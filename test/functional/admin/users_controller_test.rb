@@ -18,20 +18,13 @@
 #++
 # encoding: utf-8
 
-require File.dirname(__FILE__) + "/../../test_helper"
+require "test_helper"
 
 class Admin::UsersControllerTest < ActionController::TestCase
   def setup
     setup_ssl_from_config
     login_as :johan
   end
-
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:post, :reset_password)
-  should_enforce_ssl_for(:put, :suspend)
-  should_enforce_ssl_for(:put, :unsuspend)
 
   should "GET /admin/users" do
     get :index
@@ -93,7 +86,7 @@ class Admin::UsersControllerTest < ActionController::TestCase
     should "sends a new password if email was found" do
       u = users(:johan)
       User.expects(:generate_random_password).returns("secret")
-      Mailer.expects(:deliver_forgotten_password).with(u, "secret")
+      Mailer.expects(:forgotten_password).with(u, "secret").returns(FakeMail.new)
       post :reset_password, :id => u.to_param
       assert_redirected_to(admin_users_path)
       assert_equal "A new password has been sent to your email", flash[:notice]

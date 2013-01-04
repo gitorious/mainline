@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +19,7 @@
 # This script maps an incoming path to a full path on the file system
 # This script does not load the Rails environment, only a minimal subset
 # required to load the Gitorious and database environment
-# 
+#
 # Call with a single parameter, the URL to translate
 #
 # We will exit with a non-zero exit code if an error occurs or we cannot resolve
@@ -49,7 +49,6 @@ if !File.file?(gitorious_yml_path)
 end
 
 RAILS_ENV = ENV["RAILS_ENV"] || "production"
-GitoriousConfig = YAML::load_file(gitorious_yml_path)[RAILS_ENV]
 
 database_yml_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "config", "database.yml"))
 if !File.file?(database_yml_path)

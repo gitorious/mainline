@@ -1,22 +1,23 @@
 <%
-# encoding: utf-8
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  # encoding: utf-8
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <%= breadcrumbs_from(@merge_request) -%>
 
@@ -24,27 +25,27 @@
 <%= render :partial => @merge_request, :locals => { :no_link => true } -%>
 
 <% if !@merge_request.open? -%>
-<div class="merge-request-reason">
-  <h4 class="<%= @merge_request.status_string -%>">
-    <span><%= @merge_request.status_string.titlecase -%></span>:
-  </h4>
-  <%= simple_format(auto_link(h(@merge_request.reason), :urls)) -%>
-</div>
+  <div class="merge-request-reason">
+    <h4 class="<%= @merge_request.status_string -%>">
+      <span><%= @merge_request.status_string.titlecase -%></span>:
+    </h4>
+    <%= simple_format(auto_link(h(@merge_request.reason), :urls)) -%>
+  </div>
 <% end -%>
 
 
 <% if logged_in? && can_resolve_merge_request?(current_user, @merge_request) && !@merge_request.possible_next_states.blank? -%>
 
-<% if @merge_request.open? -%>
-<% help_box(:left) do -%>
-<p>
-  <%= t("views.merges.help") %>
-  <small>
-    <%= link_to_function(t("views.merges.example"),
-        "$('#detailed_merge_request_help').toggle()", :class => "more_info") -%>
-  </small>
-</p>
-<pre id="detailed_merge_request_help" style="display:none;">
+  <% if @merge_request.open? -%>
+    <%= help_box(:left) do -%>
+      <p>
+        <%= t("views.merges.help") %>
+        <small>
+          <%= link_to_function(t("views.merges.example"),
+                               "$('#detailed_merge_request_help').toggle()", :class => "more_info") -%>
+        </small>
+      </p>
+      <pre id="detailed_merge_request_help" style="display:none;">
   git checkout master
   git remote add <%= @merge_request.source_repository.user.login -%> <%= @merge_request.source_repository.clone_url %>
   git fetch <%= @merge_request.source_repository.user.login %>
@@ -56,55 +57,55 @@
   git checkout <%= @merge_request.target_branch || 'master' %>
   git merge <%= @merge_request.source_repository.user.login -%>/<%= @merge_request.source_branch || 'master' %>
   git push origin <%= @merge_request.target_branch || 'master' -%>
-</pre>
-<% end -%>
-<% end -%>
+      </pre>
+    <% end -%>
+  <% end -%>
 <% end -%>
 
 <% if @merge_request.open? -%>
-<h2><%= t("views.merges.commits_to_merged") %>:</h2>
+  <h2><%= t("views.merges.commits_to_merged") %>:</h2>
 <% else -%>
-<h2><%= t("views.merges.commits") %>:</h2>
+  <h2><%= t("views.merges.commits") %>:</h2>
 <% end -%>
 
 <script type="text/javascript" charset="utf-8">
   function toggleComments(index) {
-  if ($("#commit_" + index).hasClass("with_comments")) {
-  $("#commit_" + index).removeClass("with_comments")
-  } else {
-  $("#commit_" + index).addClass("with_comments")
-  }
-  $('.comment_for_commit_' + index).each(function(){
-      $(this).toggle();
-  })
+      if ($("#commit_" + index).hasClass("with_comments")) {
+          $("#commit_" + index).removeClass("with_comments")
+      } else {
+          $("#commit_" + index).addClass("with_comments")
+      }
+
+      $('.comment_for_commit_' + index).each(function(){
+          $(this).toggle();
+      });
   }
 </script>
 
 <% if @commits.blank? -%>
-<p><em>
-    It appears that the commits in this merge request have already been merged
-    into <%= link_to(@merge_request.target_repository.name, repo_owner_path(@merge_request.target_repository,
-             [@merge_request.target_repository.project, @merge_request.target_repository])) -%>.
-  </em><br />
-  <% if !@merge_request.ending_commit.blank? -%>
-  The ending commit of this merge request was <%=h @merge_request.ending_commit -%>.
-  <% end -%>
-</p>
+  <p><em>
+      It appears that the commits in this merge request have already been merged
+      into <%= link_to(@merge_request.target_repository.name, [@merge_request.target_repository.project, @merge_request.target_repository]) -%>.
+    </em><br />
+    <% if !@merge_request.ending_commit.blank? -%>
+      The ending commit of this merge request was <%=h @merge_request.ending_commit -%>.
+    <% end -%>
+  </p>
 <% else -%>
 
-<%= render :partial => 'commits', :locals => {:skip_headings => true} %>
+  <%= render :partial => 'commits', :locals => {:skip_headings => true} %>
 <% end # if @commits.blank? -%>
 
-<%- content_for(:sidebar) do -%>
-<%- if @merge_request.user == current_user -%>
-<ul class="links navigation">
-  <li class="delete_merge_request">
-    <%= link_to t('views.merges.delete_btn'), repo_owner_path(@merge_request.target_repository,
-        [@merge_request.source_repository.project,
-        @merge_request.target_repository, @merge_request]), :method => :delete, :confirm => 'Are you sure you want to delete this merge request?' %>
-  </li>
-</ul>
-<%- end -%>
+<%= content_for(:sidebar) do -%>
+  <%- if @merge_request.user == current_user -%>
+    <ul class="links navigation">
+      <li class="delete_merge_request">
+        <%= link_to t('views.merges.delete_btn'), [@merge_request.source_repository.project,
+                                                   @merge_request.target_repository,
+                                                   @merge_request], :method => :delete, :confirm => 'Are you sure you want to delete this merge request?' %>
+      </li>
+    </ul>
+  <%- end -%>
 <%- end -%>
 
 <h2 id="comments">Comments</h2>

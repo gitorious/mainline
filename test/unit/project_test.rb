@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,8 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../test_helper'
+require "test_helper"
 
 class ProjectTest < ActiveSupport::TestCase
   def create_project(options={})
@@ -30,8 +30,8 @@ class ProjectTest < ActiveSupport::TestCase
     }.merge(options))
   end
 
-  should_belong_to :containing_site
-  should_have_many :merge_request_statuses
+  should belong_to(:containing_site)
+  should have_many(:merge_request_statuses)
 
   should "have a title to be valid" do
     project = create_project(:title => nil)
@@ -50,7 +50,7 @@ class ProjectTest < ActiveSupport::TestCase
     p1.save!
     p2 = create_project(:slug => "FOO")
     assert !p2.valid?, 'valid? should be false'
-    assert_not_nil p2.errors.on(:slug)
+    assert_not_nil p2.errors[:slug]
   end
 
   should "have an alphanumeric slug" do
@@ -68,11 +68,11 @@ class ProjectTest < ActiveSupport::TestCase
   should "cannot have a reserved name as slug" do
     project = create_project(:slug => Gitorious::Reservations.project_names.first)
     project.valid?
-    assert_not_nil project.errors.on(:slug)
+    assert_not_nil project.errors[:slug]
 
     project = create_project(:slug => "dashboard")
     project.valid?
-    assert_not_nil project.errors.on(:slug)
+    assert_not_nil project.errors[:slug]
   end
 
   should "creates the wiki repository on create" do
@@ -185,9 +185,9 @@ class ProjectTest < ActiveSupport::TestCase
     project.bugtracker_url = "invalid@bugtracker"
 
     assert !project.valid?
-    assert project.errors.on(:home_url)
-    assert project.errors.on(:mailinglist_url)
-    assert project.errors.on(:bugtracker_url)
+    assert project.errors[:home_url]
+    assert project.errors[:mailinglist_url]
+    assert project.errors[:bugtracker_url]
   end
 
   should "allow valid urls" do
@@ -198,9 +198,9 @@ class ProjectTest < ActiveSupport::TestCase
     project.bugtracker_url = "http://bugtracker.com"
 
     assert project.valid?
-    assert project.errors.on(:home_url).nil?
-    assert project.errors.on(:mailinglist_url).nil?
-    assert project.errors.on(:bugtracker_url).nil?
+    assert project.errors[:home_url].blank?
+    assert project.errors[:mailinglist_url].blank?
+    assert project.errors[:bugtracker_url].blank?
   end
 
   should "find or create an associated wiki repo" do
@@ -437,15 +437,15 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Merge request status tags' do
-    setup {@project = Factory.create(:user_project)}
+  context "Merge request status tags" do
+    setup { @project = FactoryGirl.create(:user_project) }
 
-    should 'serialize merge_request_state_options' do
+    should "serialize merge_request_state_options" do
       @project.merge_request_custom_states = %w(Merged Verifying)
       assert_equal %w(Merged Verifying), @project.merge_request_custom_states
     end
 
-    should 'be serializible through a text-only version' do
+    should "be serializible through a text-only version" do
       assert_equal "Open\nClosed\nVerifying", @project.merge_request_states
       @project.merge_request_states = "Foo\nBar"
       assert_equal ['Foo','Bar'], @project.merge_request_custom_states
@@ -453,7 +453,7 @@ class ProjectTest < ActiveSupport::TestCase
   end
 
   should "create default merge_request_statuses on creation" do
-    project = Factory.build(:user_project)
+    project = FactoryGirl.build(:user_project)
     assert project.new_record?
     project.save!
 
@@ -468,14 +468,14 @@ class ProjectTest < ActiveSupport::TestCase
 
   context "Searching" do
     setup do
-      @owner = Factory.create(:user, :login => "thejoker")
-      @project = Factory.create(:project, :user => @owner,
+      @owner = FactoryGirl.create(:user, :login => "thejoker")
+      @project = FactoryGirl.create(:project, :user => @owner,
         :owner => @owner)
-      @repo = Factory.create(:repository, :project => @project, :owner => @owner,
+      @repo = FactoryGirl.create(:repository, :project => @project, :owner => @owner,
         :user => @owner, :name => "thework", :description => "halloween")
-      @group = Factory.create(:group, :creator => @owner,
+      @group = FactoryGirl.create(:group, :creator => @owner,
         :name => "foo-hackers", :user_id => @owner.to_param)
-      @group_repo = Factory.create(:repository, :project => @project,
+      @group_repo = FactoryGirl.create(:repository, :project => @project,
         :owner => @group, :name => "group-repo", :user => @owner)
       @tracking_repo = @repo.create_tracking_repository
     end
@@ -503,14 +503,14 @@ class ProjectTest < ActiveSupport::TestCase
 
   context "Cloneable repositories" do
     setup do
-      @owner = Factory.create(:user, :login => "thejoker")
-      @project = Factory.create(:project, :user => @owner,
+      @owner = FactoryGirl.create(:user, :login => "thejoker")
+      @project = FactoryGirl.create(:project, :user => @owner,
         :owner => @owner)
-      @repo = Factory.create(:repository, :project => @project, :owner => @owner,
+      @repo = FactoryGirl.create(:repository, :project => @project, :owner => @owner,
         :user => @owner, :name => "thework", :description => "halloween")
-      @group = Factory.create(:group, :creator => @owner,
+      @group = FactoryGirl.create(:group, :creator => @owner,
         :name => "foo-hackers", :user_id => @owner.to_param)
-      @group_repo = Factory.create(:repository, :project => @project,
+      @group_repo = FactoryGirl.create(:repository, :project => @project,
         :owner => @group, :name => "group-repo", :user => @owner)
       @tracking_repo = @repo.create_tracking_repository
     end
@@ -560,7 +560,7 @@ class ProjectTest < ActiveSupport::TestCase
 
   context "Tagging" do
     setup do
-      @project = Factory.create(:user_project)
+      @project = FactoryGirl.create(:user_project)
     end
 
     should "have a tag_list= setter" do
@@ -572,13 +572,17 @@ class ProjectTest < ActiveSupport::TestCase
   should "not allow api as slug" do
     p = Project.new(:slug => "api")
     assert !p.valid?
-    assert_not_nil p.errors.on(:slug)
+    assert_not_nil p.errors[:slug]
   end
 
   context "Database authorization" do
     context "with private repositories enabled" do
       setup do
-        GitoriousConfig["enable_private_repositories"] = true
+        @settings = Gitorious::Configuration.prepend("enable_private_repositories" => true)
+      end
+
+      teardown do
+        Gitorious::Configuration.prune(@settings)
       end
 
       should "allow anonymous user to view public project" do
@@ -611,26 +615,22 @@ class ProjectTest < ActiveSupport::TestCase
     end
 
     context "with private repositories disabled" do
-      setup do
-        GitoriousConfig["enable_private_repositories"] = false
-      end
-
       should "allow anonymous user to view 'private' project" do
-        projects(:johans).add_member(users(:johan))
-        assert can_read?(nil, projects(:johans))
+        Gitorious::Configuration.override("enable_private_repositories" => false) do
+          projects(:johans).add_member(users(:johan))
+          assert can_read?(nil, projects(:johans))
+        end
       end
     end
 
     context "making projects private" do
-      setup do
+      should "add owner as member" do
         @user = users(:johan)
         @project = projects(:johans)
-        GitoriousConfig["enable_private_repositories"] = true
-      end
-
-      should "add owner as member" do
-        @project.make_private
-        assert !can_read?(users(:mike), @project)
+        Gitorious::Configuration.override("enable_private_repositories" => true) do
+          @project.make_private
+          assert !can_read?(users(:mike), @project)
+        end
       end
     end
   end

@@ -18,7 +18,7 @@
 
 module CacheInPrivateHelper
   def cache_in_private(key, options={}, &block)
-    if GitoriousConfig["enable_private_repositories"]
+    if Gitorious.private_repositories?
       yield
     else
       cache(key, options, &block)

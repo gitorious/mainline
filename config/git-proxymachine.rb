@@ -24,7 +24,7 @@ class GitRouter
   end
 
   def self.header_tag(path)
-    host = GitoriousConfig['gitorious_host']
+    host = Gitorious.host
     header_data = "git-upload-pack /#{path}\000host=#{host}\000"
     "%04x%s" % [header_data.length+4, header_data]
   end

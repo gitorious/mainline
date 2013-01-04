@@ -1,26 +1,26 @@
 <%
-#--
-#   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% @page_title = @project.title -%>
 <%= breadcrumbs_from(@root) -%>
@@ -48,7 +48,7 @@
   <%= render :partial => "events/events", :locals => {  :events => @events, :container_css_class => "w-750"  } -%>
 </div>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="links navigation">
     <% if @project.wiki_enabled? -%>
       <li class="wiki_page"> <!-- Create / Open Wiki -->
@@ -65,17 +65,17 @@
       <li class="new_repository"><%= link_to t("views.projects.add_repository"), new_project_repository_path(@project) -%></li>
       <li class="update_project"><%= link_to t("views.projects.edit"), edit_project_path(@project) -%></li>
     <% end -%>
-    <% if GitoriousConfig["enable_private_repositories"] && can_grant_access?(current_user, @project) -%>
+    <% if Gitorious.private_repositories? && can_grant_access?(current_user, @project) -%>
       <li class="update_access"><%= link_to t("views.projects.manage_access"), project_project_memberships_path(@project) -%></li>
     <% end -%>
-    <%- if logged_in? && site_admin?(current_user) && GitoriousConfig["is_gitorious_dot_org"] -%>
+    <%- if logged_in? && site_admin?(current_user) && Gitorious.dot_org? -%>
       <li>
         <%= link_to t('views.projects.edit_oauth_settings'), edit_admin_oauth_settings_path(@project) %>
       </li>
     <%- end -%>
   </ul>
   <%= render :partial => "meta" %>
-  <% benchmark("Repositories (sidebar)") do  -%>
+  <%= benchmark("Repositories (sidebar)") do  -%>
     <h3>
       <%= link_to t("views.projects.repository_clones"),
           project_repositories_path(@project) -%>

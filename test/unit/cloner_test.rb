@@ -17,9 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
-gem("geoip", ">=0")
-require "geoip"
+require "test_helper"
 
 class ClonerTest < ActiveSupport::TestCase
 

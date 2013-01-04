@@ -23,16 +23,16 @@
 
 class RepositoriesController < ApplicationController
   before_filter :login_required,
-    :except => [:index, :show, :writable_by, :config, :search_clones]
-  before_filter :find_repository_owner, :except => [:writable_by, :config]
-  before_filter :unauthorized_repository_owner_and_project, :only => [:writable_by, :config]
+    :except => [:index, :show, :writable_by, :repository_config, :search_clones]
+  before_filter :find_repository_owner, :except => [:writable_by, :repository_config]
+  before_filter :unauthorized_repository_owner_and_project, :only => [:writable_by, :repository_config]
   before_filter :require_owner_adminship, :only => [:new, :create]
   before_filter :find_and_require_repository_adminship,
     :only => [:edit, :update, :confirm_delete, :destroy]
   before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
-  always_skip_session :only => [:config, :writable_by]
-  renders_in_site_specific_context :except => [:writable_by, :config]
+  always_skip_session :only => [:repository_config, :writable_by]
+  renders_in_site_specific_context :except => [:writable_by, :repository_config]
 
   def index
     if term = params[:filter]
@@ -40,7 +40,7 @@ class RepositoriesController < ApplicationController
     else
       @repositories = paginate(page_free_redirect_options) do
         filter_paginated(params[:page], Repository.per_page) do |page|
-          @owner.repositories.regular.paginate(:all, :include => [:user, :events, :project], :page => page)
+          @owner.repositories.regular.paginate(:include => [:user, :events, :project], :page => page)
         end
       end
     end
@@ -59,8 +59,9 @@ class RepositoriesController < ApplicationController
     @events = paginated_events
 
     return if @events.count == 0 && params.key?(:page)
-    @atom_auto_discovery_url = repo_owner_path(@repository, :project_repository_path,
-                                  @repository.project, @repository, :format => :atom)
+    @atom_auto_discovery_url = project_repository_path(@repository.project,
+                                                       @repository,
+                                                       :format => :atom)
     response.headers["Refresh"] = "5" unless @repository.ready
 
     respond_to do |format|
@@ -72,9 +73,9 @@ class RepositoriesController < ApplicationController
 
   def paginated_events
     paginate(page_free_redirect_options) do
-      if !private_repositories_enabled?
+      if !Gitorious.private_repositories?
         Rails.cache.fetch("new_paginated_events_in_repo_#{@repository.id}:#{params[:page] || 1}", :expires_in => 1.minute) do
-          unfiltered_paginated_events
+          marshalable_events(unfiltered_paginated_events)
         end
       else
         filter_paginated(params[:page], Event.per_page) do |page|
@@ -85,7 +86,8 @@ class RepositoriesController < ApplicationController
   end
 
   def unfiltered_paginated_events
-    @repository.events.top.paginate(:all, :page => params[:page], :order => "created_at desc")
+    @repository.events.top.paginate(:page => params[:page],
+                                    :order => "created_at desc")
   end
 
   def new
@@ -105,7 +107,7 @@ class RepositoriesController < ApplicationController
     @repository.owner = @project.owner
     @repository.user = current_user
     @repository.merge_requests_enabled = params[:repository][:merge_requests_enabled]
-    
+
     if @repository.save
       @repository.make_private if repos_private_on_creation?
       flash[:success] = I18n.t("repositories_controller.create_success")
@@ -116,7 +118,7 @@ class RepositoriesController < ApplicationController
   end
 
   def repos_private_on_creation?
-    GitoriousConfig["enable_private_repositories"] && (params[:private_repository] || GitoriousConfig["repos_and_projects_private_by_default"])
+    Gitorious.private_repositories? && (params[:private_repository] || Gitorious.repositories_default_private?)
   end
 
   undef_method :clone
@@ -126,7 +128,7 @@ class RepositoriesController < ApplicationController
     @root = Breadcrumb::CloneRepository.new(@repository_to_clone)
     unless @repository_to_clone.has_commits?
       flash[:error] = I18n.t "repositories_controller.new_clone_error"
-      redirect_to [@owner, @repository_to_clone]
+      redirect_to [@repository_to_clone.project, @repository_to_clone]
       return
     end
     @repository = Repository.new_by_cloning(@repository_to_clone, current_user.login)
@@ -139,11 +141,11 @@ class RepositoriesController < ApplicationController
       respond_to do |format|
         format.html do
           flash[:error] = I18n.t "repositories_controller.create_clone_error"
-          redirect_to [@owner, @repository_to_clone]
+          redirect_to [@repository_to_clone.project, @repository_to_clone]
         end
         format.xml do
           render :text => I18n.t("repositories_controller.create_clone_error"),
-            :location => [@owner, @repository_to_clone], :status => :unprocessable_entity
+            :location => [@repository_to_clone.project, @repository_to_clone], :status => :unprocessable_entity
         end
       end
       return
@@ -165,7 +167,7 @@ class RepositoriesController < ApplicationController
       if @repository.save
         @owner.create_event(Action::CLONE_REPOSITORY, @repository, current_user, @repository_to_clone.id)
 
-        location = repo_owner_path(@repository, :project_repository_path, @owner, @repository)
+        location = project_repository_path(@repository.project, @repository)
         format.html { redirect_to location }
         format.xml  { render :xml => @repository, :status => :created, :location => location }
       else
@@ -209,7 +211,7 @@ class RepositoriesController < ApplicationController
       @repository.merge_requests_enabled = params[:repository][:merge_requests_enabled]
       @repository.save!
       flash[:success] = "Repository updated"
-      redirect_to [@repository.project_or_owner, @repository]
+      redirect_to [@repository.project, @repository]
     end
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound
     render :action => "edit"
@@ -234,7 +236,7 @@ class RepositoriesController < ApplicationController
     render :text => 'false' and return
   end
 
-  def config
+  def repository_config
     @repository = @owner.cloneable_repositories.find_by_name_in_project!(params[:id],
       @containing_project)
     authorize_configuration_access(@repository)
@@ -280,8 +282,7 @@ class RepositoriesController < ApplicationController
     @repository = @owner.repositories.find_by_name_in_project!(params[:id],
                                                                @containing_project)
     unless admin?(current_user, authorize_access_to(@repository))
-      respond_denied_and_redirect_to(repo_owner_path(@repository,
-                                                     :project_repository_path, @owner, @repository))
+      respond_denied_and_redirect_to(project_repository_path(@repository.project, @repository))
       return
     end
   end
@@ -347,9 +348,9 @@ class RepositoriesController < ApplicationController
   end
 
   def authorize_configuration_access(repository)
-    return true if !GitoriousConfig["enable_private_repositories"]
+    return true if !Gitorious.private_repositories?
     if !can_read?(User.find_by_login(params[:username]), repository)
-      raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
+      raise Gitorious::Authorization::UnauthorizedError.new(request.fullpath)
     end
   end
 

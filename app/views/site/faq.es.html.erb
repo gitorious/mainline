@@ -1,21 +1,22 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <h1>Preguntas frecuentes</h1>
 
@@ -33,25 +34,25 @@
 <p>
   La manera más fácil es poniendo algo como lo siguiente en el archivo <code>.git/config</code>
   del repositorio que quiere publicar:
-<pre>
-[remote "origin"]
-       url = <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
-       fetch = +refs/heads/*:refs/remotes/origin/*
-[branch "master"]
-       remote = origin
-       merge = refs/heads/master
-</pre>
+  <pre>
+    [remote "origin"]
+    url = <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").http_safe %>
+    fetch = +refs/heads/*:refs/remotes/origin/*
+    [branch "master"]
+    remote = origin
+    merge = refs/heads/master
+  </pre>
   y entonces <code>git push origin master</code> para publicar el código en Gitorious.
 </p>
 <p>
-  También puede simplemente ejecutar "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:tumbline/mainline.git</code>", o puede configurar un remote haciendo lo siguiente (agregue --fetch en la llamada a add para
+  También puede simplemente ejecutar "<code>git push <%= Gitorious.ssh_daemon.url('tumbline/mainline.git').html_safe %></code>", o puede configurar un remote haciendo lo siguiente (agregue --fetch en la llamada a add para
   obtener la configuración de arriba):
   <pre>
-  git remote add origin <% GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
-  # para publicar el branch master al origin remote que agregamos arriba:
-  git push origin master
-  # después de eso puede simplemente hacer:
-  git push
+    git remote add origin <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").http_safe %>
+    # para publicar el branch master al origin remote que agregamos arriba:
+    git push origin master
+    # después de eso puede simplemente hacer:
+    git push
   </pre>
 </p>
 
@@ -63,7 +64,7 @@
   para que puedan contactarlo sobre sus proyectos si así lo necesitan. De todas formas tomamos
   algunas medidas simples contra crawlers al no mostrar toda su dirección en texto plano. <br />
   Pero sólo para que quede claro: nosotros no vendemos ni usamos la información que usted brinda
-  a <%= GitoriousConfig['gitorious_host'] -%> para obtener ganancias económicas o personales.
+  a <%= Gitorious.host -%> para obtener ganancias económicas o personales.
 </p>
 
 <hr />
@@ -95,7 +96,7 @@
   <code>git versión 1.5.4.4</code>
 </p>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="links navigation">
     <li><%= link_to "Acerca de", about_path(:anchor => "about") -%></li>
     <li><%= link_to "Contacto", about_path(:anchor => "contact") -%></li>

@@ -1,41 +1,40 @@
 <%
   #--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Patrick Aljord <patcito@gmail.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2008 Patrick Aljord <patcito@gmail.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <div id="content">
-
   <%= login_method %>
-  <% form_tag sessions_path  do -%>
+  <%= form_tag sessions_path do -%>
     <div class="form-wrapper" id="login">
       <div id="log-in">
-        <h1>Log in to <%= GitoriousConfig["site_name"] %></h1>
+        <h1>Log in to <%= Gitorious.site_name %></h1>
         <p class="openid-switch">Or log in with <a href="#" class="foo1">OpenID</a>.</p>
         <p class="regular-switch" style="display: none">Or log in with your <a href="#" class="foo2">regular account</a>.</p>
         <% kerberos = Gitorious::Authentication::Configuration.authentication_methods.detect do |m|
              Gitorious::Authentication::KerberosAuthentication === m
-           end
-          if kerberos
-        %>
-        <p>Or log in with <%= link_to 'Kerberos', :controller => "sessions", :action=> "http" %> (single sign-on).</p>
+           end %>
+        <% if kerberos %>
+          <p>Or log in with <%= link_to 'Kerberos', :controller => "sessions", :action=> "http" %> (single sign-on).</p>
         <% end %>
         <div class="horisontal-shadow"></div>
         <% if flash[:error] %>
@@ -81,16 +80,13 @@
             </li>
           </ul>
         </div>
-
-
-
-      </div><!-- end #log-in -->
-    </div><!-- end form-wrapper -->
-  <% end -%> <!-- end form -->
+      </div>
+    </div>
+  <% end -%>
 
   <p class="alt_links">
     <small>
-      <% if GitoriousConfig['public_mode'] -%>
+      <% if Gitorious.public? -%>
         <%= link_to t("views.sessions.register"), new_user_path -%>
         &mdash;
       <% end -%>
@@ -98,8 +94,3 @@
     </small>
   </p>
 </div>
-
-
-
-</div>
-

@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+#
+# Wrapper around Gitorious' search engine Use this script instead of
+# calling rake tasks directly; this will keep your app running even if
+# we change search engines
+
+require "pathname"
+command = ARGV.shift
+rake = (Pathname(__FILE__) + "../rake").realpath
+
+
+Commands = {
+  "start" => "ts:start",
+  "stop" => "ts:stop",
+  "restart" => "ts:reindex" # I know, I know
+}
+
+if rake_command = Commands[command]
+  exec("#{rake} #{rake_command}")
+else
+  abort "Unknown action #{command}. Valid commands are #{Commands.keys}"
+end

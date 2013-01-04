@@ -10,6 +10,7 @@ module Gitorious
   class CLI
     def run_with_gitorious_environment
       setup_environment
+      load_config
       require_valid_user!
       yield
     end
@@ -27,9 +28,23 @@ module Gitorious
       rails_root ||= (Pathname(__FILE__) + "../../").realpath.to_s
     end
 
+    def rails_env
+      ENV["RAILS_ENV"]
+    end
+
+    def load_config
+      $LOAD_PATH << rails_root + "/lib"
+      require "./lib/gitorious/configuration_loader"
+      require "./lib/gitorious/messaging"
+      loader = Gitorious::ConfigurationLoader.new
+      loader.load_configurable_singletons(rails_root)
+      config = loader.configure_singletons(rails_env)
+      config
+    end
+
     def require_valid_user!
       if rails_env == "production"
-        if git_user = gitorious_config("gitorious_user")
+        if git_user = Gitorious.user
           etc_user = Etc.getpwnam(git_user)
           uid = etc_user.uid
           gid = etc_user.gid
@@ -47,14 +62,6 @@ module Gitorious
           end
         end
       end
-    end
-
-    def gitorious_config(key)
-      YAML::load_file(rails_root + "/config/gitorious.yml")[rails_env][key]
-    end
-
-    def rails_env
-      ENV["RAILS_ENV"]
     end
   end
 end

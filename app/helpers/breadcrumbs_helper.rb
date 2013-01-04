@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -33,7 +34,7 @@ module BreadcrumbsHelper
       end
       html << content_tag(:li, breadcrumb_link_to(crumb), :class => css_klass)
     end
-    html
+    html.html_safe
   end
 
   # Renders breadcrumbs starting from +root+
@@ -46,7 +47,7 @@ module BreadcrumbsHelper
   def breadcrumb_link_to(an_object)
     url = case an_object
     when Repository
-      repo_owner_path(an_object, :project_repository_path, an_object.project, an_object)
+      project_repository_path(an_object.project, an_object)
     when Project
       project_path(an_object)
     when Group
@@ -54,8 +55,7 @@ module BreadcrumbsHelper
     when User
       user_path(an_object)
     when Breadcrumb::Branch
-      repo_owner_path(@repository, :project_repository_commits_in_ref_path,
-                        @project, @repository, ensplat_path(an_object.title))
+      project_repository_commits_in_ref_path(@project, @repository, ensplat_path(an_object.title))
     when Breadcrumb::Folder
       tree_path(@ref, an_object.paths)
     when Breadcrumb::Blob
@@ -75,15 +75,15 @@ module BreadcrumbsHelper
     when Membership
       edit_group_membership_path(@group, @membership)
     when Breadcrumb::MergeRequests
-      [@owner, @repository, :merge_requests]
+      [@repository.project, @repository, :merge_requests]
     when MergeRequest
-      [@owner, @repository, @merge_request]
+      [@repository.project, @repository, @merge_request]
     when Breadcrumb::Committerships
-      [@owner, @repository, :committerships]
+      [@repository.project, @repository, :committerships]
     when Committership
-      [@owner, @repository, @committership]
+      [@repository.project, @repository, @committership]
     when Breadcrumb::ProjectMemberships
-      [@owner, @project, :project_memberships]
+      [@project, :project_memberships]
     when Breadcrumb::Messages
       messages_path
     when Breadcrumb::ReceivedMessages

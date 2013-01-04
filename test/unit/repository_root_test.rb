@@ -16,16 +16,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require 'test_helper'
+require "test_helper"
 
 class RepositoryRootTest < ActiveSupport::TestCase
   context "No roots defined" do
-    setup do
-      @base_path = GitoriousConfig["repository_base_path"]
-    end
-
     should "provide the default base path" do
-      assert_equal @base_path, RepositoryRoot.default_base_path
+      assert_equal "/tmp/git/repositories", RepositoryRoot.default_base_path
     end
   end
 end

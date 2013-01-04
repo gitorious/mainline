@@ -27,8 +27,7 @@ class TreesController < ApplicationController
   renders_in_site_specific_context :except => [:archive]
 
   def index
-    redirect_to repo_owner_path(@repository, :project_repository_tree_path,
-                  @project, @repository, branch_with_tree(@repository.head_candidate_name, []))
+    redirect_to(project_repository_tree_path(@project, @repository, branch_with_tree(@repository.head_candidate_name, [])))
   end
 
   def show
@@ -37,7 +36,7 @@ class TreesController < ApplicationController
     unless @commit = @git.commit(@ref)
       handle_missing_tree_sha and return
     end
-    if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join),
+    if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path]),
                           @commit.committed_date.utc)
       head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
       @root = Breadcrumb::Folder.new({:paths => @path, :head => head,
@@ -50,7 +49,6 @@ class TreesController < ApplicationController
 
   def archive
     @git = @repository.git
-    # FIXME: update route when we've fixed rails bug #1939
     @ref = desplat_path(params[:branch])
     ext = params[:archive_format]
     unless @commit = @git.commit(@ref)
@@ -64,7 +62,7 @@ class TreesController < ApplicationController
 
     user_path = "#{@repository.project_or_owner.to_param}-#{@repository.to_param}-#{@ref}.#{ext}"
     disk_path = "#{@repository.hashed_path.gsub(/\//,'-')}-#{@commit.id}.#{ext}"
-    if File.exist?(File.join(GitoriousConfig["archive_cache_dir"], disk_path))
+    if File.exist?(File.join(Gitorious.archive_cache_dir, disk_path))
       respond_to do |format|
         format.html {
           set_xsendfile_headers(disk_path, user_path)
@@ -76,7 +74,7 @@ class TreesController < ApplicationController
       end
     else
       # enqueue the creation of the tarball, and send an accepted response
-      if !File.exist?(File.join(GitoriousConfig["archive_work_dir"], disk_path))
+      if !File.exist?(File.join(Gitorious.archive_work_dir, disk_path))
         publish_archive_message(@repository, disk_path, @commit)
       end
 
@@ -95,10 +93,10 @@ class TreesController < ApplicationController
 
   protected
   def set_xsendfile_headers(real_path, user_path, content_type = "application/x-gzip")
-    if GitoriousConfig["frontend_server"] == "nginx"
+    if Gitorious.frontend_server == "nginx"
       response.headers["X-Accel-Redirect"] = "/tarballs/#{real_path}"
     else
-      response.headers["X-Sendfile"] = File.join(GitoriousConfig["archive_cache_dir"], real_path)
+      response.headers["X-Sendfile"] = File.join(Gitorious.archive_cache_dir, real_path)
     end
       response.headers["Content-Type"] = content_type
       user_path = user_path.gsub("/", "_").gsub('"', '\"')
@@ -108,8 +106,8 @@ class TreesController < ApplicationController
     def publish_archive_message(repo, disk_path, commit)
       publish("/queue/GitoriousRepositoryArchiving", {
         :full_repository_path => repo.full_repository_path,
-        :output_path => File.join(GitoriousConfig["archive_cache_dir"], disk_path),
-        :work_path => File.join(GitoriousConfig["archive_work_dir"], disk_path),
+        :output_path => File.join(Gitorious.archive_cache_dir, disk_path),
+        :work_path => File.join(Gitorious.archive_work_dir, disk_path),
         :commit_sha => commit.id,
         :name => (repo.project.slug + "-" + repo.name),
         :format => "tar.gz",

@@ -17,57 +17,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class TreesControllerTest < ActionController::TestCase
-
   should_render_in_site_specific_context :except => [:archive]
-
-  should_enforce_ssl_for(:get, :archive)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :show)
-
-  context "routing" do
-    should_eventually "recognize a single glob with a format" do
-      pending "fix rails bug #1939"
-      assert_recognizes({
-        :controller => "trees",
-        :action => "archive",
-        :project_id => "proj",
-        :repository_id => "repo",
-        :branch => ["foo"],
-        :format => "tar.gz",
-      }, "/proj/repo/archive/foo.tar.gz")
-      assert_recognizes({
-        :controller => "trees",
-        :action => "archive",
-        :project_id => "proj",
-        :repository_id => "repo",
-        :branch => ["foo"],
-        :format => "zip",
-      }, "/proj/repo/archive/foo.zip")
-    end
-
-    should_eventually "recognize multiple globs with a format" do
-      pending "fix rails bug #1939"
-      assert_recognizes({
-        :controller => "trees",
-        :action => "archive",
-        :project_id => "proj",
-        :repository_id => "repo",
-        :branch => ["foo", "bar"],
-        :format => "zip",
-      }, "/proj/repo/archive/foo/bar.zip")
-      assert_recognizes({
-        :controller => "trees",
-        :action => "archive",
-        :project_id => "proj",
-        :repository_id => "repo",
-        :branch => ["foo", "bar"],
-        :format => "tar.gz",
-      }, "/proj/repo/archive/foo/bar.tar.gz")
-    end
-  end
 
   def setup
     @project = projects(:johans)
@@ -88,7 +41,7 @@ class TreesControllerTest < ActionController::TestCase
 
   context "#show" do
     should "GET successfully" do
-      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      get :show, params(:branch_and_path => "master/lib/grit")
 
       assert_response :success
       assert_equal @repository.git.tree("81a18c36ebe04e406ab84ccc911d79e65e14d1c0"), assigns(:tree)
@@ -97,21 +50,21 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "redirect to HEAD if provided sha was not found (backwards compat)" do
-      get :show, params(:branch_and_path => ["a"*40, "foo"])
+      get :show, params(:branch_and_path => "a"*40 + "/foo")
 
       assert_redirected_to(project_repository_tree_path(@project, @repository, ["HEAD", "foo"]))
     end
 
     should "set a pseudo-head if the tree ref is a sha" do
       ref = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
-      get :show, params(:branch_and_path => [ref])
+      get :show, params(:branch_and_path => ref)
 
       assert_response :success
       assert_equal ref[0..6], assigns(:root).breadcrumb_parent.title
     end
 
     should "support browsing a namespaced branch" do
-      get :show, params(:branch_and_path => ["test", "master", "lib"])
+      get :show, params(:branch_and_path => "test/master/lib")
 
       assert_response :success
       assert_equal "test/master", assigns(:root).breadcrumb_parent.breadcrumb_parent.title
@@ -119,7 +72,7 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "cache the tree" do
-      get :show, params(:branch_and_path => ["test", "master", "lib"])
+      get :show, params(:branch_and_path => "test/master/lib")
 
       assert_response :success
       assert_equal "max-age=30, private", @response.headers["Cache-Control"]
@@ -127,7 +80,7 @@ class TreesControllerTest < ActionController::TestCase
 
     should "redirect to the tree index with a msg if the tree SHA1 was not found" do
       @grit.expects(:commit).with("master").returns(nil)
-      get :show, params(:branch_and_path => ["master", "lib"])
+      get :show, params(:branch_and_path => "master/lib")
       assert_response :redirect
       assert_match(/no such tree sha/i, flash[:error])
     end
@@ -138,7 +91,7 @@ class TreesControllerTest < ActionController::TestCase
       git_repo = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
       @repository.git.expects(:commit).with("ticket-#42") \
         .returns(git_repo.commit("master"))
-      get :show, params(:branch_and_path => ["ticket-%2342"])
+      get :show, params(:branch_and_path => "ticket-%2342")
       assert_response :success
       assert_equal "ticket-#42", assigns(:ref)
     end
@@ -155,18 +108,17 @@ class TreesControllerTest < ActionController::TestCase
     setup do
       @master_sha = "ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a"
       @test_master_sha = "2d3acf90f35989df8f262dc50beadc4ee3ae1560"
-      @cached_path = File.join(GitoriousConfig["archive_cache_dir"],
+      @cached_path = File.join(Gitorious.archive_cache_dir,
                         "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
       File.stubs(:exist?).with(@cached_path).returns(true)
     end
 
     should "return the correct for an existing cached tarball" do
-
       get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
 
       assert_response :success
       assert_equal @cached_path, @response.headers["X-Sendfile"]
-      assert_equal "application/x-gzip; charset=utf-8", @response.headers["Content-Type"]
+      assert_equal "application/x-gzip", @response.headers["Content-Type"]
       exp_filename = "#{@repository.project.to_param}-#{@repository.to_param}-master.tar.gz"
       assert_equal "Content-Disposition: attachment; filename=\"#{exp_filename}\"", @response.headers["Content-Disposition"]
     end
@@ -179,24 +131,23 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "use X-Accel-Redirect to /tarballs/name-sha.tar.gz when running Nginx" do
-      GitoriousConfig["frontend_server"] = "nginx"
+      Gitorious.stubs(:frontend_server).returns("nginx")
       get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
 
       assert_response :success
       tarball_name = "#{@repository.hashed_path.gsub(/\//,'-')}-#{@master_sha}.tar.gz"
       assert_equal "/tarballs/#{tarball_name}", @response.headers["X-Accel-Redirect"]
-      GitoriousConfig["frontend_server"] = nil
     end
 
     should "enqueue a job when the tarball is not cached" do
-      cached_path = File.join(GitoriousConfig["archive_cache_dir"],
+      cached_path = File.join(Gitorious.archive_cache_dir,
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.tar.gz")
-      work_path = File.join(GitoriousConfig["archive_work_dir"],
+      work_path = File.join(Gitorious.archive_work_dir,
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.tar.gz")
       File.expects(:exist?).with(cached_path).returns(false)
       File.expects(:exist?).with(work_path).returns(false)
 
-      get :archive, params(:branch => %w[test master], :archive_format => "tar.gz")
+      get :archive, params(:branch => "test/master", :archive_format => "tar.gz")
 
       assert_response 202 # Accepted
       assert_match(/is currently being generated, try again later/, @response.body)
@@ -210,9 +161,9 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "not enqueue a job when work has already begun" do
-      cached_path = File.join(GitoriousConfig["archive_cache_dir"],
+      cached_path = File.join(Gitorious.archive_cache_dir,
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
-      work_path = File.join(GitoriousConfig["archive_work_dir"],
+      work_path = File.join(Gitorious.archive_work_dir,
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
       File.expects(:exist?).with(cached_path).returns(false)
       File.expects(:exist?).with(work_path).returns(true)
@@ -250,13 +201,13 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "disallow unauthorized users from showing tree" do
-      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      get :show, params(:branch_and_path => "master/lib/grit")
       assert_response 403
     end
 
     should "allow authorized users to show tree" do
       login_as :johan
-      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      get :show, params(:branch_and_path => "master/lib/grit")
       assert_not_equal "403", @response.code
     end
 
@@ -290,13 +241,13 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "disallow unauthorized users from showing tree" do
-      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      get :show, params(:branch_and_path => "master/lib/grit")
       assert_response 403
     end
 
     should "allow authorized users to show tree" do
       login_as :johan
-      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      get :show, params(:branch_and_path => "master/lib/grit")
       assert_not_equal "403", @response.code
     end
 

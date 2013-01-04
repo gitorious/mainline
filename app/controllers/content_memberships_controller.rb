@@ -23,7 +23,7 @@ class ContentMembershipsController < ApplicationController
 
   def index
     @memberships = paginate(page_free_redirect_options) do
-      content.content_memberships.paginate(:all, :page => params[:page])
+      content.content_memberships.paginate(:page => params[:page])
     end
     @root = Breadcrumb.const_get("#{content.class.name}Memberships".to_sym).new(content)
     render_action(:index)
@@ -62,7 +62,7 @@ class ContentMembershipsController < ApplicationController
   end
 
   def render_action(action)
-    @site_name = GitoriousConfig["site_name"]
+    @site_name = Gitorious.site_name
     @content = content
     @class_name = @content.class.name.downcase
     render :template => "content_memberships/#{action}"

@@ -37,7 +37,8 @@ before_fork do |server, worker|
 end
 
 def gitorious_config(key)
-  YAML::load_file(Pathname(RAILS_ROOT) + "config/gitorious.yml")[RAILS_ENV][key]
+  config = YAML::load_file(Pathname(RAILS_ROOT) + "config/gitorious.yml")
+  config[key] || (config[RAILS_ENV] && config[RAILS_ENV][key])
 end
 
 after_fork do |server, worker|

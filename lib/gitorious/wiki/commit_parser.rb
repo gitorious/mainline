@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious/wiki/commit"
 
 module Gitorious
   module Wiki
@@ -51,7 +52,7 @@ module Gitorious
         result.commit_message = extract_commit_message_from_line(message_line)
 
         file_listing = lines.drop(4).join("\n")
-        
+
         result.added_file_names = extract_added_files_from_git_output(file_listing)
         result.modified_file_names = extract_modified_files_from_git_output(file_listing)
         result

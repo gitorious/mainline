@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+require "pathname"
+rails_root = Pathname(__FILE__) + "../../"
+Dir.chdir(rails_root)
+tests = Dir.glob("test/micro/**/*.rb").join(" ")
+command = "bundle exec ruby -I.:app:lib:test -e '%w[#{tests}].each { |t| require(t) }'"
+puts command
+system command

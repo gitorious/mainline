@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -23,33 +24,22 @@ module ProjectsHelper
   include Gitorious::Authorization
 
   def show_new_project_link?
-    if logged_in?
-      if GitoriousConfig["only_site_admins_can_create_projects"] && !site_admin?(current_user)
-        return false
-      end
-    else
-      return false
-    end
-    true
+    return logged_in? && !ProjectProposal.required?(current_user)
   end
 
   def wiki_permission_choices
-    [
-      ["Writable by everyone", Repository::WIKI_WRITABLE_EVERYONE],
-      ["Writable by project members", Repository::WIKI_WRITABLE_PROJECT_MEMBERS],
-    ]
+    [["Writable by everyone", Repository::WIKI_WRITABLE_EVERYONE],
+     ["Writable by project members", Repository::WIKI_WRITABLE_PROJECT_MEMBERS]]
   end
 
   def add_status_link(form_builder)
-    link_to_function("Add status") do |page|
-      form_builder.fields_for(:merge_request_statuses, MergeRequestStatus.new,
-          :child_index => 'NEW_RECORD') do |f|
-        html = render(:partial => 'merge_request_status_form',
-                 :locals => { :form => f, :project_form => nil })
-        page << ("$('#merge_request_statuses').append(" +
-          "'#{escape_javascript(html)}'.replace(/NEW_RECORD/g, new Date().getTime()))" +
-          ".find('input:last').SevenColorPicker();")
-      end
+    form_builder.fields_for(:merge_request_statuses, MergeRequestStatus.new,
+                            :child_index => 'NEW_RECORD') do |f|
+      html = render(:partial => 'merge_request_status_form',
+                    :locals => { :form => f, :project_form => nil })
+      link_to_function("Add status", "$('#merge_request_statuses').append(" +
+                       "'#{escape_javascript(html)}'.replace(/NEW_RECORD/g, new Date().getTime()))" +
+                       ".find('input:last').SevenColorPicker();")
     end
   end
 
@@ -81,6 +71,6 @@ module ProjectsHelper
   end
 
   def license_label(scope = nil)
-    GitoriousConfig["license_label"] || t("license", :scope => scope)
+    Gitorious::Configuration.get("license_label", t("license", :scope => scope))
   end
 end

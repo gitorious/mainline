@@ -17,10 +17,24 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class MergeRequestsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
+    TestCommit = Struct.new(:id, :name, :message) do
+      def id_abbrev
+        id.to_s[0..6]
+      end
+      def committer
+        name
+      end
+      def committed_date
+        1.year.ago
+      end
+      def short_message
+        message
+      end
+    end
 
   def setup
     setup_ssl_from_config
@@ -38,24 +52,13 @@ class MergeRequestsControllerTest < ActionController::TestCase
     MergeRequestVersion.any_instance.stubs(:affected_commits).returns([])
     @merge_request.versions << version
     version.stubs(:merge_request).returns(@merge_request)
-    @merge_request.stubs(:commits_for_selection).returns([])
+
+
+    commit_stub = TestCommit.new("fff", "This is great")
+    MergeRequest.any_instance.stubs(:commits_for_selection).returns([commit_stub])
+
     assert_not_nil @merge_request.versions.last
   end
-
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :commit_status)
-  should_enforce_ssl_for(:get, :direct_access)
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:get, :oauth_return)
-  should_enforce_ssl_for(:get, :show)
-  should_enforce_ssl_for(:get, :terms_accepted)
-  should_enforce_ssl_for(:get, :version)
-  should_enforce_ssl_for(:post, :commit_list)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:post, :target_branches)
-  should_enforce_ssl_for(:put, :update)
 
   context "#index (GET)" do
     should "not require login" do
@@ -67,7 +70,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     should "gets all the merge requests in the repository" do
       %w(html xml).each do |format|
         get :index, params(:format => format)
-        assert_equal @target_repository.merge_requests.open, assigns(:open_merge_requests)
+        assert_equal @target_repository.open_merge_requests, assigns(:open_merge_requests)
       end
     end
 
@@ -113,7 +116,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
     should "get a list of the commits to be merged" do
       %w(html patch xml).each do |format|
-        MergeRequest.expects(:find).returns(@merge_request)
+        MergeRequest.expects(:find_by_sequence_number!).returns(@merge_request)
         stub_commits(@merge_request)
 
         get :show, mr_params(:format => format)
@@ -125,12 +128,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
     should "allow committers to change status" do
       login_as :johan
       stub_commits(@merge_request)
-
-      MergeRequest.expects(:find).returns(@merge_request)
-      git_stub = stub_everything("Grit", :commit_deltas_from => [])
-      [@merge_request.source_repository, @merge_request.target_repository].each do |r|
-        r.stubs(:git).returns(git_stub)
-      end
 
       get :show, mr_params
       assert_response :success
@@ -181,13 +178,14 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
 
     should "display 'how to merge' help with correct branch" do
-      MergeRequest.expects(:find).returns(@merge_request)
       stub_commits(@merge_request)
       @merge_request.sequence_number = 399
       @merge_request.target_branch = "superfly-feature"
+      @merge_request.save
 
       get :show, mr_params
 
+      assert_response 200
       assert @response.body.include?("git merge merge-requests/399")
       assert @response.body.include?("git push origin superfly-feature")
     end
@@ -254,7 +252,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
   context "#create (POST)" do
     setup do
       Grit::Repo.any_instance.stubs(:heads).returns([])
-      GitoriousConfig["use_ssl"] = false
     end
 
     should "require login" do
@@ -335,16 +332,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert_response :redirect
       assert_redirected_to "/foo/bar"
     end
-
-    should "route the merge_request_landing_page" do
-      assert_recognizes({ :controller => "merge_requests",
-                          :action => "oauth_return",
-                        }, "/merge_request_landing_page")
-    end
-
-    should "have a named route" do
-      assert_equal "/merge_request_landing_page", merge_request_landing_page_path
-    end
   end
 
   context "Terms accepted (GET)" do
@@ -357,7 +344,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
                                                                         :summary => "foo" })
       assert @merge_request.save
       @merge_request.stubs(:commits_to_be_merged).returns([])
-      MergeRequest.stubs(:find).returns(@merge_request)
+      MergeRequest.stubs(:find_by_sequence_number!).returns(@merge_request)
       login_as :johan
     end
 
@@ -409,7 +396,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     setup do
       @merge_request.stubs(:commit_merged?).with("ffc").returns(false)
       @merge_request.stubs(:commit_merged?).with("ffo").returns(true)
-      MergeRequest.stubs(:find).returns(@merge_request)
+      MergeRequest.stubs(:find_by_sequence_number!).returns(@merge_request)
     end
 
     should "return false if the given commit has not been merged" do
@@ -505,27 +492,24 @@ class MergeRequestsControllerTest < ActionController::TestCase
   end
 
   context "GET #target_branches" do
-    setup do
-      GitoriousConfig["use_ssl"] = false
-      GitoriousConfig["enable_private_repositories"] = false
-    end
-
     should "retrive a list of the target repository branches" do
-      grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
-      MergeRequest.any_instance.expects(:target_branches_for_selection).returns(grit.branches)
+      Gitorious::Configuration.override("enable_private_repositories" => false) do
+        grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+        MergeRequest.any_instance.expects(:target_branches_for_selection).returns(grit.branches)
 
-      login_as :johan
-      post :target_branches, mr_params(:merge_request => {
-        :target_repository_id => repositories(:johans).id
-      })
-      assert_response :success
-      assert_equal grit.branches, assigns(:target_branches)
+        login_as :johan
+        post :target_branches, mr_params(:merge_request => {
+                                           :target_repository_id => repositories(:johans).id
+                                         })
+        assert_response :success
+        assert_equal grit.branches, assigns(:target_branches)
+      end
     end
   end
 
   context "GET #version" do
     should "render the diff browser for the given version" do
-      MergeRequest.stubs(:find).returns(@merge_request)
+      MergeRequest.stubs(:find_by_sequence_number!).returns(@merge_request)
       get :version, mr_params(:version => @merge_request.versions.first.version)
       assert_response :success
     end
@@ -546,7 +530,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
     should "soft-delete the record" do
       login_as :johan
-      assert_difference("@target_repository.merge_requests.open.count", -1) do
+      assert_difference("@target_repository.open_merge_requests.count", -1) do
         do_delete
       end
       assert_redirected_to(project_repository_path(@project, @target_repository))
@@ -578,47 +562,11 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
   end
 
-  context "routing" do
-    should "route for repositories thats owned by users with dots in their username on #index" do
-      assert_recognizes({ :controller => "merge_requests",
-                          :action => "index",
-                          :user_id => "mc.hammer",
-                          :project_id => "myproject",
-                          :repository_id => "myrepo",
-                        }, {:path => "/~mc.hammer/myproject/myrepo/merge_requests", :method => :get})
-      assert_generates("/~mc.hammer/myproject/myrepo/merge_requests", {
-                         :controller => "merge_requests",
-                         :action => "index",
-                         :user_id => "mc.hammer",
-                         :project_id => "myproject",
-                         :repository_id => "myrepo",
-                       })
-    end
-
-    should "route for repositories thats owned by users with dots in their username on #show" do
-      assert_recognizes({ :controller => "merge_requests",
-                          :action => "show",
-                          :user_id => "mc.hammer",
-                          :project_id => "myproject",
-                          :repository_id => "myrepo",
-                          :id => "42"
-                        }, {:path => "/~mc.hammer/myproject/myrepo/merge_requests/42", :method => :get})
-      assert_generates("/~mc.hammer/myproject/myrepo/merge_requests/42", {
-                         :controller => "merge_requests",
-                         :action => "show",
-                         :user_id => "mc.hammer",
-                         :project_id => "myproject",
-                         :repository_id => "myrepo",
-                         :id => "42"
-                       })
-    end
-  end
-
   context "With private projects" do
     setup do
       enable_private_repositories
       stub_commits(@merge_request)
-      MergeRequest.stubs(:find).returns(@merge_request)
+      MergeRequest.stubs(:find_by_sequence_number!).returns(@merge_request)
     end
 
     should "disallow unauthenticated users from listing merge requests" do
@@ -627,7 +575,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
 
     should "allow authenticated users to list merge requests" do
-      MergeRequest.unstub(:find)
+      MergeRequest.unstub(:find_by_sequence_number!)
       login_as :johan
       get :index, params
       assert_response :success
@@ -766,7 +714,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       enable_private_repositories(@target_repository)
       @project.content_memberships.delete_all
       stub_commits(@merge_request)
-      MergeRequest.stubs(:find).returns(@merge_request)
+      MergeRequest.stubs(:find_by_sequence_number!).returns(@merge_request)
     end
 
     should "disallow unauthenticated users from listing merge requests" do
@@ -775,7 +723,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
 
     should "allow authenticated users to list merge requests" do
-      MergeRequest.unstub(:find)
+      MergeRequest.unstub(:find_by_sequence_number!)
       login_as :johan
       get :index, params
       assert_response :success

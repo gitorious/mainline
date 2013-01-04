@@ -17,12 +17,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class EventTest < ActiveSupport::TestCase
-
-  should_have_many :feed_items, :dependent => :destroy
-
   def setup
     @event = new_event
     @user = users(:johan)
@@ -39,6 +36,8 @@ class EventTest < ActiveSupport::TestCase
     c.project = opts[:project] || @project
     c
   end
+
+  should have_many(:feed_items).dependent(:destroy)
 
   should "belong to a user or have an author email" do
     event = Event.new(:target => repositories(:johans), :body => "blabla", :project => @project, :action => Action::COMMIT)
@@ -215,7 +214,7 @@ class EventTest < ActiveSupport::TestCase
       repository = repositories(:johans)
       initial_commit_event = new_event(
         :action => Action::PUSH,
-        :created_at => 32.days.ago,
+        :created_at => 35.days.ago,
         :data => "ffc",
         :target => repository)
       initial_commit_event.save!
@@ -223,7 +222,8 @@ class EventTest < ActiveSupport::TestCase
       Event.events_for_archive_in_batches(1.month.ago) do |batch|
         batch.each {|event| result << event}
       end
-      assert result.include?(initial_commit_event)
+
+      assert result.collect(&:id).include?(initial_commit_event.id)
     end
 
     should "not include newer events" do

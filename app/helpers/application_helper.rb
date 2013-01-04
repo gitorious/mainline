@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
@@ -23,6 +23,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
+require "gitorious"
 
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
@@ -48,7 +50,7 @@ module ApplicationHelper
   end
 
   def help_box(style = :side, icon = :help, options = {}, &block)
-    concat(<<-HTML)
+    raw <<-HTML
       <div id="#{options.delete(:id)}" style="#{options.delete(:style)}"
            class="help-box #{style} #{icon} round-5">
         <div class="icon #{icon}"></div>
@@ -59,7 +61,7 @@ module ApplicationHelper
 
   def pull_box(title, options = {}, &block)
     title_html = title.nil? ? "" : "<div class=\"pull-box-header\"><h3>#{title}</h3></div>"
-    concat(<<-HTML)
+    raw <<-HTML
       <div class="pull-box-container #{options.delete(:class)}">
         #{title_html}
         <div class="pull-box-content">
@@ -71,7 +73,7 @@ module ApplicationHelper
 
   def dialog_box(title, options = {}, &block)
     title_html = title.nil? ? "" : "<h3 class=\"round-top-5 dialog-box-header\">#{title}</h3>"
-    concat(<<-HTML)
+    raw <<-HTML
       <div class="dialog-box #{options.delete(:class)}">
         #{title_html}
         <div class="dialog-box-content">
@@ -83,7 +85,7 @@ module ApplicationHelper
 
   def markdown(text, options = [:smart])
     renderer = MarkupRenderer.new(text, :markdown => options)
-    renderer.to_html
+    renderer.to_html.html_safe
   end
 
   def render_markdown(text, *options)
@@ -94,21 +96,22 @@ module ApplicationHelper
     if auto_link
       markdownized_text = auto_link(markdownized_text, :urls)
     end
-    sanitize(markdownized_text)
+    sanitize(markdownized_text).html_safe
   end
 
   def feed_icon(url, alt_title = "Atom feed", size = :small)
-    link_to image_tag("silk/feed.png", :class => "feed_icon"), url,
-      :alt => alt_title, :title => alt_title
+    link_to(image_tag("silk/feed.png", :class => "feed_icon"), url,
+            :alt => alt_title, :title => alt_title)
   end
 
   def default_css_tag_sizes
     %w(tag_size_1 tag_size_2 tag_size_3 tag_size_4)
   end
+
   def linked_tag_list_as_sentence(tags)
     tags.map do |tag|
       link_to(h(tag.name), search_path(:q => "@category #{h(tag.name)}"))
-    end.to_sentence
+    end.to_sentence.html_safe
   end
 
   def build_notice_for(object, options = {})
@@ -122,20 +125,20 @@ module ApplicationHelper
     end
     out << %Q{  <p class="hint">If this message persists beyond what is reasonable, feel free to #{link_to("contact us", contact_path)}</p>}
     out << %Q{</div></div>}
-    out
+    out.html_safe
   end
 
   def render_if_ready(object, options = {})
     if object.respond_to?(:ready?) && object.ready?
       yield
     else
-      concat(build_notice_for(object, options))
+      raw build_notice_for(object, options)
     end
   end
 
   def selected_if_current_page(url_options, slack = false)
     if slack
-      if controller.request.request_uri.index(CGI.escapeHTML(url_for(url_options))) == 0
+      if controller.request.fullpath.index(CGI.escapeHTML(url_for(url_options))) == 0
         "selected"
       end
     else
@@ -178,7 +181,7 @@ module ApplicationHelper
       # end
       return stylesheet_link_tag("syntax_themes/idle")
     end
-    out.join("\n")
+    out.join("\n").html_safe
   end
 
   def base_url(full_url)
@@ -192,7 +195,7 @@ module ApplicationHelper
     port_string = [443, 80].include?(request.port) ? "" : ":#{request.port}"
     "#{prefix}.gravatar.com/avatar/" +
     (email.nil? ? "" : Digest::MD5.hexdigest(email.downcase)) + "&amp;default=" +
-      u("#{scheme}://#{GitoriousConfig['gitorious_host']}#{port_string}" +
+      u("#{scheme}://#{Gitorious.host}#{port_string}" +
       "/#{options.delete(:default)}") +
     options.map { |k,v| "&amp;#{k}=#{v}" }.join
   end
@@ -235,13 +238,13 @@ module ApplicationHelper
 
   def gravatar_frame(email, options = {})
     extra_css_class = options[:style] ? " gravatar_#{options[:style]}" : ""
-    %{<div class="gravatar#{extra_css_class}">#{gravatar(email, options)}</div>}
+    %{<div class="gravatar#{extra_css_class}">#{gravatar(email, options)}</div>}.html_safe
   end
 
   def flashes
     flash.map do |type, content|
       content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")
-    end.join("\n")
+    end.join("\n").html_safe
   end
 
   def action_and_body_for_event(event)
@@ -267,10 +270,6 @@ module ApplicationHelper
     end
   end
 
-  def sidebar_content?
-    !@content_for_sidebar.blank?
-  end
-
   def render_readme(repository)
     possibilities = []
     repository.git.git.ls_tree({:name_only => true}, "master").each do |line|
@@ -283,7 +282,7 @@ module ApplicationHelper
   end
 
   def render_markdown_help
-    render :partial => '/site/markdown_help'
+    render(:partial => "/site/markdown_help")
   end
 
   def link_to_help_toggle(dom_id, style = :image)
@@ -296,26 +295,25 @@ module ApplicationHelper
       link_to_function("?", "$('##{dom_id}').toggle()", :class => "more_info") +
       ")</span>"
     end
-
   end
 
   FILE_EXTN_MAPPINGS = {
-    '.cpp' => 'cplusplus-file',
-    '.c' => 'c-file',
-    '.h' => 'header-file',
-    '.java' => 'java-file',
-    '.sh' => 'exec-file',
-    '.exe'  => 'exec-file',
-    '.rb' => 'ruby-file',
-    '.png' => 'image-file',
-    '.jpg' => 'image-file',
-    '.gif' => 'image-file',
-    'jpeg' => 'image-file',
-    '.zip' => 'compressed-file',
-    '.gz' => 'compressed-file'}
+    ".cpp" => "cplusplus-file",
+    ".c" => "c-file",
+    ".h" => "header-file",
+    ".java" => "java-file",
+    ".sh" => "exec-file",
+    ".exe"  => "exec-file",
+    ".rb" => "ruby-file",
+    ".png" => "image-file",
+    ".jpg" => "image-file",
+    ".gif" => "image-file",
+    "jpeg" => "image-file",
+    ".zip" => "compressed-file",
+    ".gz" => "compressed-file"}
 
   def class_for_filename(filename)
-    return FILE_EXTN_MAPPINGS[File.extname(filename)] || 'file'
+    return FILE_EXTN_MAPPINGS[File.extname(filename)] || "file"
   end
 
   def render_download_links(project, repository, head, options={})
@@ -332,10 +330,7 @@ module ApplicationHelper
       head = head[0..7]
     end
 
-    {
-      'tar.gz' => 'tar',
-      # 'zip' => 'zip',
-    }.each do |extension, url_key|
+    { "tar.gz" => "tar" }.each do |extension, url_key|
       archive_path = self.send("project_repository_archive_#{url_key}_path", project, repository, ensplat_path(head))
       link_html = link_to("Download #{head} as #{extension}", archive_path,
         :onclick => "Gitorious.DownloadChecker.checkURL('#{archive_path}?format=js', 'archive-box-#{head.gsub("/", "_")}');return false",
@@ -347,7 +342,7 @@ module ApplicationHelper
     end
 
     if options.delete(:only_list_items)
-      links.join("\n")
+      links.join("\n").html_safe
     else
       css_classes = options[:class] || "meta"
       content_tag(:ul, links.join("\n"), :class => "links #{css_classes}")
@@ -358,22 +353,24 @@ module ApplicationHelper
     return if text.blank?
     first, rest = text.split("</p>", 2)
     if rest.blank?
-      first + "</p>"
+      (first + "</p>").html_safe
     else
-      %Q{#{first}
+      (<<-HTML).html_safe
+        #{first}
         <a href="#more"
            onclick="$('#description-rest-#{identifier}').toggle(); $(this).hide()">more&hellip;</a></p>
-        <div id="description-rest-#{identifier}" style="display:none;">#{rest}</div>}
+        <div id="description-rest-#{identifier}" style="display:none;">#{rest}</div>
+      HTML
     end
   end
 
   def markdown_hint
     t("views.common.format_using_markdown",
-      :markdown => %(<a href="http://daringfireball.net/projects/markdown/">Markdown</a>))
+      :markdown => %(<a href="http://daringfireball.net/projects/markdown/">Markdown</a>)).html_safe
   end
 
   def current_site
-    @controller.current_site
+    controller.current_site
   end
 
   def force_utf8(str)
@@ -387,7 +384,6 @@ module ApplicationHelper
     else
       str.mb_chars
     end
-
   end
 
   # Creates a CSS styled <button>.
@@ -396,7 +392,7 @@ module ApplicationHelper
   #  <%= styled_button :medium, "Do something!", :class => "foo", :id => "bar" %>
   def styled_button(size_identifier, label, options = {})
     options.reverse_merge!(:type => "submit", :class => size_identifier.to_s)
-    content_tag(:button, %{<span>#{label}</span>}, options)
+    content_tag(:button, content_tag(:span, label), options)
   end
 
   # Similar to styled_button, but creates a link_to <a>, not a <button>.
@@ -430,7 +426,7 @@ module ApplicationHelper
 
         <div class="clear"></div>
       </div>
-    }
+    }.html_safe
   end
 
   def project_summary_box(project)
@@ -448,7 +444,6 @@ module ApplicationHelper
     summary_box link_to(team.name, group_path(team)),
       text,
       glossy_homepage_avatar(team.avatar? ? image_tag(team.avatar.url(:thumb), :width => 30, :height => 30) : default_avatar)
-
   end
 
   def user_summary_box(user)
@@ -491,7 +486,7 @@ module ApplicationHelper
   def include_stylesheets(group)
     stylesheets = STYLESHEETS[group]
     cache_name = "gts-#{group}"
-    additional = GitoriousConfig["#{group}_stylesheets"]
+    additional = Gitorious::Configuration.get("#{group}_stylesheets")
 
     unless additional.nil?
       additional = [additional] unless Array === additional
@@ -513,33 +508,25 @@ module ApplicationHelper
                  "/merge_requests", "/diff_browser", "/messages", "/live_search",
                  "/repository_search"].collect { |f| "gitorious#{f}" }
 
-    scripts = jquery + ["core_extensions"] + gitorious + ["lib/spin.js/spin.js", "application"]
+    scripts = jquery + ["core_extensions"] + gitorious + ["rails.js", "lib/spin.js/spin.js", "application"]
 
     javascript_include_tag(scripts, :cache => true)
   end
 
   def favicon_link_tag
-    unless (url = GitoriousConfig["favicon_url"]).blank?
-      "<link rel=\"shortcut icon\" href=\"#{url}\" type=\"image/x-icon\">"
-    end
+    url = Gitorious::Configuration.get("favicon_url", "/favicon.ico")
+    "<link rel=\"shortcut icon\" href=\"#{url}\" type=\"image/x-icon\">".html_safe
   end
 
   def logo_link
-    visual = if !GitoriousConfig.key?("logo_url")
-               image_tag("/img/logo.png")
-             elsif GitoriousConfig["logo_url"].blank?
-               "Gitorious"
-             else
-               image_tag(GitoriousConfig["logo_url"])
-             end
-
-    link_to visual, root_path
+    logo = Gitorious::Configuration.get("logo_url", "/img/logo.png")
+    link_to(logo.blank? ? "Gitorious" : image_tag(logo), root_path)
   end
 
   # inserts a <wbr> tag somewhere in the middle of +str+
   def wbr_middle(str)
     half_size = str.length / 2
-    str.to_s[0..half_size-1] + "<wbr />" + str[half_size..-1]
+    (str.to_s[0..half_size-1] + "<wbr />" + str[half_size..-1]).html_safe
   end
 
   def time_ago(time, options = {})
@@ -574,36 +561,59 @@ module ApplicationHelper
       :next_label => "Next",
       :container => "True"
     }
-    will_paginate(collection, options.merge(default_options))
+    (will_paginate(collection, options.merge(default_options)) || "").html_safe
   end
 
   def dashboard_path
-    root_url(:host => GitoriousConfig["gitorious_host"], :protocol => GitoriousConfig["scheme"])
+    root_url(:host => Gitorious.host, :protocol => Gitorious.scheme)
   end
 
   def site_domain
-    host = GitoriousConfig["gitorious_host"]
-    port = GitoriousConfig["gitorious_port"]
+    host = Gitorious.host
+    port = Gitorious.port
     port = port.to_i != 80 ? ":#{port}" : ""
     "#{host}#{port}"
   end
 
   def fq_root_link
-    "http#{GitoriousConfig['use_ssl'] ? 's' : ''}://#{site_domain}/"
+    Gitorious.url("/")
   end
 
   def url?(setting)
-    !GitoriousConfig["#{setting}_url"].blank?
+    !Gitorious::View.send(:"#{setting}_url").blank?
   end
 
   def footer_link(setting, html_options={})
-    url = GitoriousConfig["#{setting}_url"]
+    url = Gitorious::View.send(:"#{setting}_url")
     text = t("views.layout.#{setting}")
-    "<li>#{link_to text, url, html_options}</li>"
+    "<li>#{link_to text, url, html_options}</li>".html_safe
   end
 
   def namespaced_atom_feed(options={}, &block)
     options["xmlns:gts"] = "http://gitorious.org/schema"
     atom_feed(options, &block)
+  end
+
+  # Temporary - Rails 3 removed error_messages_for
+  def error_messages(model)
+    return "" if !model.errors.any?
+    errors = model.errors
+    result = errors.full_messages.inject("") do |memo, obj|
+      memo << content_tag(:li, obj)
+    end
+    header = content_tag(:h2, pluralize(errors.size, "error"))
+    "<div class=\"errorExplanation\" id=\"errorExplanation\">#{header}<ul>#{result}</ul></div>".html_safe
+  end
+
+  def vcs_link_tag(options)
+    content_for :extra_head do
+      (<<-HTML).html_safe
+        <link rel="vcs-git" href="#{h(options[:href])}" title="#{h(options[:title])}">
+      HTML
+    end
+  end
+
+  def long_ordinal(date)
+    date.strftime("%B #{date.day.ordinalize}, %Y")
   end
 end

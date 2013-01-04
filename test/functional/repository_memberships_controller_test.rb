@@ -16,15 +16,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class RepositoryMembershipsControllerTest < ActionController::TestCase
-  should_render_in_site_specific_context :only => [:index]
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:put, :update)
-
   def setup
     setup_ssl_from_config
     @repository = repositories(:johans)
@@ -34,7 +28,6 @@ class RepositoryMembershipsControllerTest < ActionController::TestCase
   context "With private repos" do
     setup do
       enable_private_repositories
-      GitoriousConfig["use_ssl"] = false
     end
 
     context "index" do
@@ -161,15 +154,13 @@ class RepositoryMembershipsControllerTest < ActionController::TestCase
   end
 
   context "With private repos disabled" do
-    setup do
-      GitoriousConfig["enable_private_repositories"] = false
-    end
-
     should "redirect to repository index" do
-      login_as :moe
-      @repository = repositories(:moes)
-      get :index, params
-      assert_redirected_to :controller => "repositories", :action => "show", :id => @repository.to_param
+      Gitorious::Configuration.override("enable_private_repositories" => false) do
+        login_as :moe
+        @repository = repositories(:moes)
+        get :index, params
+        assert_redirected_to :controller => "repositories", :action => "show", :id => @repository.to_param
+      end
     end
   end
 

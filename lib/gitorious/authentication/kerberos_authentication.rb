@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious/authentication/configuration"
+
 module Gitorious
   module Authentication
     class KerberosAuthentication
@@ -52,8 +54,8 @@ module Gitorious
       def authenticate(credentials)
         return false unless credentials.env && valid_kerberos_login(credentials.env)
         username = find_username_from_kerberos(credentials.env)
-        Rails.logger.debug("Kerberos: REMOTE_USER '#{credentials.env['REMOTE_USER']}'.")
-        Rails.logger.debug("Kerberos: found username '#{username}'.")
+        log("Kerberos: REMOTE_USER '#{credentials.env['REMOTE_USER']}'.")
+        log("Kerberos: found username '#{username}'.")
         if existing_user = User.find_by_login(transform_username(username))
           user = existing_user
         else
@@ -80,8 +82,8 @@ module Gitorious
         user = User.new
         user.login = transform_username(username)
         user.email = username + '@' + @email_domain
-        Rails.logger.debug("Kerberos: username after transform_username: '#{user.login}'.")
-        Rails.logger.debug("Kerberos: email '#{user.email}'.")
+        log("Kerberos: username after transform_username: '#{user.login}'.")
+        log("Kerberos: email '#{user.email}'.")
 
         # Again, similar to LDAPAuthentication's implementation
         user.password = "left_blank"
@@ -95,6 +97,9 @@ module Gitorious
         user
       end
 
+      def log(message)
+        Rails.logger.debug(message) if defined?(Rails)
+      end
     end
   end
 end

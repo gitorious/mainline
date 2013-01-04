@@ -24,6 +24,7 @@
 
 require "digest/sha1"
 require_dependency "event"
+require "open_id_authentication"
 
 class User < ActiveRecord::Base
   include UrlLinting
@@ -69,6 +70,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of   :login, :email, :case_sensitive => false
   validates_acceptance_of :terms_of_use, :on => :create, :allow_nil => false
   validates_format_of     :avatar_file_name, :with => /\.(jpe?g|gif|png|bmp|svg|ico)$/i, :allow_blank => true
+  validate :normalized_openid_identifier
 
   before_save :encrypt_password
   before_create :make_activation_code
@@ -85,27 +87,30 @@ class User < ActiveRecord::Base
 
   end
 
-  has_many :received_messages, :class_name => "Message",
-      :foreign_key => "recipient_id", :order => "created_at DESC" do
+  has_many :received_messages, {
+    :class_name => "Message",
+    :foreign_key => "recipient_id",
+    :order => "created_at DESC"
+  } do
     def unread
-      find(:all, :conditions => {:aasm_state => "unread"})
+      where({ :aasm_state => "unread" })
     end
 
     def top_level
-      find(:all, :conditions => {:in_reply_to_id => nil})
+      where({ :in_reply_to_id => nil })
     end
 
     def unread_count
-      count(:all, :conditions => ["aasm_state = ? and archived_by_recipient = ? and sender_id != recipient_id",
-                                  "unread", false])
+      where("aasm_state = ? and archived_by_recipient = ? and sender_id != recipient_id",
+            "unread", false).count
     end
   end
 
   def all_messages
-    Message.find(:all, :conditions => ["sender_id = ? OR recipient_id = ?", self, self])
+    Message.where("sender_id = ? OR recipient_id = ?", self, self)
   end
 
-  Paperclip.interpolates("login"){|attachment, style| attachment.instance.login.downcase}
+  Paperclip.interpolates("login") { |attachment, style| attachment.instance.login.downcase }
 
   avatar_local_path = "/system/:attachment/:login/:style/:basename.:extension"
   has_attached_file :avatar,
@@ -132,10 +137,13 @@ class User < ActiveRecord::Base
                          {:user => self.id, :yes => true, :no => false, :limit => limit}])
   end
 
-  has_many :sent_messages, :class_name => "Message",
-      :foreign_key => "sender_id", :order => "created_at DESC" do
+  has_many :sent_messages, {
+    :class_name => "Message",
+    :foreign_key => "sender_id",
+    :order => "created_at DESC"
+  } do
     def top_level
-      find(:all, :conditions => {:in_reply_to_id => nil})
+      where(:in_reply_to_id => nil)
     end
   end
 
@@ -155,11 +163,11 @@ class User < ActiveRecord::Base
   end
 
   def self.generate_random_password(n = 12)
-    ActiveSupport::SecureRandom.hex(n)
+    SecureRandom.hex(n)
   end
 
   def self.generate_reset_password_key(n = 16)
-    ActiveSupport::SecureRandom.hex(n)
+    SecureRandom.hex(n)
   end
 
   def self.find_avatar_for_email(email, version)
@@ -189,53 +197,42 @@ class User < ActiveRecord::Base
   end
 
   def self.most_active(limit = 10, cutoff = 3)
-    Rails.cache.fetch("users:most_active_pushers:#{limit}:#{cutoff}",
-        :expires_in => 1.hour) do
-      find(:all, :select => "users.*, events.action, count(events.id) as event_count",
-        :joins => :events, :group => "users.id", :order => "event_count desc",
-        :conditions => ["events.action = ? and events.created_at > ?",
-                        Action::PUSH_SUMMARY, cutoff.days.ago],
-        :limit => limit)
-    end
+    cache_key = "users:most_active_pushers:#{limit}:#{cutoff}"
+    select("users.*, events.action, count(events.id) as event_count").
+      where("events.action = ? and events.created_at > ?",
+            Action::PUSH_SUMMARY,
+            cutoff.days.ago).
+      joins(:events).
+      group("users.id, events.action").
+      order("count(events.id) desc").
+      limit(limit)
   end
 
   def self.find_fuzzy(query)
-    find(:all,
-         :conditions => ["lower(login) like :name or lower(email) like :name",
-                         { :name => "%" + query.downcase + "%" }],
-         :limit => 10)
+    where("lower(login) like :name or lower(email) like :name",
+          { :name => "%" + query.downcase + "%" }).limit(10)
   end
 
   # A Hash of repository => count of mergerequests active in the
   # repositories that the user is a reviewer in
   def review_repositories_with_open_merge_request_count
-    mr_repository_ids = review_repositories(self).find(:all,
-      :select => "repository_id").map{|c| c.repository_id }
-    Repository.find(:all, {
-        :select => "repositories.*, count(merge_requests.id) as open_merge_request_count",
-        :conditions => ["repositories.id in (?) and merge_requests.status = ?",
-                        mr_repository_ids, MergeRequest::STATUS_OPEN],
-        :group => "repositories.id",
-        :joins => :merge_requests,
-        :limit => 5
-      })
-  end
-
-  def validate
-    if !not_openid?
-      begin
-        OpenIdAuthentication.normalize_identifier(self.identity_url)
-      rescue OpenIdAuthentication::InvalidOpenId => e
-        errors.add(:identity_url, I18n.t( "user.invalid_url" ))
-      end
-    end
+    repo_ids = review_repositories(self).select("repository_id")
+    mr_repository_ids = repo_ids.map { |c| c.repository_id }
+    Repository.
+      select("repositories.*, count(merge_requests.id) as open_merge_request_count").
+      where("repositories.id in (?) and merge_requests.status = ?",
+            mr_repository_ids,
+            MergeRequest::STATUS_OPEN).
+      group("repositories.id").
+      joins(:merge_requests).
+      limit(5)
   end
 
   # Activates the user in the database.
   def activate
     @activated = true
     self.attributes = {:activated_at => Time.now.utc, :activation_code => nil}
-    save(false)
+    save(:validate => false)
   end
 
   def activated?
@@ -282,13 +279,13 @@ class User < ActiveRecord::Base
   def remember_me_until(time)
     self.remember_token_expires_at = time
     self.remember_token            = encrypt("#{email}--#{remember_token_expires_at}")
-    save(false)
+    save(:validate => false)
   end
 
   def forget_me
     self.remember_token_expires_at = nil
     self.remember_token            = nil
-    save(false)
+    save(:validate => false)
   end
 
   def reset_password!
@@ -370,10 +367,7 @@ class User < ActiveRecord::Base
   end
 
   def watched_objects
-    favorites.find(:all, {
-      :include => :watchable,
-      :order => "id desc"
-    }).collect(&:watchable)
+    favorites.includes(:watchable).order("id desc").collect(&:watchable)
   end
 
   def paginated_events_in_watchlist(pagination_options = {})
@@ -386,7 +380,7 @@ class User < ActiveRecord::Base
 
       total = (watched.length < watched.per_page ? watched.length : watched.total_entries)
       items = WillPaginate::Collection.new(watched.current_page, watched.per_page, total)
-      items.replace(Event.find(watched.map(&:event_id), {:order => "created_at desc"}))
+      items.replace(Event.where(:id => watched.map(&:event_id)).order("created_at desc"))
     end
   end
 
@@ -395,9 +389,9 @@ class User < ActiveRecord::Base
   end
 
   def self.admins
-    User.find(:all, :conditions=> {:is_admin => true})
+    User.where(:is_admin => true)
   end
-  
+
   protected
   # before filter
   def encrypt_password
@@ -407,11 +401,11 @@ class User < ActiveRecord::Base
   end
 
   def password_required?
-    not_openid? && (crypted_password.blank? || !password.blank?)
+    !openid? && (crypted_password.blank? || !password.blank?)
   end
 
-  def not_openid?
-    identity_url.blank?
+  def openid?
+    !identity_url.blank?
   end
 
   def make_activation_code
@@ -420,9 +414,9 @@ class User < ActiveRecord::Base
   end
 
   def lint_identity_url
-    return if not_openid?
-    self.identity_url = OpenIdAuthentication.normalize_identifier(self.identity_url)
-  rescue OpenIdAuthentication::InvalidOpenId
+    return if !openid?
+    self.identity_url = OpenID.normalize_url(self.identity_url)
+  rescue OpenID::DiscoveryFailure
     # validate will catch it instead
   end
 
@@ -430,4 +424,13 @@ class User < ActiveRecord::Base
     login.downcase! if login
   end
 
+  protected
+  def normalized_openid_identifier
+    return if !openid?
+    begin
+      OpenID.normalize_url(self.identity_url)
+    rescue OpenID::DiscoveryFailure => e
+      errors.add(:identity_url, I18n.t( "user.invalid_url" ))
+    end
+  end
 end

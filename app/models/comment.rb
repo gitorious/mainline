@@ -36,7 +36,7 @@ class Comment < ActiveRecord::Base
   validates_presence_of :user_id, :target, :project_id
   validates_presence_of :body, :if =>  Proc.new {|mr| mr.body_required?}
 
-  named_scope :with_shas, proc{|*shas|
+  scope :with_shas, proc{|*shas|
     {:conditions => { :sha1 => shas.flatten }, :include => :user}
   }
 
@@ -134,7 +134,7 @@ class Comment < ActiveRecord::Base
   protected
   def notify_target_if_supported
     if target && NOTIFICATION_TARGETS.include?(target.class)
-      if self.target === MergeRequestVersion
+      if self.target.is_a?(MergeRequestVersion)
         target_user = target.merge_request.user
       else
         target_user = target.user
@@ -145,7 +145,7 @@ class Comment < ActiveRecord::Base
   end
 
   def update_state_in_target
-    if applies_to_merge_request? and state_change
+    if applies_to_merge_request? and !state_change.blank?
       target.with_user(user) do
         if can_resolve_merge_request?(user, target)
           target.status_tag=(state_changed_to)

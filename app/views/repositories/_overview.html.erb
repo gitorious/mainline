@@ -1,101 +1,93 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% verbose ||= false %>
 
 <div class="repository_meta">
-	<div class="repository-info">
-    		<h3 <%= repository.mainline? ? "mainline" : "clone" -%>>
-      		  <% if verbose -%>
-                    <%= link_to h(repository.project.to_param),
-                    repository.project -%>
-                    <% if repository.project.private? -%>
-                      <%= image_tag("silk/lock.png", :class => "private_access") -%>
-                    <% end -%>
-      		    <%= image_tag("silk/arrow_right.png") -%>
-      		  <% end -%>
-      		  <%= link_to h(repository.name),
-                      repo_owner_path(repository, [repository.project, repository]) -%>
-                  <% if repository.private? -%>
-                    <%= image_tag("silk/lock.png", :class => "private_access") -%>
-                  <% end -%>
-                </h3>
-    
+  <div class="repository-info">
+    <h3 <%= repository.mainline? ? "mainline" : "clone" -%>>
+      <% if verbose -%>
+        <%= link_to h(repository.project.to_param),
+            repository.project -%>
+        <% if repository.project.private? -%>
+          <%= image_tag("silk/lock.png", :class => "private_access") -%>
+        <% end -%>
+        <%= image_tag("silk/arrow_right.png") -%>
+      <% end -%>
+      <%= link_to h(repository.name), [repository.project, repository] -%>
+      <% if repository.private? -%>
+        <%= image_tag("silk/lock.png", :class => "private_access") -%>
+      <% end -%>
+    </h3>
+    <% unless repository.description.blank? -%>
+      <div class="repository-description page">
+        <%= paragraphs_with_more(render_markdown(repository.description, :auto_link),
+                                 repository.id) -%>
+      </div>
+    <% end -%>
+    <div class="infobox">
+      <%= render :partial => "repositories/clone_urls",
+          :locals => {:repository => repository} -%>
 
-  <% unless repository.description.blank? -%>
-    <div class="repository-description page">
-	
-      <%= paragraphs_with_more(render_markdown(repository.description, :auto_link),
-            repository.id) -%>
-     </div>
-  <% end -%>
-  <div class="infobox">
-    <%= render :partial => "repositories/clone_urls",
-         :locals => {:repository => repository} -%>
+    </div>
+    <% if verbose && repository.has_commits? && !repository.git.heads.blank? -%>
+      <div class="branches">
+        <ul class="branch_list">
+          <li><strong>Branches:</strong></li>
+          <%= render_chunked_branch_list_items(repository) -%>
+        </ul>
+      </div>
+      <% if repository.parent -%>
+        <div class="clone-of">
+          <ul class="clone-of_list">
+            <li><strong>Clone of:</strong></li>
+            <li class="head"><%= link_to "#{h(repository.parent.name)}",
+                                 [repository.parent.project, repository.parent] -%></li>
+          </ul>
+        </div>
+      <% end -%>
+    <% end -%>
+  </div> <!-- End of repository-description -->
+  <div class="repository-links">
+    <%= favorite_button(repository) -%>
+    <ul>
+      <li class="repository-link commit">
+        <%= link_to "Commit log",
+            [repository.project, repository, :commits] -%>
+      </li>
+      <li class="repository-link tree">
+        <%= link_to "Source tree",
+            [repository.project, repository, :trees] -%>
+      </li>
+      <%- if repository.merge_requests_enabled? -%>
+        <li class="repository-link merge_requests">
+          <%= link_to("Merge requests <small>(#{repository.open_merge_requests.count})</small>".html_safe,
+                      [repository.project, repository, :merge_requests]) -%>
+        </li>
+      <%- end -%>
 
- </div>
- <% if verbose && repository.has_commits? && !repository.git.heads.blank? -%>
-   <div class="branches">
-     <ul class="branch_list">
-       <li><strong>Branches:</strong></li>
-       <%= render_chunked_branch_list_items(repository) -%>
-     </ul>
-   </div>
- <% if repository.parent -%>
-	<div class="clone-of">
-		<ul class="clone-of_list">
-			<li><strong>Clone of:</strong></li>
-			<li class="head"><%= link_to "#{h(repository.parent.name)}",
-	       		repo_owner_path(repository.parent, [repository.parent.project, repository.parent]) -%></li>
-		</ul>
-	</div>
- <% end -%>
-
- <% end -%>
-	</div> <!-- End of repository-description -->
-
-	<div class="repository-links">
-		<%= favorite_button(repository) -%>
-		
-	  	<ul>
-	    	<li class="repository-link commit">
-	      	<%= link_to "Commit log",
-	          repo_owner_path(repository, [repository.project, repository, :commits]) -%>
-	    	</li>
-	    	<li class="repository-link tree">
-	      	<%= link_to "Source tree",
-	            repo_owner_path(repository, [repository.project, repository, :trees]) -%>
-	    	</li>
-	    <%- if repository.merge_requests_enabled? -%>
-	    	<li class="repository-link merge_requests">
-	      	<%= link_to "Merge requests <small>(#{repository.merge_requests.open.count})</small>",
-	            repo_owner_path(repository, [repository.project, repository, :merge_requests]) -%>
-	    	</li>
-	    <%- end -%>
-
-		<% if repository.ready? -%>
-			<li class="repository-link clone_repository">
-				<%= link_to t("views.repos.btn_clone"), repo_owner_path(repository, [:clone, repository.project, repository]) -%>
-			</li>
-		 <% end -%>
-	  </ul>	
-		
-	</div>
-
+      <% if repository.ready? -%>
+        <li class="repository-link clone_repository">
+          <%= link_to t("views.repos.btn_clone"), [:clone, repository.project, repository] -%>
+        </li>
+      <% end -%>
+    </ul>
+  </div>
 </div>

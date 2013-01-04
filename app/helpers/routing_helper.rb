@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
@@ -44,92 +45,49 @@ module RoutingHelper
     path.split("/").select{|p| !p.blank? }
   end
 
-  def secure_login_url
-    if SslRequirement.disable_ssl_check?
-      sessions_path
-    else
-      sessions_url(:protocol => "https", :host => SslRequirement.ssl_host)
-    end
-  end
-
-  # return the url with the +repo+.owner prefixed if it's a mainline repo,
-  # otherwise return the +path_spec+
-  # if +path_spec+ is an array (and no +args+ given) it'll use that as the
-  # polymorphic-url-style (eg [@project, @repo, @foo])
-  def repo_owner_path(repo, path_spec, *args)
-    if repo.team_repo?
-      if path_spec.is_a?(Symbol)
-        return send("group_#{path_spec}", *args.unshift(repo.owner))
-      else
-        return *unshifted_polymorphic_path(repo, path_spec)
-      end
-    elsif repo.user_repo?
-      if path_spec.is_a?(Symbol)
-        return send("user_#{path_spec}", *args.unshift(repo.owner))
-      else
-        return *unshifted_polymorphic_path(repo, path_spec)
-      end
-    else
-      if path_spec.is_a?(Symbol)
-        return send(path_spec, *args)
-      else
-        return *path_spec
-      end
-    end
-  end
-
   def log_path(objectish = "master", options = {})
     objectish = ensplat_path(objectish)
     if options.blank? # just to avoid the ? being tacked onto the url
-      repo_owner_path(@repository, :project_repository_commits_in_ref_path, @project, @repository, objectish)
+      project_repository_commits_in_ref_path(@project, @repository, objectish)
     else
-      repo_owner_path(@repository, :project_repository_commits_in_ref_path, @project, @repository, objectish, options)
+      project_repository_commits_in_ref_path(@project, @repository, objectish, options)
     end
   end
 
   def commit_path(objectish = "master")
-    repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, objectish)
+    project_repository_commit_path(@project, @repository, objectish)
   end
 
   def tree_path(treeish = "master", path = [])
     if path.respond_to?(:to_str)
       path = path.split("/")
     end
-    repo_owner_path(@repository, :project_repository_tree_path, @project, @repository, branch_with_tree(treeish, path))
+    project_repository_tree_path(@project, @repository, branch_with_tree(treeish, path))
   end
 
   def repository_path(action, sha1=nil)
-    repo_owner_path(@repository, :project_repository_path, @project, @repository)+"/"+action+"/"+sha1.to_s
+    project_repository_path(@project, @repository) + "/" + action + "/" + sha1.to_s
   end
 
   def blob_path(shaish, path)
-    repo_owner_path(@repository, :project_repository_blob_path, @project, @repository, branch_with_tree(shaish, path))
+    project_repository_blob_path(@project, @repository, branch_with_tree(shaish, path))
   end
 
   def raw_blob_path(shaish, path)
-    repo_owner_path(@repository, :project_repository_raw_blob_path, @project, @repository, branch_with_tree(shaish, path))
+    project_repository_raw_blob_path(@project, @repository, branch_with_tree(shaish, path))
   end
 
   def blob_history_path(shaish, path)
-    repo_owner_path(@repository, :project_repository_blob_history_path, @project, @repository, branch_with_tree(shaish, path))
+    project_repository_blob_history_path(@project, @repository, branch_with_tree(shaish, path))
   end
 
   def file_path(repository, filename, head = "master")
     project_repository_blob_path(repository.project, repository, branch_with_tree(head, filename))
   end
 
-  def tree_archive_status_url
-    fmt = (params[:archive_format] == "tar.gz" ? "tar" : zip)
-    self.send("project_repository_archive_#{fmt}_path",
-      @repository.project, @repository, @ref, :format => :js)
-  end
-
   def new_polymorphic_comment_path(parent, comment)
-    if parent
-      repo_owner_path(@repository, [@project, @repository, parent, comment])
-    else
-      repo_owner_path(@repository, [@project, @repository, comment])
-    end
+    return [@project, @repository, parent, comment] if parent
+    [@project, @repository, comment]
   end
 
   def select_version_url(merge_request)

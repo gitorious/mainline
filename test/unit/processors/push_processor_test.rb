@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,15 +16,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../../test_helper'
+require "test_helper"
 
 class PushProcessorTest < ActiveSupport::TestCase
   def setup
     @processor = PushProcessor.new
   end
 
-  #should_subscribe_to :push
   should_consume "/queue/GitoriousPush"
 
   context "Parsing" do
@@ -65,7 +63,7 @@ class PushProcessorTest < ActiveSupport::TestCase
         :message => "#{NULL_SHA} #{SHA} refs/heads/master"
       }.to_json
     end
-    
+
     should "be re-established" do
       @processor.expects(:verify_connections!)
       @processor.consume(@json)
@@ -112,10 +110,6 @@ class PushProcessorTest < ActiveSupport::TestCase
       assert_nothing_raised do
         @processor.consume(@payload.to_json)
       end
-    end
-
-    should_eventually "locate the correct merge request" do
-      # @repository.merge_requests.expect(:find_by_sequence_number!).with(@merge_request.sequence_number)
     end
   end
 

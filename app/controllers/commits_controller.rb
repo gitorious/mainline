@@ -88,11 +88,11 @@ class CommitsController < ApplicationController
   end
 
   def feed
+    expires_in(30.minutes, :public => true)
     @git = @repository.git
     @ref = desplat_path(params[:branch])
     @commits = @repository.git.commits(@ref, 1)
     return if @commits.empty?
-    expires_in 30.minutes
     if stale?(:etag => @commits.first.id, :last_modified => @commits.first.committed_date.utc)
       @commits += @repository.git.commits(@ref, 49, 1)
       respond_to do |format|
@@ -104,8 +104,7 @@ class CommitsController < ApplicationController
   protected
   def handle_missing_sha
     flash[:error] = "No such SHA1 was found"
-    redirect_to repo_owner_path(@repository, :project_repository_commits_path, @project,
-                                @repository)
+    redirect_to(project_repository_commits_path(@project, @repository))
   end
 
   def commit_diffs

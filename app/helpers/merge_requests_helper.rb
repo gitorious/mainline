@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -24,7 +25,7 @@ module MergeRequestsHelper
 
   def render_status_tag_list(status_tags, repository)
     project_statuses = repository.project.merge_request_statuses
-    
+
     out = '<ul class="horizontal">'
     open_tags = project_statuses.select{|s| s.open? }
     out << "<li><strong>Open:</strong></li>" unless open_tags.blank?
@@ -50,7 +51,7 @@ module MergeRequestsHelper
       out << "<li class=foo>#{link_to_status(repository, status)}</li>"
     end
     out << "</ul>"
-    out
+    out.html_safe
   end
 
   def link_to_status(repository, status)
@@ -62,23 +63,24 @@ module MergeRequestsHelper
       link_to_not_selected_status(repository, status)
     end
   end
-  
+
   def link_to_not_selected_status(repository, status)
-    link_to(h(status.to_s), repo_owner_path(repository, 
-        :project_repository_merge_requests_path, repository.project,
-        repository, {:status => status}))
+    link_to(h(status.to_s), project_repository_merge_requests_path(repository.project,
+                                                                   repository,
+                                                                   :status => status))
   end
-  
+
   def link_to_selected_status(repository, status)
-    link_to(h(status.to_s), repo_owner_path(repository, 
-        :project_repository_merge_requests_path, repository.project,
-        repository, {:status => status}), {:class => "selected"})
+    url = project_repository_merge_requests_path(repository.project,
+                                                 repository,
+                                                 :status => status)
+    link_to(h(status.to_s), url, :class => "selected")
   end
 
   def merge_base_link(version)
     version.merge_base_sha[0..6]
   end
-  
+
   # a href="#commit_<sha>" id="commit_<sha>" data-commit-sha="sha"
   def inline_commit_link(commit)
     inline_sha_link(commit.id_abbrev, commit.id)
@@ -94,7 +96,8 @@ module MergeRequestsHelper
 
   def colorized_status(status_tag)
     return "" unless status_tag
-    %Q{<span style="color:#{h(status_tag.color)}">} + h(status_tag.name) + "</span>"
+    (%Q{<span style="color:#{h(status_tag.color)}">} +
+     h(status_tag.name) + "</span>").html_safe
   end
 
   # By some arbitarily random standard, does this +version+ contain many commits?
@@ -113,12 +116,12 @@ module MergeRequestsHelper
       [
        summarize_version_with_single_sha(version.short_merge_base),
        summarize_version_with_several_shas("","")
-      ].join("\n")
+      ].join("\n").html_safe
     else
       [
        summarize_version_with_single_sha(""),
        summarize_version_with_several_shas(version.short_merge_base,version.affected_commits.last.id_abbrev)
-      ].join("\n")
+      ].join("\n").html_safe
     end
   end
 
@@ -127,7 +130,7 @@ module MergeRequestsHelper
     options[:style] = "display: none" if sha.blank?
     content_html = content_tag(:span, 'Showing', :class => 'label') + " " +
       content_tag(:code, sha, :class => 'merge_base')
-    content_tag(:div, "#{content_html}", options)
+    content_tag(:div, content_html, options)
   end
 
   def summarize_version_with_several_shas(first,last)
@@ -136,7 +139,6 @@ module MergeRequestsHelper
     content_html = content_tag(:span, 'Showing', :class => 'label') + " " +
       content_tag(:code, first, :class => 'first') + "-" +
       content_tag(:code, last, :class => 'last')
-    content_tag(:div, "#{content_html}", options)
+    content_tag(:div, content_html, options)
   end
-
 end

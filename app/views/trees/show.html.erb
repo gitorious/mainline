@@ -1,38 +1,39 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Fabio Akita <fabioakita@gmail.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#   Copyright (C) 2009 Bill Marquette <bill.marquette@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Bill Marquette <bill.marquette@gmail.com>
+  #   Copyright (C) 2008 Fabio Akita <fabioakita@gmail.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% @page_title = t("views.trees.page_title", :repo => @repository.name, :title => @project.title) -%>
 
 <%= breadcrumbs_from(@root) -%>
 
-<% cache(tree_path(@commit.id, @path) + @ref) do -%>
+<%= cache(tree_path(@commit.id, @path) + @ref) do -%>
   <table class="listing tree">
     <% @tree.contents.select{|c| c.is_a? Grit::Tree}.sort_by{|c| force_utf8(c.name).downcase}.each do |node| -%>
       <tr class="<%= cycle("odd", "even") -%>">
-          <td class="node folder" colspan="3">
-            <%= link_to h(node.basename) + "/", tree_path(@ref, node.name) -%>
-          </td>
+        <td class="node folder" colspan="3">
+          <%= link_to h(node.basename) + "/", tree_path(@ref, node.name) -%>
+        </td>
     <% end -%>
     <% @tree.contents.select{|c| !c.is_a? Grit::Tree}.sort_by{|c| force_utf8(c.name).downcase}.each do |node| -%>
       <tr class="<%= cycle("odd", "even") -%>">
@@ -48,7 +49,7 @@
           <td class="meta commit_message">submodule: <%= h(node.url(@ref)) -%></td>
         <% else -%>
           <% if !too_many_entries_for_log?(@tree) && last_commit = commit_for_tree_path(@repository, node.name) -%>
-            <td class="meta"><%= last_commit.committed_date.to_s(:short) -%></td>
+            <td class="meta"><%= l(last_commit.committed_date, :format => :short) -%></td>
             <td class="meta commit_message">
               <%= link_to truncate(h(last_commit.message), :length => 75, :omission => "&hellip;"), commit_path(last_commit.id) -%>
             </td>
@@ -62,10 +63,10 @@
   </table>
 <% end -%>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="sidebar-meta">
     <li><strong>Repository:</strong>
-      <%= link_to(h(@repository.name), repo_owner_path(@repository, :project_repository_path, @repository.project, @repository)) -%>
+      <%= link_to(h(@repository.name), project_repository_path(@repository.project, @repository)) -%>
     </li>
     <li>
       <strong>Project:</strong>
@@ -91,13 +92,13 @@
 
   <ul class="links navigation">
     <li class="commit">
-      <%= link_to "Commit log", repo_owner_path(@repository, :project_repository_commits_in_ref_path, @project, @repository, ensplat_path(@ref)) -%>
+      <%= link_to "Commit log", project_repository_commits_in_ref_path(@project, @repository, ensplat_path(@ref)) -%>
     </li>
     <%= render_download_links(@repository.project, @repository, @ref,
                               :except => :source_tree, :only_list_items => true) -%>
   </ul>
 
-  <% cache([tree_path(@commit.id), :tags_and_branches],
+  <%= cache([tree_path(@commit.id), :tags_and_branches],
            {:expires_in => 10.minutes}) do -%>
 
     <ul class="links navigation disable_hover">
@@ -107,7 +108,7 @@
 
     <% unless @git.tags.blank? -%>
       <ul class="links navigation disable_hover">
-	      <h5><%= t("views.logs.tags") %>:</h5>
+        <h5><%= t("views.logs.tags") %>:</h5>
         <%= tree_and_diff_link(@commit, @ref, @git.tags.sort{ |a, b| a.name <=> b.name }, @project, @repository) %>
       </ul>
     <% end -%>

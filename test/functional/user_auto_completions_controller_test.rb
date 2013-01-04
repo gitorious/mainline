@@ -17,11 +17,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require "test_helper"
 
 class UserAutoCompletionsControllerTest < ActionController::TestCase
-  should_enforce_ssl_for :get, :index
-
   def setup
     @user = users(:johan)
     @user.email = "dr_awesome@example.com"

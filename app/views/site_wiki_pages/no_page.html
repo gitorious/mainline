@@ -1,23 +1,24 @@
 <%
-#--
-#   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2009 Marius Mathiesen <marius.mathiesen@gmail.com>
-#   Copyright (C) 2009 Tor Arne Vestbø <torarnv@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
+  #   Copyright (C) 2009 Marius Mathiesen <marius.mathiesen@gmail.com>
+  #   Copyright (C) 2009 Tor Arne Vestbø <torarnv@gmail.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <%= breadcrumbs_from(@root) -%>
 
@@ -26,7 +27,7 @@
   does not exist
 </h1>
 
-<% help_box(:middle, :error) do -%>
+<%= help_box(:middle, :error) do -%>
   <p>The page "<%=h params[:id] -%>" does not exist yet. If you would like to create
-  it you must <%= link_to "log in", login_path -%> first.</p>
+    it you must <%= link_to "log in", login_path -%> first.</p>
 <% end -%>

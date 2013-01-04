@@ -27,7 +27,7 @@ class ProjectsController < ApplicationController
 
   before_filter :login_required,
     :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
-  before_filter :check_if_only_site_admins_can_create, :only => [:create]
+  before_filter :check_if_project_proposal_is_required, :only => [:create]
   before_filter :find_project,
     :only => [:show, :clones, :edit, :update, :confirm_delete, :destroy, :edit_slug]
   before_filter :require_admin, :only => [:edit, :update, :edit_slug]
@@ -38,7 +38,7 @@ class ProjectsController < ApplicationController
   def index
     @page = JustPaginate.page_value(params[:page])
 
-    if private_repositories_enabled?
+    if Gitorious.private_repositories?
       @project_count = filter(Project.all).count
       @projects, @total_pages = JustPaginate.paginate(@page, Project.per_page, @project_count) do |index_range|
         filter(Project.all).slice(index_range)
@@ -63,7 +63,6 @@ class ProjectsController < ApplicationController
 
   def show
     @events = paginated_events
-
     return if @events.count == 0 && params.key?(:page)
     @big_repos = 10
     @mainlines = by_push_time(@project.repositories.mainlines)
@@ -92,7 +91,7 @@ class ProjectsController < ApplicationController
   end
 
   def new
-    if (GitoriousConfig["only_site_admins_can_create_projects"] & !site_admin?(current_user))
+    if ProjectProposal.required?(current_user)
       redirect_to(:controller => "admin/project_proposals", :action => :new)
     end
     @project = Project.new
@@ -101,6 +100,7 @@ class ProjectsController < ApplicationController
   end
 
   def create
+    owner_id = params[:project].delete(:owner_id)
     @project = Project.new(params[:project])
     @root = Breadcrumb::NewProject.new
     @project.user = current_user
@@ -108,7 +108,7 @@ class ProjectsController < ApplicationController
       when "User"
         current_user
       when "Group"
-        Team.find(params[:project][:owner_id])
+        Team.find(owner_id)
       end
 
     if @project.save
@@ -143,7 +143,7 @@ class ProjectsController < ApplicationController
 
     # change group, if requested
     unless params[:project][:owner_id].blank?
-      new_owner = Team.find(params[:project][:owner_id])
+      new_owner = Team.find(params[:project].delete(:owner_id))
       if Team.group_admin?(new_owner, current_user)
         @project.change_owner_to(new_owner)
       end
@@ -187,32 +187,31 @@ class ProjectsController < ApplicationController
     repositories.sort_by { |ml| ml.last_pushed_at || Time.utc(1970) }.reverse
   end
 
-  def check_if_only_site_admins_can_create
-    if GitoriousConfig["only_site_admins_can_create_projects"]
-      unless site_admin?(current_user)
-        flash[:error] = I18n.t("projects_controller.create_only_for_site_admins")
-        redirect_to projects_path
-        return false
-      end
+  def check_if_project_proposal_is_required
+    if ProjectProposal.required?(current_user)
+      flash[:error] = I18n.t("projects_controller.create_only_for_site_admins")
+      redirect_to(projects_path)
+      return false
     end
   end
 
   def paginate_projects(page, per_page)
     filter_paginated(page, per_page) do |page|
-      Project.paginate(:all, :order => "projects.created_at desc",
+      Project.paginate(:order => "projects.created_at desc",
                        :page => page,
                        :include => [:tags, { :repositories => :project } ])
     end
   end
 
   def projects_private_on_creation?
-    GitoriousConfig["enable_private_repositories"] && (params[:private_project] || GitoriousConfig["repos_and_projects_private_by_default"])
+    Gitorious.private_repositories? && (params[:private_project] || Gitorious.repositories_default_private?)
   end
 
   def paginated_events
     paginate(:action => "show", :id => @project.to_param) do
-      if !private_repositories_enabled?
-        Rails.cache.fetch("paginated-project-events:#{@project.id}:#{params[:page] || 1}", :expires_in => 10.minutes) do
+      if !Gitorious.private_repositories?
+        id = "paginated-project-events:#{@project.id}:#{params[:page] || 1}"
+        Rails.cache.fetch(id, :expires_in => 10.minutes) do
           unfiltered_paginated_events
         end
       else
@@ -224,9 +223,12 @@ class ProjectsController < ApplicationController
   end
 
   def unfiltered_paginated_events
-    events_finder_options = {}
-    events_finder_options.merge!(@project.events.top.proxy_options)
-    events_finder_options.merge!({:per_page => Event.per_page, :page => params[:page]})
-    @project.events.paginate(events_finder_options)
+    marshalable_events(@project.events.paginate({
+      :conditions => ["target_type != ?", "Event"],
+      :order => "created_at desc",
+      :include => [:user, :project],
+      :per_page => Event.per_page,
+      :page => params[:page]
+    }))
   end
 end

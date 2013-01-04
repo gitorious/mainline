@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class CommitDiffsControllerTest < ActionController::TestCase
   def setup
@@ -51,14 +51,14 @@ class CommitDiffsControllerTest < ActionController::TestCase
     end
 
     should "not touch the session object" do
-      with_private_repositories_set_to(nil) do
+      Gitorious::Configuration.override("enable_private_repositories" => false) do
         ApplicationController.any_instance.expects(:authorize_access_with_private_repositories_enabled).never
         get :index, params("5a0943123f6872e75a9b1dd0b6519dd42a186fda")
       end
     end
 
     should "not bypass authorization if private repositories are enabled" do
-      with_private_repositories_set_to(true) do
+      Gitorious::Configuration.override("enable_private_repositories" => true) do
         @controller.expects(:authorize_access_with_private_repositories_enabled).with(@project).returns(@project)
         @controller.expects(:authorize_access_with_private_repositories_enabled).with(@repository).returns(@repository)
         get :index, params("5a0943123f6872e75a9b1dd0b6519dd42a186fda")
@@ -66,49 +66,11 @@ class CommitDiffsControllerTest < ActionController::TestCase
     end
   end
 
-  def with_private_repositories_set_to(state)
-    old_value = GitoriousConfig.fetch("enable_private_repositories")
-    GitoriousConfig["enable_private_repositories"] = state
-    yield
-    GitoriousConfig["enable_private_repositories"] = old_value
-  end
-
   context "Comparing arbitrary commits" do
     should "pick the correct commits" do
       Grit::Commit.expects(:diff).with(@repository.git, OTHER_SHA, @sha).returns([])
       get :compare, compare_params
       assert_response :success
-    end
-  end
-
-  context "Routing" do
-    should "route commit diffs index" do
-      assert_recognizes({
-        :controller => "commit_diffs",
-        :action => "index",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-      }, { :path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}/diffs", :method => :get })
-
-      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}/diffs", {
-        :controller => "commit_diffs",
-        :action => "index",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-      })
-    end
-
-    should "route comparison between two commits" do
-      assert_recognizes({:controller => "commit_diffs",
-        :action => "compare",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :from_id => SHA,
-        :id => OTHER_SHA }, {
-        :path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{SHA}/diffs/#{OTHER_SHA}"
-      })
     end
   end
 

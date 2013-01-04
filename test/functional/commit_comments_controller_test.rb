@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class CommitCommentsControllerTest < ActionController::TestCase
   def setup
@@ -40,26 +40,6 @@ class CommitCommentsControllerTest < ActionController::TestCase
 
       assert_response :success
       assert_not_equal "Fri, 18 Apr 2008 23:26:07 GMT", @response.headers["Last-Modified"]
-    end
-  end
-
-  context "Routing" do
-    should "route commits index" do
-      assert_recognizes({
-        :controller => "commit_comments",
-        :action => "index",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-      }, { :path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}/comments", :method => :get })
-
-      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}/comments", {
-        :controller => "commit_comments",
-        :action => "index",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-      })
     end
   end
 

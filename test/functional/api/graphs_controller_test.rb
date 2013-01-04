@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../../test_helper"
+require "test_helper"
 
 class Api::GraphsControllerTest < ActionController::TestCase
   def setup
@@ -26,6 +26,11 @@ class Api::GraphsControllerTest < ActionController::TestCase
     @cache_key_all = "commit-graph-#{@project.slug}/#{@repo.name}/--all"
     Rails.cache.delete(@cache_key)
     Rails.cache.delete(@cache_key_all)
+    cache = Rails.cache
+
+    def cache.fetch(*args, &block)
+      yield
+    end
   end
 
   def expect_cache(key)
@@ -35,12 +40,13 @@ class Api::GraphsControllerTest < ActionController::TestCase
   def mock_shell
     shell = mock
     @controller.expects(:git_shell).returns(shell)
-    shell.expects(:graph_log)
+    shell.stubs(:graph_log)
   end
 
   context "Graphing the log" do
     should "render JSON" do
-      mock_shell.with(@repo.full_repository_path, "--decorate=full", "-100", "").returns("")
+      path = @repo.full_repository_path
+      mock_shell.with(path, "--decorate=full", "-100", "").returns("")
       get :show, params
       assert_response :success
     end
@@ -94,7 +100,6 @@ class Api::GraphsControllerTest < ActionController::TestCase
   context "With private project" do
     setup do
       enable_private_repositories
-      GitoriousConfig["use_ssl"] = false
     end
 
     should "disallow unauthorized user to graph branch" do
@@ -113,7 +118,6 @@ class Api::GraphsControllerTest < ActionController::TestCase
   context "With private repository" do
     setup do
       enable_private_repositories(@repo)
-      GitoriousConfig["use_ssl"] = false
     end
 
     should "disallow unauthorized user to graph branch" do

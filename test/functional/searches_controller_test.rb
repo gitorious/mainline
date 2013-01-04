@@ -21,16 +21,15 @@ require File.dirname(__FILE__) + "/../test_helper"
 
 class SearchesControllerTest < ActionController::TestCase
   should_render_in_global_context
-  should_enforce_ssl_for(:get, :show)
 
   context "#show" do
     should "search for the given query" do
       search_result = [projects(:johans)]
 
       ThinkingSphinx.expects(:search).with("foo",{
-                                             :page => 1, :per_page => 30,
-                                             :classes => [Project, Repository, MergeRequest],
-                                             :match_mode => :extended
+        :page => 1, :per_page => 30,
+        :classes => [Project, Repository, MergeRequest],
+       :match_mode => :extended
       }).returns(search_result)
 
       search_result.expects(:total_entries).returns(1)
@@ -46,12 +45,10 @@ class SearchesControllerTest < ActionController::TestCase
       get :show, :q => ""
       assert_nil assigns(:results)
     end
-
   end
 
   context "With private repositories" do
     setup do
-      GitoriousConfig["use_ssl"] = false
       @project = Project.first
       search_results = Project.all.concat(Repository.all)
       enable_private_repositories

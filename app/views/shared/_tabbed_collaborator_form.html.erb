@@ -18,7 +18,7 @@
 #++
 %>
 
-<% content_for :extra_head do -%>
+<%= content_for :extra_head do -%>
   <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){
         $("#add_group_link").click(function(event){
@@ -57,5 +57,5 @@
 <p class="tab-content" id="add_group" style="display:none;">
   <label for="group_name_autocomplete"><%= t("views.collaborators.group_name") -%></label><br />
   <%= text_field :group, :name, :id => "group_name_autocomplete" -%><br />
-  <span class="hint"><%= t("views.collaborators.add_team_note") -%></span>
+  <span class="hint"><%= t("views.collaborators.add_team_note").html_safe -%></span>
 </p>

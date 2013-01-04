@@ -1,56 +1,57 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% @page_title = "Sobre" -%>
 <div class="section">
   <a name="about"></a><h1>Sobre o Gitorious</h1>
 
   <p><strong>O <a href="/p/gitorious">Gitorious</a> tem como objetivo fornecer
-	uma grande maneira de colaborar com código opensource de forma distribuída</strong></p>
+      uma grande maneira de colaborar com código opensource de forma distribuída</strong></p>
 
   <h2>A idéia</h2>
   <p>Código Tradicional e construção de projetos oferecem muitas grandes coisas e
-	sem dúvida ajudaram desenvolvedores de software open source. Entretanto, sempre
-	existe a questão de mantenabilidade de longo prazo; como humanos sempre nos
-	distraímos, ficamos ocupados ou apenas cansados de trabalhar com coisas de longo
-	prazo.</p>
+    sem dúvida ajudaram desenvolvedores de software open source. Entretanto, sempre
+    existe a questão de mantenabilidade de longo prazo; como humanos sempre nos
+    distraímos, ficamos ocupados ou apenas cansados de trabalhar com coisas de longo
+    prazo.</p>
 
   <p>Controle de versão Distribuído fornece uma maneira ao redor disso tornando a
-	cópia de todos um repositório completo, de forma que se as pessoas gostarem mais do
-	repositório de outros, ou se outra pessoa está mantendo o projeto ativamente eles
-	podem simplesmente puxar dessa pessoa em vez do repositório "oficial". E se o
-	mantenedor do projeto assim decidir, ele pode puxar essas mudanças para seu próprio
-	branch principal. É isso que torna open source tão bom.</p>
+    cópia de todos um repositório completo, de forma que se as pessoas gostarem mais do
+    repositório de outros, ou se outra pessoa está mantendo o projeto ativamente eles
+    podem simplesmente puxar dessa pessoa em vez do repositório "oficial". E se o
+    mantenedor do projeto assim decidir, ele pode puxar essas mudanças para seu próprio
+    branch principal. É isso que torna open source tão bom.</p>
 
   <p><strong>O <a href="/p/gitorious">Gitorious</a></strong> fornece uma maneira de
-	gerenciar esses clones facilmente através de:</p>
+    gerenciar esses clones facilmente através de:</p>
 
   <ul class="bullet_list">
-  	<li>Ver o que os outros estão fazendo</li>
-  	<li>Saber onde eles podem ser encontrados</li>
-  	<li>Permitir que qualquer um contribua sem precisar de "permissão de commit"</li>
-  	<li>Tornando mais fácil para mantenedores aceitar contribuições</li>
+    <li>Ver o que os outros estão fazendo</li>
+    <li>Saber onde eles podem ser encontrados</li>
+    <li>Permitir que qualquer um contribua sem precisar de "permissão de commit"</li>
+    <li>Tornando mais fácil para mantenedores aceitar contribuições</li>
   </ul>
 
   <p>O Gitorious ainda está sob desenvolvimento e existem muitas e muitas coisas que eu
-	gostaria de fazer com isso. Se tiver idéias para melhoria ou problemas técnicos,
-	por favor dê uma parada no <a href="http://groups.google.com/group/gitorious">grupo de discussão</a>.</p>
+    gostaria de fazer com isso. Se tiver idéias para melhoria ou problemas técnicos,
+    por favor dê uma parada no <a href="http://groups.google.com/group/gitorious">grupo de discussão</a>.</p>
 
   <p>
     Obrigado,<br />
@@ -63,16 +64,16 @@
 <div class="section">
   <a name="contact"></a><h1>Informações de Contato</h1>
   <p>
-	Se tiver algum problema técnico sinta-se à vontade para
+    Se tiver algum problema técnico sinta-se à vontade para
     <a href="mailto:johan@johansorensen.com">enviar um e-mail</a>, também temos o
     <a href="http://groups.google.com/group/gitorious">grupo de discussão</a> para
-	discussões mais gerais sobre o Gitorious. Também temos o canal de IRC
+    discussões mais gerais sobre o Gitorious. Também temos o canal de IRC
     <a href="irc://irc.freenode.net/gitorious"><code>#gitorious</code></a>
- 	na FreeNode.
+    na FreeNode.
   </p>
 </div>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="links navigation">
     <li><a href="#about">Sobre</a></li>
     <li><a href="#contact">Contato</a></li>

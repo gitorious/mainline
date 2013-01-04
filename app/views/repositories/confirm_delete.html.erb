@@ -1,38 +1,39 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
-<% dialog_box(t("views.repos.confirm_delete", :repo => @repository.name, :title => h(@owner.title))) do %>
-<p class="important_message">
-  <%= t("views.repos.message_delete") %>
-  
-  <% form_for repo_owner_path(@repository, [@repository.project, @repository]), :html => {:method => :delete} do |f| -%>
+<%= dialog_box(t("views.repos.confirm_delete", :repo => @repository.name, :title => h(@owner.title))) do %>
+  <p class="important_message">
+    <%= t("views.repos.message_delete") %>
+
+    <%= form_for [@repository.project, @repository], :html => {:method => :delete} do |f| -%>
     <%= f.submit(t("views.repos.btn_delete")) -%>
-  <% end -%>
+<% end -%>
 </p>
 <% end -%>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="links navigation">
-    <li><%= link_to t("views.projects.back"), 
-	repo_owner_path(@repository, [:edit, @repository.project, @repository]) -%></li>
+    <li><%= link_to t("views.projects.back"),
+            [:edit, @repository.project, @repository] -%></li>
   </ul>
 <% end -%>

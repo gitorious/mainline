@@ -18,12 +18,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require "gitorious"
+
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
   include AuthenticatedSystem
-  include ExceptionNotifiable
   include RoutingHelper
   include Gitorious::Authorization
   protect_from_forgery
@@ -31,17 +32,13 @@ class ApplicationController < ActionController::Base
   before_filter :public_and_logged_in
   before_filter :require_current_eula
 
-  include SslRequirement # Need to be included after the above
-
   after_filter :mark_flash_status
-
-  filter_parameter_logging :password, :password_confirmation
 
   layout :pick_layout_based_on_site
 
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
   rescue_from ActionController::UnknownController, :with => :render_not_found
-  rescue_from ActionController::UnknownAction, :with => :render_not_found
+  rescue_from ::AbstractController::ActionNotFound, :with => :render_not_found
   rescue_from Grit::GitRuby::Repository::NoSuchPath, :with => :render_not_found
   rescue_from Grit::Git::GitTimeout, :with => :render_git_timeout
   rescue_from RecordThrottling::LimitReachedError, :with => :render_throttled_record
@@ -139,7 +136,7 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_access_to(thing)
-    if private_repositories_enabled?
+    if Gitorious.private_repositories?
       return authorize_access_with_private_repositories_enabled(thing)
     else
       return thing
@@ -148,7 +145,7 @@ class ApplicationController < ActionController::Base
 
   def authorize_access_with_private_repositories_enabled(thing)
     if !can_read?(current_user, thing)
-      raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
+      raise Gitorious::Authorization::UnauthorizedError.new(request.fullpath)
     end
     return thing
   end
@@ -173,27 +170,31 @@ class ApplicationController < ActionController::Base
   end
 
   def render_not_found
-    render :template => Rails.root + "public/404.html", :status => 404, :layout => "application"
+    render({ :file => Rails.root + "public/404.html",
+             :status => 404,
+             :layout => "application" })
   end
 
   def render_git_timeout
-    render :partial => "/shared/git_timeout", :layout => (request.xhr? ? false : "application") and return
+    render("/shared/_git_timeout",
+           :layout => (request.xhr? ? false : "application"))
+    return false
   end
 
   def render_throttled_record
-    render :partial => "/shared/throttled_record",
-    :layout => "application", :status => 412 # precondition failed
+    render("/shared/_throttled_record",
+           :layout => "application", :status => 412) # precondition failed
     return false
   end
 
   def render_unauthorized
-    render :partial => "/shared/unauthorized",
-    :layout => "application", :status => 403 # forbidden
+    render("/shared/_unauthorized",
+           :layout => "application", :status => 403) # forbidden
     return false
   end
 
   def public_and_logged_in
-    login_required unless GitoriousConfig['public_mode']
+    login_required unless Gitorious.public?
   end
 
   def mark_flash_status
@@ -258,7 +259,7 @@ class ApplicationController < ActionController::Base
   end
 
   def subdomain_without_common
-    tld_length = GitoriousConfig["gitorious_host"].split(".").length - 1
+    tld_length = Gitorious.host.split(".").length - 1
     request.subdomains(tld_length).select{|s| s !~ /^(ww.|secure)$/}.first
   end
 
@@ -266,7 +267,7 @@ class ApplicationController < ActionController::Base
     return unless request.get?
     if !current_site.subdomain.blank?
       if subdomain_without_common != current_site.subdomain
-        url_parameters = {:only_path => false, :host => "#{current_site.subdomain}.#{GitoriousConfig["gitorious_host"]}#{request.port_string}"}.merge(params)
+        url_parameters = {:only_path => false, :host => "#{current_site.subdomain}.#{Gitorious.host}#{request.port_string}"}.merge(params)
         redirect_to url_parameters
       end
     elsif !subdomain_without_common.blank?
@@ -283,7 +284,7 @@ class ApplicationController < ActionController::Base
   def redirect_to_top_domain
     host_without_subdomain = {
       :only_path => false,
-      :host => GitoriousConfig["gitorious_host"]
+      :host => Gitorious.host
     }
     if ![80, 443].include?(request.port)
       host_without_subdomain[:host] << ":#{request.port}"
@@ -292,7 +293,7 @@ class ApplicationController < ActionController::Base
   end
 
   def self.skip_session(options = {})
-    return if !GitoriousConfig["public_mode"]
+    return if !Gitorious.public?
     always_skip_session(options)
   end
 
@@ -337,10 +338,6 @@ class ApplicationController < ActionController::Base
     request.ssl?
   end
 
-  def ssl_required?
-    GitoriousConfig["use_ssl"] && using_session? && logged_in?
-  end
-
   def unshifted_polymorphic_path(repo, path_spec)
     if path_spec[0].is_a?(Symbol)
       path_spec.insert(1, repo.owner)
@@ -367,7 +364,7 @@ class ApplicationController < ActionController::Base
   #
   #     def index
   #       @groups = paginate(:action => "index") do
-  #         Group.paginate(:all, :page => params[:page])
+  #         Group.paginate(:page => params[:page])
   #       end
   #     end
   #
@@ -378,7 +375,7 @@ class ApplicationController < ActionController::Base
       items = []
     end
 
-    if params.key?(:page) && items.count == 0
+    if params.key?(:page) && items.length == 0
       controller = params[:controller].gsub("/", "_")
       key = "#{controller}_controller.#{params[:action]}_pagination_oob"
       flash[:error] = I18n.t(key, :page => params[:page].to_i)
@@ -386,6 +383,18 @@ class ApplicationController < ActionController::Base
     end
 
     items
+  end
+
+  def marshalable_events(events)
+    def events.marshal_dump
+      map(&:attributes).to_json
+    end
+
+    def events.marshal_load(attributes)
+      JSON.parse(attributes).map { |attrs| Event.new(attrs) }
+    end
+
+    events
   end
 
   def page_free_redirect_options
@@ -399,7 +408,7 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_to_ref(ref, repo_view)
-    redirect_to repo_owner_path(@repository, repo_view, @project, @repository, ref)
+    redirect_to(send(repo_view, @project, @repository, ref))
   end
 
   def get_head(ref)
@@ -439,10 +448,6 @@ class ApplicationController < ActionController::Base
         pager.total_entries = result.first.nil? ? 0 : result.first.class.count
       end
     end
-  end
-
-  def private_repositories_enabled?
-    GitoriousConfig["enable_private_repositories"]
   end
 
   helper_method :unshifted_polymorphic_path

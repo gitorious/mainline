@@ -16,6 +16,9 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
+require "will_paginate/array"
+
 class MessagesController < ApplicationController
   before_filter :login_required
   renders_in_global_context
@@ -44,7 +47,7 @@ class MessagesController < ApplicationController
 
   def sent
     @messages = paginate(page_free_redirect_options) do
-      current_user.sent_messages.paginate(:all, :page => params[:page])
+      current_user.sent_messages.paginate(:page => params[:page])
     end
 
     @root = Breadcrumb::SentMessages.new(current_user)
@@ -62,7 +65,7 @@ class MessagesController < ApplicationController
     message_ids = params[:message_ids].to_a
     message_ids.each do |message_id|
       # if message = current_user.all_messages.find(message_id)
-      if message = Message.find(:first, :conditions => ['(recipient_id=? OR sender_id=?) AND id=?', current_user, current_user, message_id])
+      if message = Message.where("(recipient_id=? OR sender_id=?) AND id=?", current_user, current_user, message_id).first
         if params[:requested_action] == 'archive'
           message.archived_by(current_user)
           message.save!

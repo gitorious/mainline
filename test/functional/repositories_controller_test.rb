@@ -17,22 +17,11 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class RepositoriesControllerTest < ActionController::TestCase
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :clone)
-  should_enforce_ssl_for(:get, :confirm_delete)
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:get, :search_clones)
-  should_enforce_ssl_for(:get, :show)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:put, :update)
-
   def setup
-    GitoriousConfig["enable_private_repositories"] = false
+    @settings = Gitorious::Configuration.prepend("enable_private_repositories" => false)
     setup_ssl_from_config
     @project = projects(:johans)
     @repo = repositories(:johans)
@@ -40,359 +29,11 @@ class RepositoriesControllerTest < ActionController::TestCase
     Repository.any_instance.stubs(:git).returns(@grit)
   end
 
-  should_render_in_site_specific_context :except => [:writable_by, :config]
-
-  context "Routing, by projects" do
-    should "recognizes routing like /projectname/reponame" do
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "show",
-        :project_id => @project.to_param,
-        :id => @repo.to_param,
-      }, {:path => "/#{@project.to_param}/#{@repo.to_param}", :method => :get})
-      assert_recognizes({
-        :controller => "merge_requests",
-        :action => "index",
-        :project_id => @project.to_param,
-        :repository_id => @repo.to_param,
-      }, {:path => "/#{@project.to_param}/#{@repo.to_param}/merge_requests", :method => :get})
-      assert_generates("/#{@project.to_param}/#{@repo.to_param}", {
-        :controller => "repositories",
-        :action => "show",
-        :project_id => @project.to_param,
-        :id => @repo.to_param,
-      })
-
-      assert_generates("/#{@project.to_param}/#{@repo.to_param}/trees", {
-        :controller => "trees",
-        :action => "index",
-        :project_id => @project.to_param,
-        :repository_id => @repo.to_param,
-      })
-
-      assert_generates("/#{@project.to_param}/#{@repo.to_param}/trees/foo/bar/baz", {
-        :controller => "trees",
-        :action => "show",
-        :project_id => @project.to_param,
-        :repository_id => @repo.to_param,
-        :branch_and_path => %w[foo bar baz]
-      })
-    end
-
-    should "recognizes routing like /projectname/repositories" do
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "index",
-        :project_id => @project.to_param
-      }, "/#{@project.to_param}/repositories")
-
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "index",
-        :project_id => @project.to_param
-      }, "/#{@project.to_param}/repositories/")
-      assert_generates("/#{@project.to_param}/repositories", {
-        :controller => "repositories",
-        :action => "index",
-        :project_id => @project.to_param
-      })
-    end
-
-    should "recognize routing like /projectname/starts-with-reserved-name" do
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "show",
-        :project_id => "myproject",
-        :id => "users-test-repo",
-      }, "/myproject/users-test-repo")
-
-      assert_generates("/myproject/users-test-repo", {
-        :controller => "repositories",
-        :action => "show",
-        :project_id => "myproject",
-        :id => "users-test-repo",
-      })
-    end
-
-    should "recognizes routing like /projectname/reponame, with a non-html format" do
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "show",
-        :project_id => @project.to_param,
-        :format => "xml",
-        :id => @repo.to_param,
-      }, "/#{@project.to_param}/#{@repo.to_param}.xml")
-      assert_recognizes({
-        :controller => "merge_requests",
-        :action => "index",
-        :format => "xml",
-        :project_id => @project.to_param,
-        :repository_id => @repo.to_param,
-      }, "/#{@project.to_param}/#{@repo.to_param}/merge_requests.xml")
-
-      assert_generates("/#{@project.to_param}/#{@repo.to_param}.xml", {
-        :controller => "repositories",
-        :action => "show",
-        :project_id => @project.to_param,
-        :id => @repo.to_param,
-        :format => "xml",
-      })
-      assert_generates("/#{@project.to_param}/#{@repo.to_param}/merge_requests", {
-        :controller => "merge_requests",
-        :action => "index",
-        :project_id => @project.to_param,
-        :repository_id => @repo.to_param,
-      })
-    end
-
-    should "recognizes routing like /projectname/repositories, with a non-html format" do
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "index",
-        :format => "xml",
-        :project_id => @project.to_param
-      }, "/#{@project.to_param}/repositories.xml")
-
-      assert_generates("/#{@project.to_param}/repositories.xml", {
-        :controller => "repositories",
-        :action => "index",
-        :project_id => @project.to_param,
-        :format => "xml",
-      })
-    end
-
-    should "recognize routing for clones search" do
-      assert_recognizes({
-          :controller => "repositories",
-          :action => "search_clones",
-          :format => "json",
-          :project_id => @project.to_param,
-          :id => @repo.to_param
-        }, "/projects/#{@project.to_param}/repositories/#{@repo.to_param}/search_clones.json")
-
-      assert_generates("/#{@project.to_param}/#{@repo.to_param}/search_clones.json", {
-          :controller => "repositories",
-          :action => "search_clones",
-          :project_id => @project.to_param,
-          :id => @repo.to_param,
-          :format => "json"
-        })
-    end
+  teardown do
+    Gitorious::Configuration.prune(@settings)
   end
 
-  context "Routing, by users" do
-    should "recognizes routing like /~username/repositories" do
-      user = users(:johan)
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "index",
-        :user_id => user.to_param
-      }, "/~#{user.to_param}/repositories")
-
-      assert_generates("/~#{user.to_param}/repositories", {
-        :controller => "repositories",
-        :action => "index",
-        :user_id => user.to_param,
-      })
-    end
-
-    should "recognizes routing like /~username/repositories, with a non-html format" do
-      user = users(:johan)
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "index",
-        :format => "xml",
-        :user_id => user.to_param
-      }, "/~#{user.to_param}/repositories.xml")
-
-      assert_generates("/~#{user.to_param}/repositories.xml", {
-        :controller => "repositories",
-        :action => "index",
-        :user_id => user.to_param,
-        :format => "xml",
-      })
-    end
-
-    should "recognize routing like /~user/reponame" do
-      user = users(:johan)
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "show",
-        :user_id => user.to_param,
-        :id => @repo.to_param,
-      }, "/~#{user.to_param}/#{@repo.to_param}")
-
-      assert_generates("/~#{user.to_param}/#{@repo.to_param}", {
-        :controller => "repositories",
-        :action => "show",
-        :user_id => user.to_param,
-        :id => @repo.to_param,
-      })
-    end
-
-    should "recognize routing like /~user/reponame/action" do
-      user = users(:johan)
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "edit",
-        :user_id => user.to_param,
-        :id => @repo.to_param,
-      }, "/~#{user.to_param}/#{@repo.to_param}/edit")
-
-      assert_generates("/~#{user.to_param}/#{@repo.to_param}/edit", {
-        :controller => "repositories",
-        :action => "edit",
-        :user_id => user.to_param,
-        :id => @repo.to_param,
-      })
-    end
-
-    should "recognize routing like /~user/projectname/reponame" do
-      user = users(:johan)
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "show",
-        :project_id => @project.to_param,
-        :user_id => user.to_param,
-        :id => @repo.to_param,
-      }, "/~#{user.to_param}/#{@project.to_param}/#{@repo.to_param}")
-
-      assert_generates("/~#{user.to_param}/#{@project.to_param}/#{@repo.to_param}", {
-        :controller => "repositories",
-        :action => "show",
-        :project_id => @project.to_param,
-        :user_id => user.to_param,
-        :id => @repo.to_param,
-      })
-    end
-
-    should "recognize routing like /~user/projectname/reponame/action" do
-      user = users(:johan)
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "clone",
-        :project_id => @project.to_param,
-        :user_id => user.to_param,
-        :id => @repo.to_param,
-      }, "/~#{user.to_param}/#{@project.to_param}/#{@repo.to_param}/clone")
-
-      assert_generates("/~#{user.to_param}/#{@project.to_param}/#{@repo.to_param}/clone", {
-        :controller => "repositories",
-        :action => "clone",
-        :project_id => @project.to_param,
-        :user_id => user.to_param,
-        :id => @repo.to_param,
-      })
-    end
-
-    context "usernames, with a dot" do
-      should "recognize routing like /~user.name/myproject/myrepo" do
-        assert_recognizes({
-          :controller => "repositories",
-          :action => "show",
-          :project_id => "myproject",
-          :user_id => "user.name",
-          :id => "myrepo",
-        }, "/~user.name/myproject/myrepo")
-
-        assert_generates("/~user.name/myproject/myrepo", {
-          :controller => "repositories",
-          :action => "show",
-          :project_id => "myproject",
-          :user_id => "user.name",
-          :id => "myrepo",
-        })
-      end
-
-      should "recognize routing like /~user.name/myproject/myrepo/action" do
-        user = users(:johan)
-        assert_recognizes({
-          :controller => "repositories",
-          :action => "clone",
-          :project_id => "myproject",
-          :user_id => "user.name",
-          :id => "myrepo",
-        }, "/~user.name/myproject/myrepo/clone")
-
-        assert_generates("/~user.name/myproject/myrepo/clone", {
-          :controller => "repositories",
-          :action => "clone",
-          :project_id => "myproject",
-          :user_id => "user.name",
-          :id => "myrepo",
-        })
-      end
-    end
-  end
-
-  context "Routing, by teams" do
-    should "recognizes routing like /+teamname/repositories" do
-      team = groups(:team_thunderbird)
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "index",
-        :group_id => team.to_param
-      }, "/+#{team.to_param}/repositories")
-
-      assert_generates("/+#{team.to_param}/repositories", {
-        :controller => "repositories",
-        :action => "index",
-        :group_id => team.to_param,
-      })
-    end
-
-    should "recognizes routing like /+teamname/repo" do
-      team = groups(:team_thunderbird)
-      repo = team.repositories.first
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "show",
-        :group_id => team.to_param,
-        :id => repo.to_param
-      }, "/+#{team.to_param}/#{repo.to_param}")
-
-      assert_generates("/+#{team.to_param}/#{repo.to_param}", {
-        :controller => "repositories",
-        :action => "show",
-        :group_id => team.to_param,
-        :id => repo.to_param
-      })
-    end
-
-    should "recognizes routing like /+teamname/repo/action" do
-      team = groups(:team_thunderbird)
-      repo = team.repositories.first
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "clone",
-        :group_id => team.to_param,
-        :id => repo.to_param
-      }, "/+#{team.to_param}/#{repo.to_param}/clone")
-
-      assert_generates("/+#{team.to_param}/#{repo.to_param}/clone", {
-        :controller => "repositories",
-        :action => "clone",
-        :group_id => team.to_param,
-        :id => repo.to_param
-      })
-    end
-
-    should "recognizes routing like /+teamname/repositories, with a non-html format" do
-      team = groups(:team_thunderbird)
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "index",
-        :format => "xml",
-        :group_id => team.to_param
-      }, "/+#{team.to_param}/repositories.xml")
-      assert_generates("/+#{team.to_param}/repositories.xml", {
-        :controller => "repositories",
-        :action => "index",
-        :group_id => team.to_param,
-        :format => "xml",
-      })
-    end
-  end
+  should_render_in_site_specific_context :except => [:writable_by, :repository_config]
 
   context "#index" do
     setup do
@@ -449,10 +90,15 @@ class RepositoriesControllerTest < ActionController::TestCase
       repo.owner = @user
       repo.save!
       repo.stubs(:git).returns(stub_everything("git mock"))
-      get :show, :user_id => @user.to_param, :project_id => repo.project.to_param,
+
+      get :show, {
+        :user_id => @user.to_param,
+        :project_id => repo.project.to_param,
         :id => repo.to_param
+      }
+
       assert_response :success
-      atom_url = user_project_repository_path(@user, repo.project, repo, :format => :atom)
+      atom_url = project_repository_path(repo.project, repo, :format => :atom)
       assert_equal atom_url, assigns(:atom_auto_discovery_url)
     end
 
@@ -834,7 +480,7 @@ class RepositoriesControllerTest < ActionController::TestCase
   end
 
   def do_config_get(options={})
-    get(:config, {:project_id => @project.slug, :id => @repository.name}.merge(options))
+    get(:repository_config, {:project_id => @project.slug, :id => @repository.name}.merge(options))
   end
 
   context "#config" do
@@ -1048,8 +694,13 @@ class RepositoriesControllerTest < ActionController::TestCase
           :committer => users(:moe)
         }, Committership::CAN_ADMIN)
       @repository.save!
-      get :edit, :project_id => @repository.project.to_param,
-        :user_id => users(:moe).to_param, :id => @repository.to_param
+
+      get :edit, {
+        :project_id => @project.to_param,
+        :user_id => users(:moe).to_param,
+        :id => @repository.to_param
+      }
+
       assert_response :success
     end
 
@@ -1151,7 +802,7 @@ class RepositoriesControllerTest < ActionController::TestCase
           :owner_id => new_group.id
         }
       assert_response :redirect
-      assert_redirected_to(group_repository_path(group, @repository))
+      assert_redirected_to(project_repository_path(@project, @repository))
       assert_equal group, @repository.reload.owner
     end
 
@@ -1199,10 +850,10 @@ class RepositoriesControllerTest < ActionController::TestCase
       login_as :mike
       project = projects(:johans)
       repository = project.repositories.clones.first
-      repository.committerships.create!({
-          :committer => users(:mike),
-          :permissions => Committership::CAN_REVIEW | Committership::CAN_COMMIT
-        })
+      committership = repository.committerships.new
+      committership.committer = users(:mike)
+      committership.permissions = Committership::CAN_REVIEW | Committership::CAN_COMMIT
+      committership.save!
 
       Project.expects(:find_by_slug!).with(project.slug).returns(project)
       repository.stubs(:has_commits?).returns(true)
@@ -1229,31 +880,20 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
   end
 
-  context "when hiding git:// URLs" do
-    setup do
-      @hide_setting = GitoriousConfig["hide_git_clone_urls"]
-      GitoriousConfig["hide_git_clone_urls"] = true
-    end
+  should "not display git:// link when disabling the git daemon" do
+    Gitorious.stubs(:git_daemon).returns(nil)
+    project = projects(:johans)
+    repository = project.repositories.mainlines.first
+    repository.update_attribute(:ready, true)
 
-    teardown do
-      GitoriousConfig["hide_git_clone_urls"] = @hide_setting
-    end
+    get :show, :project_id => project.to_param, :id => repository.to_param
 
-    should "not display git:// link" do
-      project = projects(:johans)
-      repository = project.repositories.mainlines.first
-      repository.update_attribute(:ready, true)
-
-      get :show, :project_id => project.to_param, :id => repository.to_param
-
-      assert_no_match(/git:\/\//, @response.body)
-    end
+    assert_no_match(/git:\/\//, @response.body)
   end
 
   context "With private projects" do
     setup do
       enable_private_repositories
-      GitoriousConfig["use_ssl"] = false
       @group = groups(:team_thunderbird)
       @repository = @project.repositories.first
     end
@@ -1442,7 +1082,6 @@ class RepositoriesControllerTest < ActionController::TestCase
   context "With private repositories" do
     setup do
       enable_private_repositories(@repo)
-      GitoriousConfig["use_ssl"] = false
       @group = groups(:team_thunderbird)
       @repository = @project.repositories.first
     end

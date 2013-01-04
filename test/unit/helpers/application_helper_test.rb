@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,8 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../../test_helper'
+require "test_helper"
 
 class TestEnv
   attr_accessor :request
@@ -48,11 +48,11 @@ class ApplicationHelperTest < ActionView::TestCase
   should "not render block content if object is ready" do
     obj = mock("any given object")
     obj.stubs(:ready?).returns(false)
-    render_if_ready(obj) do
+    output = render_if_ready(obj) do
       "moo"
     end
-    assert_not_equal "moo", output_buffer
-    assert_match(/is being created/, output_buffer)
+    assert_not_equal "moo", output
+    assert_match(/is being created/, output)
   end
 
   should "gives us the domain of a full url" do
@@ -109,57 +109,37 @@ class ApplicationHelperTest < ActionView::TestCase
   end
 
   context "favicon link tag" do
-    setup do
-      @gitconf = GitoriousConfig["favicon_url"]
-    end
-
-    teardown do
-      GitoriousConfig["favicon_url"] = @gitconf
-    end
-
-    should "not return markup when no url is configured" do
-      GitoriousConfig["favicon_url"] = ""
-      assert favicon_link_tag.blank?
+    should "return markup with default URL when no URL is configured" do
+      assert_match /"\/favicon.ico"/, favicon_link_tag
     end
 
     should "return link tag for configured favicon url" do
-      GitoriousConfig["favicon_url"] = "http://myserver.com/favicon.ico"
-      assert_match "myserver.com/favicon", favicon_link_tag
-      assert_match "shortcut", favicon_link_tag
-    end
-
-    should "return nothing when no favicon_url setting exists" do
-      GitoriousConfig.delete(["favicon_url"])
-      assert favicon_link_tag.blank?
+      Gitorious::Configuration.override("favicon_url" => "http://myserver.com/favicon.ico") do |c|
+        assert_match "myserver.com/favicon", favicon_link_tag
+        assert_match "shortcut", favicon_link_tag
+      end
     end
   end
 
   context "logo link tag" do
-    setup do
-      @gitconf = GitoriousConfig["logo_url"]
-    end
-
-    teardown do
-      GitoriousConfig["logo_url"] = @gitconf
-    end
-
-    should "return linked text when empty url is configured" do
-      GitoriousConfig["logo_url"] = ""
-      assert_match ">Gitorious<", logo_link
-      assert_no_match /img/, logo_link
-    end
-
     should "return linked default logo no url is configured" do
-      GitoriousConfig.delete("logo_url")
       assert_match /img[^>]*src=/, logo_link
       assert_match "/img/logo.png", logo_link
     end
 
+    should "return linked text when empty url is configured" do
+      Gitorious::Configuration.override("logo_url" => "") do |c|
+        assert_match ">Gitorious<", logo_link
+        assert_no_match /img/, logo_link
+      end
+    end
+
     should "return linked configured url" do
-      GitoriousConfig["logo_url"] = "http://myserver.com/logo.png"
-      assert_match /img[^>]*src=/, logo_link
-      assert_match "http://myserver.com/logo.png", logo_link
-      assert_no_match /\/img\/logo\.png/, logo_link
+      Gitorious::Configuration.override("logo_url" => "http://myserver.com/logo.png") do |c|
+        assert_match /img[^>]*src=/, logo_link
+        assert_match "http://myserver.com/logo.png", logo_link
+        assert_no_match /\/img\/logo\.png/, logo_link
+      end
     end
   end
 end

@@ -17,10 +17,14 @@
 #++
 
 class Admin::DiagnosticsController < ApplicationController
+  if Rails.env.test?
+    include Gitorious::Diagnostics::Test
+  else
+    include Gitorious::Diagnostics
+  end
   before_filter :login_required, :except => :summary
   before_filter :require_site_admin, :except => :summary
 
-  include Gitorious::Diagnostics
   def index
     @everything_healthy = markup(everything_healthy?)
 
@@ -31,7 +35,6 @@ class Admin::DiagnosticsController < ApplicationController
     @repo_dir_ok = markup(repo_dir_ok?)
     @tarball_dirs_ok = markup(tarball_dirs_ok?)
     @authorized_keys_ok = markup(authorized_keys_ok?)
-    @not_using_reserved_hostname = markup(not_using_reserved_hostname?)
 
     @ssh_deamon_up = markup(ssh_deamon_up?)
     @git_daemon_up = markup(git_daemon_up?)
@@ -52,25 +55,28 @@ class Admin::DiagnosticsController < ApplicationController
   end
 
   def summary
-    if GitoriousConfig["turn_on_public_diagnostic_summary_page"]
-      if everything_healthy?
-        render :text => "OK"
-      else
-        render :text => "Error! Something might be broken in your Gitorious install. See /admin/diagnostics for overview", :status => 500
-      end
-    else
-      render :text => "Error! Diagnostic summary page not exposed, see 'turn_on_public_diagnostic_summary_page' setting in gitorious.sample.yml", :status => 500
+    if !Gitorious::ops?(request.remote_addr)
+      render(:text => <<-EOF, :status => 403) and return
+Error! The diagnostic summary page can only be reached from pre-approved
+remote addresses. If you feel you are being stopped injustly, please contact
+#{Gitorious.support_email}
+      EOF
     end
-  end  
 
+    render(:text => "OK") and return if everything_healthy?
+
+    render(:text => <<-EOF, :status => 500)
+Error! Something might be broken in your Gitorious install.
+See /admin/diagnostics for a detailed overview.
+    EOF
+  end
 
   private
-
   def markup(status)
     if status == true
-      "<span class='diagnostic-true-indicator'>true</span>"
+      "<span class='diagnostic-true-indicator'>true</span>".html_safe
     else
-      "<span class='diagnostic-false-indicator'>false</span>"
+      "<span class='diagnostic-false-indicator'>false</span>".html_safe
     end
   end
 
@@ -79,5 +85,4 @@ class Admin::DiagnosticsController < ApplicationController
       redirect_to root_path
     end
   end
-  
 end

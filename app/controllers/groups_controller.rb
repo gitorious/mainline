@@ -24,7 +24,7 @@ class GroupsController < ApplicationController
 
   def index
     @groups = paginate(:action => "index") do
-      Team.paginate_all(params[:page])
+      Team.paginate(params[:page])
     end
   end
 
@@ -81,14 +81,6 @@ class GroupsController < ApplicationController
     flash[:success] = "The team image was deleted"
     redirect_to group_path(@group)
   end
-
-  # TODO: Remove? Don't thing it's used
-  # def auto_complete_for_project_slug
-  #   @projects = filter(Project.find(:all,
-  #     :conditions => ['LOWER(slug) LIKE ?', "%#{params[:project][:slug].downcase}%"],
-  #     :limit => 10))
-  #   render :layout => false
-  # end
 
   protected
   def find_group_and_ensure_group_adminship

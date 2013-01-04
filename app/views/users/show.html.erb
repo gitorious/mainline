@@ -1,22 +1,22 @@
 <%
-#--
-#   Copyright (C) 2011-2012 Gitorious AS
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2011-2012 Gitorious AS
+  #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <div class="with_divider">
   <div id="left">
@@ -70,7 +70,7 @@
     </div>
   </div>
   <div id="right" class="w-390">
-    <% pull_box(t("views.site.dashboard.projects"), :class => "your-projects pull-box-390") do -%>
+    <%= pull_box(t("views.site.dashboard.projects"), :class => "your-projects pull-box-390") do -%>
       <ul class="with_icons">
         <% @projects.each do |project| -%>
           <li class="project">
@@ -84,17 +84,16 @@
         <div class="pull-box-links">
           <%= link_button_link_to(t("views.projects.create_new"), new_project_path, {
                                     :id => "new-project-button"}) %>
-        </div><% end -%><% end -%><% pull_box(t("views.site.dashboard.repositories"), :class => "your-repositories pull-box-390") do -%><% if @repositories.blank? -%><% if is_current_user?(@user) -%>You currently do not have any repository clones. You can clone a repository you wish to contribute to by going to a repository overview page and clicking the "Clone repository" button in the repository information box.<% else -%>
+        </div><% end -%><% end -%><%= pull_box(t("views.site.dashboard.repositories"), :class => "your-repositories pull-box-390") do -%><% if @repositories.blank? -%><% if is_current_user?(@user) -%>You currently do not have any repository clones. You can clone a repository you wish to contribute to by going to a repository overview page and clicking the "Clone repository" button in the repository information box.<% else -%>
           <p class="hint">
             <%=h @user.title -%> currently does not have any repository clones.
           </p><% end -%><% else -%>
         <ul class="with_icons">
           <% @repositories.each do |repo| -%>
             <li class="repository">
-              <%= link_to h(repo.url_path),
-                  repo_owner_path(repo, [repo.project, repo]) -%>
+              <%= link_to h(repo.url_path), [repo.project, repo] -%>
             </li><% end -%>
-        </ul><% end -%><% end %><% pull_box("#{h @user.title} is watching", :class => "your-favorites favorite pull-box-390") do %>
+        </ul><% end -%><% end %><%= pull_box("#{h @user.title} is watching", :class => "your-favorites favorite pull-box-390") do %>
       <div class="filters">
         <ul>
           <li>
@@ -130,7 +129,7 @@
             </p>
           </li>
         <% end -%>
-      </ul><% end %><% pull_box("Team memberships", :class => "teams pull-box-390") do -%>
+      </ul><% end %><%= pull_box("Team memberships", :class => "teams pull-box-390") do -%>
       <ul>
         <% Team.for_user(@user).each do |group| -%>
           <li style="clear:left">

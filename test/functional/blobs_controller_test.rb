@@ -17,11 +17,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class BlobsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
-  should_enforce_ssl_for(:get, :history)
 
   def branch_and_path_params(sha = "master", file = "README")
     branch_and_path = [sha]
@@ -29,7 +28,7 @@ class BlobsControllerTest < ActionController::TestCase
     branch_and_path << file if file.is_a?(String)
     { :project_id => @project.slug,
       :repository_id => @repository.name,
-      :branch_and_path => branch_and_path }
+      :branch_and_path => branch_and_path.join("/") }
   end
 
   context "Blob rendering" do

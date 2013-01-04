@@ -17,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 require "ostruct"
 
 class RepositoryTest < ActiveSupport::TestCase
@@ -39,11 +39,12 @@ class RepositoryTest < ActiveSupport::TestCase
     clear_message_queue
   end
 
-  should_validate_presence_of :user_id, :name, :owner_id
-  should_validate_uniqueness_of :hashed_path
-  should_validate_uniqueness_of :name, :scoped_to => :project_id, :case_sensitive => false
-
-  should_have_many :hooks, :dependent => :destroy
+  should validate_presence_of(:user_id)
+  should validate_presence_of(:name)
+  should validate_presence_of(:owner_id)
+  should validate_uniqueness_of(:hashed_path)
+  should validate_uniqueness_of(:name).scoped_to(:project_id)
+  should have_many(:hooks).dependent(:destroy)
 
   should "only accept names with alphanum characters in it" do
     @repository.name = "foo bar"
@@ -63,26 +64,27 @@ class RepositoryTest < ActiveSupport::TestCase
     @repository.save
     repos = new_repos(:name => "FOO")
     assert !repos.valid?, "valid? should be false"
-    assert_not_nil repos.errors.on(:name)
+    assert_not_nil repos.errors[:name]
 
     assert new_repos(:project => projects(:moes)).valid?
   end
 
-  should "not have a reserved name" do
-    repo = new_repos(:name => Gitorious::Reservations.repository_names.first.dup)
-    repo.valid?
-    assert_not_nil repo.errors.on(:name)
+  should "not be able to use a reserved name" do
+    repo = new_repos(:name => "clones")
+
+    refute repo.valid?
+    assert_not_nil repo.errors[:name]
+
     RepositoriesController.action_methods.each do |action|
       repo.name = action.dup
       repo.valid?
-      assert_not_nil repo.errors.on(:name), "fail on #{action}"
+      assert_not_nil repo.errors[:name], "fail on #{action}"
     end
   end
 
   context "git urls" do
     setup do
-      @host_with_user = "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_host']}"
-      @host = "#{GitoriousConfig['gitorious_host']}"
+      @host = "#{Gitorious.host}"
     end
 
     should "has a gitdir name" do
@@ -90,7 +92,14 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     should "has a push url" do
-      assert_equal "#{@host_with_user}:#{@repository.project.slug}/foo.git", @repository.push_url
+      assert_equal "git@gitorious.test:#{@repository.project.slug}/foo.git", @repository.push_url
+    end
+
+    should "uses configured ssh host" do
+      Gitorious::Configuration.override("ssh_daemon_host" => "git.gitorious") do |c|
+        expected = "git@git.gitorious:#{@repository.project.slug}/foo.git"
+        assert_equal expected, @repository.push_url
+      end
     end
 
     should "has a clone url" do
@@ -98,16 +107,14 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     should "has a http url" do
-      assert_equal "#{GitoriousConfig['scheme']}://git.#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
+      assert_equal Gitorious.url("/#{@repository.project.slug}/foo.git"), @repository.http_clone_url
     end
 
     should "use the real http cloning URL" do
-      old_value = Site::HTTP_CLONING_SUBDOMAIN
-      silence_warnings do
-        Site::HTTP_CLONING_SUBDOMAIN = "whatever"
+      Gitorious::Configuration.override("git_http_host" => "whatever.dude") do
+        expected = "http://whatever.dude/#{@repository.project.slug}/foo.git"
+        assert_equal expected, @repository.http_clone_url
       end
-      assert_equal "#{GitoriousConfig['scheme']}://whatever.#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
-      silence_warnings {Site::HTTP_CLONING_SUBDOMAIN = old_value}
     end
 
     should "has a clone url with the project name, if it is a mainline" do
@@ -130,36 +137,36 @@ class RepositoryTest < ActiveSupport::TestCase
     should "has a push url with the project name, if it is a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO
-      assert_equal "#{@host_with_user}:#{@repository.project.slug}/foo.git", @repository.push_url
+      assert_equal "git@gitorious.test:#{@repository.project.slug}/foo.git", @repository.push_url
     end
 
     should "have a push url with the team/user, if it is not a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_TEAM_REPO
-      url = "#{@host_with_user}:#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      url = "git@gitorious.test:#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
       assert_equal url, @repository.push_url
 
       @repository.kind = Repository::KIND_USER_REPO
       @repository.owner = users(:johan)
-      url = "#{@host_with_user}:#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      url = "git@gitorious.test:#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
       assert_equal url, @repository.push_url
     end
 
     should "has a http clone url with the project name, if it is a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO
-      assert_equal "#{GitoriousConfig['scheme']}://git.#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
+      assert_equal "#{Gitorious.scheme}://#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
     end
 
     should "have a http clone url with the team/user, if it is not a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_TEAM_REPO
-      url = "#{GitoriousConfig['scheme']}://git.#{@host}/#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      url = "#{Gitorious.scheme}://#{@host}/#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
       assert_equal url, @repository.http_clone_url
 
       @repository.owner = users(:johan)
       @repository.kind = Repository::KIND_USER_REPO
-      url = "#{GitoriousConfig['scheme']}://git.#{@host}/#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      url = "#{Gitorious.scheme}://#{@host}/#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
       assert_equal url, @repository.http_clone_url
     end
 
@@ -169,11 +176,11 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal expected_dir, @repository.full_repository_path
     end
 
-    should "always display SSH URLs when so instructed" do
-      old_value = GitoriousConfig["always_display_ssh_url"]
-      GitoriousConfig["always_display_ssh_url"] = true
+    should "always display SSH URLs when no git:// or http:// but SSH is enabled" do
+      Gitorious.stubs(:git_daemon).returns(nil)
+      Gitorious.stubs(:git_http).returns(nil)
+
       assert @repository.display_ssh_url?(users(:moe))
-      GitoriousConfig["always_display_ssh_url"] = old_value
     end
   end
 
@@ -309,7 +316,7 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal repo, Repository.find_by_path(path)
     end
 
-    should_eventually "finds a repository by its path, regardless of repository kind" do
+    should "finds a repository by its path, regardless of repository kind" do
       repo = projects(:johans).wiki_repository
       path = File.join(RepositoryRoot.default_base_path.chomp("/"),
                         projects(:johans).slug, "#{repo.name}.git")
@@ -472,10 +479,10 @@ class RepositoryTest < ActiveSupport::TestCase
       @repository.kind = Repository::KIND_PROJECT_REPO
       @repository.project.repositories << new_repos(:name => "another")
       @repository.save!
-      @repository.committerships.create!({
-        :committer => users(:moe),
-        :permissions => (Committership::CAN_REVIEW | Committership::CAN_COMMIT)
-      })
+      committership = @repository.committerships.new
+      committership.committer = users(:moe)
+      committership.permissions = Committership::CAN_REVIEW | Committership::CAN_COMMIT
+      committership.save!
     end
 
     should "be deletable by admins" do
@@ -603,19 +610,19 @@ class RepositoryTest < ActiveSupport::TestCase
     repo.committerships.create_with_permissions!({
         :committer => users(:johan)
       }, Committership::CAN_COMMIT)
-    assert_equal [users(:johan).login], committers(repo).map(&:login)
+
+    assert_equal [users(:johan).login], committers(repo.reload).map(&:login)
 
     repo.committerships.create_with_permissions!({
         :committer => groups(:team_thunderbird)
       }, Committership::CAN_COMMIT)
     exp_users = groups(:team_thunderbird).members.unshift(users(:johan))
-    assert_equal exp_users.map(&:login), committers(repo).map(&:login)
+    assert_equal exp_users.map(&:login).sort, committers(repo.reload).map(&:login).sort
 
     groups(:team_thunderbird).add_member(users(:moe), Role.admin)
     repo.reload
     assert committers(repo).include?(users(:moe))
   end
-
 
   should "know you can request merges from it"  do
     repo = repositories(:johans2)
@@ -628,19 +635,17 @@ class RepositoryTest < ActiveSupport::TestCase
     assert !can_request_merge?(users(:mike), repo), "mainlines should not request merges"
   end
 
-  should "use a sharded hashed path if enable_repository_dir_sharding is toggled" do
-    GitoriousConfig["enable_repository_dir_sharding"] = true
+  should "use a sharded hashed path if RepositoryRoot is configured to" do
+    RepositoryRoot.stubs(:shard_dirs?).returns(true)
     repository = new_repos
     assert repository.new_record?, "repository.new_record? should be true"
     repository.save!
     assert_not_nil repository.hashed_path
     assert_equal 3, repository.hashed_path.split("/").length
     assert_match(/[a-z0-9\/]{42}/, repository.hashed_path)
-    GitoriousConfig["enable_repository_dir_sharding"] = false
   end
 
   should "use repo name for path by default, not sharded hashed paths" do
-    GitoriousConfig["enable_repository_dir_sharding"] = false
     repository = new_repos
     FileUtils.mkdir_p(repository.full_repository_path, :mode => 0755)
     repository.save!
@@ -762,7 +767,7 @@ class RepositoryTest < ActiveSupport::TestCase
       @repo.committerships.create_with_permissions!({
           :committer => users(:moe)
         }, Committership::CAN_REVIEW)
-      assert reviewers(@repo).map(&:login).include?(users(:moe).login)
+      assert reviewers(@repo.reload).map(&:login).include?(users(:moe).login)
     end
 
     context "permission helpers" do
@@ -802,17 +807,20 @@ class RepositoryTest < ActiveSupport::TestCase
 
     should "return a list of the users who are admin for the repository if owned_by_group?" do
       @repo.change_owner_to!(groups(:a_team))
-      assert_equal([users(:johan)], @repo.owners)
+      assert_equal(1, @repo.owners.count)
+      assert_equal(users(:johan), @repo.owners.first)
     end
 
     should "not throw an error if transferring ownership to a group if the group is already a committer" do
       @repo.change_owner_to!(groups(:team_thunderbird))
-      assert_equal([users(:mike)], @repo.owners)
+      assert_equal(1, @repo.owners.count)
+      assert_equal(users(:mike), @repo.owners.first)
     end
 
     should "return the owner if owned by user" do
       @repo.change_owner_to!(users(:moe))
-      assert_equal([users(:moe)], @repo.owners)
+      assert_equal(1, @repo.owners.count)
+      assert_equal(users(:moe), @repo.owners.first)
     end
   end
 
@@ -866,7 +874,7 @@ class RepositoryTest < ActiveSupport::TestCase
   end
 
   context "Thottling" do
-    setup{ Repository.destroy_all }
+    setup { Repository.all.collect(&:destroy) }
 
     should "throttle on create" do
       assert_nothing_raised do
@@ -882,14 +890,14 @@ class RepositoryTest < ActiveSupport::TestCase
   end
 
   context "Logging updates" do
-    setup {@repository = repositories(:johans)}
+    setup { @repository = repositories(:johans) }
 
     should "generate events for each value that is changed" do
       assert_incremented_by(@repository.events, :size, 1) do
         @repository.log_changes_with_user(users(:johan)) do
           @repository.replace_value(:name, "new_name")
         end
-        assert @repository.save
+        assert @repository.save!
       end
       assert_equal "new_name", @repository.reload.name
     end
@@ -957,8 +965,8 @@ class RepositoryTest < ActiveSupport::TestCase
 
   context "Merge request repositories" do
     setup do
-      @project = Factory.create(:user_project)
-      @main_repo = Factory.create(:repository, :project => @project, :owner => @project.owner, :user => @project.user)
+      @project = FactoryGirl.create(:user_project)
+      @main_repo = FactoryGirl.create(:repository, :project => @project, :owner => @project.owner, :user => @project.user)
     end
 
     should "initially not have a merge request repository" do
@@ -1020,13 +1028,13 @@ class RepositoryTest < ActiveSupport::TestCase
   context "Fresh repositories" do
     setup do
       Repository.destroy_all
-      @me = Factory.create(:user, :login => "johnnie")
-      @project = Factory.create(:project, :user => @me,
+      @me = FactoryGirl.create(:user, :login => "johnnie")
+      @project = FactoryGirl.create(:project, :user => @me,
         :owner => @me)
-      @repo = Factory.create(:repository, :project => @project,
+      @repo = FactoryGirl.create(:repository, :project => @project,
         :owner => @project, :user => @me)
       @users = %w(bill steve jack nellie).map { | login |
-        Factory.create(:user, :login => login)
+        FactoryGirl.create(:user, :login => login)
       }
       @user_repos = @users.map do |u|
         new_repo = Repository.new_by_cloning(@repo)
@@ -1203,8 +1211,12 @@ class RepositoryTest < ActiveSupport::TestCase
   context "Database authorization" do
     context "with private repositories enabled" do
       setup do
-        GitoriousConfig["enable_private_repositories"] = true
+        @settings = Gitorious::Configuration.prepend("enable_private_repositories" => true)
         @repository = repositories(:johans)
+      end
+
+      teardown do
+        Gitorious::Configuration.prune(@settings)
       end
 
       should "mark repository as private" do
@@ -1264,27 +1276,25 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     context "with private repositories disabled" do
-      setup do
-        GitoriousConfig["enable_private_repositories"] = false
-        @repository = repositories(:johans)
-      end
-
       should "allow anonymous user to view 'private' repository" do
-        @repository.add_member(users(:johan))
-        assert can_read?(nil, @repository)
+        Gitorious::Configuration.override("enable_private_repositories" => false) do
+          @repository = repositories(:johans)
+          @repository.add_member(users(:johan))
+
+          assert can_read?(nil, @repository)
+        end
       end
     end
 
     context "making repositories private" do
-      setup do
+      should "add owner as member" do
         @user = users(:johan)
         @repository = repositories(:johans)
-        GitoriousConfig["enable_private_repositories"] = true
-      end
+        Gitorious::Configuration.override("enable_private_repositories" => true) do
+          @repository.make_private
 
-      should "add owner as member" do
-        @repository.make_private
-        assert !can_read?(users(:mike), @repository)
+          assert !can_read?(users(:mike), @repository)
+        end
       end
     end
   end
@@ -1305,24 +1315,26 @@ class RepositoryTest < ActiveSupport::TestCase
 
     should "not allow users as repository name" do
       repo = otherwise_valid_repository(:name => "users")
-      assert repo.errors.on :name
+      assert repo.errors[:name]
     end
 
     should "not allow 'groups' as repository name" do
       repo = otherwise_valid_repository(:name => "groups")
-      assert repo.errors.on :name
+      assert repo.errors[:name]
     end
   end
 
   context "Deletion" do
-    setup {
+    setup do
       @repository = repositories(:johans)
-    }
+    end
 
     should "ensure merge requests are removed first to avoid cascading validation errors" do
       mr = mock
-      mr.expects(:destroy).times(2)
-      @repository.stubs(:merge_requests).returns([mr])
+      mr.expects(:destroy).times(1)
+      merge_requests = [mr]
+      def merge_requests.delete_all; end
+      @repository.stubs(:merge_requests).returns(merge_requests)
       @repository.destroy
     end
   end

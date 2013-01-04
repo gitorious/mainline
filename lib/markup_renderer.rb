@@ -20,10 +20,10 @@ require "zlib"
 
 class MarkupRenderer
   class NotProcessedYetError < StandardError; end
-  
+
   WRAPPER_NAME = "markdown-wrapper".freeze
-  PRE_TAG_EXTRATION_KEY = "gts-markup-renderer".freeze
-  
+  PRE_TAG_EXTRACTION_KEY = "gts-markup-renderer".freeze
+
   def initialize(content, options = {})
     @content = content.to_s
     @options = options
@@ -48,12 +48,12 @@ class MarkupRenderer
     @content.gsub!(/(<pre>.*?<\/pre>)/im) do |pre|
       crc = Zlib.crc32(pre)
       pre_tag_content[crc] = pre
-      "$#{PRE_TAG_EXTRATION_KEY}-#{crc}$"
+      "$#{PRE_TAG_EXTRACTION_KEY}-#{crc}$"
     end
 
     # Convert windows lineendings
     @content.gsub!(/\r\n?/, "\n")
-    
+
     # Convert any single newlines to space-space-newline
     # so markdown will break them
     @content.gsub!(/([^\n]\n)(?=[^\n])/) do |m|
@@ -61,7 +61,7 @@ class MarkupRenderer
     end
 
     # re-insert the extracted <pre> tag content
-    @content.gsub!(/\$#{PRE_TAG_EXTRATION_KEY}-(\d+)\$/) do
+    @content.gsub!(/\$#{PRE_TAG_EXTRACTION_KEY}-(\d+)\$/) do
       pre_tag_content[$1.to_i]
     end
 

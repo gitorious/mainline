@@ -25,7 +25,7 @@ class CommittershipsController < ApplicationController
 
   def index
     @committerships = paginate(page_free_redirect_options) do
-      @repository.committerships.paginate(:all, :page => params[:page])
+      @repository.committerships.paginate(:page => params[:page])
     end
 
     @root = Breadcrumb::Committerships.new(@repository)
@@ -51,7 +51,7 @@ class CommittershipsController < ApplicationController
       else
         flash[:success] = "Team added as committers"
       end
-      redirect_to([@owner, @repository, :committerships])
+      redirect_to([@repository.project, @repository, :committerships])
     else
       render :action => "new"
     end
@@ -72,7 +72,7 @@ class CommittershipsController < ApplicationController
 
     if @committership.save
       flash[:success] = "Permissions updated"
-      redirect_to([@owner, @repository, :committerships])
+      redirect_to([@repository.project, @repository, :committerships])
     else
       render "edit"
     end
@@ -86,11 +86,11 @@ class CommittershipsController < ApplicationController
     # We have no other way of passing destroying user along
     # except restructing code to not use implicit event hooks.
     @committership.creator = current_user
-    
+
     if @committership.destroy
       flash[:notice] = "The committer was removed."
     end
-    redirect_to([@owner, @repository, :committerships])
+    redirect_to([@repository.project, @repository, :committerships])
   end
 
   protected
@@ -99,7 +99,7 @@ class CommittershipsController < ApplicationController
       respond_to do |format|
         format.html {
           flash[:error] = I18n.t "repositories_controller.adminship_error"
-          redirect_to([@owner, @repository])
+          redirect_to([@repository.project, @repository])
         }
         format.xml  {
           render :text => I18n.t( "repositories_controller.adminship_error"),

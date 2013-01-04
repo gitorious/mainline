@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,10 +17,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../../test_helper'
+require "test_helper"
 
 class BlobsHelperTest < ActionView::TestCase
+  include ERB::Util
 
   def included_modules
     (class << self; self; end).send(:included_modules)
@@ -36,12 +37,12 @@ class BlobsHelperTest < ActionView::TestCase
   context "render_highlighted()" do
     should "html escape the line & add the proper class" do
       res = render_highlighted("puts '<foo>'", "foo.rb")
-      assert res.include?(%Q{<td class="code"><pre class="prettyprint lang-rb">puts '&lt;foo&gt;'</pre></td>}), res
+      assert res.include?(%Q{<td class="code"><pre class="prettyprint lang-rb">puts &#x27;&lt;foo&gt;&#x27;</pre></td>}), "Res: #{res}"
     end
 
     should "add line numbers" do
       res = render_highlighted("alert('moo')\nalert('moo')", "foo.js")
-      assert res.include?(%Q{<td class="line-numbers"><a href="#line2" name="line2">2</a></td>} ), res
+      assert res.include?(%Q{<td class="line-numbers"><a href="#line2" name="line2">2</a></td>} ), "Res: #{res}"
     end
   end
 

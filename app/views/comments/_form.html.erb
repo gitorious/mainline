@@ -1,83 +1,84 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
-<% comment ||= nil -%>
+<% comment ||= Comment.new -%>
 <% sha1 ||= nil -%>
 <% parent ||= nil -%>
 <div id="comment-form">
-<h3><%= t("views.comments.add_title") %>:</h3>
+  <h3><%= t("views.comments.add_title") %>:</h3>
 
-<% if logged_in? -%>
-  <%= error_messages_for :comment -%>
-  <% form_for(:comment, :url => new_polymorphic_comment_path(parent, comment || Comment.new)) do |f| -%>
-    <% if sha1 -%>
-      <%= f.hidden_field :sha1, :value => sha1 -%>
-    <% end -%>
-    <p>
-      <%= f.label :body, t("views.comments.body") -%>
-      <span class="hint">
-        (<%= markdown_hint -%>)
-      </span><br />
-      <%= f.text_area :body, :class => "text medium" -%><br />
-    </p>
-    <p class="hint markdown_help_link"><small>
-      <a href="#markdown-help" class="markdown-help-toggler">Toggle Markdown help</a>
-    </small></p>
-    <%= render_markdown_help %>
-    <div id="comment_preview">
-
-    </div>
-    <%- if comment_applies_to_merge_request?(parent) -%>
-    <p>
-      <%= f.label :state, 'Status' %><br />
-      <%= f.select :state, statuses_for_merge_request_for_select(parent),
-           :selected => parent.status_tag.to_s, :include_blank => true -%>
-    </p>
-
-    <p>
-      <%- if !parent.watched_by?(current_user) -%>
-        <%= label_tag(:add_to_favorites, "Start watching") %>:
-        <%= check_box_tag(:add_to_favorites, "on") %> <br />
-        <span class="hint">
-          If you later on want to stop watching this <%= parent.class.human_name -%>,
-          simply click the button on the merge request labelled
-          &quot;Stop watching&quot; at the top of the page
-        </span>
-      <%- end -%>
-    </p>
-    <%- end -%>
-    <p>
-      <input type="button" class="preview" value="Preview" id="comment_preview_button" />
-      <%- if MergeRequest === parent && (logged_in? && can_resolve_merge_request?(current_user, parent)) -%>
-        <%= f.submit t("views.comments.update_or_add") -%>
-      <% else -%>
-        <%= f.submit t("views.comments.add") -%>
+  <% if logged_in? -%>
+    <%= error_messages(comment) -%>
+    <%= form_for(:comment, :url => new_polymorphic_comment_path(parent, comment)) do |f| -%>
+      <% if sha1 -%>
+        <%= f.hidden_field :sha1, :value => sha1 -%>
       <% end -%>
+      <p>
+        <%= f.label :body, t("views.comments.body") -%>
+        <span class="hint">
+          (<%= markdown_hint -%>)
+        </span><br />
+        <%= f.text_area :body, :class => "text medium" -%><br />
+      </p>
+      <p class="hint markdown_help_link"><small>
+          <a href="#markdown-help" class="markdown-help-toggler">Toggle Markdown help</a>
+        </small></p>
+      <%= render_markdown_help %>
+      <div id="comment_preview">
+
+      </div>
+      <%- if comment_applies_to_merge_request?(parent) -%>
+        <p>
+          <%= f.label :state, 'Status' %><br />
+          <%= f.select :state, statuses_for_merge_request_for_select(parent),
+              :selected => parent.status_tag.to_s, :include_blank => true -%>
+        </p>
+
+        <p>
+          <%- if !parent.watched_by?(current_user) -%>
+            <%= label_tag(:add_to_favorites, "Start watching") %>:
+            <%= check_box_tag(:add_to_favorites, "on") %> <br />
+            <span class="hint">
+              If you later on want to stop watching this <%= parent.class.human_name -%>,
+              simply click the button on the merge request labelled
+              &quot;Stop watching&quot; at the top of the page
+            </span>
+          <%- end -%>
+        </p>
+      <%- end -%>
+      <p>
+        <input type="button" class="preview" value="Preview" id="comment_preview_button" />
+        <%- if MergeRequest === parent && (logged_in? && can_resolve_merge_request?(current_user, parent)) -%>
+          <%= f.submit t("views.comments.update_or_add") -%>
+        <% else -%>
+          <%= f.submit t("views.comments.add") -%>
+        <% end -%>
+      </p>
+    <% end -%>
+  <% else -%>
+    <p>
+      <em><%= link_to t("views.sessions.login"), new_sessions_path -%> or
+        <%= link_to t("views.users.create"), new_user_path -%> to post a comment</em>
     </p>
   <% end -%>
-<% else -%>
-  <p>
-    <em><%= link_to t("views.sessions.login"), new_sessions_path -%> or 
-    <%= link_to t("views.users.create"), new_user_path -%> to post a comment</em>
-  </p>
-<% end -%>
 </div>

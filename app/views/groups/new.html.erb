@@ -1,32 +1,33 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <h2 class="content-header"><%= t("views.groups.create_team") -%></h2>
 
-<%= error_messages_for :group -%>
-<% form_for @group, :html => {:multipart => true} do |f| -%>
+<%= error_messages(@group) -%>
+<%= form_for @group, :html => {:multipart => true} do |f| -%>
 <fieldset>
   <li>
     <%= f.label :name, t("views.groups.team_name") -%>
     <div><%= f.text_field :name -%></div>
   </li>
-  
+
   <li>
     <%= f.label :description, t('views.groups.description') -%>
     <div><%= f.text_area :description, :class => "text wide tall" -%></div>
@@ -50,11 +51,11 @@
 
   <% # TODO: be able to add a bunch of members right away -%>
 </fieldset>
-<fieldset class="submit"> 
+<fieldset class="submit">
   <%= f.submit t("views.groups.create_team_submit") -%>
 </fieldset>
 <% end -%>
-<% content_for :sidebar do -%>
-<h2>Information</h2>
+<%= content_for :sidebar do -%>
+  <h2>Information</h2>
   <p><%= t("views.groups.new_team_after_create_hint") -%></p>
 <% end -%>

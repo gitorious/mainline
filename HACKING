@@ -1,58 +1,19 @@
 == Guide to Hacking Gitorious
 
-=== Dependencies
+To get started you need a working Gitorious setup. Gitorious ships
+with two scripts that gets most enough services up and running to work
+on it. See doc/setup-dev-env-centos.sh or doc/setup-dev-env-ubuntu.sh.
+These scripts are executable annotated walkthroughs for getting
+Gitorious up and running. If you're on e.g. Debian, the Ubuntu script
+should work, but you will likely need to go through it manually.
 
-Ruby libraries/bindings/gems
+On a box that has no existing Ruby development environment running
+either of the two aforementioned scripts will take about 10-15
+minutes.
 
-* BlueCloth (http://rubyforge.org/projects/bluecloth/)
-* mime-types (http://rubyforge.org/projects/mime-types)
-* oniguruma (http://rubyforge.org/projects/oniguruma)
-* textpow (http://rubyforge.org/projects/textpow)
-* chronic (http://rubyforge.org/projects/chronic)
-* rmagick (http://rubyforge.org/projects/rmagick)
-
-Libraries/applications:
-
-* Git (http://git-scm.org)
-* Oniguruma C library (http://www.geocities.jp/kosako3/oniguruma/)
-* Sphinx (http://sphinxsearch.com/)
-
-(App is deployed on mysql, although source should be free of mysql-isms/quirks)
-
-
-=== The Hackers digest guide:
-
-1. Do the normal rails app stuff (database.yml etc.)
-
-2. Rename the config/gitorious.sample.yml file to gitorious.yml, and update it with your changes.
-
-3a. If you want real project data, find a project, set the 'ready' status to true, create a bare git repository (git --bare init) in the directory GitoriousConfig['repository_base_path']/#{project.slug}/#{repository.name}.git, and push something to that repository (cd to a git repository with commits and do "git push path/to/the/bare/repository/you/just/created master").
-
-3b. OR run the script/task_performer and let it create the repository for you (remember to do step 2 first)
-
-4. Get your git on!
-
-Consult the mailinglist (http://groups.google.com/group/gitorious) or drop in
-by #gitorious on irc.freenode.net if you have questions.
-
-
-=== Tasks and other scripts
-
-* rake db:setup creates the initial database tables
-* script/task_performer runs any tasks in the queue (creating repositories etc)
-* script/graph_generator generates graph.
-* rake ultrasphinx:configure configures sphinx
-* rake ultrasphinx:index runs the search indexer
-* rake ultrasphinx:daemon:start and ultrasphinx:daemon:stop manage the sphinx daemon
-
-
-=== PostgreSQL
-
-* Install the functions in vendor/plugins/ultrasphinx/lib/ultrasphinx/postgresql/
-* After running "rake ultrasphinx:configure" you'll have to replace all instances of user with "user" in ultrasphinx's config file (user is a keyword in PostgreSQL).
-
-  perl -p -i -e 's/ user([^s]{1})/ "user"$1/g' config/ultrasphinx/*.conf
-
+Alternatively, if you're OK with working through a virtual machine,
+you can grab the fully automated installer or one of the pre-built VMs
+from http://getgitorious.org.
 
 === Coding style
 

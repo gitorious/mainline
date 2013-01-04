@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,8 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../../../test_helper'
+require "test_helper"
 
 class TextEventRenderingTest < ActiveSupport::TestCase
   def setup
@@ -43,7 +43,7 @@ class TextEventRenderingTest < ActiveSupport::TestCase
 
     should "always include a project link" do
       res = render(@event)
-      assert_match /\n#{GitoriousConfig['scheme']}:\/\/#{GitoriousConfig['gitorious_host']}\/johans-project$/, res
+      assert_match /\n#{Gitorious.scheme}:\/\/#{Gitorious.host}\/johans-project$/, res
     end
 
     should "raise error for unknown actions" do
@@ -96,7 +96,7 @@ class TextEventRenderingTest < ActiveSupport::TestCase
     end
 
     should "render the url of the clone" do
-      exp = " #{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/#{@clone_repo.url_path}"
+      exp = Gitorious.url("/#{@clone_repo.url_path}")
       assert @output.include?(exp), "did not include the url in: #{@output}"
     end
   end
@@ -155,7 +155,7 @@ class TextEventRenderingTest < ActiveSupport::TestCase
       assert_match /^johan deleted merge request for johansprojectrepos-clone with johansprojectrepos/, result
     end
   end
-  
+
   context "creating and deleting tags" do
     setup do
       @event.data = "v1.0"
@@ -340,7 +340,7 @@ class TextEventRenderingTest < ActiveSupport::TestCase
     should "include a link to the repo" do
       res = render(@event)
       url = "gitorious.test/#{@event.target.url_path}"
-      assert res.include?(url), "repo url not in: #{res}"
+      assert res.include?(url), "Expected to contain '#{url}': #{res}"
     end
 
     should "include the repo description, if present" do
@@ -433,10 +433,6 @@ class TextEventRenderingTest < ActiveSupport::TestCase
   protected
   def render(event)
     ::EventRendering::Text.render(event)
-  end
-
-  def base_url
-    "#{GitoriousConfig['scheme']}://" + GitoriousConfig["gitorious_host"]
   end
 
   def mock_git_git_show_call

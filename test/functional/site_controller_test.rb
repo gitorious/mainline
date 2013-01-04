@@ -17,43 +17,18 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 require "test_cache_store"
 
 class SiteControllerTest < ActionController::TestCase
-
   should_render_in_site_specific_context :except => [:about, :faq, :contact, :tos, :privacy_policy]
   should_render_in_global_context :only => [:about, :faq, :contact, :tos, :privacy_policy]
-
-  should_enforce_ssl_for(:get, :dashboard)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :public_timeline)
 
   def setup
     setup_ssl_from_config
   end
 
-  def alter_gitorious_config(key, value)
-    old_value = GitoriousConfig[key]
-    GitoriousConfig[key] = value
-
-    yield
-
-    if old_value.nil?
-      GitoriousConfig.delete(key)
-    else
-      GitoriousConfig[key] = old_value
-    end
-  end
-
   context "#activity" do
-    should "route /activity to public_timeline" do
-      assert_recognizes({
-          :controller => "site",
-          :action => "public_timeline"
-        }, "/activities")
-    end
-
     should "render the global activity timeline" do
       get :public_timeline
       assert_response :success
@@ -87,7 +62,7 @@ class SiteControllerTest < ActionController::TestCase
 
     context "Anonymous users" do
       should "render the public timeline" do
-        alter_gitorious_config("is_gitorious_dot_org", false) do
+        Gitorious::Configuration.override("is_gitorious_dot_org" => false) do
           get :index
           assert_response :success
           assert_template "site/index"
@@ -95,16 +70,9 @@ class SiteControllerTest < ActionController::TestCase
       end
 
       should "not include any commit_repositories" do
+        BlogFeed.any_instance.stubs(:fetch).returns([])
         get :index
         assert_nil assigns(:repositories)
-      end
-
-      should "use the funky layout" do
-        alter_gitorious_config("is_gitorious_dot_org", true) do
-          get :index
-          assert_response :success
-          assert_equal "layouts/second_generation/application", @response.layout
-        end
       end
     end
 
@@ -112,7 +80,11 @@ class SiteControllerTest < ActionController::TestCase
       setup do
         @project = Project.first
         enable_private_repositories
-        GitoriousConfig["is_gitorious_dot_org"] = false
+        @settings = Gitorious::Configuration.append("is_gitorious_dot_org" => false)
+      end
+
+      teardown do
+        Gitorious::Configuration.prune(@settings)
       end
 
       should "not display unauthenticated projects" do
@@ -133,8 +105,8 @@ class SiteControllerTest < ActionController::TestCase
 
       should "not display unauthenticated projects in public timeline" do
         logout
-        projects = Project.find(:all)
-        repos = Repository.find(:all)
+        projects = Project.all
+        repos = Repository.all
         Project.stubs(:most_active_recently).returns(projects)
         Repository.stubs(:most_active_clones).returns(repos)
 
@@ -163,9 +135,7 @@ class SiteControllerTest < ActionController::TestCase
 
   context "#index, with a non-default site" do
     setup do
-      paths = ActionController::Base.view_paths
-      paths << File.join(Rails.root, "test", "fixtures", "views")
-      ActionController::Base.view_paths = paths
+      @controller.prepend_view_path(File.join(Rails.root, "test", "fixtures", "views"))
       @site = sites(:qt)
       @request.host = "#{@site.subdomain}.gitorious.test"
     end
@@ -215,17 +185,18 @@ class SiteControllerTest < ActionController::TestCase
 
   context "in Private Mode" do
     setup do
-      GitoriousConfig["public_mode"] = false
-      GitoriousConfig["is_gitorious_dot_org"] = false
+      @settings = Gitorious::Configuration.append("is_gitorious_dot_org" => false)
     end
 
     teardown do
-      GitoriousConfig["public_mode"] = true
-      GitoriousConfig["is_gitorious_dot_org"] = true
+      Gitorious::Configuration.prune(@settings)
     end
 
     should "GET / should not show private content in the homepage" do
+      Gitorious.stubs(:public?).returns(false)
       get :index
+
+      assert_response 200
       assert_no_match(/Newest projects/, @response.body)
       assert_no_match(/action\=\"\/search"/, @response.body)
       assert_no_match(/Creating a user account/, @response.body)

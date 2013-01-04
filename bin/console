@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require File.expand_path(File.dirname(__FILE__) + "/setup")
 Gitorious::CLI.new.run_with_gitorious_environment do
-  require "config/boot"
-  require "commands/console"
+  require "./config/environment"
+  require "irb"
+  IRB.start
 end

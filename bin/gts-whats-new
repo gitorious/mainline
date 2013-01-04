@@ -1,8 +1,9 @@
-#!/usr/bin/env ruby -wKU
+#!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
 
-require "rubygems"
-require "httparty"
 require "pp"
+require "bundler"
+Bundler.require(:http_utils) if defined?(Bundler)
 
 project_name = ARGV[0]
 local_branch = ARGV[1] || "master"
@@ -12,7 +13,7 @@ abort("Usage: #{$0} projectname <local branch>") unless project_name
 class GitoriousAPI
   include HTTParty
   base_uri "http://gitorious.org"
-  
+
   def project(name)
     data = self.class.get("/projects/#{name}.xml", { :format => :xml })
     data["project"]
@@ -29,9 +30,9 @@ project["repositories"].each do |repo|
     `git remote add gts-remotes/#{repo["name"]} #{git_url}`
   end
   `git fetch gts-remotes/#{repo["name"]}`
-  
-  Dir[".git/refs/remotes/gts-remotes/#{repo["name"]}/*"].map{|s| 
-    File.basename(s) 
+
+  Dir[".git/refs/remotes/gts-remotes/#{repo["name"]}/*"].map{|s|
+    File.basename(s)
   }.each do |branch|
     full_branch_name = "gts-remotes/#{repo["name"]}/#{branch}"
     log = `git log --pretty="format:%Cblue%h %an: %Creset%s" #{local_branch}..#{full_branch_name}`
@@ -39,7 +40,7 @@ project["repositories"].each do |repo|
       puts "skipping #{full_branch_name}, nothing new…"
       next
     end
-  
+
     puts "== In #{full_branch_name}"
     puts log
     puts

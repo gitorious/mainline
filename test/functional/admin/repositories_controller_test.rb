@@ -19,9 +19,6 @@
 require "test_helper"
 
 class Admin::RepositoriesControllerTest < ActionController::TestCase
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:put, :recreate)
-
   def setup
     setup_ssl_from_config
   end
@@ -40,8 +37,9 @@ class Admin::RepositoriesControllerTest < ActionController::TestCase
 
     should "re-post the creation message" do
       login_as :johan
-      @repo = repositories(:johans)
-      Repository.expects(:find).with("2").returns(@repo)
+      repo = repositories(:johans)
+      Repository.expects(:find).with("2").returns(repo)
+
       put :recreate, :id => 2
       assert_response :redirect
     end

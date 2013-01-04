@@ -11,17 +11,17 @@ class CreateGroups < ActiveRecord::Migration
       add_index :groups, [:name, :public]
       add_index :groups, :user_id
       add_index :groups, [:project_id, :public]
-    
+
       create_table :roles do |t|
         t.string      :name
         t.integer     :kind
         t.timestamps
       end
-    
-      ActiveRecord::Base.reset_column_information
+
+      Role.reset_column_information
       Role.create!(:name => "Administrator", :kind => Role::KIND_ADMIN)
       Role.create!(:name => "Committer", :kind => Role::KIND_MEMBER)
-    
+
       create_table :memberships do |t|
         t.integer     :group_id
         t.integer     :user_id

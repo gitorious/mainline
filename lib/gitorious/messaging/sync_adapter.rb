@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -31,7 +31,7 @@ module Gitorious::Messaging::SyncAdapter
     self.load_env if !defined?(Rails)
     queue = Publisher::QUEUES[identifier.to_s]
     require "processors/#{queue}_processor"
-    Object.const_get("#{queue.split("_").collect(&:capitalize)}Processor")
+    Object.const_get("#{queue.split("_").collect(&:capitalize).join}Processor")
   end
 
   module Publisher

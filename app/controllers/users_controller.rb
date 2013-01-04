@@ -31,13 +31,9 @@ class UsersController < ApplicationController
   before_filter :find_user,
     :only => [:show, :edit, :update, :password, :update_password, :avatar]
   before_filter :require_current_user,
-    :only => [:edit, :update, :password, :update_password, :avatar, ]
+    :only => [:edit, :update, :password, :update_password, :avatar]
   before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
   before_filter :require_public_user, :only => :show
-
-  verify :method => :put, :only => [:update_password, :update]
-  verify :method => :delete, :only => :avatar
-  verify :method => :post, :only => [:create, :forgot_password_create]
 
   renders_in_global_context
   layout :decide_layout
@@ -47,27 +43,26 @@ class UsersController < ApplicationController
   end
 
   def show
-    include = [:tags, { :repositories => :project }]
-    @projects = filter(@user.projects.find(:all, :include => include))
+    @projects = filter(@user.projects.includes(:tags, { :repositories => :project }))
     @repositories = filter(@user.commit_repositories)
     @events = paginated_events
     return if @events.count == 0 && params.key?(:page)
 
     @messages = @user.messages_in_inbox(3) if @user == current_user
     @favorites = filter(@user.favorites.all(:include => :watchable))
-    @atom_auto_discovery_url = feed_user_path(@user, :format => :atom)
+    @atom_auto_discovery_url = user_feed_path(@user, :format => :atom)
     @atom_auto_discovery_title = "Public activity feed"
 
     respond_to do |format|
       format.html { }
-      format.atom { redirect_to feed_user_path(@user, :format => :atom) }
+      format.atom { redirect_to user_feed_path(@user, :format => :atom) }
     end
   end
 
   def feed
     @user = User.find_by_login!(params[:id])
-    @events = filter(@user.events.find(:all, :order => "events.created_at desc",
-                                       :include => [:user, :project], :limit => 30))
+    @events = filter(@user.events.order("events.created_at desc").
+                     includes(:user, :project).limit(30))
     respond_to do |format|
       format.html { redirect_to user_path(@user) }
       format.atom { }
@@ -83,10 +78,13 @@ class UsersController < ApplicationController
   end
 
   def create
+    login = params[:user].delete(:login)
+    password = params[:user].delete(:password)
+    password_confirmation = params[:user].delete(:password_confirmation)
     @user = User.new(params[:user])
-    @user.login = params[:user][:login]
-    @user.password = params[:user][:password]
-    @user.password_confirmation = params[:user][:password_confirmation]
+    @user.login = login
+    @user.password = password
+    @user.password_confirmation = password_confirmation
     @user.save!
     if !@user.terms_of_use.blank?
       @user.accept_terms!
@@ -120,7 +118,7 @@ class UsersController < ApplicationController
     if params[:user] && user = User.find_by_email(params[:user][:email])
       if user.activated?
         password_key = user.forgot_password!
-        Mailer.deliver_forgotten_password(user, password_key)
+        Mailer.forgotten_password(user, password_key).deliver
         flash[:success] = "A password confirmation link has been sent to your email address"
         redirect_to(root_path)
       else
@@ -157,6 +155,8 @@ class UsersController < ApplicationController
 
   def update
     @user = current_user
+    params[:user].delete(:password)
+    params[:user].delete(:password_confirmation)
     @user.attributes = params[:user]
     if current_user.save
       flash[:success] = "Your account details were updated"
@@ -188,12 +188,17 @@ class UsersController < ApplicationController
   end
 
   def openid_build
-    @user = User.new(:identity_url => session[:openid_url], :email => session[:openid_email], :login => session[:openid_nickname], :fullname => session[:openid_fullname])
+    @user = User.new(:identity_url => session[:openid_url],
+                     :email => session[:openid_email],
+                     :fullname => session[:openid_fullname])
+    @user.login = session[:openid_nickname]
+    @user
   end
 
   def openid_create
+    login = params[:user].delete(:login)
     @user = User.new(params[:user])
-    @user.login = params[:user][:login]
+    @user.login = login
     @user.identity_url = session[:openid_url]
     if @user.save
       if !@user.terms_of_use.blank?
@@ -218,7 +223,7 @@ class UsersController < ApplicationController
     flash[:success] = "You profile image was deleted"
     redirect_to user_path
   end
-  
+
   def delete_current
     @user = current_user
     if(@user.deletable?)
@@ -232,10 +237,6 @@ class UsersController < ApplicationController
   end
 
   protected
-  def ssl_required?
-    GitoriousConfig["use_ssl"]
-  end
-
   def find_user
     @user = User.find_by_login!(params[:id])
   end

@@ -17,55 +17,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class MembershipsControllerTest < ActionController::TestCase
   should_render_in_global_context
 
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:put, :update)
-
   def setup
     setup_ssl_from_config
-  end
-
-  context "Routing" do
-    setup do
-      @group = groups(:team_thunderbird)
-    end
-
-    should "recognizes routing like /+team-name/memberships" do
-      assert_generates("/+#{@group.to_param}/memberships", {
-        :controller => "memberships",
-        :action => "index",
-        :group_id => @group.to_param
-      })
-      assert_recognizes({
-        :controller => "memberships",
-        :action => "index",
-        :group_id => @group.to_param
-      }, {:path => "/+#{@group.to_param}/memberships", :method => :get})
-    end
-
-    should "recognizes routing like /+team-name/memberships/n" do
-      membership = @group.memberships.first
-      assert_generates("/+#{@group.to_param}/memberships/#{membership.to_param}", {
-        :controller => "memberships",
-        :action => "show",
-        :group_id => @group.to_param,
-        :id => membership.to_param
-      })
-      assert_recognizes({
-        :controller => "memberships",
-        :action => "show",
-        :group_id => @group.to_param,
-        :id => membership.to_param
-      }, {:path => "/+#{@group.to_param}/memberships/#{membership.to_param}", :method => :get})
-    end
   end
 
   context "MembershipsController" do
@@ -74,14 +32,14 @@ class MembershipsControllerTest < ActionController::TestCase
       @group = groups(:team_thunderbird)
     end
 
-    context "GET /groups/N/memberships.html" do
-      should "gets the memberships successfully" do
+    context "GET group memberships" do
+      should "get memberships successfully" do
         get :index, :group_id => @group.to_param
         assert_response :success
         assert_equal @group.memberships, assigns(:memberships)
       end
 
-      should " not require adminship in index" do
+      should "not require admin for index" do
         login_as :moe
         get :index, :group_id => @group.to_param
         assert_response :success

@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -18,6 +19,6 @@
 
 class ArchivedEvent < ActiveRecord::Base
   def commits
-    self.class.find(:all, :conditions => ["target_id = ? AND target_type = ?", id, "Event"])
+    self.class.where("target_id = ? AND target_type = ?", id, "Event")
   end
 end

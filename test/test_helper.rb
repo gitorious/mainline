@@ -1,33 +1,16 @@
 ENV["RAILS_ENV"] = "test"
-require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-require "test_help"
+require File.join(File.dirname(__FILE__), "../config/environment")
+require "rails/test_help"
 require "ssl_requirement_macros"
 require "messaging_test_helper"
-
 require "shoulda"
 require "mocha"
-begin
-  require "redgreen"
-rescue LoadError
-end
+require "fast_test_helper"
 
 class ActiveSupport::TestCase
   include AuthenticatedTestHelper
   include Gitorious::Authorization
 
-  # Transactional fixtures accelerate your tests by wrapping each test method
-  # in a transaction that's rolled back on completion.  This ensures that the
-  # test database remains unchanged so your fixtures don't have to be reloaded
-  # between every test method.  Fewer database queries means faster tests.
-  #
-  # Read Mike Clark's excellent walkthrough at
-  #   http://clarkware.com/cgi/blosxom/2005/10/24#Rails10FastTesting
-  #
-  # Every Active Record database supports transactions except MyISAM tables
-  # in MySQL.  Turn off transactional fixtures in this case; however, if you
-  # don't care one way or the other, switching from MyISAM to InnoDB tables
-  # is recommended.
-  #
   # The only drawback to using transactional fixtures is when you actually
   # need to test transactions.  Since your test is bracketed by a transaction,
   # any transactions started in your code will be automatically rolled back.
@@ -45,12 +28,6 @@ class ActiveSupport::TestCase
   # Note: You'll currently still have to declare fixtures explicitly in integration tests
   # -- they do not yet inherit this setting
   fixtures :all
-
-  NULL_SHA = "0" * 40 unless defined?(NULL_SHA)
-  SHA = "a" * 40 unless defined?(SHA)
-  OTHER_SHA = "f" * 40 unless defined?(OTHER_SHA)
-
-  # Add more helper methods to be used by all tests here...
 
   def repo_path
     File.join(File.dirname(__FILE__), "..", ".git")
@@ -78,25 +55,13 @@ class ActiveSupport::TestCase
       (message || inclusion_failure(collection, object, false)))
   end
 
-  def refute(test, message=nil)
-    assert !test, message
+  def refute(*args)
+    assert(!args.shift, *args)
   end
 
   def inclusion_failure(collection, object, should_be_included)
     not_message = should_be_included ? "" : " not"
     "Expected collection (#{collection.count} items) #{not_message} to include #{object.class.name}"
-  end
-
-  def self.should_subscribe_to(queue_name)
-    should "Subscribe to message queue #{queue_name}" do
-      klass = self.class.name.sub(/Test$/, "").constantize
-
-      subscription = ActiveMessaging::Gateway.subscriptions.values.find do |s|
-        s.destination.name == queue_name && s.processor_class == klass
-      end
-
-      assert_not_nil subscription, "#{klass.name} does not subscribe to #{queue_name}"
-    end
   end
 
   def self.should_scope_pagination_to(action, klass, pluralized = nil, opt = {})
@@ -118,7 +83,6 @@ class ActiveSupport::TestCase
     should "add flash message explaining that page doesn't exist" do
       params = @params || {}
       get action, params.merge({ :page => 10 })
-
       assert_not_nil flash[:error]
       assert_match /no #{pluralized}/, flash[:error]
       assert_match /10/, flash[:error]
@@ -147,105 +111,42 @@ class ActionController::TestCase
   include Gitorious::Authorization
 
   def setup_ssl_from_config
-    return unless GitoriousConfig["use_ssl"]
+    return unless Gitorious.ssl?
 
     @request.env["HTTPS"] = "on"
     @request.env["SERVER_PORT"] = 443
   end
 
-  def self.enforce_ssl
-    context "when enforcing ssl" do
-      setup do
-        @use_ssl = GitoriousConfig["use_ssl"]
-        GitoriousConfig["use_ssl"] = true
-        login_as(:johan)
-      end
-
-      teardown do
-        GitoriousConfig["use_ssl"] = @use_ssl
-      end
-
-      context "" do
-        yield
-      end
-    end
-  end
-
-  def self.disable_ssl
-    context "when not enforcing ssl" do
-      setup do
-        @use_ssl = GitoriousConfig["use_ssl"]
-        GitoriousConfig["use_ssl"] = false
-      end
-
-      teardown do
-        GitoriousConfig["use_ssl"] = @use_ssl
-      end
-
-      context "" do
-        yield
-      end
-    end
-  end
-
-  def self.should_enforce_ssl_for(method, action, params = {}, &block)
-    enforce_ssl do
-      without_ssl_context do
-        context "#{method.to_s.upcase} :#{action}" do
-          setup do
-            block.call unless block.nil?
-            self.send(method, action, params)
-          end
-
-          should_redirect_to_ssl
-        end
-      end
-    end
-
-    disable_ssl do
-      without_ssl_context do
-        context "#{method.to_s.upcase} :#{action}" do
-          should "not redirect to HTTPS" do
-            begin
-              self.send(method, action, params)
-            rescue NoMethodError
-              # Doesn't matter, this just means we hit the controller missing
-              # some parameters
-            end
-
-            assert_not_equal "https://" + @request.host + @request.request_uri, @response.location
-          end
-        end
-      end
-    end
-  end
-
   def self.should_render_in_global_context(options = {})
-    should "Render in global context for actions" do
-      filter = @controller.class.filter_chain.find(:require_global_site_context)
-      assert_not_nil filter, ":require_global_site_context before_filter not set"
-      unless options[:except].blank?
-        assert_not_nil filter.options[:except], "no :except specified in controller"
-        assert_equal [*options[:except]].flatten.map(&:to_s).sort, filter.options[:except].sort
-      end
-      unless options[:only].blank?
-        assert_not_nil filter.options[:only], "no :only specified in controller"
-        assert_equal [*options[:only]].flatten.map(&:to_s).sort, filter.options[:only].sort
-      end
-    end
+    should_use_class_macro(
+      "Render in global context for actions",
+      "renders_in_global_context",
+      options
+    )
   end
 
   def self.should_render_in_site_specific_context(options = {})
-    should "Render in site specific context for actions" do
-      filter = @controller.class.filter_chain.find(:redirect_to_current_site_subdomain)
-      assert_not_nil filter, ":redirect_to_current_site_subdomain before_filter not set"
-      unless options[:except].blank?
-        assert_not_nil filter.options[:except], "no :except specified in controller"
-        assert_equal [*options[:except]].flatten.map(&:to_s).sort, filter.options[:except].sort
+    should_use_class_macro(
+      "Render in site specific context for actions",
+      "renders_in_site_specific_context",
+      options
+    )
+  end
+
+  # TODO: This is _horrible_. Refactor to an actual API and use that.
+  def self.should_use_class_macro(test_name, macro_name, options = {})
+    should test_name do
+      filter = extract_class_macro(@controller, macro_name)
+      assert_not_nil filter, "Class macro #{macro_name} apparently not in use"
+
+      if !options[:except].blank?
+        assert_not_nil filter[:except], "no :except specified in controller"
+        assert_equal [*options[:except]].flatten.map(&:to_s).sort, filter[:except]
       end
-      unless options[:only].blank?
-        assert_not_nil filter.options[:only], "no :only specified in controller"
-        assert_equal [*options[:only]].flatten.map(&:to_s).sort, filter.options[:only].sort
+
+      if !options[:only].blank?
+        assert_not_nil filter[:only], "no :only specified in controller"
+        assert_equal [*options[:only]].flatten.map(&:to_s).sort, filter[:only]
       end
     end
   end
@@ -256,7 +157,6 @@ class ActionController::TestCase
 
       actions.each do |method|
         send(method, action, params)
-
         assert_response 400, "Should disallow #{method} for #{action}"
       end
     end
@@ -271,7 +171,7 @@ class ActionController::TestCase
   end
 
   def enable_private_repositories(subject = nil)
-    GitoriousConfig["enable_private_repositories"] = true
+    Gitorious::Configuration.prepend("enable_private_repositories" => true)
     return subject.make_private if !subject.nil?
 
     if defined?(@project)
@@ -280,4 +180,26 @@ class ActionController::TestCase
       @repository.make_private
     end
   end
+
+  # TODO: This is _horrible_. Refactor to an actual API and use that.
+  def extract_class_macro(controller, macro)
+    klass = controller.class.to_s.underscore
+    contents = File.read(Rails.root + "app/controllers/#{klass}.rb")
+    regexp = /#{macro}(?:[ ,]+:except => (.*))?(?:[ ,]+:only => (.*))?/
+    matches = contents.match(regexp)
+    return nil if !matches
+
+    { :except => extract_strings(matches[1]),
+      :only => extract_strings(matches[2]) }
+  end
+
+  def extract_strings(str)
+    matches = str && str.match(/\[(.*)\]/)
+    matches && matches[1].split(", ").map { |s| s[1..-1] }.sort
+  end
+end
+
+class FakeMail
+  attr_reader :delivered
+  def deliver; @delivered = true; end
 end

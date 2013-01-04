@@ -18,12 +18,30 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
   setup do
     @user = User.new
   end
+
+  should have_many(:email_aliases)
+  should have_many(:committerships).dependent(:destroy)
+  should have_many(:memberships).dependent(:destroy)
+  should have_many(:email_aliases).dependent(:destroy)
+  should have_many(:favorites).dependent(:destroy)
+  should have_many(:commit_repositories)
+  should have_many(:feed_items)
+  should validate_presence_of(:login)
+  should validate_presence_of(:password)
+  should validate_presence_of(:password_confirmation)
+  should validate_presence_of(:email)
+  should validate_acceptance_of(:terms_of_use)
+  should_not allow_value("john.doe").for(:login)
+  should_not allow_value("john_doe").for(:login)
+  should allow_value("JohnDoe").for(:login)
+  should allow_value("john-doe").for(:login)
+  should allow_value("john999").for(:login)
 
   should "create a valid user" do
     assert_difference("User.count") do
@@ -31,20 +49,6 @@ class UserTest < ActiveSupport::TestCase
       assert !user.new_record?
     end
   end
-
-  should_have_many :email_aliases
-  should_have_many :committerships, :dependent => :destroy
-  should_have_many :memberships, :dependent => :destroy
-  should_have_many :email_aliases, :dependent => :destroy
-  should_have_many :commit_repositories
-  should_have_many :favorites, :dependent => :destroy
-  should_have_many :feed_items
-
-  should_validate_presence_of :login, :password, :password_confirmation, :email
-  should_validate_acceptance_of :terms_of_use
-
-  should_not_allow_values_for :login, "john.doe", "john_doe"
-  should_allow_values_for :login, "JohnDoe", "john-doe", "john999"
 
   should "downcase the login before validation" do
     u = User.new
@@ -56,14 +60,14 @@ class UserTest < ActiveSupport::TestCase
   should "require a username without spaces" do
     assert_no_difference("User.count") do
       u = create_user(:login => "joe schmoe")
-      assert_equal "is invalid", u.errors.on(:login)
+      assert_equal ["is invalid"], u.errors[:login]
     end
   end
 
   should "require an email that looks emailish" do
     assert_no_difference("User.count") do
       u = create_user(:email => "kernel.wtf")
-      assert_not_nil u.errors.on(:email)
+      assert_not_nil u.errors[:email]
     end
   end
 
@@ -199,7 +203,7 @@ class UserTest < ActiveSupport::TestCase
     u = users(:johan)
     u.identity_url = "€&/()"
     assert !u.valid?
-    assert_not_nil u.errors.on(:identity_url), u.errors.on(:identity_url)
+    assert_not_nil u.errors[:identity_url], u.errors[:identity_url]
   end
 
   should "return that the user already has a password" do
@@ -315,9 +319,9 @@ class UserTest < ActiveSupport::TestCase
 
     context "Top level messages" do
       setup do
-        @sender = Factory.create(:user)
-        @recipient = Factory.create(:user)
-        @other_user = Factory.create(:user)
+        @sender = FactoryGirl.create(:user)
+        @recipient = FactoryGirl.create(:user)
+        @other_user = FactoryGirl.create(:user)
         @message = Message.create(:sender => @sender, :recipient => @recipient, :subject => "Hello", :body => "World")
       end
 
@@ -517,6 +521,8 @@ class UserTest < ActiveSupport::TestCase
   end
 
   context "most active users" do
+    setup { Rails.cache.clear }
+
     should "be retrieved as expected" do
       u1 = create_user(:login => "joe", :email => "joe@hepp.com")
       u2 = create_user(:login => "jane", :email => "jane@hepp.com")
@@ -527,9 +533,9 @@ class UserTest < ActiveSupport::TestCase
       e4 = create_event(:action => Action::PUSH_SUMMARY, :user => u2, :body => "78")
 
       assert_not_nil User.most_active
-      assert_equal 2, User.most_active.count
-      assert_equal "2", User.most_active.first.event_count
-      assert_equal "1", User.most_active.second.event_count
+      assert_equal 2, User.most_active.all.count
+      assert_equal 2, User.most_active.first.event_count.to_i
+      assert_equal 1, User.most_active.second.event_count.to_i
     end
   end
 
@@ -546,16 +552,26 @@ class UserTest < ActiveSupport::TestCase
 
   protected
   def create_user(options = {})
-    u = User.new({ :email => "quire@example.com", :terms_of_use => "1" }.merge(options))
-    u.login = options[:login] || "quire"
-    u.password = options[:password] || "quire"
-    u.password_confirmation = options[:password_confirmation] || "quire"
+    login = options.delete(:login) || "quire"
+    password = options.delete(:password) || "quire"
+    password_confirmation = options.delete(:password_confirmation) || "quire"
+    u = User.new({
+      :email => "quire@example.com",
+      :terms_of_use => "1",
+      :aasm_state => "pending"
+    }.merge(options))
+    u.login = login
+    u.password = password
+    u.password_confirmation = password_confirmation
     u.save
     u
   end
 
   def create_event(options={})
-    c = Event.new({ :target => repositories(:johans), :body => "blabla" }.merge(options))
+    c = Event.new({
+      :target => repositories(:johans),
+      :body => "blabla"
+    }.merge(options))
     c.user = options[:user] || users(:johan)
     c.project = options[:project] || projects(:thunderbird)
     c.save!

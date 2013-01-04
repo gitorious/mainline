@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,6 +16,9 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
+require "builder"
+
 class Message < ActiveRecord::Base
   include RecordThrottling
   include Gitorious::Messaging::Publisher
@@ -34,8 +38,7 @@ class Message < ActiveRecord::Base
 
   throttle_records :create, :limit => 10,
     :counter => proc{|msg|
-      msg.sender.sent_messages.count(:all,
-        :conditions => ["created_at > ?", 1.day.ago])
+      msg.sender.sent_messages.where("created_at > ?", 1.day.ago).count
     },
     :conditions => proc{|msg| {:sender_id => msg.sender.id, :notifiable_type => nil} },
     :timeframe => 15.minutes
@@ -56,7 +59,7 @@ class Message < ActiveRecord::Base
 
   def to_xml(options = {})
     options[:indent] ||= 2
-    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
     xml.message do
       xml.tag!(:id, to_param)

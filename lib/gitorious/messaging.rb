@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require 'json'
+require "pathname"
+require "json"
 
 if !"".respond_to?(:camelize)
   class String
@@ -28,6 +29,13 @@ end
 # See lib/gitorious/messaging/ for possible implementations
 module Gitorious
   module Messaging
+    def self.adapter=(adapter)
+      @@adapter = adapter
+    end
+
+    def self.adapter
+      @@adapter || "resque"
+    end
 
     module Publisher
       # Publishes a message. The payload is JSON encoded before passed along,
@@ -103,19 +111,20 @@ module Gitorious
     end
 
     def self.load_processors
+      root = Pathname(__FILE__) + "../../../app/processors"
       %w[merge_request_git_backend merge_request merge_request_version
          message_forwarding push repository_archiving repository_creation
          repository_deletion ssh_key web_hook].each do |p|
-        require "processors/#{p}_processor"
+        require "#{root}/#{p}_processor"
       end
     end
 
     class AbortMessageException < Exception; end
-    class NoopLogger; def debug; end; end
+    class NoopLogger; def debug(message); end; end
 
     def self.logger
       return @@logger if defined? @@logger
-      return @@logger = NoopLogger.new if !defined?(ActiveSupport)
+      return @@logger = NoopLogger.new if !defined?(ActiveSupport) || !defined?(Rails)
 
       filename = "message_processing#{Rails.env.test? ? '_test' : ''}"
       io = Rails.env.development? ? STDOUT : Rails.root + "log/#{filename}.log"
@@ -139,8 +148,7 @@ module Gitorious
       Gitorious::Messaging::Consumer.use(klass)
     end
 
-    def self.configure(config)
-      adapter = config["messaging_adapter"]
+    def self.configure(adapter)
       Gitorious::Messaging.load_adapter(adapter)
       Gitorious::Messaging.configure_publisher(adapter)
       Gitorious::Messaging.configure_consumer(adapter)

@@ -1,30 +1,31 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% @page_title = t("views.blobs.page_title", :path => current_path.join("/"), :repo => @repository.name, :title => @project.title) -%>
 <%= breadcrumbs_from(@root) -%>
 <%= render "menu" -%>
 
-<% content_for :extra_head do -%>
+<%= content_for :extra_head do -%>
   <% if highlightable?(@blob) -%>
     <%= stylesheet_link_tag("prettify/prettify.css") -%>
     <%= javascript_include_tag("lib/prettify.js") -%>
@@ -35,42 +36,40 @@
 <% end -%>
 
 <% if false -%>
-<ul class="mode_selector">
-  <li class="list_header">
-    <%= t("views.blobs.wrap") %>:
-  </li>
-  <li>
-    <%= link_to_function t("views.common.toggle"), "Gitorious.Wordwrapper.toggle($$('table#codeblob td.code'))" -%>
-  </li>
-</ul>
+  <ul class="mode_selector">
+    <li class="list_header">
+      <%= t("views.blobs.wrap") %>:
+    </li>
+    <li>
+      <%= link_to_function t("views.common.toggle"), "Gitorious.Wordwrapper.toggle($$('table#codeblob td.code'))" -%>
+    </li>
+  </ul>
 <% end -%>
 
-<!-- mime: <%= @blob.mime_type -%> -->
-
 <% if textual?(@blob) && !too_big_to_render?(@blob.size) -%>
-  <% cache([:blob_render, @commit.id, @blob.id]) do -%>
-     <% help_box(:center, :error, :style => "display:none", :id => "long-file") do -%>
-        <p>
-          This file looks large and may slow your browser down if we attempt
-          to syntax highlight it, so we are showing it without any
-          pretty colors.
-          <a href="#highlight-anyway" id="highlight-anyway">Highlight
+  <%= cache([:blob_render, @commit.id, @blob.id]) do -%>
+    <%= help_box(:center, :error, :style => "display:none", :id => "long-file") do -%>
+      <p>
+        This file looks large and may slow your browser down if we attempt
+        to syntax highlight it, so we are showing it without any
+        pretty colors.
+        <a href="#highlight-anyway" id="highlight-anyway">Highlight
           it anyway</a>.
-        </p>
-     <% end -%>
+      </p>
+    <% end -%>
     <%= render_highlighted(@blob.data, current_path.last || "") -%>
   <% end -%>
 <% elsif textual?(@blob) && too_big_to_render?(@blob.size) -%>
   <p>
-        <%= t("views.blobs.too_big", :path => raw_blob_path(@commit.id, current_path)) %>
+    <%= t("views.blobs.too_big", :path => raw_blob_path(@commit.id, current_path)) %>
   </p>
 <% elsif image?(@blob) -%>
-  <% cache(blob_path(@commit.id, @blob.id)) do -%>
+  <%= cache(blob_path(@commit.id, @blob.id)) do -%>
     <%= image_tag raw_blob_path(@commit.id, current_path) -%>
   <% end -%>
 <% else -%>
   <p>
-        <%= t("views.blobs.message", :path => raw_blob_path(@commit.id, current_path)) %>
+    <%= t("views.blobs.message", :path => raw_blob_path(@commit.id, current_path)) %>
   </p>
 <% end -%>
 <%= render "unholy_highlight_mess" %>

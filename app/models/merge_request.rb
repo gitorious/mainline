@@ -39,7 +39,7 @@ class MergeRequest < ActiveRecord::Base
   after_destroy  :delete_tracking_branches
   after_create :add_to_creators_favorites
 
-  before_validation_on_create :set_sequence_number
+  before_validation(:set_sequence_number, :on => :create)
 
   attr_protected :user_id, :status, :merge_requests_need_signoff, :oauth_path_prefix,
     :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site, :sequence_number
@@ -52,9 +52,6 @@ class MergeRequest < ActiveRecord::Base
   STATUS_PENDING_ACCEPTANCE_OF_TERMS = 0
   STATUS_OPEN = 1
   STATUS_CLOSED = 5 # further states must start at 5+n (for backwards compat)
-#   STATUS_MERGED = 2
-#   STATUS_REJECTED = 3
-#   STATUS_VERIFYING = 4
 
   state_machine :status, :initial => :pending do
     state :pending, :value => ::MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS
@@ -74,10 +71,10 @@ class MergeRequest < ActiveRecord::Base
     end
   end
 
-  named_scope :public, :conditions => ["status != ?", STATUS_PENDING_ACCEPTANCE_OF_TERMS]
-  named_scope :open, :conditions => ["status = ?", STATUS_OPEN]
-  named_scope :closed, :conditions => ["status = ?", STATUS_CLOSED]
-  named_scope :by_status, lambda {|state|
+  scope :public, :conditions => ["status != ?", STATUS_PENDING_ACCEPTANCE_OF_TERMS]
+  scope :open, :conditions => ["status = ?", STATUS_OPEN]
+  scope :closed, :conditions => ["status = ?", STATUS_CLOSED]
+  scope :by_status, lambda {|state|
     {:conditions => ["LOWER(status_tag) = ? AND status != ?",
                      state.downcase, STATUS_PENDING_ACCEPTANCE_OF_TERMS ] }
   }
@@ -97,7 +94,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def self.count_open
-    count(:all, :conditions => {:status => STATUS_OPEN})
+    where(:status => STATUS_OPEN).count
   end
 
   def self.statuses
@@ -167,7 +164,7 @@ class MergeRequest < ActiveRecord::Base
     end
 
     @previous_state = status_tag.name if status_tag
-    write_attribute(:status_tag, tag.name)
+    self[:status_tag] = tag.name
     save
   end
 
@@ -187,25 +184,6 @@ class MergeRequest < ActiveRecord::Base
       target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self,
         @current_user, message, comment)
     end
-  end
-
-  # Returns a hash (for the view) of labels and event names for next
-  # states TODO: Obviously, putting the states and transitions inside
-  # a map is not all that DRY, but the state machine does not have a
-  # one-to-one relationship between states and events
-  def possible_next_states_hash
-    map = {
-        STATUS_OPEN => ["Open", "open"],
-        STATUS_VERIFYING => ["Verifying", "in_verification"],
-        STATUS_REJECTED => ["Rejected", "reject"],
-        STATUS_MERGED => ["Merged", "merge"]
-        }
-    result = {}
-    possible_next_states.each do |s|
-      label, value = map[s]
-      result[label] = value
-    end
-    return result
   end
 
   def can_transition_to?(new_state)
@@ -253,8 +231,13 @@ class MergeRequest < ActiveRecord::Base
 
   def commits_for_selection
     return [] if !target_repository
-    @commits_for_selection ||= target_repository.git.commit_deltas_from(
-      source_repository.git, target_branch, source_branch)
+    @commits_for_selection ||= lookup_commits_for_selection
+  end
+
+  def lookup_commits_for_selection
+    start_at = target_repository.git.get_head(target_branch).commit.id
+    end_at = source_repository.git.get_head(source_branch).commit.id
+    source_repository.git.commits_between(start_at, end_at).reverse
   end
 
   def applies_to_specific_commits?
@@ -382,11 +365,11 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def creation_event
-    Event.find(:first, :conditions => {
-        :action => Action::REQUEST_MERGE,
-        :target_id => self.id,
-        :target_type => self.class.name
-      })
+    Event.where({
+      :action => Action::REQUEST_MERGE,
+      :target_id => self.id,
+      :target_type => self.class.name
+    }).first
   end
 
   def oauth_request_token=(token)
@@ -621,10 +604,10 @@ class MergeRequest < ActiveRecord::Base
       save
     else
       comment = comments.create!({
-          :user => updated_by,
-          :body => reason,
-          :project => target_repository.project
-        })
+        :user => updated_by,
+        :body => reason,
+        :project => target_repository.project
+      })
       comment.state = status_string
       comment.save!
     end
@@ -632,12 +615,13 @@ class MergeRequest < ActiveRecord::Base
 
   # Comments made on self and all versions
   def cascaded_comments
-    Comment.find(:all,
-      :conditions => ["(target_type = 'MergeRequest' AND target_id = ?) OR " +
-                      "(target_type = 'MergeRequestVersion' AND target_id in (?))",
-                      self.id, self.version_ids],
-      :order => "comments.created_at",
-      :include => [:target,:user])
+    Comment.
+      where("(target_type = 'MergeRequest' AND target_id = ?) OR " +
+            "(target_type = 'MergeRequestVersion' AND target_id in (?))",
+            self.id,
+            self.version_ids).
+      order("comments.created_at").
+      includes(:target, :user)
   end
 
   # Watchables need a project in order for redirection to work

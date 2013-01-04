@@ -17,6 +17,6 @@
 #++
 module ContentMembershipsHelper
   def text(key, params = {})
-    t("views.#{@class_name}_memberships.#{key}", params)
+    t("views.#{@class_name}_memberships.#{key}", params).html_safe
   end
 end

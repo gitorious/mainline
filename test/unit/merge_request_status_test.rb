@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,12 +17,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require "test_helper"
 
 class MergeRequestStatusTest < ActiveSupport::TestCase
-  
-  should_belong_to :project
-  should_validate_presence_of :project, :state, :name
+  should belong_to(:project)
+  should validate_presence_of(:project)
+  should validate_presence_of(:state)
+  should validate_presence_of(:name)
 
   context "State" do
     setup do
@@ -51,7 +53,7 @@ class MergeRequestStatusTest < ActiveSupport::TestCase
 
       assert @project.merge_request_statuses.first.open?
       assert @project.merge_request_statuses.first.default?
-      
+
       assert @project.merge_request_statuses.last.closed?
       assert !@project.merge_request_statuses.last.default?
     end
@@ -98,5 +100,5 @@ class MergeRequestStatusTest < ActiveSupport::TestCase
       end
 
     end
-  end  
+  end
 end

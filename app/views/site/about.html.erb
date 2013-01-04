@@ -1,48 +1,49 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Jonas Fonseca <fonseca@diku.dk>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+  #   Copyright (C) 2008 Jonas Fonseca <fonseca@diku.dk>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% @page_title = "About" -%>
 <div class"content-container">
-	<h2 class="content-header">About Gitorious</h2>
+  <h2 class="content-header">About Gitorious</h2>
 
-  <p class="ingress"><%= t("views.site.description") %></p>
-  
+  <p class="ingress"><%= t("views.site.description").html_safe %></p>
+
   <p>
     Gitorious provides open source infrastructure for hosting open source projects
-    that use Git. The central entity in Gitorious is the project, which contains 
+    that use Git. The central entity in Gitorious is the project, which contains
     one or more top-level repositories and any repositories managed by the project's
     contributors. <br />
     This allows you, as a project administrator, to keep an eye on what people
-    are working on in their individual clones of your repositories. It also lets 
+    are working on in their individual clones of your repositories. It also lets
     you merge or provide feedback on their contributions. <br />
     Likewise, as a project contributor, you get a place to host your contributions
     and provide feedback back into the projects ecosystem and easily collaborate
     with others on the same project. You get your own personal clone of the project
-    on the site that you can work freely in and a way to package up your changes 
+    on the site that you can work freely in and a way to package up your changes
     and notify the other project members about your changes.
   </p>
-  
+
   <h3>Features</h3>
-  
+
   <ul class="bullet_list">
     <li>Project hosting</li>
     <li>Hosting of official project repositories</li>
@@ -55,20 +56,20 @@
     <li>Free for opensource projects</li>
     <li>Commercial support and customizations available</li>
   </ul>
-  
+
   <h3>History</h3>
   <p>
     Gitorious was started by Johan Sørensen in the end of 2007 as a way to easily
-    host Git repositories for himself. The idea turned out to be so useful that 
-    Gitorious began to offer hosting for other projects as well, for free, 
+    host Git repositories for himself. The idea turned out to be so useful that
+    Gitorious began to offer hosting for other projects as well, for free,
     eventually opening up for anyone to create an account.
   </p>
   <p>
-    In March 2009 Gitorious.org was folded into <a href="http://shortcut.no">Shortcut AS</a>, 
-    a software company co-founded by Johan. The intention was to improve 
-    Gitorious  beyond what was feasible for a single developer to manage. 
-    Shortcut's fully owned subsidiary Gitorious AS now  officially supports and develops Gitorious in cooperation 
-    with contributors outside the company, while still being 100% free software. 
+    In March 2009 Gitorious.org was folded into <a href="http://shortcut.no">Shortcut AS</a>,
+    a software company co-founded by Johan. The intention was to improve
+    Gitorious  beyond what was feasible for a single developer to manage.
+    Shortcut's fully owned subsidiary Gitorious AS now  officially supports and develops Gitorious in cooperation
+    with contributors outside the company, while still being 100% free software.
     under the <a href="http://www.gnu.org/licenses/agpl.txt">GNU Affero General Public License</a>.
   </p>
 
@@ -82,23 +83,23 @@
     <li>Branded subdomains on gitorious.org</li>
     <li>Consulting services: development of custom features, integration, branding and training</li>
   </ul>
-  
+
   <p>
-    For more information about professional Gitorious services, please visit the 
+    For more information about professional Gitorious services, please visit the
     <a href="http://gitorious.com/">gitorious.com</a> web site.
   </p>
 
   <h3>License</h3>
   <p>
-    The Gitorious <a href="/gitorious">codebase</a> is licensed under the 
-    <a href="http://www.gnu.org/licenses/agpl.txt">GNU Affero General Public License</a> 
+    The Gitorious <a href="/gitorious">codebase</a> is licensed under the
+    <a href="http://www.gnu.org/licenses/agpl.txt">GNU Affero General Public License</a>
     unless noted otherwise.
   </p>
   <p>
     The <em>Gitorious</em> name is a registered trademark of Gitorious AS.
   </p>
   <p>
-    The Gitorious logo is owned by Gitorious AS and 
+    The Gitorious logo is owned by Gitorious AS and
     <a rel="license" href="http://creativecommons.org/licenses/by-nd/3.0/">
       is licensed under a Creative Commons Attribution-No Derivative Works 3.0 Norway License</a>. <br />
     <a rel="license" href="http://creativecommons.org/licenses/by-nd/3.0/">
@@ -106,13 +107,13 @@
     </a>
   </p>
   <p>
-    The icons used are <a href="http://www.famfamfam.com/lab/icons/silk/">famfamfam silk</a>, 
-    which are licensed under a 
+    The icons used are <a href="http://www.famfamfam.com/lab/icons/silk/">famfamfam silk</a>,
+    which are licensed under a
     <a href="http://creativecommons.org/licenses/by/2.5/">Creative Commons Attribution 2.5 License</a>
   </p>
 </div>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="links navigation">
     <%= render "meta_links" -%>
   </ul>

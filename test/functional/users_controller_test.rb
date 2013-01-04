@@ -18,43 +18,14 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class UsersControllerTest < ActionController::TestCase
-  should_enforce_ssl_for(:delete, :avatar)
-  should_enforce_ssl_for(:get, :activate)
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :feed)
-  should_enforce_ssl_for(:get, :forgot_password)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:get, :openid_build)
-  should_enforce_ssl_for(:get, :password)
-  should_enforce_ssl_for(:get, :pending_activation)
-  should_enforce_ssl_for(:get, :reset_password, :token => "a1bda21bd3b332bda")
-  should_enforce_ssl_for(:get, :show)
-  should_enforce_ssl_for(:get, :watchlist)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:post, :forgot_password_create)
-  should_enforce_ssl_for(:post, :openid_create)
-  should_enforce_ssl_for(:put, :reset_password)
-  should_enforce_ssl_for(:put, :update)
-  should_enforce_ssl_for(:put, :update_password)
+  should_render_in_global_context
 
   def setup
     setup_ssl_from_config
   end
-
-  context "http methods" do
-    setup { login_as :johan }
-
-    should_verify_method :post, :create
-    should_verify_method :post, :forgot_password_create
-    should_verify_method :put, :update, :id => "johan"
-    should_verify_method :put, :update_password, :id => "johan"
-    should_verify_method :delete, :avatar, :id => "johan"
-  end
-
-  should_render_in_global_context
 
   should "show pending activation" do
     get :pending_activation
@@ -83,35 +54,6 @@ class UsersControllerTest < ActionController::TestCase
     assert_nil User.authenticate("moe@example.com", "test")
   end
 
-  context "Routing" do
-    setup do
-      @user = users(:johan)
-    end
-
-    should "recognizes routes starting with tilde as users/show/<name>" do
-      assert_generates("/~#{@user.to_param}", {
-        :controller => "users",
-        :action => "show",
-        :id => @user.to_param})
-
-      assert_recognizes({
-        :controller => "users", :action => "show", :id => @user.to_param
-      }, {:path => "/~#{@user.to_param}", :method => :get})
-    end
-
-    should "does not recognize controller collection actions as repositories" do
-      assert_recognizes({
-        :controller => "users", :action => "forgot_password"
-      }, {:path => "/users/forgot_password", :method => :get})
-    end
-
-    should "does not recognize controller member actions as repositories" do
-      assert_recognizes({
-        :controller => "users", :action => "activate", :activation_code => "123"
-      }, {:path => "/users/activate/123", :method => :get})
-    end
-  end
-
   def create_user(options = {})
     post :create, :user => { :login => "quire", :email => "quire@example.com",
       :password => "quire", :password_confirmation => "quire",
@@ -128,7 +70,7 @@ class UsersControllerTest < ActionController::TestCase
   should "require login on signup" do
     assert_no_difference("User.count") do
       create_user(:login => nil)
-      assert_not_nil assigns(:user).errors.on(:login)
+      assert_not_nil assigns(:user).errors[:login]
       assert_template("users/new")
     end
   end
@@ -136,7 +78,7 @@ class UsersControllerTest < ActionController::TestCase
   should "require password on signup" do
     assert_no_difference("User.count") do
       create_user(:password => nil)
-      assert !assigns(:user).errors.on(:password).empty?
+      assert !assigns(:user).errors[:password].empty?
       assert_template(("users/new"))
     end
   end
@@ -144,7 +86,7 @@ class UsersControllerTest < ActionController::TestCase
   should "require password confirmation on signup" do
     assert_no_difference("User.count") do
       create_user(:password_confirmation => nil)
-      assert !assigns(:user).errors.on(:password_confirmation).empty?
+      assert !assigns(:user).errors[:password_confirmation].empty?
       assert_template(("users/new"))
     end
   end
@@ -152,7 +94,7 @@ class UsersControllerTest < ActionController::TestCase
   should "require email on signup" do
     assert_no_difference("User.count") do
       create_user(:email => nil)
-      assert !assigns(:user).errors.on(:email).empty?, "empty? should be false"
+      assert !assigns(:user).errors[:email].empty?, "empty? should be false"
       assert_template(("users/new"))
     end
   end
@@ -189,45 +131,11 @@ class UsersControllerTest < ActionController::TestCase
     assert_select "#sidebar ul li.email", 0
   end
 
-  should "recognizes routing with dots in it" do
-    assert_recognizes({
-      :controller => "users",
-      :action => "show",
-      :id => "j.s"
-    }, "/users/j.s")
-    assert_recognizes({
-      :controller => "users",
-      :action => "show",
-      :id => "j.s"
-    }, "/~j.s")
-  end
-
-  should "recognizes sub-resource routing with dots in it" do
-    assert_recognizes({
-      :controller => "licenses",
-      :action => "edit",
-      :user_id => "j.s"
-    }, "/users/j.s/license/edit")
-    assert_recognizes({
-      :controller => "licenses",
-      :action => "edit",
-      :user_id => "j.s"
-    }, "/~j.s/license/edit")
-  end
-
-  should "recognizes activate routes" do
-    assert_recognizes({
-      :controller => "users",
-      :action => "activate",
-      :activation_code => "abc123",
-    }, "/users/activate/abc123")
-  end
-
   context "GET show" do
     should "#show sets atom feed autodiscovery" do
       user = users(:johan)
       get :show, :id => user.login
-      assert_equal feed_user_path(user, :format => :atom), assigns(:atom_auto_discovery_url)
+      assert_equal user_feed_path(user, :format => :atom), assigns(:atom_auto_discovery_url)
     end
 
     should "not display inactive users" do
@@ -251,7 +159,7 @@ class UsersControllerTest < ActionController::TestCase
     get :feed, :id => user.login, :format => "atom"
     assert_response :success
     assert_equal user, assigns(:user)
-    assert_equal user.events.find(:all, :limit => 30, :order => "created_at desc"), assigns(:events)
+    assert_equal user.events.limit(30).order("created_at desc").all, assigns(:events)
   end
 
   context "#forgot_password" do
@@ -314,7 +222,7 @@ class UsersControllerTest < ActionController::TestCase
     should "sends a new password if email was found" do
       u = users(:johan)
       User.expects(:generate_reset_password_key).returns("secret")
-      Mailer.expects(:deliver_forgotten_password).with(u, "secret")
+      Mailer.expects(:forgotten_password).with(u, "secret").returns(FakeMail.new)
       post :forgot_password_create, :user => {:email => u.email}
       assert_redirected_to(root_path)
       assert_match(/A password confirmation link has been sent/, flash[:success])
@@ -332,11 +240,11 @@ class UsersControllerTest < ActionController::TestCase
 
   context "in Private Mode" do
     setup do
-      GitoriousConfig["public_mode"] = false
+      @test_settings = Gitorious::Configuration.prepend("public_mode" => false)
     end
 
     teardown do
-      GitoriousConfig["public_mode"] = true
+      Gitorious::Configuration.prune(@test_settings)
     end
 
     should "activate user" do
@@ -376,7 +284,6 @@ class UsersControllerTest < ActionController::TestCase
 
   context "account-related tests" do
     setup do
-      GitoriousConfig["use_ssl"] = false
       login_as :johan
     end
 
@@ -463,6 +370,16 @@ class UsersControllerTest < ActionController::TestCase
       assert_equal user, User.authenticate(user.email, "test")
     end
 
+    should "actually update user data on #update" do
+      user = users(:johan)
+      name = "The mystery man"
+      put :update, :id => users(:johan).to_param, :user => {
+        :fullname => name
+      }
+      assert_response :redirect
+      assert_equal name, user.reload.fullname
+    end
+
     should "be able to update password, even if user is openid enabled" do
       user = users(:johan)
       user.update_attribute(:identity_url, "http://johan.someprovider.com/")
@@ -492,7 +409,7 @@ class UsersControllerTest < ActionController::TestCase
       delete :avatar, :id => user.to_param
       assert_redirected_to user_path(user)
       assert !user.reload.avatar?
-    end    
+    end
   end
 
   context "deleting your own account" do
@@ -518,7 +435,7 @@ class UsersControllerTest < ActionController::TestCase
       assert_not_nil User.find_by_login(user.login)
     end
   end
-  
+
   context "Viewing ones own favorites" do
     setup {
       login_as(:johan)

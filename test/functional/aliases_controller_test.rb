@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,10 +16,10 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require File.dirname(__FILE__) + '/../test_helper'
+
+require "test_helper"
 
 class AliasesControllerTest < ActionController::TestCase
-
   should_render_in_global_context
 
   def setup
@@ -27,12 +28,6 @@ class AliasesControllerTest < ActionController::TestCase
     @email = emails(:johans1)
     login_as :johan
   end
-
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :confirm)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:post, :create)
 
   context "Listing all emails" do
     should "require login" do

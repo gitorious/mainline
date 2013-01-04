@@ -221,7 +221,7 @@ module Gitorious
       end
 
       def private_repos
-        GitoriousConfig["enable_private_repositories"]
+        Gitorious.private_repositories?
       end
     end
   end

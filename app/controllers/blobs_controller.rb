@@ -31,13 +31,13 @@ class BlobsController < ApplicationController
 
   def show
     if stale?({
-          :etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join),
+          :etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path]),
           :last_modified => @commit.committed_date.utc})
       @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
       render_not_found and return unless @blob
       unless @blob.respond_to?(:data) # it's a tree
-        redirect_to repo_owner_path(@repository, :project_repository_tree_path,
-          @project, @repository, params[:branch_and_path])
+        url = project_repository_tree_path(@project, @repository, params[:branch_and_path])
+        redirect_to(url)
       end
       head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
       @root = Breadcrumb::Blob.new(:paths => @path, :head => head,
@@ -77,7 +77,7 @@ class BlobsController < ApplicationController
         redirect_to project_repository_raw_blob_path(@project, @repository,
                       branch_with_tree("HEAD", @path)) and return
       end
-      if stale?(:etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), :last_modified => @commit.committed_date.utc)
+      if stale?(:etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path]), :last_modified => @commit.committed_date.utc)
         @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
         render_not_found and return unless @blob
         if @blob.size > 500.kilobytes
@@ -95,8 +95,7 @@ class BlobsController < ApplicationController
     @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
     render_not_found and return unless @blob
     unless @blob.respond_to?(:data) # it's a tree
-      redirect_to repo_owner_path(@repository, :project_repository_tree_path,
-        @project, @repository, params[:branch_and_path])
+      redirect_to(project_repository_tree_path(@project, @repository, params[:branch_and_path]))
     end
 
     @root = Breadcrumb::Blob.new({

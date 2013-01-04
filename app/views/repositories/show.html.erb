@@ -1,45 +1,45 @@
 <%
-#--
-#   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% @page_title = t("views.repos.show_page_title", :repo => @repository.name, :title => @owner.title) -%>
 <%= breadcrumbs_from(@root) -%>
 
-<% render_if_ready(@repository) do -%>
-<div class="content-container" id="repositories">
-<%= render :partial => "repositories/overview",
-      :locals => {:repository => @repository, :verbose => true} -%>
-</div>
-<div class="content-container">
-  <% if !@repository.has_commits? && committers(@repository).include?(current_user) -%>
-<%= render "getting_started" -%>
-  <% end -%>
-</div>
+<%= render_if_ready(@repository) do -%>
+  <div class="content-container" id="repositories">
+    <%= render :partial => "repositories/overview",
+        :locals => {:repository => @repository, :verbose => true} -%>
+  </div>
+  <div class="content-container">
+    <% if !@repository.has_commits? && committers(@repository).include?(current_user) -%>
+      <%= render "getting_started" -%>
+    <% end -%>
+  </div>
   <h2><%= t("views.repos.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
   <%= render :partial => "events/events", :locals => { :events => @events, :container_css_class => "w-750" } -%>
 <% end -%>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="sidebar-meta">
     <li>
       <strong><%= t("views.repos.project") %>:</strong>
@@ -49,44 +49,44 @@
       <strong><%= t("views.repos.owner") %>:</strong>
       <%= link_to h(@repository.owner.to_param_with_prefix), @repository.owner -%>
       <% if @repository.owned_by_group? -%>
-      <small class="hint">
-        (through <%= link_to h(@repository.user.to_param_with_prefix), @repository.user -%>)
-      </small>
+        <small class="hint">
+          (through <%= link_to h(@repository.user.to_param_with_prefix), @repository.user -%>)
+        </small>
       <% end -%>
     </li>
     <% if @repository.parent -%>
-    <li>
-      <strong><%= t("views.repos.clone_of") %>:</strong>
-      <%= link_to h(@repository.parent.gitdir),
-            repo_owner_path(@repository.parent, [@repository.parent.project, @repository.parent]) -%>
-    </li>
+      <li>
+        <strong><%= t("views.repos.clone_of") %>:</strong>
+        <%= link_to h(@repository.parent.gitdir),
+            [@repository.parent.project, @repository.parent] -%>
+      </li>
     <% end -%>
     <li>
       <strong><%= t("views.repos.created") %>:</strong>
-      <%= @repository.created_at.to_s(:short) -%>
+      <%= l(@repository.created_at, :format => :short) -%>
     </li>
   </ul>
 
   <ul class="links navigation">
     <% if @repository.ready? -%>
-      <li class="clone_repository"><%= link_to t("views.repos.btn_clone"), repo_owner_path(@repository, [:clone, @repository.project, @repository]) -%></li>
+      <li class="clone_repository"><%= link_to t("views.repos.btn_clone"), [:clone, @repository.project, @repository] -%></li>
     <% end -%>
     <% if logged_in? && can_request_merge?(current_user, @repository) -%>
       <li class="merge_request">
         <%= link_to t('views.repos.btn_request'),
-              new_project_repository_merge_request_path(@repository.project, @repository) %>
+            new_project_repository_merge_request_path(@repository.project, @repository) %>
       </li>
     <% end -%>
   </ul>
 
   <ul class="links navigation">
     <% if admin?(current_user, @repository) -%>
-      <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), repo_owner_path(@repository, [@repository.project, @repository, :committerships]) -%></li>
+      <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), [@repository.project, @repository, :committerships] -%></li>
 
-    <% if GitoriousConfig["enable_private_repositories"] -%>
-      <li class="update_access"><%= link_to "Manage read access", project_repository_repository_memberships_path(@repository.project, @repository) -%></li>
-    <% end -%>
-    <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), repo_owner_path(@repository, [:edit, @repository.project, @repository]) -%></li>
+      <% if Gitorious.private_repositories? -%>
+        <li class="update_access"><%= link_to "Manage read access", project_repository_repository_memberships_path(@repository.project, @repository) -%></li>
+      <% end -%>
+      <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), [:edit, @repository.project, @repository] -%></li>
     <% end -%>
   </ul>
 
@@ -96,12 +96,12 @@
     <h3><%= t("views.logs.branches") %>:</h3>
     <ul>
       <% @repository.git.branches.each do |branch| -%>
-        <li><%= link_to h(branch.name), project_repository_log_path(@owner, @repository, ensplat_path(branch.name)) -%></li>
+        <li><%= link_to h(branch.name), project_repository_log_path(@repository.project, @repository, ensplat_path(branch.name)) -%></li>
       <% end -%>
     </ul>
   <% end -%>
 
-  <% cache([@project, @repository, :clone_list], :expires_in => 5.minutes) do -%>
+  <%= cache([@project, @repository, :clone_list], :expires_in => 5.minutes) do -%>
     <%= render "clone_list" -%>
   <% end -%>
 <% end -%>

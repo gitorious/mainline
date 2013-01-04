@@ -26,10 +26,12 @@ class MergeRequestVersionsController < ApplicationController
     @merge_request = @version.merge_request
 
     begin
-      @timeout = Timeout.timeout(GitoriousConfig["merge_request_diff_timeout"]) do
+      @timeout = Timeout.timeout(Gitorious.diff_timeout) do
         @diffs = @version.diffs(extract_range_from_parameter(params[:commit_shas]))
       end
+
       @timeout = nil unless @timeout.length == 0
+
     rescue Timeout::Error => err
       @diffs = []
       @timeout = err

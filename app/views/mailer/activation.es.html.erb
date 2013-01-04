@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,11 +19,10 @@
 #++
 %>
 
-Hola <%= @user.login %>, 
+Hola <%= @user.login %>,
 
-Su cuenta fue activada. Puede agregar su llave pública de SSH aquí <%= GitoriousConfig['scheme'] %>://<%= GitoriousConfig['gitorious_host'] %>/account así como modificar sus datos.
+Su cuenta fue activada. Puede agregar su llave pública de SSH aquí <%= Gitorious.url("/account") %> así como modificar sus datos.
 
 Atentamente,
 
-<%= GitoriousConfig['scheme'] %>://<%= GitoriousConfig['gitorious_host'] %>
-
+<%= Gitorious.url("/") %>

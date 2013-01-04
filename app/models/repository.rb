@@ -23,7 +23,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "gitorious/reservations"
+require "gitorious"
 require "gitorious/messaging"
 
 class Repository < ActiveRecord::Base
@@ -66,44 +66,49 @@ class Repository < ActiveRecord::Base
   validates_presence_of :user_id, :name, :owner_id, :project_id
   validates_format_of :name, :with => /^#{NAME_FORMAT}$/i,
     :message => "is invalid, must match something like /[a-z0-9_\\-]+/"
-  validates_exclusion_of :name,
-    :in => (Gitorious::Reservations.project_names + Gitorious::Reservations.repository_names)
+  validates_exclusion_of :name, :in => lambda { |r| Repository.reserved_names }
   validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
   validates_uniqueness_of :hashed_path, :case_sensitive => false
 
   before_validation :downcase_name
   before_create :set_repository_path
-  # after_create :create_initial_committership
-  # after_create :add_initial_members
-  # after_create :create_add_event_if_project_repo
-  # after_create :post_repo_creation_message
-  # after_create :add_owner_as_watchers
   after_create :build_repository
   after_destroy :post_repo_deletion_message
 
   throttle_records :create, :limit => 5,
     :counter => proc{|record|
-      record.user.repositories.count(:all, :conditions => ["created_at > ?", 5.minutes.ago])
+      record.user.repositories.where("created_at > ?", 5.minutes.ago).count
     },
-    :conditions => proc{|record| {:user_id => record.user.id} },
+    :conditions => proc { |record| { :user_id => record.user.id } },
     :timeframe => 5.minutes
 
-  named_scope :by_users,  :conditions => { :kind => KIND_USER_REPO } do
+  scope :by_users,  :conditions => { :kind => KIND_USER_REPO } do
     def fresh(limit = 10)
-      find(:all, :order => "last_pushed_at DESC", :limit => limit)
+      order("last_pushed_at DESC").limit(limit)
     end
   end
-  named_scope :by_groups, :conditions => { :kind => KIND_TEAM_REPO } do
-    def fresh(limit=10)
-      find(:all, :order => "last_pushed_at DESC", :limit => limit)
-    end
-  end
-  named_scope :clones,    :conditions => ["kind in (?) and parent_id is not null",
-                                          [KIND_TEAM_REPO, KIND_USER_REPO]]
-  named_scope :mainlines, :conditions => { :kind => KIND_PROJECT_REPO }
 
-  named_scope :regular, :conditions => ["kind in (?)", [KIND_TEAM_REPO, KIND_USER_REPO,
+  scope :by_groups, :conditions => { :kind => KIND_TEAM_REPO } do
+    def fresh(limit=10)
+      order("last_pushed_at DESC").limit(limit)
+    end
+  end
+
+  scope :clones,    :conditions => ["kind in (?) and parent_id is not null",
+                                          [KIND_TEAM_REPO, KIND_USER_REPO]]
+
+  scope :mainlines, :conditions => { :kind => KIND_PROJECT_REPO }
+
+  scope :regular, :conditions => ["kind in (?)", [KIND_TEAM_REPO, KIND_USER_REPO,
                                                        KIND_PROJECT_REPO]]
+
+  def open_merge_requests
+    # merge_requests.open doesn't quite work, presumably related to the
+    # issue of 'open': Object#open, "open" state and "open" scope. Overload!
+    # TODO: Refactor MergeRequest
+    merge_requests.where({}).open
+  end
+
   def destroy
     merge_requests.each &:destroy
     reload
@@ -154,7 +159,7 @@ class Repository < ActiveRecord::Base
         owner_conditions.merge!(:project_id => project.id)
       end
     end
-    Repository.find(:first, :conditions => {:name => repo_name}.merge(owner_conditions))
+    Repository.where({ :name => repo_name }.merge(owner_conditions)).first
   end
 
   def self.create_git_repository(path)
@@ -178,38 +183,39 @@ class Repository < ActiveRecord::Base
 
   def self.most_active_clones_in_projects(projects, limit = 5)
     key = "repository:most_active_clones_in_projects:#{projects.map(&:id).join('-')}:#{limit}"
-    Rails.cache.fetch(key, :expires_in => 2.hours) do
-      clone_ids = projects.map do |project|
-        project.repositories.clones.map{|r| r.id }
-      end.flatten
-      find(:all, :limit => limit,
-        :select => "distinct repositories.*, count(events.id) as event_count",
-        :order => "event_count desc", :group => "repositories.id",
-        :conditions => ["repositories.id in (?) and events.created_at > ? and kind in (?)",
-                        clone_ids, 7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
-        #:conditions => { :id => clone_ids },
-        :joins => :events, :include => :project)
-    end
+    clone_ids = projects.map do |project|
+      project.repositories.clones.map{|r| r.id }
+    end.flatten
+
+    select("distinct repositories.*, count(events.id) as event_count").
+      where("repositories.id in (?) and events.created_at > ? and kind in (?)",
+            clone_ids, 7.days.ago,
+            [KIND_USER_REPO, KIND_TEAM_REPO]).
+      order("count(events.id) desc").
+      joins(:events).
+      includes(:project).
+      group("repositories.id").
+      limit(limit)
   end
 
   def self.most_active_clones(limit = 10)
-    Rails.cache.fetch("repository:most_active_clones:#{limit}", :expires_in => 2.hours) do
-      find(:all, :limit => limit,
-        :select => "distinct repositories.id, repositories.*, count(events.id) as event_count",
-        :order => "event_count desc", :group => "repositories.id",
-        :conditions => ["events.created_at > ? and kind in (?)",
-                        7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
-        :joins => :events, :include => :project)
-    end
+    select("distinct repositories.id, repositories.*, count(events.id) as event_count").
+      where("events.created_at > ? and kind in (?)",
+            7.days.ago,
+            [KIND_USER_REPO, KIND_TEAM_REPO]).
+      order("count(events.id) desc").
+      group("repositories.id").
+      joins(:events).
+      includes(:project).
+      limit(limit)
   end
 
   # Finds all repositories that might be due for a gc, starting with
   # the ones who've been pushed to recently
   def self.all_due_for_gc(batch_size = 25)
-    find(:all,
-      :order => "push_count_since_gc desc",
-      :conditions => "push_count_since_gc > 0",
-      :limit => batch_size)
+    where("push_count_since_gc > 0").
+      order("push_count_since_gc desc").
+      limit(batch_size)
   end
 
   def gitdir
@@ -229,7 +235,7 @@ class Repository < ActiveRecord::Base
   end
 
   def browse_url
-    "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/#{url_path}"
+    Gitorious.url(url_path)
   end
 
   def default_clone_url
@@ -239,7 +245,7 @@ class Repository < ActiveRecord::Base
   end
 
   def clone_url
-    "git://#{GitoriousConfig['gitorious_clone_host'] || GitoriousConfig['gitorious_host']}/#{gitdir}"
+    Gitorious.git_daemon.url(gitdir)
   end
 
   def ssh_clone_url
@@ -251,28 +257,27 @@ class Repository < ActiveRecord::Base
   end
 
   def http_clone_url
-    "#{GitoriousConfig['scheme']}://#{Site::HTTP_CLONING_SUBDOMAIN}.#{GitoriousConfig['gitorious_host']}/#{gitdir}"
+    Gitorious.git_http.url(gitdir)
   end
 
   def http_cloning?
-    !GitoriousConfig["hide_http_clone_urls"]
+    !Gitorious.git_http.nil?
   end
 
   def git_cloning?
-    return false if GitoriousConfig["hide_git_clone_urls"]
-    return public?
+    return !Gitorious.git_daemon.nil? && public?
   end
 
   def ssh_cloning?
-    true
+    return !Gitorious.ssh_daemon.nil?
   end
 
   def push_url
-    "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_clone_host'] || GitoriousConfig['gitorious_host']}:#{gitdir}"
+    Gitorious.ssh_daemon.url(gitdir)
   end
 
   def display_ssh_url?(user)
-    return true if GitoriousConfig["always_display_ssh_url"]
+    return true if !http_cloning? && !git_cloning? && ssh_cloning?
     can_push?(user, self)
   end
 
@@ -355,29 +360,29 @@ class Repository < ActiveRecord::Base
   # changes the owner to +another_owner+, removes the old owner as committer
   # and adds +another_owner+ as committer
   def change_owner_to!(another_owner)
-    unless owned_by_group?
-      transaction do
-        if existing = committerships.find_by_committer_id_and_committer_type(owner.id, owner.class.name)
-          existing.destroy
-        end
-        self.owner = another_owner
-        if self.kind != KIND_PROJECT_REPO
-          case another_owner
-          when Group
-            self.kind = KIND_TEAM_REPO
-          when User
-            self.kind = KIND_USER_REPO
-          end
-        end
-        if cs_to_upgrade = committerships.detect{|c|c.committer == another_owner}
-          cs_to_upgrade.build_permissions(:review, :commit, :admin)
-          cs_to_upgrade.save!
-        else
-          committerships.create_for_owner!(self.owner)
-        end
-        save!
-        reload
+    return if owned_by_group?
+
+    transaction do
+      if existing = committerships.find_by_committer_id_and_committer_type(owner.id, owner.class.name)
+        existing.destroy
       end
+      self.owner = another_owner
+      if self.kind != KIND_PROJECT_REPO # project_repo?
+        case another_owner
+        when Group
+          self.kind = KIND_TEAM_REPO
+        when User
+          self.kind = KIND_USER_REPO
+        end
+      end
+      if cs_to_upgrade = committerships.detect{|c|c.committer == another_owner}
+        cs_to_upgrade.build_permissions(:review, :commit, :admin)
+        cs_to_upgrade.save!
+      else
+        committerships.create_for_owner!(self.owner)
+      end
+      save!
+      reload
     end
   end
 
@@ -467,8 +472,7 @@ class Repository < ActiveRecord::Base
       emails[actor.email] = actor.name
     end
 
-    users = User.find(:all, :conditions => ["email in (?)", emails.keys])
-    users.each do |user|
+    User.where("email in (?)", emails.keys).each do |user|
       author_name = emails[user.email]
       if h[author_name] # in the event that a user with the same name has used two different emails, he'd be gone by now
         h[user.login] = h.delete(author_name)
@@ -481,7 +485,7 @@ class Repository < ActiveRecord::Base
   # Returns a Hash {email => user}, where email is selected from the +commits+
   def self.users_by_commits(commits)
     emails = commits.map { |commit| commit.author.email }.uniq
-    users = User.find(:all, :conditions => ["email in (?)", emails])
+    users = User.where("email in (?)", emails)
 
     users_by_email = users.inject({}){|hash, user| hash[user.email] = user; hash }
     users_by_email
@@ -516,7 +520,7 @@ class Repository < ActiveRecord::Base
   end
 
   def owned_by_group?
-    owner === Group || owner === LdapGroup
+    owner.is_a?(Group) || owner.is_a?(LdapGroup)
   end
 
   def internal?
@@ -565,7 +569,7 @@ class Repository < ActiveRecord::Base
   end
 
   def set_repository_path
-    if GitoriousConfig["enable_repository_dir_sharding"]
+    if RepositoryRoot.shard_dirs?
       set_repository_hash
     else
       set_repository_plain_path
@@ -589,7 +593,7 @@ class Repository < ActiveRecord::Base
       raw_hash = Digest::SHA1.hexdigest(owner.to_param +
                                         self.to_param +
                                         Time.now.to_f.to_s +
-                                        ActiveSupport::SecureRandom.hex)
+                                        SecureRandom.hex)
       sharded_hash = sharded_hashed_path(raw_hash)
       sharded_hash
     end
@@ -606,12 +610,11 @@ class Repository < ActiveRecord::Base
   # Replaces a value within a log_changes_with_user block
   def replace_value(field, value, allow_blank = false)
     old_value = read_attribute(field)
-    if !allow_blank && value.blank? || old_value == value
-      return
-    end
+    return if !allow_blank && value.blank? || old_value == value
     self.send("#{field}=", value)
     valid?
-    if !errors.on(field)
+
+    if errors[field].length == 0
       @updated_fields << field
     end
   end
@@ -639,7 +642,7 @@ class Repository < ActiveRecord::Base
   end
 
   def tracking_repository
-    self.class.find(:first, :conditions => {:parent_id => self, :kind => KIND_TRACKING_REPO})
+    self.class.where(:parent_id => self, :kind => KIND_TRACKING_REPO).first
   end
 
   def has_tracking_repository?
@@ -773,6 +776,15 @@ class Repository < ActiveRecord::Base
 
   def build_repository
     RepositoryBuilder.new(self).build
+  end
+
+  def self.reserved_names
+    @reserved_names ||= []
+  end
+
+  def self.reserve_names(names)
+    @reserved_names ||= []
+    @reserved_names.concat(names)
   end
 
   private

@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -29,7 +30,7 @@ class Favorite < ActiveRecord::Base
   end
 
   def event_options
-    {:action => Action::ADD_FAVORITE, :data => watchable.id,
+    {:action => Action::ADD_FAVORITE, :data => watchable.id.to_s,
       :body => watchable.class.name, :project_id => project.id,
       :target_type => "User", :target_id => user.id}
   end
@@ -54,13 +55,13 @@ class Favorite < ActiveRecord::Base
   end
 
   def destroy_event
-    if event = Event.find(:first, :conditions => event_options)
+    if event = Event.where(event_options).first
       event.destroy
     end
   end
 
   def notify_about_event(an_event)
     notification_content = EventRendering::Text.render(an_event)
-    Mailer.deliver_favorite_notification(self.user, notification_content)
+    Mailer.favorite_notification(self.user, notification_content).deliver
   end
 end

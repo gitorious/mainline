@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -19,13 +20,13 @@
 
 Hello,
 
-Your <%= GitoriousConfig['gitorious_host'] -%> account has been created, your username is <%= @user.login %>
+Your <%= Gitorious.host -%> account has been created, your username is <%= @user.login %>
 
 Please visit this url to activate your account:
 
   <%= @url %>
-  
+
 
 Thank you
 
-<%= GitoriousConfig['scheme'] %>://<%= GitoriousConfig['gitorious_host'] %>
+<%= Gitorious.url("/") %>

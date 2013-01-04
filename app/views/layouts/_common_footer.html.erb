@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -19,5 +20,5 @@
 <div class="powered-by">
   <%= link_to image_tag("../img/poweredby.png", :title => "Powered by Gitorious"), "http://gitorious.org" -%>
 </div>
-<%= GitoriousConfig["extra_html_head_data"] -%>
+<%= Gitorious::Configuration.get("extra_html_head_data") -%>
 <%= javascript_include_tag("onload", :cache => false) %>

@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,11 +17,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../test_helper'
+require "test_helper"
 
 class CommentTest < ActiveSupport::TestCase
-  should_validate_presence_of :target, :user_id, :project_id
+  should validate_presence_of(:target)
+  should validate_presence_of(:user_id)
+  should validate_presence_of(:project_id)
 
   context "message notifications" do
     setup do

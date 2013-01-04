@@ -18,7 +18,6 @@ setup.</p>
   <tr><td>Tarball directories present w/ correct permissions?</td><td><%= @tarball_dirs_ok %></td></tr>
   <tr><td>(git user) ~/.ssh/authorized_keys present w/ correct permissions?</td><td><%= @authorized_keys_ok %></td></tr>
   <tr><td>At least one Gitorious account exists?</td><td><%= @atleast_one_gitorious_account_present %></td></tr>
-  <tr><td>Hostname not bound to a 'git.*' domain</td><td><%= @not_using_reserved_hostname %></td></tr>
 </table>
 
 
@@ -27,10 +26,10 @@ setup.</p>
 <table>
   <tr><td> ssh daemon is up?</td><td><%= @ssh_deamon_up %></td></tr>
   <tr><td> git-daemon or git-proxy is up?</td><td><%= @git_daemon_up %></td></tr>
-  <tr><td> gitorious-poller is up?</td><td><%= @poller_up %></td></tr>
+  <tr><td> Message queue worker is up?</td><td><%= @poller_up %></td></tr>
   <tr><td> Mysql is up?</td><td> <%= @mysql_up  %></td></tr>
-  <tr><td> Ultrasphinx is up?</td><td> <%= @ultrasphinx_up %></td></tr>
-  <tr><td> Queue service (active mq etc) is up?</td><td><%= @queue_service_up %></td></tr>
+  <tr><td> Search engine is up?</td><td> <%= @ultrasphinx_up %></td></tr>
+  <tr><td> Redis up?</td><td><%= @queue_service_up %></td></tr>
   <tr><td> Memcached is up?</td><td> <%= @memcached_up %></td></tr>
 </table>
 
@@ -41,7 +40,7 @@ setup.</p>
   <tr><td>Less than <%= Gitorious::Diagnostics::MAX_HEALTHY_DISK_USAGE%>% disk space used?</td><td><%= @enough_disk_free %></td></tr>
   <tr><td>Less than <%= Gitorious::Diagnostics::MAX_HEALTHY_RAM_USAGE%>% RAM used?</td><td><%= @enough_RAM_free %></td></tr>
   <tr><td>Average cpu load last 15 minutes below <%= Gitorious::Diagnostics::MAX_HEALTHY_CPU_LOAD%>%?</td><td><%= @healthy_cpu_load_average %></td></tr>
-  
+
 </table>
 
 <h3>uptime</h3>

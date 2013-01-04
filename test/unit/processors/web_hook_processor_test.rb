@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,7 +16,9 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
 require "test_helper"
+
 class WebHookProcessorTest < ActiveSupport::TestCase
 
   def setup
@@ -23,9 +26,9 @@ class WebHookProcessorTest < ActiveSupport::TestCase
     @repository = repositories(:johans)
     @processor.repository = @repository
     @user = users(:mike)
- 
+
     @spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/master")
-    grit = mock    
+    grit = mock
     committer = Grit::Actor.new("John Committer", "noone@invalid.org")
     author = Grit::Actor.new("Jane Author", "jane@g.org")
     grit_commit = Grit::Commit.new(nil, SHA, [], nil,
@@ -51,13 +54,13 @@ class WebHookProcessorTest < ActiveSupport::TestCase
           :repository_id => @repository.id,
           :payload => @payload}.to_json)
     end
-    
+
     should "extract the repository from the message" do
       assert_equal @repository, @processor.repository
     end
 
     should "extract the user from the message" do
-      assert_equal @user, @processor.user      
+      assert_equal @user, @processor.user
     end
   end
 
@@ -70,7 +73,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
   def last_hook_response(repository)
     repository.hooks.reload.first.last_response
   end
-  
+
   context "Notifying web hooks" do
     should "post the payload once for each hook" do
       add_hook_url(@repository, "http://foo.com/")
@@ -93,7 +96,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
       @processor.expects(:post_payload).returns(successful_response)
       @processor.notify_web_hooks(@payload)
       assert_equal "200 OK", last_hook_response(@repository)
-    end    
+    end
   end
 
   context "Error handling" do
@@ -108,7 +111,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
     end
 
     should "handle connection refused" do
-      @processor.expects(:post_payload).raises(Errno::ECONNREFUSED, "Connection refused")      
+      @processor.expects(:post_payload).raises(Errno::ECONNREFUSED, "Connection refused")
       @processor.notify_web_hooks(@payload)
       assert_equal "Connection refused", last_hook_response(@repository)
     end
@@ -152,5 +155,5 @@ class WebHookProcessorTest < ActiveSupport::TestCase
       assert !@processor.successful_response?(response)
     end
   end
-  
+
 end

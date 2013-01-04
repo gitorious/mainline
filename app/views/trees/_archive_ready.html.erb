@@ -17,17 +17,10 @@
 #++
 %>
 <script type="text/javascript" charset="utf-8">
-  <% if params[:archive_format] == "tar.gz" -%>
-    window.location = "<%= project_repository_archive_tar_path(@repository.project, @repository, ensplat_path(@ref)) -%>";
-  <% else -%>
-    window.location = "<%= project_repository_archive_zip_path(@repository.project, @repository, ensplat_path(@ref)) -%>";
-  <% end -%>
-  
+  window.location = "<%= project_repository_archive_tar_url -%>";
   $('archive-box-<%= @ref.gsub("/", "_") -%>').hide();
 </script>
 
 <h4>Download ready</h4>
 
-<%= render_download_links(@repository.project, @repository, @ref, 
-      :except => :source_tree) -%>
-  
+<%= link_to("Download now", project_repository_archive_tar_url) %>

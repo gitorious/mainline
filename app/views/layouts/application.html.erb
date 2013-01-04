@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
@@ -28,9 +29,9 @@
 </head>
 <body id="<%= controller.controller_name -%>">
   <div id="wrapper">
-    <% unless GitoriousConfig["system_message"].blank? -%>
+    <% unless Gitorious::Configuration.get("system_message").blank? -%>
       <div id="system_message">
-        <p><strong><%= t("views.layout.system_notice") %>:</strong> <%= GitoriousConfig["system_message"] -%></p>
+        <p><strong><%= t("views.layout.system_notice") %>:</strong> <%= Gitorious::Configuration.get("system_message") -%></p>
       </div>
     <% end -%>
     <ul id="user-nav">
@@ -42,7 +43,7 @@
         <%= logo_link %>
       </h1>
       <ul id="menu">
-        <% if GitoriousConfig['public_mode'] || logged_in? -%>
+        <% if Gitorious.public? || logged_in? -%>
           <li class="activity"><%= link_to t("views.site.dashboard.activities"), activity_path -%></li>
           <li class="projects"><%= link_to t("views.layout.projects"), projects_path -%></li>
           <li class="teams"><%= link_to t("views.layout.teams"), groups_path -%></li>
@@ -53,18 +54,18 @@
       <ul id="breadcrumbs">
         <%= yield :breadcrumbs -%>
       </ul>
-      <% if GitoriousConfig['public_mode'] || logged_in? -%>
+      <% if Gitorious.public? || logged_in? -%>
         <div id="searchbox">
           <%= render :partial => "/searches/search_box_global", :locals => {:hide_tips => true} -%>
         </div>
       <% end -%>
     </div>
-    <div id="container" class="<%= @content_for_submenu.blank? ? "" : "in-context-mode" -%>">
-      <div id="content" class="<%= sidebar_content? ? "with_sidebar" : "" -%>">
+    <div id="container" class="<%= !content_for?(:submenu) ? "" : "in-context-mode" -%>">
+      <div id="content" class="<%= content_for?(:sidebar) ? "with_sidebar" : "" -%>">
         <%= flashes %>
         <%= yield -%>
       </div>
-      <% if sidebar_content? -%>
+      <% if content_for?(:sidebar) -%>
         <div id="sidebar">
           <%= yield :sidebar -%>
         </div>

@@ -24,7 +24,7 @@ class MembershipsController < ApplicationController
 
   def index
     @memberships = paginate(page_free_redirect_options) do
-      @group.memberships.paginate(:all, :page => params[:page])
+      @group.memberships.paginate(:page => params[:page])
     end
 
     @root = Breadcrumb::Memberships.new(@group)

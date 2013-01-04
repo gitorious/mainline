@@ -17,126 +17,26 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class ProjectsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
   should_render_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
-
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :clones)
-  should_enforce_ssl_for(:get, :confirm_delete)
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :edit_slug)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:get, :show)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:put, :edit_slug)
-  should_enforce_ssl_for(:put, :preview)
-  should_enforce_ssl_for(:put, :update)
 
   def setup
     setup_ssl_from_config
     @project = projects(:johans)
   end
 
-  context "Routing" do
-    should "recognize routing like /projectname" do
-      assert_recognizes({
-        :controller => "projects", :action => "show", :id => @project.to_param
-      }, {:path => "/#{@project.to_param}", :method => :get})
-      assert_recognizes({:controller => "projects", :action => "show", :id => @project.to_param},
-          {:path => "/#{@project.to_param}/", :method => :get})
-      assert_generates("/#{@project.to_param}", {
-        :controller => "projects",
-        :action => "show",
-        :id => @project.to_param
-      })
-    end
-
-    should "recognize routing like /projectname/repositories" do
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "index",
-        :project_id => @project.to_param
-      }, {:path => "/#{@project.to_param}/repositories", :method => :get})
-
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "index",
-        :project_id => @project.to_param
-      }, {:path => "/#{@project.to_param}/repositories/", :method => :get})
-      assert_generates("/#{@project.to_param}/repositories", {
-        :controller => "repositories",
-        :action => "index",
-        :project_id => @project.to_param
-      })
-    end
-
-    should "recognize routing like /projectname/repositories/action" do
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "new",
-        :project_id => @project.to_param
-      }, {:path => "/#{@project.to_param}/repositories/new", :method => :get})
-      assert_recognizes({
-        :controller => "repositories",
-        :action => "new",
-        :project_id => @project.to_param
-      }, {:path => "/#{@project.to_param}/repositories/new", :method => :get})
-      assert_generates("/#{@project.to_param}/repositories/new", {
-        :controller => "repositories",
-        :action => "new",
-        :project_id => @project.to_param
-      })
-    end
-
-    should "recognize project actions" do
-      {
-        "edit" => [:get, "/edit"],
-        "update" => [:put, ""],
-        "destroy" => [:delete, ""],
-        "confirm_delete" => [:get, "/confirm_delete"],
-      }.each do |action, (method, path)|
-        assert_recognizes({
-          :controller => "projects",
-          :action => action,
-          :id => @project.to_param
-        }, {:path => "/#{@project.to_param}#{path}", :method => method})
-        assert_generates("/#{@project.to_param}#{path}", {
-          :controller => "projects",
-          :action => action,
-          :id => @project.to_param
-        })
-      end
-    end
-
-    should "recognize custom routing with format" do
-      assert_recognizes({
-        :controller => "projects",
-        :action => "show",
-        :id => @project.to_param,
-        :format => "xml"
-      }, {:path => "/#{@project.to_param}.xml", :method => :get})
-      assert_recognizes({
-        :controller => "projects",
-        :action => "index",
-        :format => "xml"
-      }, {:path => "/projects.xml", :method => :get})
-      assert_generates("/projects.xml", {
-        :controller => "projects",
-        :action => "index",
-        :format => "xml"
-      })
-    end
-  end
-
   context "ProjectsController" do
     context "With private repos" do
       setup do
-        GitoriousConfig["enable_private_repositories"] = true
+        @settings = Gitorious::Configuration.prepend("enable_private_repositories" => true)
         projects(:johans).make_private
+      end
+
+      teardown do
+        Gitorious::Configuration.prune(@settings)
       end
 
       should "filter private projects in index" do
@@ -169,7 +69,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
       should "render private repo clones for owner" do
         login_as :johan
-        get :clones, :id => projects(:johans).to_param
+        get :clones, :id => projects(:johans).to_param, :format => "js"
         assert_response 200
       end
 
@@ -281,7 +181,11 @@ class ProjectsControllerTest < ActionController::TestCase
 
     context "with disabled private repos" do
       setup do
-        GitoriousConfig["enable_private_repositories"] = false
+        @settings = Gitorious::Configuration.prepend("enable_private_repositories" => false)
+      end
+
+      teardown do
+        Gitorious::Configuration.prune(@settings)
       end
 
       should "not display edit acccess link to owner" do
@@ -308,7 +212,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     should "PUT to preview" do
-      put :preview, :id => projects(:johans).to_param, :project => { :description => "Hey" }
+      put :preview, :id => projects(:johans).to_param, :project => { :description => "Hey" }, :format => "js"
       assert_response 200
     end
 
@@ -437,7 +341,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     should "require login for PUT projects/update" do
-      put :update
+      put :update, :id => "gitorious"
       assert_redirected_to(new_sessions_path)
     end
 
@@ -503,7 +407,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     should "require login to DELETE projects/destroy" do
-      delete :destroy
+      delete :destroy, :id => "gitorious"
       assert_response :redirect
       assert_redirected_to new_sessions_path
     end
@@ -550,7 +454,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     should "require login for GET projects/xx/confirm_delete" do
-      get :confirm_delete
+      get :confirm_delete, :id => "gitorious"
       assert_response :redirect
       assert_redirected_to(new_sessions_path)
     end
@@ -575,22 +479,6 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_not_nil assigns(:group_clones)
       assert_not_nil assigns(:user_clones)
       assert_template "_repositories"
-    end
-
-    should "respond with etag based on the event when GET show" do
-      50.times do |i|
-        projects(:johans).events.create!({
-          :action => Action::CREATE_BRANCH,:target => repositories(:johans),
-          :data => "branch-#{i}", :body => "branch-#{i}", :user => users(:moe)
-        })
-      end
-
-      get :show, :id => projects(:johans).slug
-      page_one_etag = @response.etag
-      assert_not_nil page_one_etag
-
-      get :show, :id => projects(:johans).slug, :page => 2
-      assert_not_equal page_one_etag, @response.etag
     end
 
     context "project event pagination" do
@@ -653,16 +541,11 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   context "in Private Mode" do
-    setup do
-      GitoriousConfig["public_mode"] = false
-    end
-
-    teardown do
-      GitoriousConfig["public_mode"] = true
-    end
-
     should "GET /projects" do
-      get :index
+      Gitorious::Configuration.override("public_mode" => false) do
+        get :index
+      end
+
       assert_redirected_to(root_path)
       assert_match(/Action requires login/, flash[:error])
     end
@@ -670,13 +553,13 @@ class ProjectsControllerTest < ActionController::TestCase
 
   context "when only admins are allowed to create new projects" do
     setup do
-      GitoriousConfig["only_site_admins_can_create_projects"] = true
+      ProjectProposal.enable
       users(:johan).update_attribute(:is_admin, true)
       users(:moe).update_attribute(:is_admin, false)
     end
 
     teardown do
-      GitoriousConfig["only_site_admins_can_create_projects"] = false
+      ProjectProposal.disable
     end
 
     should "redirect regular users to the project approval workflow" do
@@ -750,8 +633,9 @@ class ProjectsControllerTest < ActionController::TestCase
   context "with a site specific layout" do
     should "render with the application layout if there is no containing site" do
       get :show, :id => projects(:johans).to_param
+
       assert_response :success
-      assert_equal "layouts/application", @response.layout
+      assert @layouts.include?("layouts/application")
       assert_not_nil assigns(:current_site)
       assert_not_nil @controller.send(:current_site)
       assert_equal Site.default.title, @controller.send(:current_site).title
@@ -784,7 +668,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
   context "With private repos and LDAP authorization" do
     setup do
-      GitoriousConfig["enable_private_repositories"] = true
+      @settings = Gitorious::Configuration.prepend("enable_private_repositories" => true)
       Team.group_implementation = LdapGroup
       @group = ldap_groups(:first_ldap_group)
       @user = users(:moe)
@@ -795,7 +679,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     teardown do
-      GitoriousConfig["enable_private_repositories"] = false
+      Gitorious::Configuration.prune(@settings)
       Team.group_implementation = Group
     end
 

@@ -16,15 +16,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class ProjectMembershipsControllerTest < ActionController::TestCase
-  should_render_in_site_specific_context :only => [:index]
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:put, :update)
-
   def setup
     setup_ssl_from_config
     @project = projects(:johans)
@@ -160,15 +154,13 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
   end
 
   context "With private repos disabled" do
-    setup do
-      GitoriousConfig["enable_private_repositories"] = false
-    end
-
     should "redirect to index project" do
-      login_as :moe
-      id = projects(:moes).to_param
-      get :index, :project_id => id
-      assert_redirected_to :controller => "projects", :action => "show", :id => id
+      Gitorious::Configuration.override("enable_private_repositories" => false) do
+        login_as :moe
+        id = projects(:moes).to_param
+        get :index, :project_id => id
+        assert_redirected_to :controller => "projects", :action => "show", :id => id
+      end
     end
   end
 end

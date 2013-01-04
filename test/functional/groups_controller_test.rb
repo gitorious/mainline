@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class GroupsControllerTest < ActionController::TestCase
   should_render_in_global_context
@@ -24,24 +25,6 @@ class GroupsControllerTest < ActionController::TestCase
   def setup
     setup_ssl_from_config
     @group = groups(:team_thunderbird)
-  end
-
-  should_enforce_ssl_for(:delete, :avatar)
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:get, :show)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:put, :update)
-
-  context "Routing" do
-    should "recognizes routes starting with plus as teams/show/<name>" do
-      assert_generates("/+#{@group.to_param}", { :controller => "groups",
-        :action => "show", :id => @group.to_param})
-      assert_recognizes({:controller => "groups", :action => "show",
-                         :id => @group.to_param}, "/+#{@group.to_param}")
-    end
   end
 
   context "index" do
@@ -68,14 +51,12 @@ class GroupsControllerTest < ActionController::TestCase
     end
   end
 
-  context "edit" do
-    setup do
-      login_as :mike
-      get :edit, :id => @group.to_param
-    end
+  should "GET edit" do
+    login_as :mike
+    get :edit, :id => @group.to_param
 
-    should_assign_to :group
-    should_respond_with :success
+    assert_not_nil assigns(:group)
+    assert_response :success
   end
 
   context "update" do

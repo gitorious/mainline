@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
 #
@@ -24,8 +25,7 @@ namespaced_atom_feed do |feed|
   @events.each do |event|
     user_title = !event.user.nil? ? event.user.login : mangled_mail(event.user_email)
     action, body, category = action_and_body_for_event(event)
-    item_url = "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}" + user_path(@user)
-    feed.entry(event, :url => item_url) do |entry|
+    feed.entry(event, :url => Gitorious.url(user_path(@user))) do |entry|
       entry.title("#{h(user_title)} #{strip_tags(action)}")
       content = event.user.nil? ? "" : "<p>#{link_to event.user.login, user_path(event.user)} #{action}</p>"
       entry.content(<<-EOS, :type => 'html')

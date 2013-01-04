@@ -15,15 +15,16 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require 'test_helper'
+
+require "test_helper"
 
 class LdapGroupTest < ActiveSupport::TestCase
-  should_validate_presence_of :name
-
   def setup
     LdapGroup.any_instance.stubs(:validate_ldap_dns)
   end
-  
+
+  should validate_presence_of(:name)
+
   context "Ldap group serialization" do
     setup {
       @group = ldap_groups(:first_ldap_group)
@@ -48,7 +49,7 @@ class LdapGroupTest < ActiveSupport::TestCase
     }
 
     should "list filter LDAP groups which are known to us" do
-      stub_ldap_groups(["cn=managers", "cn=admins","cn=developers"]) do        
+      stub_ldap_groups(["cn=managers", "cn=admins","cn=developers"]) do
         assert_equal([@group], LdapGroup.groups_for_user(@user))
       end
     end

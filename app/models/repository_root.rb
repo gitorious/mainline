@@ -15,8 +15,21 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
 class RepositoryRoot
   def self.default_base_path
-    GitoriousConfig["repository_base_path"]
+    @default_base_path
+  end
+
+  def self.default_base_path=(path)
+    @default_base_path = path
+  end
+
+  def self.shard_dirs?
+    !!@shard_dirs
+  end
+
+  def self.shard_dirs!
+    @shard_dirs = true
   end
 end

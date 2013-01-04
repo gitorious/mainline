@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -19,14 +20,12 @@
 namespaced_atom_feed do |feed|
   feed.title("Gitorious: #{h(@repository.gitdir)}:#{h(desplat_path(params[:branch]))}")
   feed.updated((@commits.blank? ? nil : @commits.first.committed_date))
-	
+
   @commits.each do |commit|
-    item_url = "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}"
-    item_url << repo_owner_path(@repository, :project_repository_commit_path, 
-                                @project, @repository, commit.id, :format => :html)
+    item_url = Gitorious.url(project_repository_commit_path(@project, @repository, commit.id, :format => :html))
     feed.entry(commit, {
-      :url => item_url, 
-      :updated => commit.committed_date.utc, 
+      :url => item_url,
+      :updated => commit.committed_date.utc,
       :published => commit.committed_date.utc
     }) do |entry|
       entry.title(truncate(commit.message, :length => 100))

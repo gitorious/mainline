@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -27,11 +28,11 @@
     <ul class="people">
       <li class="avatar">
         <div>
-	<% if @committer_user -%>
-	  <%= link_to(avatar_from_email(@commit.committer.email, { :size => 32 }), @committer_user) %>
-	<% else -%>
+        <% if @committer_user -%>
+          <%= link_to(avatar_from_email(@commit.committer.email, { :size => 32 }), @committer_user) %>
+        <% else -%>
           <%= avatar_from_email(@commit.committer.email, { :size => 32 }) %>
-	<% end -%>
+        <% end -%>
         </div>
       </li>
       <li>
@@ -50,10 +51,10 @@
         <li class="clear"></li>
         <li class="avatar">
           <div>
-	  <% if @author_user -%>
+          <% if @author_user -%>
             <%= link_to(avatar_from_email(@commit.author.email, { :size => 32 }), @author_user) %>
           <% else -%>
-	    <%= avatar_from_email(@commit.author.email, { :size => 32 }) %>
+            <%= avatar_from_email(@commit.author.email, { :size => 32 }) %>
           <% end -%>
           </div>
         </li>
@@ -71,17 +72,17 @@
     </ul>
     <ul class="meta">
       <li><strong><%= t("views.commits.tree_sha1") %>:</strong> <%= link_to h(@commit.tree.id[0,7]),
-        repo_owner_path(@repository, :project_repository_tree_path, @project, @repository, @commit.id) -%></li>
+        project_repository_tree_path(@project, @repository, @commit.id) -%></li>
       <% @commit.parents.each do |parent| -%>
         <li><strong><%= t("views.commits.parent_sha1") %>:</strong> <%= link_to h(parent.id[0,7]),
-         repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, parent) -%>
+         project_repository_commit_path(@project, @repository, parent) -%>
          <small>(<%=h parent.short_message -%>)</small>
         </li>
       <% end -%>
       <% unless @commit.merge? -%>
       <li>
-        <%= link_to "raw diff", repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, @commit.id, :format => :diff) -%>
-        | <%= link_to "raw patch", repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, @commit.id, :format => :patch) -%>
+        <%= link_to "raw diff", project_repository_commit_path(@project, @repository, @commit.id, :format => :diff) -%>
+        | <%= link_to "raw patch", project_repository_commit_path(@project, @repository, @commit.id, :format => :patch) -%>
       </li>
       <% end -%>
     </ul>

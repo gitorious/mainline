@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2009 Tor Arne Vestbø <torarnv@gmail.com>
 #
@@ -20,31 +21,39 @@
 module PagesHelper
   include CommitsHelper
   include Gitorious::Wiki::Content
-  
+
   def wiki_link(content)
     content.gsub(BRACKETED_WIKI_WORD) do |page_link|
       if bracketed_name = Regexp.last_match.captures.first
         page_link = bracketed_name
       end
-      link_to(page_link, project_page_path(@project, page_link), 
+      link_to(page_link, project_page_path(@project, page_link),
                 :class => "todo missing_or_existing")
     end
   end
-  
+
   def edit_link(page)
-    link_to(t("views.common.edit")+" "+t("views.pages.page"), 
+    link_to(t("views.common.edit")+" "+t("views.pages.page"),
           edit_project_page_path(@project, page.title))
   end
-  
+
   def page_node_name(node)
     h(node.name.split(".", 2).first)
   end
 
   def writable_wiki_url(project)
-    "git@#{GitoriousConfig['gitorious_host']}:#{project.slug}/#{project.wiki_repository.name}.git"
+    if project.respond_to?(:slug)
+      "git@#{Gitorious.host}:#{project.slug}/#{project.wiki_repository.name}.git"
+    else
+      "git@#{Gitorious.host}:wiki/#{project.id}.git"
+    end
   end
 
   def regular_wiki_url(project)
-    "git://#{GitoriousConfig['gitorious_host']}/#{project.slug}/#{project.wiki_repository.name}.git"
+    if project.respond_to?(:slug)
+      "git://#{Gitorious.host}/#{project.slug}/#{project.wiki_repository.name}.git"
+    else
+      "git://#{Gitorious.host}/wiki/#{project.id}.git"
+    end
   end
 end

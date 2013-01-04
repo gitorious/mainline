@@ -1,26 +1,25 @@
+# encoding: utf-8
+#--
+#   Copyright (C) 2012 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
 require "test_helper"
+require "authentication_test_helper"
 
 class Gitorious::Authentication::SSLAuthenticationTest < ActiveSupport::TestCase
-  def valid_client_credentials(cn, email)
-    # construct a simple Rails request.env hash
-    env = Hash.new
-    env['SSL_CLIENT_S_DN_CN'] = cn
-    env['SSL_CLIENT_S_DN_Email'] = email
-    # Wrap this in the G::A::Credentials object.
-    credentials = Gitorious::Authentication::Credentials.new
-    credentials.env = env
-    credentials
-  end
-
-  context "Authentication" do
-    setup do
-      @ssl = Gitorious::Authentication::SSLAuthentication.new({})
-    end
-
-    should "return the actual user" do
-      assert_equal(users(:moe), @ssl.authenticate(valid_client_credentials("moe", "moe@example.com")))
-    end
-  end
+  include Gitorious::SSLTestHelper
 
   context "Auto-registration" do
     setup do

@@ -17,16 +17,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class CommentsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
-
-  should_enforce_ssl_for(:get, :create)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:post, :preview)
 
   def setup
     setup_ssl_from_config
@@ -97,7 +91,7 @@ class CommentsControllerTest < ActionController::TestCase
   context "preview" do
     should "render a preview of the comment" do
       login_as :johan
-      post :preview, comment_params
+      post :preview, comment_params(nil, :format => "js")
       assert_response :success
       assert_template("comments/preview")
     end
@@ -244,7 +238,7 @@ class CommentsControllerTest < ActionController::TestCase
         @version = create_new_version
         create_merge_request_version_comment(@version)
         assert_response :success
-        assert_equal "application/json", @response.content_type
+        assert_equal "text/javascript", @response.content_type
         json = ActiveSupport::JSON.decode(@response.body)
         assert_not_nil json["file-diff"]
         assert_not_nil json["comment"]
@@ -368,7 +362,7 @@ class CommentsControllerTest < ActionController::TestCase
 
     should "allow project owner to preview comment" do
       login_as :johan
-      get :preview, comment_params
+      get :preview, comment_params(nil, :format => "js")
       assert_response 200
     end
 
@@ -448,7 +442,7 @@ class CommentsControllerTest < ActionController::TestCase
 
     should "allow project owner to preview comment" do
       login_as :johan
-      get :preview, comment_params
+      get :preview, comment_params(nil, :format => "js")
       assert_response 200
     end
 
@@ -529,10 +523,11 @@ class CommentsControllerTest < ActionController::TestCase
       :repository_id => @repository.to_param }
   end
 
-  def comment_params(comment = { :body => "Foo" })
+  def comment_params(comment = nil, extras = {})
+    comment ||= { :body => "Foo" }
     { :project_id => @project.slug,
       :repository_id => @repository.name,
-      :comment => comment }
+      :comment => comment }.merge(extras)
   end
 
   def create_new_version

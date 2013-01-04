@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
@@ -23,6 +24,7 @@
 
 require "openid"
 require "yadis"
+require "gitorious"
 
 # This controller handles the login/logout function of the site.
 class SessionsController < ApplicationController
@@ -31,7 +33,6 @@ class SessionsController < ApplicationController
   layout "second_generation/application"
   before_filter :validate_request_host, :only => :create
 
-  # render new.rhtml
   def new
   end
 
@@ -60,13 +61,8 @@ class SessionsController < ApplicationController
   end
 
   protected
-
-  def ssl_required?
-    GitoriousConfig["use_ssl"]
-  end
-
   def validate_request_host
-    if !GitoriousConfig.valid_request_host?(request.host)
+    if !Gitorious.site.can_share_cookies?(request.host)
       Rails.logger.warn("WARNING: Invalid request host '#{request.host}'. Session cookies will not work")
     end
   end
@@ -143,8 +139,8 @@ class SessionsController < ApplicationController
       cookies[:auth_token] = {
         :value => self.current_user.remember_token ,
         :expires => self.current_user.remember_token_expires_at,
-        :domain => ".#{GitoriousConfig['gitorious_host']}",
-        :secure => true
+        :domain => ".#{Gitorious.host}",
+        :secure => Gitorious.site.ssl?
       }
     end
     check_state_and_redirect('/')
@@ -159,5 +155,4 @@ class SessionsController < ApplicationController
       redirect_back_or_default(redirection_url)
     end
   end
-
 end

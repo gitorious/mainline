@@ -21,7 +21,8 @@
 
 require "net/http"
 require "uri"
-require File.expand_path(File.dirname(__FILE__) + "../../../../app/models/repository_root")
+require "gitorious/configuration_loader"
+require File.expand_path(File.join(File.dirname(__FILE__), "../../../app/models/repository_root.rb"))
 
 module Gitorious
   module SSH
@@ -34,6 +35,7 @@ module Gitorious
         @repository_name.gsub!(/\.git$/, "")
         @user_name = username
         @configuration = {}
+        load_config
       end
       attr_accessor :project_name, :repository_name, :user_name
 
@@ -101,17 +103,22 @@ module Gitorious
       end
 
       def connection
-        port = GitoriousConfig["gitorious_client_port"]
-        host = GitoriousConfig["gitorious_client_host"]
+        host = Gitorious.client.host
+        port = Gitorious.client.port
         @connection ||= Net::HTTP.start(host, port)
+      end
+
+      def load_config
+        return if Gitorious.respond_to?(:client)
+        Gitorious::ConfigurationLoader.new.configure_singletons(RAILS_ENV)
       end
 
       # Returns an actual URI object
       def writable_by_query_uri
         path = "/#{@project_name}/#{@repository_name}/writable_by"
         query = "username=#{@user_name}"
-        host = GitoriousConfig["gitorious_client_host"]
-        _port = GitoriousConfig["gitorious_client_port"]
+        host = Gitorious.client.host
+        _port = Gitorious.client.port
         # Ruby 1.9 expects a number, while 1.8 expects a string. Oh well
         port = RUBY_VERSION > "1.9" ? _port : _port.to_s
 

@@ -15,8 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class Team
 
+class Team
   def self.group_implementation
     @group_implementation
   end
@@ -25,14 +25,12 @@ class Team
     @group_implementation = klass
   end
 
-  self.group_implementation = GitoriousConfig["group_implementation"].constantize
-
   class Wrapper
     def initialize(group)
       @group = group
     end
   end
-  
+
   class LdapGroupWrapper < Wrapper
     def events(page)
       []
@@ -46,9 +44,9 @@ class Team
     def events(page)
       @group.events(page)
     end
-    
+
     def memberships
-      @group.memberships.find(:all, :include => [:user, :role])
+      @group.memberships.includes(:user, :role)
     end
   end
 
@@ -84,7 +82,7 @@ class Team
   def self.group_params(params)
     params.key?(:ldap_group) ? params[:ldap_group] : params[:group]
   end
-  
+
   def self.update_group(group, params)
     params = group_params(params)
     group.description = params[:description]
@@ -95,10 +93,10 @@ class Team
 
   class DestroyGroupError < StandardError
   end
-  
+
   def self.destroy_group(name, user)
     group = group_finder.find_by_name! name
-    unless user.is_admin? 
+    unless user.is_admin?
       raise DestroyGroupError, "You're not admin" unless group_admin?(group, user)
       raise DestroyGroupError, "Teams with current members or projects cannot be deleted" unless group.deletable?
     end
@@ -117,6 +115,6 @@ class Team
   end
 
   def self.can_have_members?(group)
-    group.is_a?(Group) 
+    group.is_a?(Group)
   end
 end

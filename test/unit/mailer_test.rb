@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,11 +17,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../test_helper'
+require "test_helper"
 
 class MailerTest < ActiveSupport::TestCase
-
   URL_BASE = "#{Mailer.default_url_options[:protocol]||'http'}://#{Mailer.default_url_options[:host]}"
 
   setup do
@@ -32,53 +31,54 @@ class MailerTest < ActiveSupport::TestCase
     user.activation_code = "8f24789ae988411ccf33ab0c30fe9106fab32e9b"
     user.password = "fubar"
     url = "#{URL_BASE}/users/activate/#{user.activation_code}"
-    mail = Mailer.create_signup_notification(user)
+    mail = Mailer.signup_notification(user)
 
     assert_equal [user.email], mail.to
     assert_equal "[Gitorious] Please activate your new account", mail.subject
-    assert_match(/username is #{user.login}$/, mail.body)
+    assert_match(/username is #{user.login}$/, mail.body.decoded)
     assert mail.body.include?(url)
 
-    Mailer.deliver(mail)
+    mail.deliver
     assert_equal [mail], Mailer.deliveries
   end
 
   should "sends activation" do
     user = users(:johan)
-    mail = Mailer.create_activation(user)
+    mail = Mailer.activation(user)
 
     assert_equal [user.email], mail.to
     assert_equal "[Gitorious] Your account has been activated!", mail.subject
-    assert_match(/your account has been activated/, mail.body)
+    assert_match(/your account has been activated/, mail.body.decoded)
 
-    Mailer.deliver(mail)
+    mail.deliver
     assert_equal [mail], Mailer.deliveries
   end
 
   should "sends forgotten_password" do
     user = users(:johan)
-    mail = Mailer.create_forgotten_password(user, "secret")
+    mail = Mailer.forgotten_password(user, "secret")
 
     assert_equal [user.email], mail.to
     assert_equal "[Gitorious] Your new password", mail.subject
-    assert_match(/requested a new password for your/i, mail.body)
-    assert_match(/reset your password: .+\/users\/reset_password\/secret/i, mail.body)
+    body = mail.body.decoded
+    assert_match(/requested a new password for your/i, body)
+    assert_match(/reset your password: .+\/users\/reset_password\/secret/i, body)
 
-    Mailer.deliver(mail)
+    mail.deliver
     assert_equal [mail], Mailer.deliveries
   end
 
   should "sends new_email_alias" do
     email = emails(:johans1)
     email.update_attribute(:confirmation_code, Digest::SHA1.hexdigest("borkborkbork"))
-    mail = Mailer.create_new_email_alias(email)
+    mail = Mailer.new_email_alias(email)
 
     assert_equal [email.address], mail.to
     assert_equal "[Gitorious] Please confirm this email alias", mail.subject
-    assert_match(/in order to activate your email alias/i, mail.body)
-    assert_match(/#{email.confirmation_code}/, mail.body)
+    assert_match(/in order to activate your email alias/i, mail.body.decoded)
+    assert_match(/#{email.confirmation_code}/, mail.body.decoded)
 
-    Mailer.deliver(mail)
+    mail.deliver
     assert_equal [mail], Mailer.deliveries
   end
 
@@ -87,22 +87,24 @@ class MailerTest < ActiveSupport::TestCase
     recipient = users(:moe)
     sender = users(:mike)
     merge_request = merge_requests(:moes_to_johans)
-    mail = Mailer.create_notification_copy(recipient, sender, "This is a message", "This is some text", merge_request, message_id)
+    mail = Mailer.notification_copy(recipient, sender, "This is a message", "This is some text", merge_request, message_id)
     assert_equal([recipient.email], mail.to)
     assert_equal "New message: This is a message", mail.subject
-    assert_match /#{sender.fullname} has sent you a message on Gitorious:/, mail.body
 
-    assert_match /#{GitoriousConfig['scheme']}:\/\/.*\/#{merge_request.target_repository.project.slug}\//i, mail.body
-    assert_match "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/messages/#{message_id}", mail.body
+    body = mail.body.decoded
+    assert_match /#{sender.fullname} has sent you a message on Gitorious:/, body
+    assert_match /#{Gitorious.scheme}:\/\/.*\/#{merge_request.target_repository.project.slug}\//i, body
+    assert_match Gitorious.url("/messages/#{message_id}"), body
   end
 
-  should 'sanitize the contents of notifications' do
+  should "sanitize the contents of notifications" do
     recipient = users(:moe)
     sender = users(:mike)
     subject = %Q(<script type="text/javascript">alert(document.cookie)</script>Hello)
     body = %Q(<script type="text/javascript">alert('foo')</script>This is the actual message)
-    mail = Mailer.create_notification_copy(recipient, sender, subject, body, nil, 9)
-    assert_no_match /alert/, mail.body
+    mail = Mailer.notification_copy(recipient, sender, subject, body, nil, 9)
+
+    assert_no_match /alert/, mail.body.decoded
     assert_no_match /document\.cookie/, mail.subject
     assert_match /Hello/, mail.subject
   end
@@ -110,38 +112,37 @@ class MailerTest < ActiveSupport::TestCase
   should "send a favorite notification" do
     user = users(:mike)
     body = "some event notification data here "*10
-    mail = Mailer.create_favorite_notification(user, body)
+    mail = Mailer.favorite_notification(user, body)
 
     assert_equal [user.email], mail.to
     assert_equal "[Gitorious] Activity: #{body[0..34]}...", mail.subject
-    assert_match(/Hello #{user.login}/, mail.body)
-    assert mail.body.include?(body), "notification body not in: #{mail.body}"
-    assert_match(/you are receiving this email because/i, mail.body)
-    assert_match(/#{GitoriousConfig['gitorious_host']}\/favorites/, mail.body)
+
+    body = mail.body.decoded
+    assert_match(/Hello #{user.login}/, body)
+    assert mail.body.include?(body), "notification body not in: #{body}"
+    assert_match(/you are receiving this email because/i, body)
+    assert_match(/#{Gitorious.host}\/favorites/, body)
   end
 
   context "Sender address" do
     setup do
-      @old_address = GitoriousConfig["sender_email_address"]
       @user = users(:moe)
     end
 
-    teardown do
-      GitoriousConfig["sender_email_address"] = @old_address
-    end
-    
     should "be a sensible default unless configured" do
-      GitoriousConfig["sender_email_address"] = nil
-      message = Mailer.create_signup_notification(@user)
-      sender_address = "no-reply@#{GitoriousConfig['gitorious_host']}"
+      Gitorious::Configuration.stubs(:configs).returns([])
+      message = Mailer.signup_notification(@user)
+      sender_address = "no-reply@#{Gitorious.host}"
       assert_equal sender_address, message.from.first
     end
 
     should "use configured sender address" do
-      sender_address = "no-reply@gitorious.example"
-      GitoriousConfig["sender_email_address"] = "Gitorious <#{sender_address}>"
-      message = Mailer.create_signup_notification(@user)
-      assert_equal sender_address, message.from.first
+      address = "Gitorious <no-reply@gitorious.example>"
+
+      Gitorious::Configuration.override("email_sender" => address) do
+        message = Mailer.signup_notification(@user)
+        assert_equal "no-reply@gitorious.example", message.from.first
+      end
     end
   end
 end

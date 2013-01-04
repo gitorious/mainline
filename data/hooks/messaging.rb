@@ -25,6 +25,7 @@ class RailsEnv
   def development?; @env == "development"; end
   def test?; @env == "test"; end
   def to_s; @env; end
+  def to_sym; @env.to_sym; end
 end
 
 module Rails
@@ -37,23 +38,23 @@ module Rails
   end
 end
 
-$: << Rails.root + "lib"
+$: << (Rails.root + "lib").realpath.to_s
 require "rubygems"
 require "bundler"
-ENV["BUNDLE_GEMFILE"] = Rails.root + "Gemfile"
-Bundler.require :messaging, Rails.env.to_s
+ENV["BUNDLE_GEMFILE"] = (Rails.root + "Gemfile").realpath.to_s
+Bundler.require(:messaging, Rails.env.to_s)
 
 require "yaml"
 require "gitorious/messaging"
 
-if !defined?(GitoriousConfig)
+if !defined?(Gitorious::Configuration)
   conf = YAML::load_file(Rails.root + "config/gitorious.yml")
-  GitoriousConfig = conf[Rails.env.to_s]
-  adapter = GitoriousConfig["messaging_adapter"] || "stomp"
-  Bundler.require adapter.to_sym
-  Gitorious::Messaging.load_adapter(adapter)
-  Gitorious::Messaging.configure_publisher(adapter)
-  if adapter == "resque"
+  Gitorious::Messaging.adapter = (conf[Rails.env.to_s] || {})["messaging_adapter"] || conf["messaging_adapter"]
+  Bundler.require(Gitorious::Messaging.adapter.to_sym)
+  Gitorious::Messaging.load_adapter(Gitorious::Messaging.adapter)
+  Gitorious::Messaging.configure_publisher(Gitorious::Messaging.adapter)
+
+  if Gitorious::Messaging.adapter == "resque"
     resque_config = Rails.root + "config/resque.yml"
     if resque_config.exist?
       settings = YAML::load_file(resque_config)[Rails.env.to_s]

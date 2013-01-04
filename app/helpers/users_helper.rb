@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -33,19 +34,19 @@ module UsersHelper
   end
 
   def mangled_mail(email)
-    if GitoriousConfig["mangle_email_addresses"]
+    if Gitorious::Configuration.get("mangle_email_addresses", true)
       user, domain = h(email).split("@", 2)
       return user if domain.blank?
       domain, ext = domain.split(".", 2)
       str = "#{user.to_s} @#{domain[0, domain.length/2].to_s}"
-      "#{str}&hellip;#{domain[-(domain.length/3)..-1]}.#{ext}"
+      "#{str}&hellip;#{domain[-(domain.length/3)..-1]}.#{ext}".html_safe
     else
       h(email)
     end
   end
 
   def render_email(email)
-    "&lt;" + mangled_mail(email).to_s + "&gt;"
+    ("&lt;" + mangled_mail(email).to_s + "&gt;").html_safe
   end
 
   def is_current_user?(a_user)

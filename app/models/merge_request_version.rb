@@ -18,7 +18,7 @@
 
 class MergeRequestVersion < ActiveRecord::Base
   include Gitorious::Messaging::Publisher
-  
+
   belongs_to :merge_request
   has_many :comments, :as => :target, :include => :user
   before_destroy :schedule_branch_deletion
@@ -39,7 +39,7 @@ class MergeRequestVersion < ActiveRecord::Base
       diff_backend.single_commit_diff(sha_or_range)
     else
       diff_backend.commit_diff(merge_base_sha, merge_request.ending_commit)
-    end    
+    end
   end
 
   def comments_for_path_and_sha(path, sha)
@@ -86,11 +86,11 @@ class MergeRequestVersion < ActiveRecord::Base
         first_parent.id
       end
     end
-    
+
     def cache_key(first, last=nil)
       ["merge_request_diff_v1", first, last].compact.join("_")
     end
-    
+
     def commit_diff(first, last, diff_with_previous=false)
       Rails.cache.fetch(cache_key(first,last)) do
         first_commit_sha = if diff_with_previous
@@ -125,7 +125,7 @@ class MergeRequestVersion < ActiveRecord::Base
     message = branch_deletion_message
     publish("/queue/GitoriousMergeRequestVersionDeletion", message)
   end
-  
+
   private
   # Returns a string representation of a sha range
   def sha_range_string(string_or_range)

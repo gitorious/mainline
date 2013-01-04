@@ -122,8 +122,10 @@ class MergeRequestsController < ApplicationController
   def new
     @merge_request = @repository.proposed_merge_requests.new
     @merge_request.user = current_user
-    @repositories = filter(@owner.repositories.find(:all,
-      :conditions => ["id != ? AND kind != ? AND merge_requests_enabled = ?", @repository.id, Repository::KIND_TRACKING_REPO, true]))
+    @repositories = filter(@owner.repositories.where("id != ? AND kind != ? AND merge_requests_enabled = ?",
+                                                     @repository.id,
+                                                     Repository::KIND_TRACKING_REPO,
+                                                     true))
     if first = @repository.parent || @repositories.first
       @merge_request.target_repository_id = first.id
     end
@@ -160,8 +162,7 @@ class MergeRequestsController < ApplicationController
     else
       respond_to do |format|
         format.html {
-          @repositories = @owner.repositories.find(:all,
-            :conditions => ["id != ?", @repository.id])
+          @repositories = @owner.repositories.where("id != ?", @repository.id)
           get_branches_and_commits_for_selection
           render :action => "new"
         }
@@ -171,7 +172,7 @@ class MergeRequestsController < ApplicationController
   end
 
   def edit
-    @repositories = filter(@owner.repositories.find(:all, :conditions => ["id != ?", @repository.id]))
+    @repositories = filter(@owner.repositories.where("id != ?", @repository.id))
     get_branches_and_commits_for_selection
   end
 
@@ -180,10 +181,9 @@ class MergeRequestsController < ApplicationController
     if @merge_request.save
       @merge_request.publish_notification
       flash[:success] = I18n.t "merge_requests_controller.update_success"
-      redirect_to [@owner, @repository, @merge_request]
+      redirect_to [@repository.project, @repository, @merge_request]
     else
-      @repositories = filter(@owner.repositories.find(:all,
-        :conditions => ["id != ?", @repository.id]))
+      @repositories = filter(@owner.repositories.where("id != ?", @repository.id))
       get_branches_and_commits_for_selection
       render :action => "edit"
     end
@@ -192,7 +192,7 @@ class MergeRequestsController < ApplicationController
   def destroy
     @merge_request.destroy
     flash[:success] = I18n.t "merge_requests_controller.destroy_success"
-    redirect_to [@owner, @repository]
+    redirect_to [@repository.project, @repository]
   end
 
   def direct_access
@@ -226,9 +226,9 @@ class MergeRequestsController < ApplicationController
                                :name => @merge_request.target_repository.name)
       @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
       @merge_request.confirmed_by_user
-      @redirection_path =  repo_owner_path(@merge_request.reload.target_repository,
-                                           :project_repository_merge_request_path, @repository.project,
-                                           @merge_request.target_repository, @merge_request)
+      @redirection_path = project_repository_merge_request_path(@repository.project,
+                                                                @merge_request.target_repository,
+                                                                @merge_request)
     end
 
     respond_to do |format|
@@ -254,7 +254,7 @@ class MergeRequestsController < ApplicationController
     unless can_resolve_merge_request?(current_user, @merge_request)
       respond_to do |format|
         flash[:error] = I18n.t "merge_requests_controller.assert_resolvable_error"
-        format.html { redirect_to([@owner, @repository, @merge_request]) }
+        format.html { redirect_to([@repository.project, @repository, @merge_request]) }
         format.xml  {
           render :text => I18n.t("merge_requests_controller.assert_resolvable_error"),
           :status => :forbidden
@@ -268,7 +268,7 @@ class MergeRequestsController < ApplicationController
     if @merge_request.user != current_user
       respond_to do |format|
         flash[:error] = I18n.t "merge_requests_controller.assert_ownership_error"
-        format.html { redirect_to([@owner, @repository]) }
+        format.html { redirect_to([@repository.project, @repository]) }
         format.xml  do
           render :text => I18n.t("merge_requests_controller.assert_ownership_error"),
           :status => :forbidden
@@ -288,11 +288,9 @@ class MergeRequestsController < ApplicationController
     paginate(page_free_redirect_options) do
       filter_paginated(page, per_page) do |page|
         @repository.merge_requests.from_filter(params[:status]) \
-          .paginate(:all, {
-                      :page => page,
-                      :per_page => per_page,
-                      :order => "created_at desc"
-                    })
+          .paginate(:page => page,
+                    :per_page => per_page,
+                    :order => "created_at desc")
       end
     end
   end

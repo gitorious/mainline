@@ -1,7 +1,5 @@
-begin
-  $: << File.join(File.expand_path(File.dirname(__FILE__)), "app")
-  require "config/environment"
-  require 'resque/tasks'
-rescue LoadError => err
-  # Ignore in case not using Resque
-end
+require "pathname"
+
+# $: << File.join(File.expand_path(File.dirname(__FILE__)), "app")
+require (Pathname(__FILE__) + "../../../config/environment.rb").realpath
+require "resque/tasks"

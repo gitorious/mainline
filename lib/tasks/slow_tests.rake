@@ -47,5 +47,4 @@ namespace :test do
       stop unless already_running
     end
   end
-
 end

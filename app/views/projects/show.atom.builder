@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -24,8 +25,7 @@ namespaced_atom_feed do |feed|
 
   @events.each do |event|
     action, body, category = action_and_body_for_event(event)
-    item_url = "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}" + project_path(@project)
-    feed.entry(event, :url => item_url) do |entry|
+    feed.entry(event, :url => Gitorious.url(project_path(@project))) do |entry|
       if event.user
         entry.title("#{h(event.user.login)} #{strip_tags(action)}")
         entry_content = <<-EOS
@@ -36,7 +36,7 @@ namespaced_atom_feed do |feed|
           entry_content << "<ul>"
           event.events.commits.each do |commit_event|
             entry_content << %Q{<li>#{h(commit_event.git_actor.name)} }
-            commit_url = repo_owner_path(event.target, :project_repository_commit_path, event.target.project, event.target, commit_event.data)
+            commit_url = project_repository_commit_path(event.target.project, event.target, commit_event.data)
             entry_content << %Q{#{link_to(h(commit_event.data[0,7]), commit_url)}}
             entry_content << %Q{: #{truncate(h(commit_event.body), :length => 75)}</li>}
           end

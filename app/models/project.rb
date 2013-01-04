@@ -49,7 +49,7 @@ class Project < ActiveRecord::Base
   has_many    :merge_request_statuses, :order => "id asc"
   accepts_nested_attributes_for :merge_request_statuses, :allow_destroy => true
 
-  default_scope :conditions => ["suspended_at is null"]
+  default_scope :conditions => ["projects.suspended_at is null"]
   serialize :merge_request_custom_states, Array
   attr_protected :owner_id, :user_id, :site_id
 
@@ -59,10 +59,12 @@ class Project < ActiveRecord::Base
   validates_uniqueness_of :slug, :case_sensitive => false
   validates_format_of :slug, :with => /^#{NAME_FORMAT}$/i,
     :message => I18n.t( "project.format_slug_validation")
-  validates_exclusion_of :slug, :in => Gitorious::Reservations.project_names
-  validates_url_format_of :home_url, :allow_nil => true, :message => I18n.t("project.ssl_required")
-  validates_url_format_of :mailinglist_url, :allow_nil => true, :message => I18n.t("project.ssl_required")
-  validates_url_format_of :bugtracker_url, :allow_nil => true, :message => I18n.t("project.ssl_required")
+  validates_exclusion_of :slug, :in => lambda { |p| Project.reserved_slugs }
+
+  URL_FORMAT = %r{\Ahttps?:\/\/([^\s:@]+:[^\s:@]*@)?[A-Za-z\d\-]+(\.[A-Za-z\d\-]+)+\.?(:\d{1,5})?([\/?]\S*)?\Z}i
+  validates_format_of :home_url, :with => URL_FORMAT, :allow_nil => true, :message => I18n.t("project.ssl_required")
+  validates_format_of :mailinglist_url, :with => URL_FORMAT, :allow_nil => true, :message => I18n.t("project.ssl_required")
+  validates_format_of :bugtracker_url, :with => URL_FORMAT, :allow_nil => true, :message => I18n.t("project.ssl_required")
 
   before_validation :downcase_slug
   after_create :create_wiki_repository
@@ -71,7 +73,7 @@ class Project < ActiveRecord::Base
 
   throttle_records :create, :limit => 5,
     :counter => proc{|record|
-      record.user.projects.count(:all, :conditions => ["created_at > ?", 5.minutes.ago])
+      record.user.projects.where("created_at > ?", 5.minutes.ago).count
     },
     :conditions => proc{|record| {:user_id => record.user.id} },
     :timeframe => 5.minutes
@@ -89,23 +91,20 @@ class Project < ActiveRecord::Base
   # Returns the projects limited by +limit+ who has the most activity within
   # the +cutoff+ period
   def self.most_active_recently(limit = 10, number_of_days = 3)
-    Rails.cache.fetch("projects:most_active_recently:#{limit}:#{number_of_days}",
-        :expires_in => 30.minutes) do
-      find(:all, :joins => :events, :limit => limit,
-        :select => 'distinct projects.*, count(events.id) as event_count',
-        :order => "event_count desc", :group => "projects.id",
-        :conditions => ["events.created_at > ?", number_of_days.days.ago])
-    end
+    projects = select("distinct projects.*, count(events.id) as event_count").
+      where("events.created_at > ?", number_of_days.days.ago).
+      joins(:events).
+      order("count(events.id) desc").
+      group("projects.id").
+      limit(limit)
   end
 
   def recently_updated_group_repository_clones(limit = 5)
-    self.repositories.by_groups.find(:all, :limit => limit,
-      :order => "last_pushed_at desc")
+    self.repositories.by_groups.order("last_pushed_at desc").limit(limit)
   end
 
   def recently_updated_user_repository_clones(limit = 5)
-    self.repositories.by_users.find(:all, :limit => limit,
-      :order => "last_pushed_at desc")
+    self.repositories.by_users.order("last_pushed_at desc").limit(limit)
   end
 
   def to_param
@@ -197,16 +196,15 @@ class Project < ActiveRecord::Base
   end
 
   def new_event_required?(action_id, target, user, data)
-    events_count = events.count(:all, :conditions => [
-      "action = :action_id AND target_id = :target_id AND target_type = :target_type AND user_id = :user_id and data = :data AND created_at > :date_threshold",
-      {
-        :action_id => action_id,
-        :target_id => target.id,
-        :target_type => target.class.name,
-        :user_id => user.id,
-        :data => data,
-        :date_threshold => 1.hour.ago
-      }])
+    events_count = events.where("action = :action_id AND target_id = :target_id AND target_type = :target_type AND user_id = :user_id and data = :data AND created_at > :date_threshold",
+                                {
+                                  :action_id => action_id,
+                                  :target_id => target.id,
+                                  :target_type => target.class.name,
+                                  :user_id => user.id,
+                                  :data => data,
+                                  :date_threshold => 1.hour.ago
+                                }).count
     return events_count < 1
   end
 
@@ -275,20 +273,21 @@ class Project < ActiveRecord::Base
 
   # Returns a String representation of the merge request states
   def merge_request_states
-    (merge_request_custom_states || merge_request_default_states).join("\n")
+    (has_custom_merge_request_states? ?
+     merge_request_custom_states :
+     merge_request_default_states).join("\n")
   end
 
   def merge_request_states=(s)
     self.merge_request_custom_states = s.split("\n").collect(&:strip)
   end
 
-
   def merge_request_fixed_states
-    ['Merged','Rejected']
+    ["Merged", "Rejected"]
   end
 
   def merge_request_default_states
-    ['Open','Closed','Verifying']
+    ["Open", "Closed", "Verifying"]
   end
 
   def has_custom_merge_request_states?
@@ -319,26 +318,35 @@ class Project < ActiveRecord::Base
     self.suspended_at = Time.now
   end
 
+  def self.reserved_slugs
+    @reserved_slugs ||= []
+  end
+
+  def self.reserve_slugs(slugs)
+    @reserved_slugs ||= []
+    @reserved_slugs.concat(slugs)
+  end
+
   protected
-    def create_wiki_repository
-      self.wiki_repository = Repository.create!({
-        :user => self.user,
-        :name => self.slug + Repository::WIKI_NAME_SUFFIX,
-        :kind => Repository::KIND_WIKI,
-        :project => self,
-        :owner => self.owner,
-      })
-    end
+  def create_wiki_repository
+    self.wiki_repository = Repository.create!({
+      :user => self.user,
+      :name => self.slug + Repository::WIKI_NAME_SUFFIX,
+      :kind => Repository::KIND_WIKI,
+      :project => self,
+      :owner => self.owner,
+    })
+  end
 
-    def create_default_merge_request_statuses
-      MergeRequestStatus.create_defaults_for_project(self)
-    end
+  def create_default_merge_request_statuses
+    MergeRequestStatus.create_defaults_for_project(self)
+  end
 
-    def downcase_slug
-      slug.downcase! if slug
-    end
+  def downcase_slug
+    slug.downcase! if slug
+  end
 
-    def add_as_favorite
-      watched_by!(self.user)
-    end
+  def add_as_favorite
+    watched_by!(self.user)
+  end
 end

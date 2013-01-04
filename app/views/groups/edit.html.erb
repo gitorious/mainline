@@ -1,42 +1,43 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <%= breadcrumbs_from(Breadcrumb::GroupEdit.new(@group)) -%>
 
 <h2 class="content-header"><%= t("views.groups.update_team") -%></h2>
 
-<%= error_messages_for :group -%>
-<% form_for @group, :html => {:multipart => true} do |f| -%>
+<%= error_messages(@group) -%>
+<%= form_for @group, :html => {:multipart => true} do |f| -%>
 <fieldset>
   <li>
     <%= f.label :description, t('views.groups.description') -%>
-     <div><%= t("views.common.format_using_markdown", :markdown => 'markdown') -%><%= f.text_area :description %> </div>
+    <div><%= t("views.common.format_using_markdown", :markdown => 'markdown') -%><%= f.text_area :description %> </div>
   </li>
 
   <li>
     <%= f.label :avatar, t('views.groups.avatar') -%>
     <div><%= image_tag @group.avatar.url(:thumb) %>
-    <%- if @group.avatar? -%>
-      <%= button_to_function("Delete current team image",
-        "if (confirm('Are you sure you want to delete the team image?')) $('#delete_avatar').submit()") %>
-    <%- end -%><br />
-    <%= f.file_field :avatar %> </div>
+      <%- if @group.avatar? -%>
+        <%= button_to_function("Delete current team image",
+                               "if (confirm('Are you sure you want to delete the team image?')) $('#delete_avatar').submit()") %>
+      <%- end -%><br />
+      <%= f.file_field :avatar %> </div>
   </li>
 
   <% if @group.is_a?(LdapGroup) %>
@@ -44,28 +45,26 @@
       <%= f.label :ldap_group_names %>
       <div>
         Enter LDAP group DNs, one per line<br />
-        <strong>Note:</strong> entries should be relative to the LDAP base DN<br /> 
+        <strong>Note:</strong> entries should be relative to the LDAP base DN<br />
         <%= f.text_area :ldap_group_names %>
       </div>
     </li>
   <% end %>
-
-
 </fieldset>
 <fieldset class="submit">
-        <%= f.submit t("views.groups.update_team_submit") -%>
+  <%= f.submit t("views.groups.update_team_submit") -%>
 </fieldset>
 <% end -%>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <% if site_admin?(current_user) || (admin?(current_user, @group) && @group.deletable?) -%>
     <p>
       <%= button_to("Delete this group permanently", group_path(@group),
-            :method => :delete, :confirm => "Do you really wish to DELETE this group?") -%>
+                    :method => :delete, :confirm => "Do you really wish to DELETE this group?") -%>
     </p>
   <% end -%>
 <% end -%>
 
-<% form_for(@group, :url => avatar_group_path,
-  :html => {:id => "delete_avatar", :method => :delete}) do |f| -%>
+<%= form_for(@group, :url => group_avatar_path,
+             :html => { :id => "delete_avatar", :method => :delete }) do |f| -%>
 <% end -%>

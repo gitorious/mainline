@@ -22,15 +22,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) +  "/../test_helper"
+require "test_helper"
 
 class FavoritesControllerTest < ActionController::TestCase
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :update)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:put, :update)
-
   def setup
     setup_ssl_from_config
   end
@@ -99,7 +93,7 @@ class FavoritesControllerTest < ActionController::TestCase
 
     should "redirect to the watchable itself" do
       do_create_post(@repository.class.name, @repository.id)
-      assert_redirected_to([@repository.owner, @repository.project, @repository])
+      assert_redirected_to([@repository.project, @repository])
     end
 
     context "JS requests" do
@@ -162,7 +156,7 @@ class FavoritesControllerTest < ActionController::TestCase
 
     should "redirect for HTML" do
       delete :destroy, :id => @favorite
-      assert_redirected_to([@repository.owner, @repository.project, @repository])
+      assert_redirected_to([@repository.project, @repository])
     end
 
     should "render :deleted for JS" do

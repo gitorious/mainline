@@ -17,13 +17,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class CommitsControllerTest < ActionController::TestCase
-  should_enforce_ssl_for(:get, :feed)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :show)
-
   context "showing a single commit" do
     setup do
       prepare_project_repo_and_commit
@@ -86,138 +82,6 @@ class CommitsControllerTest < ActionController::TestCase
       get :show, params
       assert_response :success
       assert_not_equal "Fri, 18 Apr 2008 23:26:07 GMT", @response.headers["Last-Modified"]
-    end
-  end
-
-  context "Routing" do
-    setup do
-      @project = projects(:johans)
-      @repository = @project.repositories.first
-      @repository.update_attribute(:ready, true)
-      @sha = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
-      @weird_id = '!"#$%&\'()+,-.0123456789;<=>@ABCDEFGHIJKLMNOPQRSTUVWXYZ]_`abcdefghijklmnopqrstuvwxyz{|}'
-    end
-
-    should "route commits format" do
-      assert_recognizes({
-        :controller => "commits",
-        :action => "show",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-      }, {:path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}", :method => :get})
-      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}", {
-        :controller => "commits",
-        :action => "show",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-      })
-    end
-
-    should "route user-namespaced commits index, with dots in the username" do
-      assert_recognizes({
-        :controller => "commits",
-        :action => "show",
-        :user_id => "mc.hammer",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-      }, {:path => "/~mc.hammer/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}", :method => :get})
-      assert_generates("/~mc.hammer/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}", {
-        :controller => "commits",
-        :action => "show",
-        :user_id => "mc.hammer",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-      })
-    end
-
-    should "route tags with dots in the id" do
-      assert_recognizes({
-        :controller => "commits",
-        :action => "show",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => "v0.7.0",
-      }, {:path => "/#{@project.to_param}/#{@repository.to_param}/commit/v0.7.0", :method => :get})
-      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/v0.7.0", {
-        :controller => "commits",
-        :action => "show",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => "v0.7.0",
-      })
-    end
-
-    should "route branches with weird characters in the id" do
-      assert_recognizes({
-        :controller => "commits",
-        :action => "show",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @weird_id,
-      }, {:path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@weird_id}", :method => :get})
-      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{URI.escape(@weird_id, ActionController::Routing::Segment::UNSAFE_PCHAR)}", {
-        :controller => "commits",
-        :action => "show",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @weird_id,
-      })
-    end
-
-    should "route diff format" do
-      assert_recognizes({
-        :controller => "commits",
-        :action => "show",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-        :format => "diff",
-      }, {
-        :path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}",
-        :method => :get
-      }, {
-        :format => "diff",
-      })
-      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}", {
-        :controller => "commits",
-        :action => "show",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-        :format => "diff"
-      }, {}, {
-        :format => "diff",
-      })
-    end
-
-    should "route patch format" do
-      assert_recognizes({
-        :controller => "commits",
-        :action => "show",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-        :format => "patch",
-      }, {
-        :path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}",
-        :method => :get
-      }, {
-        :format => "patch",
-      })
-      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}", {
-        :controller => "commits",
-        :action => "show",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-        :format => "patch"
-      }, {}, {
-        :format => "patch",
-      })
     end
   end
 
@@ -352,7 +216,6 @@ class CommitsControllerTest < ActionController::TestCase
 
   context "With private projects" do
     setup do
-      GitoriousConfig["use_ssl"] = false
       prepare_project_repo_and_commit
       enable_private_repositories
     end
@@ -393,7 +256,6 @@ class CommitsControllerTest < ActionController::TestCase
 
   context "With private repositories" do
     setup do
-      GitoriousConfig["use_ssl"] = false
       prepare_project_repo_and_commit
       enable_private_repositories(@repository)
     end

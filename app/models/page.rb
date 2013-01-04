@@ -18,18 +18,26 @@
 
 class Page
   class UserNotSetError < StandardError; end
-  
+  extend ActiveModel::Naming
+  include ActiveModel::Conversion
+
+  # Callback from ActiveModel::Conversion
+  # All pages behave like existing ones (should post to update)
+  def persisted?
+    true
+  end
+
   # TODO: support for more formats
   DEFAULT_FORMAT = "markdown"
   # TODO: support nested pages
   TITLE_FORMAT = /([A-Z][a-z]+)/.freeze
-  
+
   def self.find(name, repo, format = DEFAULT_FORMAT)
     fullname = "#{name}.#{format}"
     blob = find_or_create_blob(fullname, repo)
     new(fullname, blob, repo)
   end
-  
+
   def self.find_or_create_blob(fullname, repo)
     if blob = repo.tree/fullname
       return blob
@@ -37,60 +45,60 @@ class Page
       Grit::Blob.create(repo, :name => fullname, :data => '')
     end
   end
-  
+
   def initialize(name, blob, repo)
     @name = name
     @blob = blob
     @repo = repo
   end
   attr_accessor :user, :name
-  
+
   def content
     @content ||= @blob.data
   end
-  
+
   def content=(new_content)
     @content = new_content
   end
-  
+
   def new?
     @blob.id.nil?
   end
-  
+
   def new_record?
     # always false as a easy hack around rails' form handling
-    false 
+    false
   end
-  
+
   def to_param
     title
   end
   alias_method :id, :to_param
-  
+
   def title
     name.sub(/\.#{DEFAULT_FORMAT}$/, "")
   end
-  
+
   def reload
     @blob = @repo.tree/@name
   end
-  
+
   def commit
     return if new?
     logs = @repo.log("master", @name, {:max_count => 1})
     return if logs.empty?
     logs.first
   end
-  
+
   def committed_by_user
     return user if new?
     User.find_by_email_with_aliases(commit.committer.email)
   end
-  
+
   def valid?
     (title =~ TITLE_FORMAT)  == 0
   end
-  
+
   def save
     return false unless valid?
     raise UserNotSetError unless user
@@ -107,7 +115,7 @@ class Page
     end
     index.commit(msg, parents, actor, last_tree)
   end
-  
+
   def history(max_count = 30)
     @repo.log("master", @name, {:max_count => max_count})
   end

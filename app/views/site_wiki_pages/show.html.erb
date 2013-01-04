@@ -1,21 +1,22 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% @page_title = h(@page.title) + " - " + t("views.layout.pages")  -%>
 
@@ -23,47 +24,46 @@
 
 <div class="page-header">
   <h1>
-    <%= h(@page.title) -%> 
+    <%= h(@page.title) -%>
   </h1>
 </div>
 
 <%= wikize(@page.content) -%>
 
 <% if commit = @page.commit -%>
-<div class="page-meta">
-  <p>
-    <% if @page.committed_by_user -%>
-      <%#= t("views.pages.last_edited_by", 
-          :link_or_name => link_to(h(@page.committed_by_user.title), user_path(@page.committed_by_user))) -%>
-    <% else -%>
-      <%= t("views.pages.last_edited_by", :link_or_name => h(commit.committer.name)) -%>
-    <% end -%>
-  </p>
-</div>
+  <div class="page-meta">
+    <p>
+      <% if @page.committed_by_user -%>
+        <%#= t("views.pages.last_edited_by",
+               :link_or_name => link_to(h(@page.committed_by_user.title), user_path(@page.committed_by_user))) -%>
+      <% else -%>
+        <%= t("views.pages.last_edited_by", :link_or_name => h(commit.committer.name)) -%>
+      <% end -%>
+    </p>
+  </div>
 
 
-<% content_for :sidebar do -%>
-  <ul class="links navigation">
-    <% if logged_in? && current_user.site_admin? -%>
-      <li class="edit_wiki_page">
-        <%= edit_link(@page) -%>
+  <%= content_for :sidebar do -%>
+    <ul class="links navigation">
+      <% if logged_in? && current_user.site_admin? -%>
+        <li class="edit_wiki_page">
+          <%= edit_link(@page) -%>
+        </li>
+      <% end -%>
+      <li class="wiki_page_history">
+        <%= link_to(t("views.pages.history"), history_site_wiki_page_path(@page.title)) -%>
       </li>
-    <% end -%>
-    <li class="wiki_page_history">
-      <%= link_to(t("views.pages.history"), history_site_wiki_page_path(@page.title)) -%>
-    </li>
-    <li class="wiki_page">
-      <%= link_to(t("views.pages.index"), site_wiki_pages_path) -%>
-    </li>
-    <% if current_user.site_admin? -%>
-      <li class="wiki_via_git">
-        <%= link_to(t("views.pages.git"), git_access_site_wiki_pages_path) -%>
+      <li class="wiki_page">
+        <%= link_to(t("views.pages.index"), site_wiki_pages_path) -%>
       </li>
-    <% end -%>
-  </ul>
-  <p>
-    <strong>Last update:</strong> <%= commit.date.to_s(:short) -%>
-  </p>
+      <% if current_user.site_admin? -%>
+        <li class="wiki_via_git">
+          <%= link_to(t("views.pages.git"), git_access_site_wiki_pages_path) -%>
+        </li>
+      <% end -%>
+    </ul>
+    <p>
+      <strong>Last update:</strong> <%= l(commit.date, :format => :short) -%>
+    </p>
+  <% end -%>
 <% end -%>
-<% end -%>
-

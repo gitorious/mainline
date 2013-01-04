@@ -29,7 +29,7 @@ class CommentsController < ApplicationController
   renders_in_site_specific_context
 
   def index
-    @comments = @target.comments.find(:all, :include => :user)
+    @comments = @target.comments.includes(:user)
     @merge_request_count = @repository.merge_requests.count_open
     @atom_auto_discovery_url = project_repository_comments_path(@project, @repository,
       :format => :atom)
@@ -87,8 +87,7 @@ class CommentsController < ApplicationController
         if @comment.sha1.blank?
           redirect_to_repository_or_target
         else
-          redirect_to repo_owner_path(@repository,
-            :project_repository_commit_path, @project, @repository, @comment.sha1)
+          redirect_to(project_repository_commit_path(@project, @repository, @comment.sha1))
         end
       end
       wants.js do
@@ -159,9 +158,9 @@ class CommentsController < ApplicationController
 
   def redirect_to_repository_or_target
     if @target == @repository
-      redirect_to repo_owner_path(@repository, [@project, @target, :comments])
+      redirect_to([@project, @target, :comments])
     else
-      redirect_to repo_owner_path(@repository, [@project, @repository, @target])
+      redirect_to([@project, @repository, @target])
     end
   end
 

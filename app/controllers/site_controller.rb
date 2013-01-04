@@ -22,11 +22,10 @@
 #++
 
 class SiteController < ApplicationController
-  PAGES = [:about, :faq, :contact, :tos, :privacy_policy]
-  skip_before_filter :public_and_logged_in, :only => [:index].concat(PAGES)
+  skip_before_filter :public_and_logged_in, :only => [:index, :about, :faq, :contact, :tos, :privacy_policy]
   before_filter :login_required, :only => [:dashboard]
-  renders_in_site_specific_context :except => PAGES
-  renders_in_global_context :only => PAGES
+  renders_in_site_specific_context :except => [:about, :faq, :contact, :tos, :privacy_policy]
+  renders_in_global_context :only => [:about, :faq, :contact, :tos, :privacy_policy]
 
   def index
     if !current_site.subdomain.blank?
@@ -56,7 +55,7 @@ class SiteController < ApplicationController
   protected
   # Render a Site-specific index template
   def render_site_index
-    all_projects = current_site.projects.find(:all, :order => "created_at asc")
+    all_projects = current_site.projects.order("created_at asc")
     @projects = filter_authorized(current_user, all_projects)
     @teams = Group.all_participating_in_projects(@projects)
     @top_repository_clones = filter(Repository.most_active_clones_in_projects(@projects))
@@ -65,7 +64,7 @@ class SiteController < ApplicationController
   end
 
   def render_public_timeline
-    @projects = filter(Project.find(:all, :limit => 10, :order => "id desc"))
+    @projects = filter(Project.order("id desc").limit(10))
     @top_repository_clones = filter(Repository.most_active_clones)
     @active_projects = filter(Project.most_active_recently(15))
     @active_users = User.most_active
@@ -76,8 +75,7 @@ class SiteController < ApplicationController
 
   def render_dashboard
     @user = current_user
-    @projects = filter(@user.projects.find(:all,
-                                           :include => [:tags, { :repositories => :project }]))
+    @projects = filter(@user.projects.includes(:tags, { :repositories => :project }))
     @repositories = filter(current_user.commit_repositories)
     @events = filter_paginated(params[:page], Event.per_page) do |page|
       (@user.paginated_events_in_watchlist(:page => page))
@@ -85,7 +83,7 @@ class SiteController < ApplicationController
     @messages = @user.messages_in_inbox(3)
     @favorites = filter(@user.watched_objects)
     @root = Breadcrumb::Dashboard.new(@user)
-    @atom_auto_discovery_url = watchlist_user_path(@user, :format => :atom)
+    @atom_auto_discovery_url = user_watchlist_path(@user, :format => :atom)
     render :template => "site/dashboard"
   end
 
@@ -100,7 +98,7 @@ class SiteController < ApplicationController
   def render_global_index
     if logged_in?
       render_dashboard
-    elsif GitoriousConfig["is_gitorious_dot_org"]
+    elsif Gitorious.dot_org?
       render_gitorious_dot_org_in_public
     else
       render_public_timeline

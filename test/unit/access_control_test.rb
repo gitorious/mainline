@@ -15,6 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
 require "test_helper"
 
 class AccessControlTest < ActiveSupport::TestCase
@@ -69,7 +70,6 @@ class AccessControlTest < ActiveSupport::TestCase
     end
 
     should "grant admin access to repositories" do
-      refute @authorization.repository_admin?(@user, @repository)
       @committership.build_permissions(:admin)
       @committership.save!
       assert @authorization.repository_admin?(@user, @repository)

@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,13 +17,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../../test_helper'
+require "test_helper"
 
 class RepositoryCreationProcessorTest < ActiveSupport::TestCase
 
   def setup
-    @processor = RepositoryCreationProcessor.new    
+    @processor = RepositoryCreationProcessor.new
     @repository = repositories(:johans)
 
     @clone = mock
@@ -36,9 +36,9 @@ class RepositoryCreationProcessorTest < ActiveSupport::TestCase
   should "supplies two repos when cloning an existing repository" do
     Repository.expects(:clone_git_repository).with('foo', 'bar')
     options = {
-      :target_class => 'Repository', 
-      :target_id => @clone.id, 
-      :command => 'clone_git_repository', 
+      :target_class => 'Repository',
+      :target_id => @clone.id,
+      :command => 'clone_git_repository',
       :arguments => ['foo', 'bar']}
     message = options.to_json
     @processor.consume(message)
@@ -47,9 +47,9 @@ class RepositoryCreationProcessorTest < ActiveSupport::TestCase
   should "supplies one repo when creating a new repo" do
     Repository.expects(:create_git_repository).with('foo')
     options = {
-      :target_class => 'Repository', 
-      :target_id => @clone.id, 
-      :command => 'create_git_repository', 
+      :target_class => 'Repository',
+      :target_id => @clone.id,
+      :command => 'create_git_repository',
       :arguments => ['foo']}
     message = options.to_json
     @processor.consume(message)

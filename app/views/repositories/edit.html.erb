@@ -1,28 +1,29 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <%= breadcrumbs_from(@root) -%>
 
-<h1>Editing repository <%= link_to h(@repository.name), [@owner, @repository] -%></h1>
+<h1>Editing repository <%= link_to h(@repository.name), [@repository.project, @repository] -%></h1>
 
-<%= error_messages_for :repository -%>
-<% form_for(repo_owner_path(@repository.reload, [@repository.project, @repository])) do |f| -%>
+<%= error_messages(@repository) -%>
+<%= form_for([@repository.project, @repository.reload]) do |f| -%>
   <p>
     <%= f.label :description -%>
     <span class="hint">(<%= markdown_hint -%>)</span>:<br />
@@ -37,7 +38,7 @@
     <%= f.label :head %>
     <span class="hint">Change the symbolic ref the HEAD in the git repository points to</span>:<br />
     <%= f.select(:head, @heads.map{|h| [h.name, h.name] },
-          :selected => @repository.head ? @repository.head.name : nil) -%>
+                 :selected => @repository.head ? @repository.head.name : nil) -%>
   </p>
   <p>
     <%= f.label :deny_force_pushing %>:
@@ -60,7 +61,7 @@
     <p>
       <%= f.label :owner_id, "Transfer ownership to a group <small>(optional)</small>" -%>:<br />
       <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]},
-            :include_blank => true, :selected => nil -%>
+          :include_blank => true, :selected => nil -%>
       <br /><small class="hint">
         <strong>Note:</strong> Only change ownership of this repository, if you are
         absolutely sure you want to give admin and commit access to <em>everyone</em>
@@ -71,10 +72,10 @@
   <%= f.submit t("views.repos.btn_edit_repo") -%>
 <% end -%>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="links navigation">
     <% if can_delete?(current_user, @repository) -%>
-      <li class="delete_repository"><%= link_to t("views.repos.btn_delete_repo"), repo_owner_path(@repository, [:confirm_delete, @repository.project, @repository]) -%></li>
+      <li class="delete_repository"><%= link_to t("views.repos.btn_delete_repo"), [:confirm_delete, @repository.project, @repository] -%></li>
     <% end -%>
   </ul>
 <% end -%>

@@ -1,1 +1,0 @@
-ActsAsTaggableOn::TagList.delimiter = " "

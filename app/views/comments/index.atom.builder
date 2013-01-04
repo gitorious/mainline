@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2008, 2009 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -23,7 +24,7 @@ namespaced_atom_feed do |feed|
   feed.updated((@comments.blank? ? Time.now : @comments.first.created_at))
 
   @comments.each do |comment|
-    item_url = "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}" + project_repository_comments_path(@project,@repository)
+    item_url = Gitorious.url(project_repository_comments_path(@project,@repository))
     feed.entry(comment, :url => item_url) do |entry|
       entry.title("#{comment.user.login}: #{truncate(comment.body, :length => 30)}")
       entry.content(comment.body)

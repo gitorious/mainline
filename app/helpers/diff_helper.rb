@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -43,11 +44,11 @@ module DiffHelper
         out << "</h4>"
         out << force_utf8(render_diff(file.diff))
         out
-      end.join("\n")
+      end.join("\n").html_safe
     else
-      '<div class="clear"></div><div id="commit-diff-container">' +
-        render_inline_diffs_controls("commits") +
-        render_inline_diffs_with_stats(diffs, :open) + "</div>"
+      ('<div class="clear"></div><div id="commit-diff-container">' +
+       render_inline_diffs_controls("commits") +
+       render_inline_diffs_with_stats(diffs, :open) + "</div>").html_safe
     end
   end
 
@@ -61,7 +62,7 @@ module DiffHelper
                       link_to_if(@commit, "#{h(file.a_path)}", blob_path(@commit.id, file.a_path).sub("%2F","/"))
                     else
                       h(file.a_path)
-                    end                     
+                    end
       out << %Q{<span class="title"><span class="icon"></span>#{commit_link}</span>}
       out << %Q{<div class="diff-stats">}
       out << render_compact_diff_stats(diff_renderer.stats)
@@ -79,16 +80,18 @@ module DiffHelper
       end
       out << "</div></div>"
       out
-    end.join("\n")
+    end.join("\n").html_safe
   end
 
   def render_inline_diffs_controls(cookie_prefix)
-    %Q{<div class="file-diff-controls">
-         <small>
-           <a href="#" id="expand-all" gts:cookie-prefix="#{cookie_prefix}">expand all</a> /
-           <a href="#" id="collapse-all" gts:cookie-prefix="#{cookie_prefix}">collapse all</a>
-         </small>
-       </div>}
+    (<<-HTML).html_safe
+      <div class="file-diff-controls">
+        <small>
+          <a href="#" id="expand-all" gts:cookie-prefix="#{cookie_prefix}">expand all</a> /
+          <a href="#" id="collapse-all" gts:cookie-prefix="#{cookie_prefix}">collapse all</a>
+        </small>
+     </div>
+    HTML
   end
 
   def render_inline_diff(udiff, differ = nil, options = {})
@@ -107,7 +110,7 @@ module DiffHelper
       out << differ.render(Gitorious::Diff::InlineTableCallback.new)
     end
     out << "</table>"
-    out
+    out.html_safe
   end
 
   def render_sidebyside_diff(udiff)
@@ -119,7 +122,7 @@ module DiffHelper
     out << %Q{<th class="line-numbers"></th><th></th></thead>}
     out << differ.render(Gitorious::Diff::SidebysideTableCallback.new)
     out << "</table>"
-    out
+    out.html_safe
   end
 
   def render_diffmode_selector(params = {})
@@ -135,7 +138,7 @@ module DiffHelper
       out << %Q{<li><a href="#{url}?diffmode=sidebyside&amp;fragment=1" data-gts-target="parent">side by side</a></li>}
     end
     out << "</ul>"
-    out
+    out.html_safe
   end
 
   def render_diff_stats(stats)
@@ -147,11 +150,11 @@ module DiffHelper
       out << %Q{</li>}
     end
     out << "</ul>\n"
-    out
+    out.html_safe
   end
 
   def render_compact_diff_stats(stats)
-    %Q{(<span class="additions">#{stats[:additions].to_s}</span> / } +
-      %Q{<span class="deletions">#{stats[:deletions].to_s}</span>)}
+    ("(<span class=\"additions\">#{stats[:additions].to_s}</span> / " +
+     "<span class=\"deletions\">#{stats[:deletions].to_s}</span>)").html_safe
   end
 end

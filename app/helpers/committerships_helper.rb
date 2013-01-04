@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -35,11 +36,11 @@ module CommittershipsHelper
     msg = "No users with #{permissions} permissions"
     collab_items = "<li><em>#{msg}</em></li>" if collaborators.blank?
 
-    <<-HTML
-  <ul class="committers">
-  <h5>#{label}</h5>
-  #{collab_items}
-  </ul>
+    (<<-HTML).html_safe
+      <ul class="committers">
+        <h5>#{label}</h5>
+        #{collab_items.join}
+      </ul>
     HTML
   end
 
@@ -51,7 +52,6 @@ module CommittershipsHelper
 
   def last_admin(repo, to_be_removed)
     admins = repo.committerships.select { |c| c.admin? }
-    (admins.size == 1 && admins.first == to_be_removed)    
+    (admins.size == 1 && admins.first == to_be_removed)
   end
-  
 end

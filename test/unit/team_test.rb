@@ -17,6 +17,7 @@
 #++
 
 require "test_helper"
+
 class TeamTest < ActiveSupport::TestCase
   def setup
     LdapGroup.any_instance.stubs(:validate_ldap_dns)
@@ -31,10 +32,10 @@ class TeamTest < ActiveSupport::TestCase
     teardown do
       Team.group_implementation = @old_klass
     end
-
+    
     should "supply pagination" do
       LdapGroup.expects(:paginate)
-      Team.paginate_all
+      Team.paginate
     end
 
     should "find by name" do
@@ -56,8 +57,6 @@ class TeamTest < ActiveSupport::TestCase
       assert !group.valid?
       assert_equal name, group.name
     end
-
-
 
     should "destroy a group if user is admin" do
       assert_nothing_raised do
@@ -98,13 +97,7 @@ class TeamTest < ActiveSupport::TestCase
     should "create a new instance" do
       group = Team.create_group(normal_group_params, User.first)
       assert group.valid?
-    end
 
-    should "return a group even if it's invalid" do
-      name = "This is not valid"
-      group = Team.create_group({:group => {:name => name}}, User.first)
-      assert !group.valid?
-      assert_equal name, group.name
     end
 
     should "list all groups for which a user is admin" do
@@ -128,7 +121,7 @@ class TeamTest < ActiveSupport::TestCase
     end
 
     should "return memberships" do
-      assert_kind_of Array, Team.memberships(@group)
+      assert_kind_of ActiveRecord::Relation, Team.memberships(@group)
     end
   end
 

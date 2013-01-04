@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,15 +17,16 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../../test_helper'
+require "test_helper"
 
 class CommitsHelperTest < ActionView::TestCase
+  include ERB::Util
 
   should "includes the RepostoriesHelper" do
     included_modules = (class << self; self; end).send(:included_modules)
     assert included_modules.include?(RepositoriesHelper)
   end
-  
+
   context "render_diff_stats" do
     setup do
       @stat_data = [
@@ -33,7 +35,7 @@ class CommitsHelperTest < ActionView::TestCase
       ]
       @stats = Grit::CommitStats.new(mock("Grit::Repo"), "a"*40, @stat_data)
     end
-    
+
     should "renders a list of files as anchor links" do
       files = @stats.files.map{|f| f[0] }
       rendered_stats = render_diff_stats(@stats)
@@ -41,13 +43,13 @@ class CommitsHelperTest < ActionView::TestCase
         assert rendered_stats.include?(%Q{<li><a href="##{h(filename)}">#{h(filename)}</a>})
       end
     end
-    
+
     should "renders a graph of minuses for deletions" do
       assert render_diff_stats(@stats).include?(%Q{spec/database_spec.rb</a>&nbsp;17&nbsp;<small class="deletions">#{"-"*12}</small>})
     end
-    
+
     should "renders a graph of plusses for inserts" do
-      assert_match(/spec\/database_spec\.rb<\/a>&nbsp;17&nbsp;<small class="deletions.+<\/small><small class="insertions">#{"\\+"*5}<\/small>/, 
+      assert_match(/spec\/database_spec\.rb<\/a>&nbsp;17&nbsp;<small class="deletions.+<\/small><small class="insertions">#{"\\+"*5}<\/small>/,
         render_diff_stats(@stats))
     end
   end

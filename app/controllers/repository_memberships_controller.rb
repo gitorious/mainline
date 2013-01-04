@@ -24,7 +24,7 @@ class RepositoryMembershipsController < ContentMembershipsController
 
   protected
   def require_private_repos
-    if !GitoriousConfig["enable_private_repositories"]
+    if !Gitorious.private_repositories?
       find_project_and_repository if @repository.nil?
       redirect_to project_repository_path(@repository.project, @repository)
     end

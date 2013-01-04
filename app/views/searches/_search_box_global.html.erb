@@ -1,39 +1,39 @@
 <%
-#--
-#   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% hide_tips ||= false -%>
 
 <div class="search_bar">
-  <% form_for :search, :url => search_path, :html => { :method => "get" } do |f| -%>
-    <p>
-      <%= text_field_tag :q, params[:q], :class => "text search-field round-5" -%>
-      <input type="submit" value="<%= t("views.searches.search") %>" class="search-submit round-5" />
-    </p>
-    <p class="hint search-hint" style="display: none;">
-      <%= t("views.searches.hint") %>
-      <% unless hide_tips -%>
-        - <small><a id="advanced-search-toggler" href="#advanced">Advanced search tips</a></small>
-      <% end -%>
-    </p>
-  <% end -%>
+  <%= form_for :search, :url => search_path, :html => { :method => "get" } do |f| -%>
+  <p>
+    <%= text_field_tag :q, params[:q], :class => "text search-field round-5" -%>
+    <input type="submit" value="<%= t("views.searches.search") %>" class="search-submit round-5" />
+  </p>
+  <p class="hint search-hint" style="display: none;">
+    <%= t("views.searches.hint") %>
+    <% unless hide_tips -%>
+      - <small><a id="advanced-search-toggler" href="#advanced">Advanced search tips</a></small>
+    <% end -%>
+  </p>
+<% end -%>
 </div>

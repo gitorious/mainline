@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,11 +15,12 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require 'test_helper'
-require 'performance_test_help'
+
+require "test_helper"
+require "rails/performance_test_help"
 
 # Profiling results for each test method are written to tmp/performance.
-class BrowsingTest < ActionController::PerformanceTest
+class BrowsingTest < ActionDispatch::PerformanceTest
   def test_homepage
     get '/'
   end
