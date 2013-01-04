@@ -370,6 +370,16 @@ class UsersControllerTest < ActionController::TestCase
       assert_equal user, User.authenticate(user.email, "test")
     end
 
+    should "actually update user data on #update" do
+      user = users(:johan)
+      name = "The mystery man"
+      put :update, :id => users(:johan).to_param, :user => {
+        :fullname => name
+      }
+      assert_response :redirect
+      assert_equal name, user.reload.fullname
+    end
+
     should "be able to update password, even if user is openid enabled" do
       user = users(:johan)
       user.update_attribute(:identity_url, "http://johan.someprovider.com/")

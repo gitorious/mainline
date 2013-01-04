@@ -64,7 +64,8 @@
   </ul>
 </div>
 
-<%= render_if_ready(@merge_request, {:include_refresh_link => true}) do -%>
+<% render_if_ready(@merge_request, {:include_refresh_link => true}) do -%>
+
   <h2><%= t("views.merges.commits_to_merged") %>:</h2>
   <div class="version_selector">
     <div class="changable-selection-current round-10" id="merge_request_version"

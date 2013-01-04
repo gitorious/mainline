@@ -55,7 +55,7 @@ module SearchesHelper
 
     def tag_list
       @project.tag_list.map do |tag|
-        link_to(h(tag), "/search?q=#{h(tag)}")
+        link_to(h(tag), "/search?q=%40category+#{h(tag)}")
       end.to_sentence
     end
 

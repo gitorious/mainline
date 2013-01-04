@@ -12,7 +12,7 @@ class GitoriousFormBuilder < ActionView::Helpers::FormBuilder
       result << content_tag(:p, options[:hint], :class => "hint")
     end
     result << "</div>"
-    result.join("\n")
+    result.join
   end
 
   private

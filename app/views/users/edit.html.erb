@@ -41,7 +41,7 @@
   </li>
 
   <li>
-    <%= f.label :url, t("views.users.url") -%>
+    <%= f.label :url, t("views.users.url").html_safe -%>
     <div><%= f.text_field :url -%></div>
   </li>
 
@@ -71,7 +71,7 @@
   </li>
   <li>
     <%= f.label :default_favorite_notifications -%>
-    <div><%= f.check_box :default_favorite_notifications -%><span class="hint"> <%= t("views.users.describe_default_favorite_notifications", :url => favorites_path) -%></span></div>
+    <div><%= f.check_box :default_favorite_notifications -%><span class="hint"> <%= t("views.users.default_favorite_notifications", :url => favorites_path) -%></span></div>
   </li>
 </fieldset>
 <fieldset class="submit">

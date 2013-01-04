@@ -26,7 +26,7 @@
 <%= form_for(@project, :url => edit_slug_project_path(@project), :method => "put") do |f| -%>
 
   <div class="info_hint">
-    <%= t('views.projects.edit_slug_disclaimer') %>
+    <%= t('views.projects.edit_slug_disclaimer').html_safe %>
   </div>
 
   <p>

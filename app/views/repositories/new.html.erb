@@ -46,6 +46,14 @@
         <span class="hint" style="float: left;"><%= t("views.repos.merge_requests_enabled") -%></span>
       </div>
     </li>
+    <% if Gitorious.private_repositories? %>
+    <li>
+      <label for="private">Make the repository private?</label>
+      <div>
+	<input id="private_repository" name="private_repository" type="checkbox" value="1">
+      </div>
+    </li>
+    <% end %>
   </fieldset>
 
   <% if Gitorious.repositories_default_private? %>

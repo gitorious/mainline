@@ -157,6 +157,7 @@ class UsersController < ApplicationController
     @user = current_user
     params[:user].delete(:password)
     params[:user].delete(:password_confirmation)
+    @user.attributes = params[:user]
     if current_user.save
       flash[:success] = "Your account details were updated"
       redirect_to user_path

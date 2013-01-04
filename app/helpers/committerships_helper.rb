@@ -39,7 +39,7 @@ module CommittershipsHelper
     (<<-HTML).html_safe
       <ul class="committers">
         <h5>#{label}</h5>
-        #{collab_items}
+        #{collab_items.join}
       </ul>
     HTML
   end
