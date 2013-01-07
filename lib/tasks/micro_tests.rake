@@ -19,9 +19,6 @@
 namespace :test do
   desc "Run fast micro/unit tests"
   task :micros do
-    tests = Dir.glob("test/micro/**/*.rb").join(" ")
-    command = "ruby -I.:lib:test -e '%w[#{tests}].each { |t| require(t) }'"
-    puts command
-    system command
+    system "./bin/micro-tests"
   end
 end
