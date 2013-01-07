@@ -223,11 +223,7 @@ class Repository < ActiveRecord::Base
   end
 
   def url_path
-    if project_repo?
-      File.join(project.to_param_with_prefix, name)
-    else
-      File.join(owner.to_param_with_prefix, project.slug, name)
-    end
+    File.join(project.to_param_with_prefix, name)
   end
 
   def real_gitdir

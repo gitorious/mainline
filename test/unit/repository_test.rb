@@ -117,60 +117,47 @@ class RepositoryTest < ActiveSupport::TestCase
       end
     end
 
-    should "has a clone url with the project name, if it is a mainline" do
+    should "have a clone url with the project name" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO
       assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.clone_url
-    end
 
-    should "have a clone url with the team/user, if it is not a mainline" do
       @repository.kind = Repository::KIND_TEAM_REPO
-      url = "git://#{@host}/#{@repository.owner.to_param_with_prefix}/#{@repository.project.slug}/foo.git"
-      assert_equal url, @repository.clone_url
+      assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.clone_url
 
       @repository.kind = Repository::KIND_USER_REPO
-      @repository.owner = users(:johan)
-      url = "git://#{@host}/#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
-      assert_equal url, @repository.clone_url
+      assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.clone_url
     end
 
-    should "has a push url with the project name, if it is a mainline" do
+    should "has a push url with the project name" do
       @repository.owner = groups(:team_thunderbird)
+
       @repository.kind = Repository::KIND_PROJECT_REPO
+      assert_equal "git@gitorious.test:#{@repository.project.slug}/foo.git", @repository.push_url
+
+      @repository.kind = Repository::KIND_TEAM_REPO
+      assert_equal "git@gitorious.test:#{@repository.project.slug}/foo.git", @repository.push_url
+
+      @repository.kind = Repository::KIND_USER_REPO
       assert_equal "git@gitorious.test:#{@repository.project.slug}/foo.git", @repository.push_url
     end
 
-    should "have a push url with the team/user, if it is not a mainline" do
-      @repository.owner = groups(:team_thunderbird)
-      @repository.kind = Repository::KIND_TEAM_REPO
-      url = "git@gitorious.test:#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
-      assert_equal url, @repository.push_url
-
-      @repository.kind = Repository::KIND_USER_REPO
-      @repository.owner = users(:johan)
-      url = "git@gitorious.test:#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
-      assert_equal url, @repository.push_url
-    end
-
-    should "has a http clone url with the project name, if it is a mainline" do
+    should "have a http clone url with the project name" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO
-      assert_equal "#{Gitorious.scheme}://#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
-    end
+      expected = Gitorious.url("/#{@repository.project.slug}/foo.git")
 
-    should "have a http clone url with the team/user, if it is not a mainline" do
-      @repository.owner = groups(:team_thunderbird)
+      @repository.kind = Repository::KIND_PROJECT_REPO
+      assert_equal expected, @repository.http_clone_url
+
       @repository.kind = Repository::KIND_TEAM_REPO
-      url = "#{Gitorious.scheme}://#{@host}/#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
-      assert_equal url, @repository.http_clone_url
+      assert_equal expected, @repository.http_clone_url
 
-      @repository.owner = users(:johan)
       @repository.kind = Repository::KIND_USER_REPO
-      url = "#{Gitorious.scheme}://#{@host}/#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
-      assert_equal url, @repository.http_clone_url
+      assert_equal expected, @repository.http_clone_url
     end
 
-    should "has a full repository_path" do
+    should "have a full repository_path" do
       expected_dir = File.expand_path(File.join(RepositoryRoot.default_base_path,
         "#{@repository.full_hashed_path}.git"))
       assert_equal expected_dir, @repository.full_repository_path
