@@ -56,7 +56,7 @@ class Team
 
   # Return a (class level) finder
   def self.group_finder
-    group_implementation == LdapGroup ? LdapGroupFinder.new : GroupFinder.new
+    group_implementation == LdapGroup ? Finders::LdapGroupFinder.new : Finders::GroupFinder.new
   end
 
   def self.method_missing(name, *args, &block)
