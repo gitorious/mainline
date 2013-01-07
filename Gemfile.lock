@@ -270,7 +270,7 @@ DEPENDENCIES
   just_paginate (= 0.0.6)
   launchy (= 2.0.5)
   memcache-client (~> 1.8)
-  mime-types (= 1.16)
+  mime-types (~> 1.16)
   minitest (= 4.2.0)
   mocha (= 0.9.10)
   mysql2
