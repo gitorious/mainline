@@ -66,7 +66,7 @@ group :http_utils do
 end
 
 group :dolt do
-  gem "libdolt", "~> 0.12"
+  gem "libdolt", "~> 0.13"
   gem "dolt", "~> 0.9"
   gem "tiltout", "~> 1.4"
 end

@@ -1,4 +1,4 @@
-* Todo [2/11]
+* Todo [4/11]
 ** TODO Login-button needs to be replaced with user menu, if logged in
 ** TODO Remote URLs needs to be filtered for logged in user
 ** TODO Watch-button needs to be generated for logged in user
@@ -6,8 +6,8 @@
 ** DONE JS solution to link up SHAs
 ** TODO JS solution to link up authors in commit logs etc
 ** DONE tree_history JSON.encode(hash) encoding issues
-** TODO Various encoding issues
+** DONE Various encoding issues
 *** http://localhost:3000/get-gitorious/get-gitorious/source/9132c8a1d15ea5a2a79f6c1e11e97665d514cb7a:views/about.erb
-** TODO Encoding issues/exceptions in libdolt/views/tree_history.erb kills the entire app server
+** DONE Encoding issues/exceptions in libdolt/views/tree_history.erb kills the entire app server
 ** TODO Build archiving into Dolt
-** TODO Diff master..<ref>
+** TODO Links to "Diff <current branch>..<branch>" for each branch. But: Where?
