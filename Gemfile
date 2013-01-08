@@ -78,3 +78,9 @@ platform :ruby_18 do
   gem "oniguruma", "~> 1.1"
   gem "SystemTimer", "~> 1.2"
 end
+
+group :dolt do
+  gem "libdolt", "~> 0.13"
+  gem "dolt", "~> 0.9"
+  gem "tiltout", "~> 1.4"
+end
