@@ -39,7 +39,7 @@
   <h2><%= t("views.projects.popular") %></h2>
   <ul class="tag_list">
     <% @tags.each do |tag| %>
-      <li class="tag_size_3"><%= link_to h(tag.name), search_path(:q => "category:#{h(tag.name)}") -%> </li>
+      <li class="tag_size_3"><%= link_to h(tag.name), search_path(:q => "@category:#{h(tag.name)}") -%> </li>
     <% end %>
   </ul>
   <ul class="links navigation">
