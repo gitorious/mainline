@@ -23,8 +23,10 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
+require "libdolt"
 require "gitorious"
+require "gitorious/view/dolt_url_helper"
+require "gitorious/view/repository_helper"
 
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
@@ -37,6 +39,8 @@ module ApplicationHelper
   include Gitorious::Authorization
   include GroupRoutingHelper
   include Gitorious::CacheInPrivateHelper
+  include Gitorious::View::DoltUrlHelper
+  include Gitorious::View::RepositoryHelper
 
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 

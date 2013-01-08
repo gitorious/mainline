@@ -22,8 +22,11 @@ Gitorious::Application.routes.draw do
   ### R0. Site index
   root :to => "site#index"
 
-  ### R1. Git HTTP cloner Rack app
+  ### R1. Rack endpoints
   match "/:project_id/:repository_id.git/*slug" => Gitorious::GitHttpCloner
+  # The repository browser instance is configured in an initializer
+  match "/:project_id/:repository_id/:action/*slug" => Gitorious::RepositoryBrowser.instance, :action => /(source)|(tree_history|raw|blame|history)/
+  match "/:project_id/:repository_id/refs" => Gitorious::RepositoryBrowser.instance
 
   ### R2. User routes
   resources :users, :only => [:new, :create] do

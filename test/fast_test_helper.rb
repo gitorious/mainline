@@ -50,7 +50,7 @@ OTHER_SHA = "a" * 40
 
 module TestHelper
   class Model
-    attr_accessor :id, :created_at, :updated_at
+    attr_accessor :id, :to_param, :created_at, :updated_at
 
     def initialize(attributes = {})
       @is_new = true
@@ -118,7 +118,8 @@ if !defined?(Rails)
   class Repository < TestHelper::Model
     attr_accessor :project, :user, :name, :hooks, :description, :browse_url,
       :clones, :owner, :user_id, :owner_id, :project_id, :parent_id,
-      :merge_requests_enabled, :kind, :parent, :content_memberships
+      :merge_requests_enabled, :kind, :parent, :content_memberships,
+      :full_repository_path, :gitdir, :open_merge_requests
 
     def committerships
       return @cs if @cs

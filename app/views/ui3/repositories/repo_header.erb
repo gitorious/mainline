@@ -1,0 +1,97 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+%><div class="gts-repo-header">
+  <div class="container">
+    <div class="row">
+      <h1 class="span">
+        <!--img src="<%= img_url('/project-logo.png') %>" width="32" height="32" alt="gitorious logo"-->
+        <a href="<%= project_path(project) %>"><%= project.slug %></a> /
+        <span><%= repository.name %></span>
+      </h1>
+    </div>
+    <div class="row">
+      <div class="span">
+        <div class="btn-group gts-repo-urls">
+          <% default_remote = app.default_remote_url(repository) %>
+          <%= remote_link(repository, app.ssh_daemon, "SSH", default_remote) %>
+          <%= remote_link(repository, app.git_http, "HTTP", default_remote) %>
+          <%= remote_link(repository, app.git_daemon, "Git", default_remote) %>
+          <input class="span4 gts-current-repo-url gts-select-onfocus" type="url" value="<%= default_remote %>">
+          <button data-toggle="collapse" data-target="#repo-url-help" class="gts-repo-url-help btn">?</button>
+        </div>
+      </div>
+      <div class="pull-right">
+        <a href="<%= project_repository_archive_tar_path(repository.project, repository, ref) %>" class="btn gts-download" rel="tooltip" data-original-title="Download <%= ref %> master as .tar.gz">
+          <i class="icon icon-download"></i> Download
+        </a>
+        <a href="<%= favorites_path(:watchable_id => repository.id, :watchable_type => repository.class.name) %>" class="btn"><i class="icon icon-star-empty"></i> Watch</a>
+        <a href="<%= clone_project_repository_path(repository.project, repository) %>" class="btn">Clone</a>
+      </div>
+    </div>
+    <div class="collapse gts-help row" id="repo-url-help">
+      <div class="alert alert-info span pull-right">
+        <p>
+          To <strong>clone</strong> this repository:
+        </p>
+        <pre class="prettyprint">git clone <%= default_remote %></pre>
+        <p>
+          To <strong>push</strong> to this repository:
+        </p>
+        <pre class="prettyprint"># Add a new remote
+git remote add origin <%= default_remote %>
+
+# Push the master branch to the newly added origin, and configure
+# this remote and branch as the default:
+git push -u origin master
+
+# From now on you can push master to the "origin" remote with:
+git push</pre>
+      </div>
+    </div>
+    <div class="row gts-description">
+      <div class="span">
+        <%= project_description(project) %>
+      </div>
+    </div>
+    <ul class="nav nav-tabs">
+      <!--li><a href="#">Readme</a></li-->
+      <li><a href="<%= project_repository_path(repository.project, repository) %>">Activities</a></li>
+      <li><a href="<%= project_repository_commits_in_ref_path(repository.project, repository, ref) %>">Commits</a></li>
+      <li class="active"><a>Source code</a></li>
+      <li>
+        <a href="<%= project_repository_merge_requests_path(repository.project, repository) %>">
+          Merge requests
+          <span class="count">(<%= repository.open_merge_request_count %>)</span>
+        </a>
+      </li>
+      <!--li><a href="#">Community</a></li-->
+      <li class="pull-right"><a href="<%= edit_project_repository_path(repository.project, repository) %>"><i class="icon-cog"></i> Admin</a>
+      <!--li class="pull-right dropdown">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-cog"></i> Admin</a>
+        <ul class="dropdown-menu">
+          <li><a href="#"><i class="icon-pencil"></i> Edit repository</a></li>
+          <li><a href="#"><i class="icon-trash"></i> Delete repository</a></li>
+          <li class="divider"></li>
+          <li><a href="#"><i class="i"></i> Change name</a></li>
+          <li><a href="#"><i class="i"></i> Manage collaborators</a></li>
+          <li><a href="#"><i class="i"></i> Transfer ownership</a></li>
+        </ul>
+      </li-->
+    </ul>
+  </div>
+</div>

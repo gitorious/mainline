@@ -1,0 +1,76 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+%><!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title><%= @title %> - Gitorious</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/ui3/css/gitorious.css" rel="stylesheet">
+    <link href="/ui3/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/ui3/lib/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="gts-masthead navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="gts-logo" href="<%= root_path %>"><img src="/ui3/images/gitorious.png" alt="Gitorious" title="Gitorious"></a>
+          <div class="pull-right">
+            <form action="<%= search_path %>" class="navbar-search pull-left" method="get">
+              <input type="search" placeholder="Search" class="search-query span2" name="q">
+            </form>
+            <div class="pull-right btn-group">
+              <a href="<%= login_path %>" class="btn btn-inverse"><i class="icon-user icon-white"></i> Log in</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% if defined?(repository_meta) %>
+      <%= partial("repositories/repo_header", {
+            :repository => repository_meta,
+            :project => repository_meta.project,
+            :ref => ref,
+            :app => Gitorious
+          }) %>
+    <% end %>
+    <div class="container gts-body">
+      <%= yield %>
+    </div>
+    <div class="footer">
+      <%= partial("layouts/footer") %>
+    </div>
+    <% if defined?(repository_meta) %>
+      <script>
+        var gts = {
+            repository: "<%= repository_meta.slug %>",
+            commitUrlTemplate: "<%= project_repository_commit_path(repository_meta.project,
+                                                                   repository_meta,
+                                                                   "%oid%").sub("%oid%", "\#{oid}") %>"
+        };
+    </script>
+    <% end %>
+    <script src="/ui3/dist/gts-ui-deps.js"></script>
+    <script src="/ui3/js/components/abbrev.js"></script>
+    <script src="/ui3/js/components/url.js"></script>
+    <script src="/ui3/js/components/ref-selector.js"></script>
+    <script src="/ui3/js/components/tree-history.js"></script>
+    <script src="/ui3/js/components/commit-linker.js"></script>
+    <script src="/ui3/js/gitorious.js"></script>
+  </body>
+</html>
