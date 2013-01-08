@@ -369,7 +369,10 @@ class Repository < ActiveRecord::Base
             self.kind = KIND_USER_REPO
           end
         end
-        unless committerships.any?{|c|c.committer == another_owner}
+        if cs_to_upgrade = committerships.detect{|c|c.committer == another_owner}
+          cs_to_upgrade.build_permissions(:review, :commit, :admin)
+          cs_to_upgrade.save!
+        else
           committerships.create_for_owner!(self.owner)
         end
         save!
