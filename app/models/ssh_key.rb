@@ -45,7 +45,7 @@ class SshKey < ActiveRecord::Base
     end
 
     unless valid_key_using_ssh_keygen?
-      errors.add(:key, "is not recognized is a valid public key")
+      errors.add(:key, "is not recognized as a valid public key")
     end
   end
 
