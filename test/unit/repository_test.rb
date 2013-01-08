@@ -706,6 +706,15 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
+  should "upgrade the permissions for the new owner when it already has access" do
+    new_owner = groups(:team_thunderbird)
+    repo = repositories(:johans)
+    committership = repo.committerships.create_with_permissions!({:committer => new_owner}, Committership::CAN_COMMIT)
+
+    repo.change_owner_to!(new_owner)
+    assert committership.reload.admin?
+  end
+
   should "downcases the name before validation" do
     repo = new_repos(:name => "FOOBAR")
     repo.save!
