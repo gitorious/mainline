@@ -65,7 +65,7 @@ class BlobsController < ApplicationController
     @ref, @path = branch_and_path(params[:branch_and_path], @git)
     if @git.git.cat_file({:t => true}, @ref) == "blob"
       @blob = @git.blob(@ref)
-      if @blob.size > 500.kilobytes
+      if @blob.size > eval(GitoriousConfig["max_download_blob_size"] || '500.kilobytes')
         flash[:error] = I18n.t "blobs_controller.raw_error", :size => @blob.size
         redirect_to project_repository_path(@project, @repository) and return
       end
@@ -80,12 +80,12 @@ class BlobsController < ApplicationController
       if stale?(:etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), :last_modified => @commit.committed_date.utc)
         @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
         render_not_found and return unless @blob
-        if @blob.size > 500.kilobytes
+        if @blob.size > eval(GitoriousConfig["max_download_blob_size"] || '500.kilobytes')
           flash[:error] = I18n.t "blobs_controller.raw_error", :size => @blob.size
           redirect_to project_repository_path(@project, @repository) and return
         end
         expires_in 30.minutes
-        headers["Content-Disposition"] = %[attachment;filename="#{@blob.name}"]
+#        headers["Content-Disposition"] = %[attachment;filename="#{@blob.name}"]
         render :text => @blob.data, :content_type => @blob.mime_type
       end
     end

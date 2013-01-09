@@ -99,7 +99,7 @@ module BlobsHelper
   end
   
   def too_big_to_render?(size)
-    size > 350.kilobytes
+    size > eval(GitoriousConfig["max_render_blob_size"] || '350.kilobytes')
   end
 
   class BlameRenderer
