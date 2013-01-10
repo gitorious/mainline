@@ -75,7 +75,38 @@ module Gitorious
       tree_history(repo, ref, path)
     end
 
+    aget %r{/(.*)/archive/(.*)?\.(tar\.gz|tgz|zip)} do
+      repo, ref, format = params[:captures]
+
+      actions.archive(repo, ref, format) do |err, filename|
+        begin
+          if !err.nil?
+            error(err, repo, ref)
+          else
+            add_sendfile_headers(filename, format)
+            body("")
+          end
+        rescue Exception => err
+          error(err, repo, ref)
+        end
+      end
+    end
+
     private
+    def add_sendfile_headers(filename, format)
+      basename = File.basename(filename)
+      user_path = basename.gsub("/", "_").gsub('"', '\"')
+
+      response.headers["content-type"] = format == "zip" ? "application/x-zip" : "application/x-gzip"
+      response.headers["content-disposition"] = "Content-Disposition: attachment; filename=\"#{user_path}\""
+
+      if Gitorious.frontend_server == "nginx"
+        response.headers["x-accel-redirect"] = "/tarballs/#{basename}"
+      else
+        response.headers["x-sendfile"] = filename
+      end
+    end
+
     def force_ref(args, action, ref)
       redirect(args.shift + "/#{action}/#{ref}:" + args.join)
     end

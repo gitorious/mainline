@@ -27,6 +27,10 @@ module Gitorious
         @meta = RepositoryPresenter.new(repository)
         super(repository.full_repository_path)
       end
+
+      def id; @meta.id; end
+      def path_segment; @meta.path_segment; end
+      def full_repository_path; @meta.full_repository_path; end
     end
 
     class RepositoryResolver

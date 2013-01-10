@@ -16,6 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "libdolt"
+require "libdolt/git/archiver"
 require "tiltout"
 require "racks/repository_browser"
 require "gitorious"
@@ -51,5 +52,6 @@ view.helper(Gitorious::View::RepositoryHelper)
 view.helper(Dolt::View::SmartBlobRenderer)
 view.helper(:maxdepth => 3, :tab_width => 4)
 
-actions = Dolt::RepoActions.new(Gitorious::Dolt::RepositoryResolver.new)
+archiver = Dolt::Git::Archiver.new(Gitorious.archive_work_dir, Gitorious.archive_cache_dir)
+actions = Dolt::RepoActions.new(Gitorious::Dolt::RepositoryResolver.new, archiver)
 Gitorious::RepositoryBrowser.instance = Gitorious::RepositoryBrowser.new(actions, view)
