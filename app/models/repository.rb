@@ -178,8 +178,13 @@ class Repository < ActiveRecord::Base
     "#{url_path}.git"
   end
 
-  def url_path
+  # The project/repo path segment is useful for more things than URLs
+  def path_segment
     File.join(project.to_param_with_prefix, name)
+  end
+
+  def url_path
+    path_segment
   end
 
   def real_gitdir
