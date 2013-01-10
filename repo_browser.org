@@ -1,4 +1,4 @@
-* Todo [4/11]
+* Todo [5/16]
 ** TODO Login-button needs to be replaced with user menu, if logged in
 ** TODO Remote URLs needs to be filtered for logged in user
 ** TODO Watch-button needs to be generated for logged in user
@@ -8,5 +8,10 @@
 ** DONE tree_history JSON.encode(hash) encoding issues
 ** DONE Various encoding issues
 ** DONE Encoding issues/exceptions in libdolt/views/tree_history.erb kills the entire app server
-** TODO Build archiving into Dolt
+** DONE Build archiving into Dolt
 ** TODO Links to "Diff <current branch>..<branch>" for each branch. But: Where?
+** TODO renders_in_site_specific_context in new layout/Dolt Sinatra app
+** TODO before_filter :check_repository_for_commits
+** TODO stale_conditional / expires in 30.seconds (trees controller)
+** TODO Branch names containing a # character
+** TODO if @blob.size > 500.kilobytes; flash[:error] = I18n.t "blobs_controller.raw_error", :size => @blob.size

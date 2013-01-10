@@ -22,6 +22,10 @@ module Gitorious
     module DoltUrlHelper
       include Dolt::View::MultiRepository
 
+      def archive_url(repository, ref, format)
+        repo_url(repository, "/archive/#{ref}.#{format}")
+      end
+
       def tree_url(repository, ref, path = "")
         repo_url(repository, "/source/#{ref}:#{path}")
       end

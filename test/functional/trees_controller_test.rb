@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -20,87 +20,33 @@
 require "test_helper"
 
 class TreesControllerTest < ActionController::TestCase
-  should_render_in_site_specific_context :except => [:archive]
-
   def setup
     @project = projects(:johans)
     @repository = @project.repositories.mainlines.first
     @repository.update_attribute(:ready, true)
 
-    Repository.any_instance.stubs(:full_repository_path).returns(grit_test_repo("dot_git"))
-    @grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
-    Repository.any_instance.stubs(:git).returns(@grit)
+    grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+    Repository.any_instance.stubs(:git).returns(grit)
   end
 
   context "#index" do
-    should "redirect to the master head, if not :id given" do
+    should "redirect to source root" do
       get :index, params
-      assert_redirected_to(project_repository_tree_path(@project, @repository, ["master"]))
+      assert_redirected_to "/johans-project/johansprojectrepos/source/master:"
     end
   end
 
   context "#show" do
-    should "GET successfully" do
+    should "redirect to source view" do
       get :show, params(:branch_and_path => "master/lib/grit")
 
-      assert_response :success
-      assert_equal @repository.git.tree("81a18c36ebe04e406ab84ccc911d79e65e14d1c0"), assigns(:tree)
-      assert_equal "master", assigns(:ref)
-      assert_equal ["lib", "grit"], assigns(:path)
+      assert_redirected_to "/johans-project/johansprojectrepos/source/master:lib/grit"
     end
 
-    should "redirect to HEAD if provided sha was not found (backwards compat)" do
-      get :show, params(:branch_and_path => "a"*40 + "/foo")
-
-      assert_redirected_to(project_repository_tree_path(@project, @repository, ["HEAD", "foo"]))
-    end
-
-    should "set a pseudo-head if the tree ref is a sha" do
-      ref = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
-      get :show, params(:branch_and_path => ref)
-
-      assert_response :success
-      assert_equal ref[0..6], assigns(:root).breadcrumb_parent.title
-    end
-
-    should "support browsing a namespaced branch" do
+    should "redirect slashed ref to source view" do
       get :show, params(:branch_and_path => "test/master/lib")
 
-      assert_response :success
-      assert_equal "test/master", assigns(:root).breadcrumb_parent.breadcrumb_parent.title
-      assert_equal ["lib"], assigns(:path)
-    end
-
-    should "cache the tree" do
-      get :show, params(:branch_and_path => "test/master/lib")
-
-      assert_response :success
-      assert_equal "max-age=30, private", @response.headers["Cache-Control"]
-    end
-
-    should "redirect to the tree index with a msg if the tree SHA1 was not found" do
-      @grit.expects(:commit).with("master").returns(nil)
-      get :show, params(:branch_and_path => "master/lib")
-      assert_response :redirect
-      assert_match(/no such tree sha/i, flash[:error])
-    end
-  end
-
-  context "Branch names containing a # character" do
-    should "show branches with a # in them with great success" do
-      git_repo = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
-      @repository.git.expects(:commit).with("ticket-#42") \
-        .returns(git_repo.commit("master"))
-      get :show, params(:branch_and_path => "ticket-%2342")
-      assert_response :success
-      assert_equal "ticket-#42", assigns(:ref)
-    end
-
-    should "urlencode # in branch names" do
-      Repository.any_instance.expects(:head_candidate_name).returns("ticket-#42")
-      get :index, params
-      assert_response :redirect
-      assert_redirected_to project_repository_tree_path(@project, @repository, ["ticket-#42"])
+      assert_redirected_to "/johans-project/johansprojectrepos/source/test/master:lib"
     end
   end
 
@@ -113,74 +59,10 @@ class TreesControllerTest < ActionController::TestCase
       File.stubs(:exist?).with(@cached_path).returns(true)
     end
 
-    should "return the correct for an existing cached tarball" do
+    should "redirect to archive action" do
       get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
 
-      assert_response :success
-      assert_equal @cached_path, @response.headers["X-Sendfile"]
-      assert_equal "application/x-gzip", @response.headers["Content-Type"]
-      exp_filename = "#{@repository.project.to_param}-#{@repository.to_param}-master.tar.gz"
-      assert_equal "Content-Disposition: attachment; filename=\"#{exp_filename}\"", @response.headers["Content-Disposition"]
-    end
-
-    should "use X-Sendfile headers when running under Apache" do
-      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
-
-      assert_response :success
-      assert_not_nil @response.headers["X-Sendfile"]
-    end
-
-    should "use X-Accel-Redirect to /tarballs/name-sha.tar.gz when running Nginx" do
-      Gitorious.stubs(:frontend_server).returns("nginx")
-      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
-
-      assert_response :success
-      tarball_name = "#{@repository.hashed_path.gsub(/\//,'-')}-#{@master_sha}.tar.gz"
-      assert_equal "/tarballs/#{tarball_name}", @response.headers["X-Accel-Redirect"]
-    end
-
-    should "enqueue a job when the tarball is not cached" do
-      cached_path = File.join(Gitorious.archive_cache_dir,
-                      "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.tar.gz")
-      work_path = File.join(Gitorious.archive_work_dir,
-                      "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.tar.gz")
-      File.expects(:exist?).with(cached_path).returns(false)
-      File.expects(:exist?).with(work_path).returns(false)
-
-      get :archive, params(:branch => "test/master", :archive_format => "tar.gz")
-
-      assert_response 202 # Accepted
-      assert_match(/is currently being generated, try again later/, @response.body)
-      assert_equal "text/plain; charset=utf-8", @response.headers["Content-Type"]
-
-      assert_published("/queue/GitoriousRepositoryArchiving", {
-                         "full_repository_path" => @repository.full_repository_path,
-                         "output_path" => cached_path,
-                         "format" => "tar.gz"
-                       })
-    end
-
-    should "not enqueue a job when work has already begun" do
-      cached_path = File.join(Gitorious.archive_cache_dir,
-                      "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
-      work_path = File.join(Gitorious.archive_work_dir,
-                      "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
-      File.expects(:exist?).with(cached_path).returns(false)
-      File.expects(:exist?).with(work_path).returns(true)
-
-      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
-
-      assert_response 202 # Accepted
-
-      messages = Gitorious::Messaging::TestAdapter.messages_on("/queue/GitoriousRepositoryArchiving")
-      assert_nil messages.find { |m| m["comit_sha"] == @master_sha }
-    end
-
-    should "redirect to the first tree when an invalid ref is requested" do
-      get :archive, params(:branch => %w[foo], :archive_format => "tar.gz")
-
-      assert_response :redirect
-      assert_redirected_to project_repository_tree_path(@project, @repository, "HEAD")
+      assert_redirected_to "/johans-project/johansprojectrepos/archive/master.tar.gz"
     end
   end
 
