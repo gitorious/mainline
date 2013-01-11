@@ -30,5 +30,5 @@
     <%= link_to "Merge requests",
         [repository.project, repository, :merge_requests] -%>,
   <%- end -%>
-  <%= link_to("Source tree", tree_url(RepositoryPresenter.new(repository).slug, repository_head(repository))) -%>
+  <%= link_to("Source tree", tree_url(RepositoryPresenter.new(repository).slug, repository.head_candidate_name)) -%>
 </h5>

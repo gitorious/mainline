@@ -31,6 +31,7 @@ module Gitorious
       def id; @meta.id; end
       def path_segment; @meta.path_segment; end
       def full_repository_path; @meta.full_repository_path; end
+      def head_candidate_name; @meta.head_candidate_name; end
     end
 
     class RepositoryResolver

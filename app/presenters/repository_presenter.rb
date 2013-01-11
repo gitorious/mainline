@@ -28,6 +28,7 @@ class RepositoryPresenter
   def to_param; repository.to_param; end
   def path_segment; repository.path_segment; end
   def full_repository_path; repository.full_repository_path; end
+  def head_candidate_name; repository.head_candidate_name; end
 
   def open_merge_request_count
     repository.open_merge_requests.count

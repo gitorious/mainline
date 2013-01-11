@@ -26,12 +26,6 @@ module Gitorious
         class_name += " active" if url == default_remote_url
         "<a class=\"#{class_name}\" href=\"#{url}\">#{label}</a>"
       end
-
-      def repository_head(repository)
-        repository.git.head.name
-      rescue
-        "master"
-      end
     end
   end
 end

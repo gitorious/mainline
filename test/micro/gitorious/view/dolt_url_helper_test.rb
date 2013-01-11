@@ -21,6 +21,12 @@ require "gitorious/view/dolt_url_helper"
 class Gitorious::View::DoltUrlHelperTest < MiniTest::Spec
   include Gitorious::View::DoltUrlHelper
 
+  describe "#tree_entry_url" do
+    it "links to source" do
+      assert_equal "/gitorious/source/master:lib/gitorious", tree_entry_url("gitorious", "master", "lib/gitorious")
+    end
+  end
+
   describe "#tree_url" do
     it "links to source" do
       assert_equal "/gitorious/source/master:lib/gitorious", tree_url("gitorious", "master", "lib/gitorious")

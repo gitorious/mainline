@@ -17,17 +17,22 @@
 #++
 require "dolt/sinatra/base"
 require "libdolt/view/multi_repository"
-require "libdolt/view/blob"
-require "libdolt/view/tree"
+require "gitorious/view/dolt_url_helper"
 
 module Gitorious
   class RepositoryBrowser < Dolt::Sinatra::Base
     include Dolt::View::MultiRepository
-    include Dolt::View::Blob
-    include Dolt::View::Tree
+    include Gitorious::View::DoltUrlHelper
 
     def self.instance; @instance; end
     def self.instance=(instance); @instance = instance; end
+
+    # Implementing this method and returning true means that
+    # Dolt will redirect any requests to refs to the actual commit
+    # oid, e.g.:
+    #   GET /gitorious/mainline/source/master:
+    #   -> 302 /gitorious/mainline/source/2d4e282d02f438043fc425cc99a781774d22561a:
+    def redirect_refs?; true; end
 
     aget "/*/source/*:*" do
       repo, ref, path = params[:splat]
@@ -36,7 +41,7 @@ module Gitorious
     end
 
     aget "/*/source/*" do
-      force_ref(params[:splat], "source", "master")
+      force_ref(params[:splat], "source")
     end
 
     aget "/*/raw/*:*" do
@@ -45,7 +50,7 @@ module Gitorious
     end
 
     aget "/*/raw/*" do
-      force_ref(params[:splat], "raw", "master")
+      force_ref(params[:splat], "raw")
     end
 
     aget "/*/blame/*:*" do
@@ -54,7 +59,7 @@ module Gitorious
     end
 
     aget "/*/blame/*" do
-      force_ref(params[:splat], "blame", "master")
+      force_ref(params[:splat], "blame")
     end
 
     aget "/*/history/*:*" do
@@ -63,7 +68,7 @@ module Gitorious
     end
 
     aget "/*/history/*" do
-      force_ref(params[:splat], "history", "master")
+      force_ref(params[:splat], "history")
     end
 
     aget "/*/refs" do
@@ -107,8 +112,10 @@ module Gitorious
       end
     end
 
-    def force_ref(args, action, ref)
-      redirect(args.shift + "/#{action}/#{ref}:" + args.join)
+    def force_ref(args, action)
+      repo = args.shift
+      ref = resolve_repository(repo).head_candidate_name
+      redirect("/#{repo}/#{action}/#{ref}:" + args.join)
     end
   end
 end

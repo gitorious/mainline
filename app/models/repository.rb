@@ -284,13 +284,12 @@ class Repository < ActiveRecord::Base
   end
 
   def head_candidate_name
-    if head = head_candidate
-      head.name
-    end
+    return head.name if head = head_candidate
+    "master"
   end
 
   def head
-    git.head
+    git && git.head
   end
 
   def head=(head_name)

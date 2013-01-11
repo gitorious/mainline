@@ -43,16 +43,4 @@ class Gitorious::View::RepositoryHelperTest < MiniTest::Spec
       assert_match /active/, link
     end
   end
-
-  describe "#repository_head" do
-    it "returns name of git head" do
-      head = OpenStruct.new(:name => "next")
-      repo = OpenStruct.new(:git => OpenStruct.new(:head => head))
-      assert_equal "next", repository_head(repo)
-    end
-
-    it "defaults to 'master'" do
-      assert_equal "master", repository_head(nil)
-    end
-  end
 end
