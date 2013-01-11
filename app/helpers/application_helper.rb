@@ -319,34 +319,13 @@ module ApplicationHelper
   def render_download_links(project, repository, head, options={})
     head = desplat_path(head) if head.is_a?(Array)
 
-    links = []
-    exceptions = Array(options[:except])
-    unless exceptions.include?(:source_tree)
-      links << content_tag(:li, link_to("Source tree",
-                  tree_path(head)), :class => "tree")
-    end
-
-    if head =~ /^[a-z0-9]{40}$/ # it looks like a SHA1
-      head = head[0..7]
-    end
-
-    { "tar.gz" => "tar" }.each do |extension, url_key|
-      archive_path = self.send("project_repository_archive_#{url_key}_path", project, repository, ensplat_path(head))
-      link_html = link_to("Download #{head} as #{extension}", archive_path,
-        :onclick => "Gitorious.DownloadChecker.checkURL('#{archive_path}?format=js', 'archive-box-#{head.gsub("/", "_")}');return false",
-        :title => "Download #{head} as #{extension}",
-        :class => "download-link")
-      link_callback_box = content_tag(:div, "", :class => "archive-download-box round-5 shadow-2",
-        :id => "archive-box-#{head.gsub("/", "_")}", :style => "display:none;")
-      links << content_tag(:li, link_html+link_callback_box, :class => extension.split('.').last)
-    end
-
-    if options.delete(:only_list_items)
-      links.join("\n").html_safe
-    else
-      css_classes = options[:class] || "meta"
-      content_tag(:ul, links.join("\n"), :class => "links #{css_classes}")
-    end
+    (["tar.gz", "zip"].map do |extension|
+      link_html = link_to("Download #{refname(head)} as #{extension}",
+                          archive_url(repository.path_segment, head, extension),
+                          :title => "Download #{refname(head)} as #{extension}",
+                          :class => "download-link")
+      content_tag(:li, link_html, :class => extension.split('.').last)
+    end).join("\n").html_safe
   end
 
   def paragraphs_with_more(text, identifier)

@@ -54,6 +54,7 @@
   </ul>
 
   <ul class="links navigation">
+    <li class="tree"><%= link_to("Source tree", tree_url(@repository.path_segment, params[:branch])) %></li>
     <%= render_download_links(@project, @repository, params[:branch], :only_list_items => true) %>
   </ul>
 

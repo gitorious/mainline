@@ -26,6 +26,11 @@ module Gitorious
         class_name += " active" if url == default_remote_url
         "<a class=\"#{class_name}\" href=\"#{url}\">#{label}</a>"
       end
+
+      def refname(ref)
+        return ref unless ref.length == 40
+        ref[0...7]
+      end
     end
   end
 end

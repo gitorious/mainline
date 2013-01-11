@@ -68,6 +68,7 @@
       <li><%= link_to t("views.graphs.type_normal"),
               project_repository_graph_in_ref_path(:branch => params[:branch], :type => "") -%></li>
     <% end %>
+    <li class="tree"><%= link_to("Source tree", tree_url(@repository.path_segment, params[:branch])) %></li>
     <%= render_download_links(@project, @repository, params[:branch], :only_list_items => true) %>
   </ul>
 
