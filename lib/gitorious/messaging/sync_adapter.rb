@@ -50,7 +50,6 @@ module Gitorious::Messaging::SyncAdapter
       "/queue/GitoriousEmailNotifications" => "message_forwarding",
       "/queue/GitoriousNewSshKey" => "new_ssh_key",
       "/queue/GitoriousPush" => "push",
-      "/queue/GitoriousRepositoryArchiving" => "repository_archiving",
       "/queue/GitoriousRepositoryCloning" => "repository_cloning",
       "/queue/GitoriousProjectRepositoryCreation" => "project_repository_creation",
       "/queue/GitoriousRepositoryDeletion" => "repository_deletion",

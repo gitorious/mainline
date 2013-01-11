@@ -48,10 +48,6 @@ module Gitorious
       def tree_history_url(repository, ref, path)
         repo_url(repository, "/tree_history/#{ref}:#{path}")
       end
-
-      def archive_url(repository, ref, format)
-        repo_url(repository, "/archive/#{path}.#{format}")
-      end
     end
   end
 end

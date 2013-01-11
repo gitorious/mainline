@@ -113,8 +113,8 @@ module Gitorious
     def self.load_processors
       root = Pathname(__FILE__) + "../../../app/processors"
       %w[merge_request_git_backend merge_request merge_request_version
-         message_forwarding push repository_archiving project_repository_creation
-         repository_deletion new_ssh_key destroy_ssh_key web_hook].each do |p|
+         message_forwarding push project_repository_creation repository_deletion
+         new_ssh_key destroy_ssh_key web_hook].each do |p|
         require "#{root}/#{p}_processor"
       end
     end

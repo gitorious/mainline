@@ -35,7 +35,6 @@ class MessagingResqueAdapterTest < ActiveSupport::TestCase
         "/queue/GitoriousEmailNotifications" => MessageForwardingProcessor,
         "/queue/GitoriousNewSshKey" => NewSshKeyProcessor,
         "/queue/GitoriousPush" => PushProcessor,
-        "/queue/GitoriousRepositoryArchiving" => RepositoryArchivingProcessor,
         "/queue/GitoriousRepositoryCloning" => RepositoryCloningProcessor,
         "/queue/GitoriousProjectRepositoryCreation" => ProjectRepositoryCreationProcessor,
         "/queue/GitoriousTrackingRepositoryCreation" => TrackingRepositoryCreationProcessor,

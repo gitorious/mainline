@@ -30,7 +30,6 @@ module Gitorious::Messaging::ResqueAdapter
       "GitoriousEmailNotifications" => "MessageForwarding",
       "GitoriousNewSshKey" => "NewSshKey",
       "GitoriousPush" => "Push",
-      "GitoriousRepositoryArchiving" => "RepositoryArchiving",
       "GitoriousRepositoryCloning" => "RepositoryCloning",
       "GitoriousProjectRepositoryCreation" => "ProjectRepositoryCreation",
       "GitoriousTrackingRepositoryCreation" => "TrackingRepositoryCreation",
