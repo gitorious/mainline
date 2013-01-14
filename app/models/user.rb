@@ -121,6 +121,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def unread_message_count
+    received_messages.unread_count
+  end
+
   def self.human_name
     I18n.t("activerecord.models.user")
   end
@@ -304,6 +308,10 @@ class User < ActiveRecord::Base
 
   def watched_objects
     favorites.includes(:watchable).order("id desc").collect(&:watchable)
+  end
+
+  def watching?(thing)
+    watched_objects.include?(thing)
   end
 
   def paginated_events_in_watchlist(pagination_options = {})
