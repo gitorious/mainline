@@ -64,6 +64,7 @@ class UserRepositoryDataControllerTest < ActionController::TestCase
       assert_equal "/~moe/edit", JSON.parse(response.body)["user"]["editPath"]
       assert_equal "/~moe", JSON.parse(response.body)["user"]["profilePath"]
       assert_equal "/messages", JSON.parse(response.body)["user"]["messagesPath"]
+      assert_equal "/logout", JSON.parse(response.body)["user"]["logoutPath"]
     end
 
     should "indicate that user is not an administrator for the repository" do

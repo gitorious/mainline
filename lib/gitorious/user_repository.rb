@@ -43,7 +43,8 @@ module Gitorious
         "dashboardPath" => @url_generator.root_path,
         "profilePath" => @url_generator.user_path(@user),
         "editPath" => @url_generator.edit_user_path(@user),
-        "messagesPath" => @url_generator.messages_path
+        "messagesPath" => @url_generator.messages_path,
+        "logoutPath" => @url_generator.logout_path
       }
     end
 
