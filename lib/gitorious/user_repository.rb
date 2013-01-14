@@ -21,21 +21,32 @@ module Gitorious
   class UserRepository
     include Gitorious::Authorization
 
-    def initialize(user, repository)
+    def initialize(user, repository, url_generator)
       @user = user
       @repository = repository
+      @url_generator = url_generator
     end
 
     def to_json
       return "{}" if @user.nil?
       JSON.dump({
-        "login" => @user.login,
-        "unreadMessageCount" => @user.unread_message_count,
+        "user" => user_hash,
         "repository" => repository_hash
       })
     end
 
     private
+    def user_hash
+      {
+        "login" => @user.login,
+        "unreadMessageCount" => @user.unread_message_count,
+        "dashboardPath" => @url_generator.root_path,
+        "profilePath" => @url_generator.user_path(@user),
+        "editPath" => @url_generator.edit_user_path(@user),
+        "messagesPath" => @url_generator.messages_path
+      }
+    end
+
     def repository_hash
       return "{}" if @repository.nil?
       {

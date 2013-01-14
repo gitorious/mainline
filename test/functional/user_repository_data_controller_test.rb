@@ -36,7 +36,7 @@ class UserRepositoryDataControllerTest < ActionController::TestCase
 
       assert_response 200
       data = JSON.parse(response.body)
-      assert_equal "moe", data["login"]
+      assert_equal "moe", data["user"]["login"]
     end
 
     should "have empty repository if repository is not found" do
@@ -53,7 +53,17 @@ class UserRepositoryDataControllerTest < ActionController::TestCase
       login_as(:moe)
       get :show, :id => @repository.id, :format => "json"
 
-      assert_equal 1, JSON.parse(response.body)["unreadMessageCount"]
+      assert_equal 1, JSON.parse(response.body)["user"]["unreadMessageCount"]
+    end
+
+    should "incude user paths" do
+      login_as(:moe)
+      get :show, :id => @repository.id, :format => "json"
+
+      assert_equal "/", JSON.parse(response.body)["user"]["dashboardPath"]
+      assert_equal "/~moe/edit", JSON.parse(response.body)["user"]["editPath"]
+      assert_equal "/~moe", JSON.parse(response.body)["user"]["profilePath"]
+      assert_equal "/messages", JSON.parse(response.body)["user"]["messagesPath"]
     end
 
     should "indicate that user is not an administrator for the repository" do

@@ -22,7 +22,7 @@ class UserRepositoryDataController < ApplicationController
     respond_to do |format|
       user = current_user == :false ? nil : current_user
       repo = Repository.find_by_id(params[:id])
-      user_repo = Gitorious::UserRepository.new(user, repo)
+      user_repo = Gitorious::UserRepository.new(user, repo, self)
       format.json { render(:json => user_repo.to_json) }
     end
   end
