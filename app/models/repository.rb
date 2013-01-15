@@ -195,10 +195,14 @@ class Repository < ActiveRecord::Base
     Gitorious.url(url_path)
   end
 
+  def default_clone_protocol
+    return "git" if git_cloning?
+    return "http" if http_cloning?
+    "ssh"
+  end
+
   def default_clone_url
-    return git_clone_url if git_cloning?
-    return http_clone_url if http_cloning?
-    ssh_clone_url
+    send(:"#{default_clone_protocol}_clone_url")
   end
 
   def clone_url

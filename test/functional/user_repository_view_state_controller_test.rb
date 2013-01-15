@@ -17,7 +17,7 @@
 #++
 require "test_helper"
 
-class UserRepositoryDataControllerTest < ActionController::TestCase
+class UserRepositoryViewStateControllerTest < ActionController::TestCase
   def setup
     @repository = repositories(:johans)
   end
@@ -44,7 +44,7 @@ class UserRepositoryDataControllerTest < ActionController::TestCase
       get :show, :id => 666, :format => "json"
 
       assert_response 200
-      assert_equal "{}", JSON.parse(response.body)["repository"]
+      assert_nil JSON.parse(response.body)["repository"]
     end
 
     # TODO: Convert the following tests to micro tests
@@ -100,7 +100,8 @@ class UserRepositoryDataControllerTest < ActionController::TestCase
       get :show, :id => @repository.id, :format => "json"
 
       protocols = JSON.parse(response.body)["repository"]["cloneProtocols"]
-      assert_equal ["git", "http", "ssh"], protocols
+      assert_equal ["git", "http", "ssh"], protocols["protocols"]
+      assert_equal "ssh", protocols["default"]
     end
 
     should "indicate available clone protocols for non-owner" do
@@ -108,7 +109,8 @@ class UserRepositoryDataControllerTest < ActionController::TestCase
       get :show, :id => @repository.id, :format => "json"
 
       protocols = JSON.parse(response.body)["repository"]["cloneProtocols"]
-      assert_equal ["git", "http"], protocols
+      assert_equal ["git", "http"], protocols["protocols"]
+      assert_equal "git", protocols["default"]
     end
   end
 end

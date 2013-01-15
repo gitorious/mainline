@@ -15,14 +15,14 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "gitorious/user_repository"
+require "gitorious/view_state/user_repository"
 
-class UserRepositoryDataController < ApplicationController
+class UserRepositoryViewStateController < ApplicationController
   def show
     respond_to do |format|
       user = current_user == :false ? nil : current_user
       repo = Repository.find_by_id(params[:id])
-      user_repo = Gitorious::UserRepository.new(user, repo, self)
+      user_repo = Gitorious::ViewState::UserRepository.new(self, repo, user)
       format.json { render(:json => user_repo.to_json) }
     end
   end
