@@ -25,6 +25,7 @@
 $.ajaxSetup({
     "beforeSend": function (xhr) {
         xhr.setRequestHeader("Accept", "text/javascript");
+	xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
     },
 
     "complete": function () {
