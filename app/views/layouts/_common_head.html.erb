@@ -32,4 +32,4 @@
 <%= csrf_meta_tag %>
 <!--[if IE 8]><link rel="stylesheet" href="/stylesheets/ie8.css" type="text/css"><![endif]-->
 <!--[if IE 7]><link rel="stylesheet" href="/stylesheets/ie7.css" type="text/css"><![endif]-->
-<%= Gitorious::Configuration.get("extra_html_head_data") -%>
+<%= Gitorious::Configuration.get("extra_html_head_data", "").html_safe -%>

@@ -20,5 +20,5 @@
 <div class="powered-by">
   <%= link_to image_tag("../img/poweredby.png", :title => "Powered by Gitorious"), "http://gitorious.org" -%>
 </div>
-<%= Gitorious::Configuration.get("extra_html_head_data") -%>
+<%= Gitorious::Configuration.get("extra_html_head_data", "").html_safe -%>
 <%= javascript_include_tag("onload", :cache => false) %>
