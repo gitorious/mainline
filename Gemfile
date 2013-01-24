@@ -1,9 +1,8 @@
 source "http://rubygems.org"
 
-# Last released version of Rails 2.3 is 2.3.16, which does not address
-# all known security vulnerabilities. The community fork provides a
-# 2.3.15 version that does.
-git "git://github.com/rails2/rails.git", :branch => "2-3-stable" do
+# Last released version of Rails 2.3 is 2.3.15, which does not address
+# all known security vulnerabilities.
+git "git://github.com/rails/rails.git", :branch => "2-3-stable" do
   gem "rails"
   gem "actionmailer"
   gem "actionpack"

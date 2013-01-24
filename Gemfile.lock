@@ -1,6 +1,6 @@
 GIT
-  remote: git://github.com/rails2/rails.git
-  revision: c395a2d17653eb192a06f61a3b10076f9af0eafb
+  remote: git://github.com/rails/rails.git
+  revision: 3b75781d38260f5f4f2f0b944a79d16121d31342
   branch: 2-3-stable
   specs:
     actionmailer (2.3.15)
