@@ -46,7 +46,7 @@ after_fork do |server, worker|
 
   begin
     uid, gid = Process.euid, Process.egid
-    user = gitorious_config("gitorious_user")
+    user = gitorious_config("user")
     if user
       group = user
       target_uid = Etc.getpwnam(user).uid
