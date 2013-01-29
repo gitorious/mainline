@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem "rails", "2.3.15"
+gem "rails", "2.3.16"
 gem "chronic", "0.3.0"
 gem "geoip", "0.8.9"
 gem "daemons", "1.1.0", :require => false

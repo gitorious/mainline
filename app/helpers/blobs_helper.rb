@@ -21,7 +21,7 @@
 module BlobsHelper
   include RepositoriesHelper
   include TreesHelper
-  
+
   HIGHLIGHTER_TO_EXT = {
     "apollo"=> /\.(apollo|agc|aea)$/,
     "css"   => /\.css$/,
@@ -37,21 +37,21 @@ module BlobsHelper
     "wiki"  => /\.(mediawiki|wikipedia|wiki)$/,
     "yaml"  => /\.(yaml|yml)$/,
   }
-  
+
   ASCII_MIME_TYPES_EXCEPTIONS = [ /^text/ ]
-  
+
   def textual?(blob)
     !binary?(blob)
   end
-  
+
   def binary?(blob)
     blob.binary?
   end
-  
+
   def image?(blob)
     blob.mime_type =~ /^image/
   end
-  
+
   def highlightable?(blob)
     if File.extname(blob.name) == ""
       return false
@@ -61,13 +61,13 @@ module BlobsHelper
     end
     true
   end
-  
+
   def language_of_file(filename)
     if lang_tuple = HIGHLIGHTER_TO_EXT.find{|lang, matcher| filename =~ matcher }
       return lang_tuple.first
     end
   end
-  
+
   def render_highlighted(text, filename, code_theme_class = nil)
     render_highlighted_list(text.to_s.split("\n"), filename, {:code_theme_class => code_theme_class})
   end
@@ -97,7 +97,7 @@ module BlobsHelper
     out << "</table>"
     out.join("\n")
   end
-  
+
   def too_big_to_render?(size)
     size > eval(GitoriousConfig["max_render_blob_size"] || '350.kilobytes')
   end
@@ -109,7 +109,7 @@ module BlobsHelper
       @project = project
       @repository = repository
     end
-    
+
     def blame_info_for_commit(commit)
       return %Q{<td class="blame_info unchanged"></td>} if commit.id == @previous_sha
       author = commit.author.name
@@ -120,6 +120,6 @@ module BlobsHelper
       first = ' first' if not @previous_sha
       @previous_sha = commit.id
       %Q{<td class="blame_info#{first}">#{commit_link}</td>}
-    end    
+    end
   end
 end
