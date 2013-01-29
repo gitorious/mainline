@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+require File.expand_path(File.dirname(__FILE__) + "/setup")
+Gitorious::CLI.new.run_with_gitorious_environment do
+  # Passenger, if applicable
+  passenger_restart_file = File.join(Gitorious::CLI.new.rails_root, "tmp", "restart.txt")
+  `touch #{passenger_restart_file}`
+
+  # Unicorn, if applicable
+  unicorn_restart_script = File.join(Gitorious::CLI.new.rails_root, "script", "restart_unicorn")
+  `#{unicorn_restart_script}`
+
+  # Other webserver? Thin etc not supported by this script, restart your webserver manually
+end
