@@ -1,16 +1,6 @@
 source "http://rubygems.org"
 
-# Last released version of Rails 2.3 is 2.3.15, which does not address
-# all known security vulnerabilities.
-git "git://github.com/rails/rails.git", :branch => "2-3-stable" do
-  gem "rails"
-  gem "actionmailer"
-  gem "actionpack"
-  gem "activerecord"
-  gem "activeresource"
-  gem "activesupport"
-end
-
+gem "rails", "2.3.16"
 gem "chronic", "0.3.0"
 gem "geoip", "0.8.9"
 gem "daemons", "1.1.0", :require => false
