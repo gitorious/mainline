@@ -55,7 +55,7 @@ class PushEventLogger
     event.save
     event
   end
-  
+
   def push_event_data
     [@spec.from_sha.sha, @spec.to_sha.sha, @spec.ref_name, calculate_commit_count.to_s].join(PUSH_EVENT_DATA_SEPARATOR)
   end
@@ -73,8 +73,8 @@ class PushEventLogger
   end
 
   def calculate_commit_count
-    lines = @repository.git.git.log({:pretty => "oneline"}, [@spec.from_sha.sha, @spec.to_sha.sha].join(".."))
-    lines.split("\n").size
+    count = @repository.git.git.rev_list({:count => true}, [@spec.from_sha.sha, @spec.to_sha.sha].join(".."))
+    count.strip.to_i
   end
 
   private

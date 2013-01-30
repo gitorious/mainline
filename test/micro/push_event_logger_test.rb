@@ -274,18 +274,11 @@ class PushEventLoggerTest < MiniTest::Shoulda
 
     should "know how many commits were pushed" do
       git = mock
-      log =<<GIT_LOG
-# 58226ba392520deb36cf89a7c1e85c047e9d1b2b Make sure meta events create usable meta and data attributes
-c8db6a4907fc3cd7762e862ea2e1f1683ba00e5f Merge request update events are created from the model
-bea57a4ac3a6590d1c66f3fadd986943d9830dde Start building event objects in PushEventLogger
-04a7d04b72c5e9da75b775f0ff0b9b424465313a Start implementation of push event logger/factory
-e0a6a4f6604efa4a6ab9f83e9bbc92c3a27bd625 Add documentation
-GIT_LOG
-      git.expects(:log).with({:pretty => "oneline"}, [SHA,OTHER_SHA].join("..")).returns(log)
+      git.expects(:rev_list).with({:count => true}, [SHA,OTHER_SHA].join("..")).returns("6")
       grit = mock(:git => git)
       @repository.expects(:git).returns(grit)
 
-      assert_equal(5, @logger.calculate_commit_count)
+      assert_equal(6, @logger.calculate_commit_count)
     end
 
     should "create a push event with the appropriate data" do
