@@ -90,7 +90,7 @@
     },
     :project => {
       :format_slug_validation => "debe coincidir con algo en el rango de [a-z0-9_\-]+",
-      :ssl_required => "Debe comenzar con http(s)",
+      :scheme_required => "Debe comenzar con http(s)",
     },
     :user => {
       :invalid_url => "URL inválida",

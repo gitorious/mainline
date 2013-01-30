@@ -124,7 +124,7 @@
     },
     :project => {
       :format_slug_validation => "deve bater com alguma coisa no intervalo de [a-z0-9_\-]+",
-      :ssl_required => "Deve iniciar com http(s)",
+      :scheme_required => "Deve iniciar com http(s)",
     },
     :user => {
       :invalid_url => "URL inválida",

@@ -60,9 +60,9 @@ class Project < ActiveRecord::Base
   validates_format_of :slug, :with => /^#{NAME_FORMAT}$/i,
     :message => I18n.t( "project.format_slug_validation")
   validates_exclusion_of :slug, :in => Gitorious::Reservations.project_names
-  validates_url_format_of :home_url, :allow_nil => true, :message => I18n.t("project.ssl_required")
-  validates_url_format_of :mailinglist_url, :allow_nil => true, :message => I18n.t("project.ssl_required")
-  validates_url_format_of :bugtracker_url, :allow_nil => true, :message => I18n.t("project.ssl_required")
+  validates_url_format_of :home_url, :allow_nil => true, :message => I18n.t("project.scheme_required")
+  validates_url_format_of :mailinglist_url, :allow_nil => true, :message => I18n.t("project.scheme_required")
+  validates_url_format_of :bugtracker_url, :allow_nil => true, :message => I18n.t("project.scheme_required")
 
   before_validation :downcase_slug
   after_create :create_wiki_repository
