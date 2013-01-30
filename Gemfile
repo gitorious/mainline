@@ -20,7 +20,7 @@ gem "unicorn", "~> 4.3.1", :platforms => :ruby
 gem "exception_notification", :require => "exception_notifier"
 gem "thinking-sphinx", "~> 2.0.10"
 gem "rails_autolink", "~> 1.0"
-gem "mysql2"
+gem "mysql2", :platforms => :ruby
 gem "highline"
 
 group :openid do
@@ -40,7 +40,7 @@ group :test do
 end
 
 group :postgres do
-  gem "pg"
+  gem "pg", :platforms => :ruby
 end
 
 group :development do
