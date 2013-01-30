@@ -660,6 +660,7 @@
       :formats => {
         :long_ordinal => lambda { |time| "%B #{time.day.ordinalize}, %Y %H:%M" },
         :default => "%a %b %d %H:%M:%S %Z %Y",
+        :time_and_date => "%Y-%m-%d %H:%M",
         :time => "%H:%M",
         :short => "%d %b %H:%M",
         :long => "%B %d, %Y %H:%M",
