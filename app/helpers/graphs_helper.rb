@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011, 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -22,9 +22,6 @@ module GraphsHelper
   def capillary_js_paths
     formatters = %w[scale svg-data raphael message-markup].collect { |p| "formatters/#{p}" }
     paths = (%w[branch graph] + formatters).collect { |p| "lib/capillary/lib/capillary/#{p}" }
-
-    ["lib/raphael/raphael-min.js",
-     "lib/buster-core/lib/buster-core", "lib/buster-core/lib/buster-event-emitter",
-     "lib/capillary/lib/capillary"] + paths
+    ["lib/raphael/raphael-min.js", "lib/bane/lib/bane.js", "lib/capillary/lib/capillary"] + paths
   end
 end
