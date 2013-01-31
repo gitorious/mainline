@@ -4,12 +4,12 @@
 [submodule "public/javascripts/lib/raphael"]
 	path = public/javascripts/lib/raphael
 	url = https://github.com/DmitryBaranovskiy/raphael.git
-[submodule "public/javascripts/lib/buster-core"]
-	path = public/javascripts/lib/buster-core
-	url = https://git.gitorious.org/buster/buster-core.git
 [submodule "public/javascripts/lib/spin.js"]
 	path = public/javascripts/lib/spin.js
 	url = https://github.com/fgnass/spin.js.git
 [submodule "public/ui3"]
 	path = public/ui3
 	url = http://git.gitorious.org/gitorious/ui3.git
+[submodule "public/javascripts/lib/bane"]
+	path = public/javascripts/lib/bane
+	url = git://gitorious.org/buster/bane.git
