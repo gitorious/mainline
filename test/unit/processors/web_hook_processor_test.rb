@@ -75,7 +75,8 @@ class WebHookProcessorTest < ActiveSupport::TestCase
     should "post the payload once for each hook" do
       add_hook_url(@repository, "http://foo.com/")
       add_hook_url(@repository, "http://bar.com/")
-      @processor.expects(:post_payload).twice.returns(successful_response)
+      Hook.expects(:global_hooks).returns(Hook.new(:url => "http://baz.com/"))
+      @processor.expects(:post_payload).times(3).returns(successful_response)
       @processor.notify_web_hooks(@payload)
     end
 

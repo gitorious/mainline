@@ -19,8 +19,7 @@
 require 'test_helper'
 
 class HookTest < ActiveSupport::TestCase
-  should_belong_to :repository
-  should_validate_presence_of :user, :repository, :url
+  should_validate_presence_of :user, :url
 
   context "URL validation" do
     should "require a valid URL" do
@@ -34,6 +33,30 @@ class HookTest < ActiveSupport::TestCase
       assert !hook.valid?
       assert_not_nil hook.errors.on(:url)
     end
+  end
+
+  context "Global hooks" do
+    should "find hooks not associated to a repository" do
+      Hook.new(:url => "http://foo.com", :user => users(:johan)).save!
+      assert_equal 1, Hook.global_hooks.size
+    end
+    
+    should "not find hooks associated to a repository" do
+      Hook.new(:url => "http://foo.com", :user => users(:johan), :repository => repositories(:johans)).save!
+      assert_equal 0, Hook.global_hooks.size
+    end
+
+    should "be global" do
+      assert Hook.new(:url => "http://foo.com").global?
+      assert !Hook.new(:url => "http://foo.com", :repository => repositories(:johans)).global?
+    end
+
+    should "only be created by admins" do
+      hook = Hook.new(:url => "http://foo.com", :user => users(:moe))
+      assert !hook.valid?
+      assert_not_nil hook.errors.on(:repository)
+    end
+
   end
 
   context "Keeping track of connection attempts" do
