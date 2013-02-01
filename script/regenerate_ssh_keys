@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require "pathname"
+
 RAILS_ENV = ENV['RAILS_ENV'] ||= 'production'
 
 filename = ARGV[0]
@@ -8,7 +10,10 @@ if filename.nil?
   exit!
 end
 
-require File.dirname(__FILE__) + "/../config/environment"
+rails_root = (Pathname(__FILE__) + "../../")
+Dir.chdir(rails_root)
+require "./config/environment"
+#require (Pathname(__FILE__) + "../../config/environment").realpath
 
 key_file = SshKeyFile.new(filename)
 SshKey.where(:ready => true).each do |ssh_key|

@@ -32,6 +32,14 @@ namespace :backup do
   # of current Gitorious install with previously backed up config
   # files (config/{database,gitorious,authentication}.yml) plus the
   # custom hooks (data/hooks/custom-{post-receive,pre-receive,update})
+  #
+  # SKIP_REPOS=true Don't include the hosted repositories in
+  # snapshot. Useful for large installations where size of hosted git
+  # repos are big enough to make tarballing it all non-viable, and in
+  # these cases you'll need to perform cp/rsync etc yourself
+  # instead. Note: if you skip the repos during snapshot/restore, the
+  # scripts will simply output some suggestions on where to find/place
+  # the repositories yourself.
 
   # EXAMPLES:
   #
@@ -47,6 +55,10 @@ namespace :backup do
   #
   # During restore of a snapshot, also restore config files
   # sudo bundle exec rake backup:snapshot RAILS_ENV=production RESTORE_CONFIG_FILES=true
+
+  # Do the actual git repo backup/restore separately yourself
+  # sudo bundle exec rake backup:snapshot RAILS_ENV=production SKIP_REPOS=true
+  # sudo bundle exec rake backup:restore RAILS_ENV=production SKIP_REPOS=true
 
   # ASSUMPTIONS:
 
@@ -72,7 +84,9 @@ namespace :backup do
 
   # 5. Assumes that you have the time and disk-space to slurp down all
   # repos into a local tarball. Sites with huge amounts of repo data
-  # may need custom backup schemes.
+  # may need custom backup schemes. For large sites consider using the
+  # SKIP_REPOS=true option and copying the repos as a separate,
+  # explicit step.
 
   # 6. The restore step (especially if restoring old config files)
   # assumes only minor changes in versions of Gitorious between
@@ -94,16 +108,12 @@ namespace :backup do
     end
   end
 
-  def load_config
-    @config ||= Gitorious::ConfigurationLoader.new.load(RAILS_ENV)
-  end
-
   def db_config
     @db_config ||= YAML::load(File.open('config/database.yml'))
   end
 
   def repo_path
-    Gitorious::Configuration.get("repository_base_path")
+    RepositoryRoot.default_base_path
   end
 
   def db_name
@@ -118,18 +128,39 @@ namespace :backup do
     (ENV["RESTORE_CONFIG_FILES"] == "true")
   end
 
+  def skip_repos?
+    (ENV["SKIP_REPOS"] == "true")
+  end
+
+  def tarball_path
+    ENV["TARBALL_PATH"] || DEFAULT_TAR_PATH
+  end
+
+  def cleanup
+    puts "Cleaning up..."
+    puts `rm -rf #{SQL_DUMP_FILE};rm -rf #{TMP_WORKDIR}`
+  end
+
+
   desc "Simple state snapshot of the Gitorious instance to a single tarball."
   task :snapshot do
-    exit_if_nonsudo
-
-    tarball_path = ENV["TARBALL_PATH"] || DEFAULT_TAR_PATH
-
     puts "Initializing..."
     puts `rm -f #{tarball_path};rm -f #{SQL_DUMP_FILE}`
     puts `rm -rf #{TMP_WORKDIR}; mkdir #{TMP_WORKDIR}`
-    puts `mkdir #{TMP_WORKDIR}/repos`
+
     puts `mkdir #{TMP_WORKDIR}/config`
     puts `mkdir -p #{TMP_WORKDIR}/data/hooks`
+
+    if skip_repos?
+      puts "=================================================================="
+      puts "NOTE: Not including the actual git repositories in this snapshot."
+      puts "You'll need to backup the hosted repo data manually from '#{repo_path}'"
+      puts "=================================================================="
+    else
+      puts "Backing up repositories in #{repo_path}..."
+      puts `mkdir #{TMP_WORKDIR}/repos`
+      puts `cp -r #{repo_path}/* #{TMP_WORKDIR}/repos`
+    end
 
     puts "Backing up custom config files..."
     puts `cp ./config/gitorious.yml #{TMP_WORKDIR}/config`
@@ -139,8 +170,12 @@ namespace :backup do
       puts `cp ./config/authentication.yml #{TMP_WORKDIR}/config`
     end
 
-    puts "Backing up custom hooks..."
+    puts "Backing up uploaded assets (avatar pictures etc)"
+    if File.exist?("./public/system")
+      puts `cp -r ./public/system #{TMP_WORKDIR}/public_system_uploaded_assets`
+    end
 
+    puts "Backing up custom hooks..."
     if File.exist?("./data/hooks/custom-pre-receive")
       puts `cp ./data/hooks/custom-pre-receive #{TMP_WORKDIR}/data/hooks`
     end
@@ -152,30 +187,44 @@ namespace :backup do
     end
 
     puts "Backing up mysql state..."
-    puts `mysqldump #{db_name} > #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
-
-    puts "Backing up repositories in #{repo_path}..."
-    puts `cp -r #{repo_path}/* #{TMP_WORKDIR}/repos`
+    puts `mysqldump #{database_credential_options} #{db_name} > #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
 
     puts "Archiving it all in #{tarball_path}..."
     puts `tar -czf #{tarball_path} #{TMP_WORKDIR}`
 
-    puts "Cleaning up..."
-    puts `rm -rf #{SQL_DUMP_FILE};rm -rf #{TMP_WORKDIR}`
+    cleanup
 
     puts "Done! Backed up current Gitorious state to #{tarball_path}."
   end
 
 
   desc "Restores Gitorious instance to snapshot previously stored in tarball file."
-  task :restore => ["db:drop", "db:create"] do
-    exit_if_nonsudo
-    load_config
-
-    tarball_path = ENV["TARBALL_PATH"] || DEFAULT_TAR_PATH
+  task :restore => ["environment", "db:drop", "db:create"] do
+    abort "Snapshot file #{tarball_path} not found, aborting" unless File.exist?(tarball_path)
+    abort "Repo dir #{repo_path.to_s} not found in current Gitorous installation, aborting" unless File.exist?(repo_path.to_s)
 
     puts "Preparing..."
     puts `rm -rf #{TMP_WORKDIR};tar -xf #{tarball_path}`
+
+    if skip_repos?
+      puts "=================================================================="
+      puts "NOTE: Skipping repos, not restoring the actual git repositories."
+      puts "To do so manually you'll need to a backed up copy of your repositories into '#{repo_path}' yourself."
+      puts "=================================================================="
+    else
+      if !File.exist?("#{TMP_WORKDIR}/repos")
+        puts "=================================================================="
+        puts "No repostories present in snapshot, aborting."
+        puts "Perhaps the repositories skipped during when the snapshot was created?"
+        puts "If so then run the restore command with 'SKIP_REPOS=true' env variable as well, eg 'env SKIP_REPOS=true bin/restore ...'"
+        puts "=================================================================="
+        cleanup
+        exit
+      end
+      puts "Restoring repositories in #{repo_path}..."
+      puts `mkdir -p #{repo_path}`
+      puts `cp -rf #{TMP_WORKDIR}/repos/* #{repo_path}`
+    end
 
     if restore_config_files?
       puts "Restoring custom config files..."
@@ -185,26 +234,26 @@ namespace :backup do
       puts `cp -f #{TMP_WORKDIR}/data/hooks/* ./data/hooks`
     end
 
+    puts "Restoring uploaded assets (avatar pictures etc)"
+    if File.exist?("#{TMP_WORKDIR}/public_system_uploaded_assets")
+      puts `rm -rf ./public/system`
+      puts `cp -rf #{TMP_WORKDIR}/public_system_uploaded_assets ./public/system`
+    end
+
     puts "Restoring mysql state..."
     puts `mysql #{database_credential_options} #{db_name} < #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
 
     puts "Upgrading database structure..."
     Rake::Task["db:migrate"].invoke
 
-    puts "Restoring repositories in #{repo_path}..."
-    puts `mkdir -p #{repo_path}`
-    puts `cp -rf #{TMP_WORKDIR}/repos/* #{repo_path}`
-    puts `chown -R #{Gitorious.user}:#{Gitorious.user} #{repo_path}`
-
     puts "Rebuilding ~/.ssh/authorized_keys from user keys in database..."
-    puts `su #{gitorious_user} -c "rm -f ~/.ssh/authorized_keys; bundle exec script/regenerate_ssh_keys ~/.ssh/authorized_keys"`
+    puts `rm -f $HOME/.ssh/authorized_keys; bundle exec script/regenerate_ssh_keys $HOME/.ssh/authorized_keys`
 
     puts "Recreating symlink to common hooks"
     puts `rm -f #{repo_path}/.hooks`
     puts `ln -s #{File.expand_path('./data/hooks')} #{repo_path}/.hooks`
 
-    puts "Cleaning up..."
-    puts `rm -rf #{TMP_WORKDIR}`
+    cleanup
 
     puts "Done restoring Gitorious from #{tarball_path}."
   end
