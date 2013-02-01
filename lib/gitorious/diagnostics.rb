@@ -1,6 +1,7 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2013 Peter Kjellerstedt <pkj@axis.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -254,7 +255,7 @@ module Gitorious
     private
 
     def atleast_one_process_name_matching(str)
-      matching_processes_count = (`ps -ef | grep #{str} | grep -v grep | wc -l`.to_i)
+      matching_processes_count = (`ps -efww | grep #{str} | grep -v grep | wc -l`.to_i)
       matching_processes_count > 0
     end
 
