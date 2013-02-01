@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+# Convenience script for performing snapshotting/backups in standard
+# production environments of Gitorious.
+
+# Performs snapshot of current Gitorious state (hosted repositories +
+# database). Takes optional parameter to specify a specific
+# path of tarball to restore from.
+
+# For sites with a lot of hosted git repos, supply the SKIP_REPOS=true
+# environment variable to avoid including the actual hosted repos. The
+# snapshot script will then output suggestions on where to find the
+# repos for your own separate backup script.
+
+# (See /lib/tasks/backup.rake for more discussion of assumptions and
+# use cases.)
+#
+# Examples:
+#
+# bin/snapshot                               # Stores snapshot as ./snapshot.tar
+# bin/snapshot /tmp/backup.tar               # Stores snapshot in /tmp/backup.tar
+# env SKIP_REPOS=true bin/snapshot           # Handle repositories separately
+
+require "pathname"
+rake = Pathname.new(__FILE__).dirname.realpath.to_s+"/rake"
+
+require File.expand_path(File.dirname(__FILE__) + "/setup")
+Gitorious::CLI.new.run_with_gitorious_environment do
+  snapshot_path = ARGV[0] || "snapshot.tar"
+  exec("#{rake} backup:snapshot TARBALL_PATH=#{snapshot_path}")
+end
