@@ -134,7 +134,7 @@ class UsersController < ApplicationController
   end
 
   def reset_password
-    @user = User.find_by_password_key(params[:token])
+    @user = User.find_by_password_key(params[:token].to_s)
     unless @user
       flash[:error] = I18n.t "users_controller.reset_password_error"
       redirect_to forgot_password_users_path
@@ -218,7 +218,7 @@ class UsersController < ApplicationController
     flash[:success] = "You profile image was deleted"
     redirect_to user_path
   end
-  
+
   def delete_current
     @user = current_user
     if(@user.deletable?)
