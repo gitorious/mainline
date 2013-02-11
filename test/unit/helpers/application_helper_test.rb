@@ -55,14 +55,6 @@ class ApplicationHelperTest < ActionView::TestCase
     assert_match(/is being created/, output)
   end
 
-  should "gives us the domain of a full url" do
-    assert_equal "foo.com", base_url("http://foo.com")
-    assert_equal "www.foo.com", base_url("http://www.foo.com")
-    assert_equal "foo.bar.baz.com", base_url("http://foo.bar.baz.com")
-    assert_equal "foo.com", base_url("http://foo.com/")
-    assert_equal "foo.com", base_url("http://foo.com/bar/baz")
-  end
-
   should "generate a valid gravatar url" do
     @env.request.stubs(:ssl?).returns(false)
     @env.request.stubs(:port).returns(80)
@@ -70,7 +62,6 @@ class ApplicationHelperTest < ActionView::TestCase
     email = "someone@myemail.com";
     url = @env.gravatar_url_for(email)
 
-    assert_equal "www.gravatar.com", base_url(url)
     assert url.include?(Digest::MD5.hexdigest(email)), 'url.include?(Digest::MD5.hexdigest(email)) should be true'
     assert url.include?("avatar/"), 'url.include?("avatar/") should be true'
     assert url.include?("default=http://")
@@ -84,7 +75,6 @@ class ApplicationHelperTest < ActionView::TestCase
     url = @env.gravatar_url_for(email)
 
     assert_match /^https:\/\//, url
-    assert_equal "secure.gravatar.com", base_url(url)
     assert url.include?(Digest::MD5.hexdigest(email))
     assert url.include?("default=https://")
   end

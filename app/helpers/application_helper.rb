@@ -184,10 +184,6 @@ module ApplicationHelper
     out.join("\n").html_safe
   end
 
-  def base_url(full_url)
-    URI.parse(full_url).host
-  end
-
   def gravatar_url_for(email, options = {})
     prefix = request.ssl? ? "https://secure" : "http://www"
     scheme = request.ssl? ? "https" : "http"
