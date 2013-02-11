@@ -203,6 +203,10 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
     @configured = true
   end
 
+  def self.restrict_team_creation_to_site_admins?
+    Gitorious::Configuration.get("only_site_admins_can_create_teams")
+  end
+
   private
   def self.cache?
     return Rails.env.production? if defined?(Rails)

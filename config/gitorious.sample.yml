@@ -182,6 +182,9 @@ archive_work_dir: "/var/git/tarballs-work"
 # rejection/approvals.
 #enable_project_approvals: false
 
+# Only site admins are allowed to create new teams
+# only_site_admins_can_create_teams: true
+
 # Session key. It is recommended to use a long random string for this.
 # A suitable key can be generated with `apg -m 64`. Make sure you
 # paste the key as one long string, no newlines or escaped characters.

@@ -19,4 +19,14 @@ module GroupsHelper
   def group_admin?(group,user)
     Team.group_admin?(group, user)
   end
+
+  def restrict_team_creation_to_site_admins
+    if logged_in?
+      if Gitorious.restrict_team_creation_to_site_admins?
+        yield if site_admin?(current_user)
+      else
+        yield
+      end
+    end
+  end
 end

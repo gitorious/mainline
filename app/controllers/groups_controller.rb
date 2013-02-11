@@ -20,6 +20,7 @@
 class GroupsController < ApplicationController
   before_filter :login_required, :except => [:index, :show]
   before_filter :find_group_and_ensure_group_adminship, :only => [:edit, :update, :avatar]
+  before_filter :check_if_only_site_admins_can_create, :only => [:new, :create]
   renders_in_global_context
 
   def index
@@ -87,6 +88,16 @@ class GroupsController < ApplicationController
     @group = Team.find_by_name!(params[:id])
     unless admin?(current_user, @group)
       access_denied and return
+    end
+  end
+
+  def check_if_only_site_admins_can_create
+    if Gitorious.restrict_team_creation_to_site_admins?
+      unless site_admin?(current_user)
+        flash[:error] = "Only site administrators may create teams"
+        redirect_to :action => "index"
+        return false
+      end
     end
   end
 end
