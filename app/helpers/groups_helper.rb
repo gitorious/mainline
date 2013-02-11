@@ -19,4 +19,14 @@ module GroupsHelper
   def group_admin?(group,user)
     Team.group_admin?(group, user)
   end
+
+  def require_site_admin_for_setting(key)
+    if logged_in?
+      if GitoriousConfig[key]
+        yield if site_admin?(current_user)
+      else
+        yield
+      end
+    end
+  end
 end

@@ -189,4 +189,41 @@ class GroupsControllerTest < ActionController::TestCase
       assert !@group.reload.avatar?
     end
   end
+  context "when only admins are allowed to create new teams" do
+    setup do
+      GitoriousConfig["only_site_admins_can_create_teams"] = true
+      users(:johan).update_attribute(:is_admin, true)
+      users(:moe).update_attribute(:is_admin, false)
+    end
+
+    teardown do
+      GitoriousConfig["only_site_admins_can_create_teams"] = false
+    end
+
+    should "redirect on new" do
+      login_as :moe
+      get :new
+      assert_response :redirect
+      assert_redirected_to :action => "index"
+    end
+
+    should "succeed on new" do
+      login_as :johan
+      get :new
+      assert_response :success
+    end
+
+    should "display the create link for site admins" do
+      login_as :johan
+      get :index
+      assert_response :success
+      assert_select "li.team_new"
+    end
+
+    should "not display the create link for non-admins" do
+      login_as :moe
+      get :index
+      assert_select "li.team_new", false
+    end
+  end
 end

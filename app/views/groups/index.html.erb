@@ -35,6 +35,8 @@
 
 <% content_for :sidebar do -%>
   <ul class="links navigation">
+    <% require_site_admin_for_setting("only_site_admins_can_create_teams") do %>
     <li class="team_new"><%= link_to t("views.groups.create_team"), new_group_path -%></li>
+    <% end %>
   </ul>
 <% end -%>

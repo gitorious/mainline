@@ -192,6 +192,9 @@ production:
   # rejection/approvals.
   # only_site_admins_can_create_projects: false
 
+  # Only site admins are allowed to create new teams
+  # only_site_admins_can_create_teams: true
+
   # System message that will appear on all pages if present
   #system_message:
 
