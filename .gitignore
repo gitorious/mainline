@@ -1,37 +1,35 @@
-*/.DS_Store
-.DS_Store
+# Files to ignore from Gitorious' Git repository. Only add project
+# artefacts to this file (i.e. generated files, config files etc that
+# is likely to be present in most, if not all, Gitorious setups).
+# Private things like .DS_Store, todo files etc should go in
+# .git/info/excludes
+
+.bundle/
 coverage/*
-public/cache/*
-public/images/graphs/*
+config/authentication.yml
 config/database.yml
 config/gitorious.yml
-config/ultrasphinx/*.conf
-config/authentication.yml
-config/broker.yml
-db/*.sqlite3
-.autotest
+config/memcache.yml
+config/resque.yml
+data/hooks/custom-pre-receive
+data/hooks/custom-post-receive
+data/hooks/custom-update
 db/sphinx/*
-doc/api
-tmp/repos/*
-tmp/graph_generator.status
-tmp/poller*.pid
-vendor/plugins/activemessaging/doc/*
-qtorious.todo
-tmp/poller.log
-tmp/poller.output
-tmp/restart.txt
+log/
 public/javascripts/all.js
+public/javascripts/capillary.js
 public/stylesheets/gts-common.css
 public/images/sites/*
+public/stylesheets/all.css
+public/stylesheets/gts-external.css
 public/stylesheets/sites/*
 public/javascripts/sites/*
 public/system/avatars
 public/system/group_avatars
-/.keeptesting
-/data/hooks/custom-pre-receive
-/data/hooks/custom-post-receive
-/data/hooks/custom-update
-/TAGS
-/config/development.sphinx.conf
-/config/resque.yml
-/config/memcache.yml
+tmp/*
+# Official Puppet installer artefacts
+tmp/bundles_installed
+tmp/database_populated
+tmp/ownership
+# Bundled gems
+vendor/bundle/
