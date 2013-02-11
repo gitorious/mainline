@@ -20,7 +20,7 @@ require "libdolt"
 module Gitorious
   module View
     module DoltUrlHelper
-      include Dolt::View::MultiRepository
+      include ::Dolt::View::MultiRepository
 
       def archive_url(repository, ref, format)
         repo_url(repository, "/archive/#{ref}.#{format}")

@@ -20,8 +20,8 @@ require "libdolt/view/multi_repository"
 require "gitorious/view/dolt_url_helper"
 
 module Gitorious
-  class RepositoryBrowser < Dolt::Sinatra::Base
-    include Dolt::View::MultiRepository
+  class RepositoryBrowser < ::Dolt::Sinatra::Base
+    include ::Dolt::View::MultiRepository
     include Gitorious::View::DoltUrlHelper
 
     def self.instance; @instance; end
