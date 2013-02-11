@@ -18,14 +18,30 @@
 module Gitorious
   module Authentication
     module Configuration
-      
+
       def self.configure(user_configuration)
         use_default_configuration unless user_configuration["disable_default"]
         Array(user_configuration["methods"]).each { |m| add_custom_method(m)}
+        configure_openid(user_configuration)
+      end
+
+      def self.reset!
+        authentication_methods.clear
+        @openid_enabled = true
       end
 
       def self.use_default_configuration
         add_authentication_method Gitorious::Authentication::DatabaseAuthentication.new
+      end
+
+      def self.configure_openid(config)
+        if config.key?("enable_openid")
+          @openid_disabled = !config["enable_openid"]
+        end
+      end
+
+      def self.openid_enabled?
+        !@openid_disabled
       end
 
       def self.add_authentication_method(method)
@@ -43,7 +59,7 @@ module Gitorious
 
       def self.authentication_methods
         @authentication_methods ||= []
-      end      
+      end
     end
 
     class ConfigurationError < StandardError

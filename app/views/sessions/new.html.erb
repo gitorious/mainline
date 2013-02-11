@@ -28,7 +28,9 @@
     <div class="form-wrapper" id="login">
       <div id="log-in">
         <h1>Log in to <%= Gitorious.site_name %></h1>
-        <p class="openid-switch">Or log in with <a href="#" class="foo1">OpenID</a>.</p>
+     	<% if openid_allowed? %>
+          <p class="openid-switch">Or log in with <a href="#" class="foo1">OpenID</a>.</p>
+    	<% end %>
         <p class="regular-switch" style="display: none">Or log in with your <a href="#" class="foo2">regular account</a>.</p>
         <% kerberos = Gitorious::Authentication::Configuration.authentication_methods.detect do |m|
              Gitorious::Authentication::KerberosAuthentication === m
@@ -63,6 +65,7 @@
             </li>
           </ul>
         </div>
+        <% if openid_allowed? %>
         <div id="openid_login_fields" class="login_hidden">
           <ul>
             <li>
@@ -80,6 +83,7 @@
             </li>
           </ul>
         </div>
+        <% end %>
       </div>
     </div>
   <% end -%>

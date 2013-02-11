@@ -61,4 +61,19 @@ class Gitorious::Authentication::ConfigurationTest < MiniTest::Shoulda
       assert_equal "directory.example", @ldap.server
     end
   end
+
+  context "OpenID authentication" do
+    setup do
+      Gitorious::Authentication::Configuration.reset!
+    end
+
+    should "by default be enabled" do
+      assert Gitorious::Authentication::Configuration.openid_enabled?
+    end
+
+    should "disable OpenID" do
+      Gitorious::Authentication::Configuration.configure({"enable_openid" => false})
+      refute Gitorious::Authentication::Configuration.openid_enabled?
+    end
+  end
 end

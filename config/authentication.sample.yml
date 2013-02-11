@@ -8,6 +8,9 @@ development:
   # Disable database authentication altogether
   #disable_default: true
 
+  # Disable OpenID authentication by uncommenting the next line. It's on by default
+  # enable_openid: false
+
   # additional methods, an array of hashes
   #methods:
     # An adapter is a class that implements an authentication mechanism. You
@@ -69,7 +72,7 @@ development:
 
       # When using LDAP authorization: which attribute in a group
       # record specifies users that are member of the group
-      # This will depend on your  LDAP schema, but will usually be 
+      # This will depend on your  LDAP schema, but will usually be
       # member or uniquemember
       #members_attribute_name: member
 
@@ -102,19 +105,19 @@ development:
 
     # End Crowd configuration example
     ############################################################################
-    
+
     ############################################################################
     # Example of configuring Kerberos authentication
     #- adapter: Gitorious::Authentication::KerberosAuthentication
-    
+
       # Set the Kerberos realm (should be uppercase)
       #realm: EXAMPLE.COM
-      
+
       # The default email domain for users in this realm. If you do not
       # specify any email_domain, the default is to use the lowercase
       # realm value.
       #email_domain: example.com
-      
+
       # Note that you must also set up Apache's mod_auth_kerb within
       # httpd.conf. For example:
       #  # Enable SSO authentication via Kerberos
@@ -129,7 +132,7 @@ development:
       #    Require valid-user
       #    ErrorDocument 401 /401.html
       #  </Location>
-    
+
     # End Kerberos configuration example
     ############################################################################
 
