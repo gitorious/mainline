@@ -1,2 +1,4 @@
-*.log
-*.pid
+# This file is here in addition to the root .gitignore file simply to
+# keep the log/ directory present.
+
+*

@@ -26,10 +26,11 @@ public/stylesheets/sites/*
 public/javascripts/sites/*
 public/system/avatars
 public/system/group_avatars
-tmp/*
+
 # Official Puppet installer artefacts
 tmp/bundles_installed
 tmp/database_populated
 tmp/ownership
+
 # Bundled gems
 vendor/bundle/
