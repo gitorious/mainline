@@ -31,7 +31,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
 
     should "only exclude database authentication when instructed to do so" do
       Gitorious::Authentication::Configuration.configure({"disable_default" => "true"})
-      assert_equal 0, Gitorious::Authentication::Configuration.authentication_methods.size      
+      assert_equal 0, Gitorious::Authentication::Configuration.authentication_methods.size
     end
 
     should "not allow several auth methods of same type" do
@@ -54,9 +54,24 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       Gitorious::Authentication::Configuration.configure(options)
       @ldap = Gitorious::Authentication::Configuration.authentication_methods.last
     end
-    
+
     should "configure LDAP authentication" do
       assert_equal "directory.example", @ldap.server
+    end
+  end
+
+  context "OpenID authentication" do
+    setup do
+      Gitorious::Authentication::Configuration.reset!
+    end
+
+    should "by default be enabled" do
+      assert Gitorious::Authentication::Configuration.openid_enabled?
+    end
+
+    should "disable OpenID" do
+      Gitorious::Authentication::Configuration.configure({"enable_openid" => false})
+      refute Gitorious::Authentication::Configuration.openid_enabled?
     end
   end
 end

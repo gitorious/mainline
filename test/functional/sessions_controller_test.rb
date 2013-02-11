@@ -72,6 +72,12 @@ class SessionsControllerTest < ActionController::TestCase
     assert_redirected_to :controller => "users", :action => "openid_build"
   end
 
+  should "not allow openid login if disabled" do
+    @controller.stubs(:openid_allowed?).returns(false)
+    post :create, :openid_url => "http://my.gitorious.org"
+    assert_redirected_to :action => "new"
+  end
+
   should "fail login and not redirect" do
     @controller.stubs(:using_open_id?).returns(false)
     post :create, :email => "johan@johansorensen.com", :password => "bad password"

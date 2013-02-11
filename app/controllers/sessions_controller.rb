@@ -30,6 +30,7 @@ class SessionsController < ApplicationController
   renders_in_site_specific_context
   layout "second_generation/application"
   before_filter :validate_request_host, :only => :create
+  helper_method :openid_allowed?
 
   # render new.rhtml
   def new
@@ -74,6 +75,10 @@ class SessionsController < ApplicationController
   # if user does not exist, it gets created and activated,
   # else if the user already exists with same identity_url, it just logs in
   def open_id_authentication(openid_url)
+    if !openid_allowed?
+      flash[:error] = "OpenID authentication is disabled"
+      redirect_to :action => "new" and return
+    end
     authenticate_with_open_id(openid_url, :required => [:nickname, :email], :optional => [:fullname]) do |result, identity_url, registration|
       if result.successful?
         @user = User.find_or_initialize_by_identity_url(identity_url)
@@ -160,4 +165,7 @@ class SessionsController < ApplicationController
     end
   end
 
+  def openid_allowed?
+    Gitorious::Authentication::Configuration.openid_enabled?
+  end
 end
