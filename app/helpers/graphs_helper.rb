@@ -22,6 +22,6 @@ module GraphsHelper
   def capillary_js_paths
     formatters = %w[scale svg-data raphael message-markup].collect { |p| "formatters/#{p}" }
     paths = (%w[branch graph] + formatters).collect { |p| "lib/capillary/lib/capillary/#{p}" }
-    ["lib/raphael/raphael-min.js", "lib/bane/lib/bane.js", "lib/capillary/lib/capillary"] + paths
+    ["lib/raphael/raphael-min.js", "spacer.js", "lib/bane/lib/bane.js", "lib/capillary/lib/capillary"] + paths
   end
 end
