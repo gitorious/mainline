@@ -266,7 +266,7 @@ DEPENDENCIES
   highline
   httparty (~> 0.9)
   jruby-openssl
-  json (~> 1.5)
+  json (>= 1.7.7, < 1.8)
   just_paginate (= 0.0.6)
   launchy (= 2.0.5)
   memcache-client (~> 1.8)

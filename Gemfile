@@ -54,7 +54,7 @@ group :git_proxy do
 end
 
 group :messaging do
-  gem "json", "~> 1.5", :platforms => :ruby_18
+  gem "json", ">= 1.7.7", "< 1.8", :platforms => :ruby_18
 end
 
 group :resque do
