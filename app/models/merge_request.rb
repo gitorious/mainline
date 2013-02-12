@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
@@ -41,8 +41,10 @@ class MergeRequest < ActiveRecord::Base
 
   before_validation_on_create :set_sequence_number
 
-  attr_protected :user_id, :status, :merge_requests_need_signoff, :oauth_path_prefix,
-    :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site, :sequence_number
+  attr_accessible(:user, :source_repository, :target_repository, :proposal,
+                  :source_branch, :target_branch, :ending_commit, :summary,
+                  :sha_snapshot, :contribution_agreement_version,
+                  :target_repository_id, :source_repository_id)
 
   validates_presence_of :user, :source_repository, :target_repository, :summary,
     :sequence_number

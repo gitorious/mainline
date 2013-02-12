@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -51,8 +51,9 @@ class Project < ActiveRecord::Base
 
   default_scope :conditions => ["suspended_at is null"]
   serialize :merge_request_custom_states, Array
-  attr_protected :owner_id, :user_id, :site_id
-
+  attr_accessible(:title, :description, :user, :slug, :license, :home_url,
+                  :mailinglist_url, :bugtracker_url, :owner, :wiki_enabled,
+                  :owner_type)
 
   NAME_FORMAT = /[a-z0-9_\-]+/.freeze
   validates_presence_of :title, :user_id, :slug, :description, :owner_id

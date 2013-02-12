@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -23,9 +24,7 @@ class Group < ActiveRecord::Base
   has_many :memberships, :dependent => :destroy
   has_many :members, :through => :memberships, :source => :user
 
-
-  attr_protected :public, :role_id, :user_id
-
+  attr_accessible :name, :user, :description
 
   Paperclip.interpolates('group_name'){|attachment,style| attachment.instance.name}
 

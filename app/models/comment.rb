@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -30,9 +30,8 @@ class Comment < ActiveRecord::Base
   after_create :notify_target_if_supported
   after_create :update_state_in_target
   serialize :state_change, Array
-
-  attr_protected :user_id
-
+  attr_accessible(:sha1, :body, :path, :user, :project, :state_change, :lines,
+                  :target, :target_id, :target_type)
   validates_presence_of :user_id, :target, :project_id
   validates_presence_of :body, :if =>  Proc.new {|mr| mr.body_required?}
 

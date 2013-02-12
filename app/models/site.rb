@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,18 +18,17 @@
 #++
 class Site < ActiveRecord::Base
   has_many :projects
-   
+
   validates_presence_of :title
   HTTP_CLONING_SUBDOMAIN = 'git'
   validates_exclusion_of :subdomain, :in => [HTTP_CLONING_SUBDOMAIN]
 
-  attr_protected :subdomain
-  attr_protected :wiki_git_path
+  attr_accessible :title
 
   def self.default
     Site.find_or_create_by_title_and_subdomain(:title => GitoriousConfig["site_name"], :subdomain => nil)
   end
-  
+
   def after_create
     init_wiki_git_path
   end
@@ -46,7 +46,7 @@ class Site < ActiveRecord::Base
   def wiki_repo_name
     "#{self.id}-#{self.title}-site-wiki.git"
   end
-  
+
   def wiki
     if(!self.wiki_git_path) then init_wiki_git_path end
     if(!File.exist? wiki_git_path)
@@ -67,6 +67,6 @@ class Site < ActiveRecord::Base
     FileUtils.touch(wiki_git_path+"/hooks/pre-receive");
     FileUtils.chmod(0755, wiki_git_path+"/hooks/pre-receive");
   end
-  
-  
+
+
 end
