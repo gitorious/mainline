@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -51,8 +51,7 @@ class User < ActiveRecord::Base
 
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
-
-  attr_protected :login, :is_admin, :password, :current_password
+  attr_accessible :email, :fullname, :url, :terms_of_use, :identity_url
 
   # For new users we are a little more strict than for existing ones.
   USERNAME_FORMAT = /[a-z0-9\-_\.]+/i.freeze
@@ -231,7 +230,8 @@ class User < ActiveRecord::Base
   # Activates the user in the database.
   def activate
     @activated = true
-    self.attributes = {:activated_at => Time.now.utc, :activation_code => nil}
+    self.activated_at = Time.now.utc
+    self.activation_code = nil
     save(:validate => false)
   end
 

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #
@@ -80,8 +80,8 @@ class UserTest < ActiveSupport::TestCase
 
   should "not send activation mail when user is already activated" do
     Mailer.expects(:deliver_signup_notification).never
-
-    u = create_user(:activated_at => Time.now)
+    u = create_user
+    u.activated_at = Time.now
 
     u.save!
   end
@@ -555,11 +555,9 @@ class UserTest < ActiveSupport::TestCase
     login = options.delete(:login) || "quire"
     password = options.delete(:password) || "quire"
     password_confirmation = options.delete(:password_confirmation) || "quire"
-    u = User.new({
-      :email => "quire@example.com",
-      :terms_of_use => "1",
-      :aasm_state => "pending"
-    }.merge(options))
+    u = User.new({ :email => "quire@example.com" }.merge(options))
+    u.terms_of_use = "1"
+    u.aasm_state = "pending"
     u.login = login
     u.password = password
     u.password_confirmation = password_confirmation

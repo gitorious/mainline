@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ class Email < ActiveRecord::Base
   validates_length_of :address, :within => 5..255
   validates_uniqueness_of :address, :scope => "user_id", :case_sensitive => false
 
-  attr_protected :aasm_state, :user_id, :confirmation_code
+  attr_accessible :user, :address
 
   before_create :set_confirmation_code
   after_create :send_confirmation_email

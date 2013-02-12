@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -41,7 +41,7 @@ class Committership < ActiveRecord::Base
   validates_uniqueness_of :committer_id, :scope => [:committer_type, :repository_id],
     :message => "is already a committer to this repository"
 
-  attr_protected :permissions
+  attr_accessible :committer, :repository, :creator, :creator_id
 
   after_create :notify_repository_owners
   after_create :add_new_committer_event

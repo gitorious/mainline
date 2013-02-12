@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -275,7 +275,6 @@ class ProjectTest < ActiveSupport::TestCase
     c.build_permissions(:review, :commit, :admin)
     c.save!
   end
-
 
   should "delegate wiki permissions to the wiki repository" do
     project = projects(:johans)
