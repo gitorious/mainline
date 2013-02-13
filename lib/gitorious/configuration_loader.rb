@@ -58,8 +58,7 @@ Tests may not work as intended.
         "production" => cfg.delete("production"),
         "development" => cfg.delete("development")
       }
-
-      @configs[env] = [cfg, config[env] || {}]
+      @configs[env] = [config[env] || {}, cfg]
     end
 
     def hash(env)
