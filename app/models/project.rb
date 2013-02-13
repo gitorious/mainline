@@ -53,7 +53,7 @@ class Project < ActiveRecord::Base
   serialize :merge_request_custom_states, Array
   attr_accessible(:title, :description, :user, :slug, :license, :home_url,
                   :mailinglist_url, :bugtracker_url, :owner, :wiki_enabled,
-                  :owner_type)
+                  :owner_type, :tag_list)
 
   NAME_FORMAT = /[a-z0-9_\-]+/.freeze
   validates_presence_of :title, :user_id, :slug, :description, :owner_id
