@@ -260,6 +260,28 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal users(:johan), assigns(:project).owner
     end
 
+    should "create project with full form payload" do
+      login_as :johan
+
+      assert_difference("Project.count") do
+        post(:create, {
+               "utf8" => "✓",
+               "authenticity_token" => "Whb/NuCNXbRGmUdOmTMMVOjP9MEzfp2IxVPEsEhIoJs=",
+               "project" => {
+                 "title" => "Big blob",
+                 "slug" => "big-blob",
+                 "owner_type" => "User",
+                 "tag_list" => "",
+                 "license" => "Academic Free License v3.0",
+                 "home_url" => "",
+                 "mailinglist_url" => "",
+                 "bugtracker_url" => "",
+                 "wiki_enabled" => "1",
+                 "description" => "My new project"},
+               "commit" => "Create project"})
+      end
+    end
+
     should "re-render the template for POST projects/create with invalid data" do
       login_as :johan
       assert_no_difference("Project.count") do
