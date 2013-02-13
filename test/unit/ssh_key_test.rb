@@ -76,6 +76,45 @@ class SshKeyTest < ActiveSupport::TestCase
     assert key.valid?
   end
 
+  should "detect attempts at uploading private key" do
+    key = new_key
+    key.key = <<EOF
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-128-CBC,1DC94B2CF7645048FE51180FFE1D4E21
+
+0MBiH+QZutHvnUGow5zJDWEGgBWf2zd9wot05yWL26UMqyL8/Dw5mmabhFQUtEV7
+pGbiceUoMCcNeQt4Wyl31gzMLzrHBgyOzDzl0Aghm1ike9QIHpoNqPjs54gGeDkZ
+Qw0ZBcav+vxCXbr0Ei9igJz7i1hXYAB6U2KBTjJPfUrphGQYwZgXwVWPQRIOTfAc
+4kZz0d2pj3QRxwi16UY9QO2h0rIWFbuo9iBvH6eh+cZ11t3wa84m5tKOSflJ2pYB
+GoO564QLCiuLKQgmzLyP6Vv98vELUS8kO4uaKNpIMLPw0wufqQwncmyvszU87bGH
+hxrJHinQ1nVNO/4sBfZnqxaRRCL+H5ykYbfYwwI8WB7uDp9uRHWW/dMOZOwpW4n/
+6Z5PqXb0rk/tbN4jzjtFEqBl0DGIH+1VtrHi6yV0lzu2sKpeABqYUs0Ow6HuIgUo
+I3LgLpS0TTknfEp0BaRXoJHwOryPnOVcAHP9OCXHzVMLXER2IZp+A/OC835zrlwa
+YSiR3B8aR2Y8HJtakYKKRAWugTMgzTchxwUGCq7cV8gmUSE8NN1C0I6aUtX/dzGG
+2Y4ZrUXdu9yYbfyua7DNUOld20tZz5xAjyaPW5Eab83uZ3AGdIpjBpKzhg0mQoZU
+3QRi6PbvRY/8wgkl2It6BjWB+jXam2b3Ohp8Ck0Mj+NxcYmwaUwROOeIgTQryGb/
+aZ6c6QU3WTm8ArqYpnkWpRoWGKtYFVGBXio0zQDyoTGaFYRteNak111Yp0MwSr/0
+muTXn+IJM3IetIG1BjEHGcFUnaHQdeyyarZfbRJDHv+N1rA6IFiyGhBeQTYPAIjE
+234ssMEtr8zlEiw161QE9Clr4lJPn0K+ApVxy+XAfseViYy1O7UlH5p8Zd7lne25
+SjReCC335MGrHOzGrEVQPrSd7+V9GjhyaDHW8bc4zN4XTjl1eH5sggw3IAVyHvaE
+mwwokxd6CWq2feVnJQ87FrEvnnyEpeLlVmjEi3ilk7hIcaovghV4rHoGOIz+IJi6
+GsLH6/XthvZQVuWM9zm7wdV8hnB9aMdCqDjaFM0Sw3tG1CxzHGUMTG90KiSAhmgd
+7nDjiRzEDHBuZAohOlV4I64c+u7AVEF048YluvXaF2xTFV8MiNdq9Zrk8BeOCQLm
+iNTFKHGiIRoTFvHyTN3yLBPvZxi/x1LZfwqp5/4t7JWkCbtPeIQWuo7FdkQun9yD
++XF48dSpAaK7SVTP8LF2vPZAwlMVUOUweWtcHHIg/TABnW8n0hnOVxBvhJc+QsMk
+15OSPtUc9r6iwukLMchUKp4GdIUKLMsOiDHtyfyPc+o0zYTK6/GQp4QQrivIzu+O
+LBsbL8jOE8ZzjT1sbGMNHpZ51QMCv3/MeInFYt1B+qIb602cfwN92qvQaEUGrfzy
+RzglIvZrIOSmH0qd/JMru4gRiSKC6obKCPlQrSV2CUSHNAKsgCmHYp/3hVtORoDk
+p+OnyyDIYAbaOuiQMN5iflmKOsjU0IaNQ+NZxTql1CEmoSqg6cr+UM+qoJMOU9dA
+v5wH0IF6onF/Gq+B1eWCYpjTAz7zPzkUm1MNfYDAjQox5H5DFdb5Q/pGeUiUFS4O
+-----END RSA PRIVATE KEY-----
+EOF
+
+    assert !key.valid?
+    assert_match "private", key.errors[:key].join("")
+  end
+
   should "allows a wider range of extended comments" do
     key = new_key
 

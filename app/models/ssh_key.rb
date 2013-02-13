@@ -27,6 +27,7 @@ class SshKey < ActiveRecord::Base
   belongs_to :user
 
   SSH_KEY_FORMAT = /^ssh\-[a-z0-9]{3,4} [a-z0-9\+=\/]+ SshKey:(\d+)?-User:(\d+)?$/ims.freeze
+  SSH_PRIVATE_KEY_FORMAT = /^-+.*PRIVATE.*-+$/ims.freeze
 
   validate :valid_ssh_key
   validates_presence_of :user_id, :key
@@ -40,6 +41,10 @@ class SshKey < ActiveRecord::Base
   end
 
   def valid_ssh_key
+    if key =~ SSH_PRIVATE_KEY_FORMAT
+      errors.add(:key, I18n.t("ssh_key.private_key_validation_message")) and return
+    end
+
     if to_keyfile_format !~ SSH_KEY_FORMAT
       errors.add(:key, I18n.t("ssh_key.key_format_validation_message"))
     end
