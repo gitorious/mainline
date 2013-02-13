@@ -41,18 +41,18 @@ while data = gets
       if pre_receive_guard.deny_merge_request_update_with_sha?(newrev)
         # it's a request to delete a merge request ref
         logger.info("delete-merge-request.ref denied for #{ENV['GITORIOUS_USER'].inspect}" +
-          " to #{pre_receive_guard.git_spec.inspect} via " +
-          "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
-          pre_receive_guard.gitorious_says "You can't delete a merge-request ref"
-          exit!(1)
+                    " to #{pre_receive_guard.git_spec.inspect} via " +
+                    "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+        pre_receive_guard.gitorious_says "You can't delete a merge-request ref"
+        exit!(1)
       end
 
       if pre_receive_guard.deny_force_pushes?
         if pre_receive_guard.null_sha?(newrev)
           # it's a request to delete a ref
           logger.info("delete-ref denied for #{ENV['GITORIOUS_USER'].inspect} to " +
-            "#{pre_receive_guard.git_spec.inspect} via " +
-            "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+                      "#{pre_receive_guard.git_spec.inspect} via " +
+                      "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
           pre_receive_guard.gitorious_says "This repository does not allow deleting refs"
           exit!(1)
         end
@@ -62,8 +62,8 @@ while data = gets
           if merge_base != oldrev
             # it's a force-push
             logger.info("force-push denied for #{ENV['GITORIOUS_USER'].inspect} to " +
-              "#{pre_receive_guard.git_spec.inspect} via "+
-              "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+                        "#{pre_receive_guard.git_spec.inspect} via "+
+                        "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
             pre_receive_guard.gitorious_says "This repository does only allow fast-forwards"
             exit!(1)
           end
@@ -74,13 +74,13 @@ while data = gets
       # wait for the next line to be fed to us, or just let this
       # script finish..
       logger.info("Allowed #{ENV['GITORIOUS_USER'].inspect} to " +
-        "#{pre_receive_guard.git_spec.inspect} via " +
-        "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+                  "#{pre_receive_guard.git_spec.inspect} via " +
+                  "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
     else
       pre_receive_guard.gitorious_says "You do not have write access to this repository"
       logger.info("Denied #{ENV['GITORIOUS_USER'].inspect} to " +
-        "#{pre_receive_guard.git_spec.inspect} via " +
-        "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+                  "#{pre_receive_guard.git_spec.inspect} via " +
+                  "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
       exit!(1)
     end
   rescue Errno::ECONNREFUSED
@@ -89,7 +89,7 @@ while data = gets
     exit!(1)
   end
 
- 
+
 end
 
 require 'pathname'
@@ -115,12 +115,7 @@ def run_custom_hook_if_present(input)
       puts "not success, exiting with its code"
       exit(custom_hook_status.exitstatus)
     end
-  end  
+  end
 end
 
 run_custom_hook_if_present(hook_input_lines)
-
-
-
-
-
