@@ -361,6 +361,10 @@ archive_work_dir: "/var/git/tarballs-work"
 # the YAML list syntax.
 #additional_view_paths: vendor/plugin/mysite/views
 
+# Default OpenID provider URL, e.g.
+# https://www.google.com/accounts/o8/id. Blank by default.
+#default_openid_provider_url:
+
 ######################################################################
 # The following are UI theming settings. They are deprecated, and    #
 # most, if not all of them will soon be changed/replaced or removed. #

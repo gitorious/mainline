@@ -17,6 +17,7 @@
 #++
 require "gitorious/configurable"
 require "gitorious/mount_point"
+require "gitorious/openid"
 
 module Gitorious
   VERSION = "3.0.0"

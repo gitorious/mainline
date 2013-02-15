@@ -70,7 +70,7 @@
           <ul>
             <li>
               <%= label_tag :openid_url, t("views.sessions.openid") %>
-              <%= text_field_tag 'openid_url', params[:openid_url] -%>
+              <%= text_field_tag 'openid_url', params[:openid_url] || Gitorious::OpenID.default_provider_url -%>
             </li>
             <li>
               <div class="tos">
