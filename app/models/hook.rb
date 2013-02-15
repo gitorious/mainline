@@ -1,5 +1,7 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2012 John VanderPol <john.vanderpol@orbitz.com>
 #   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,11 +19,12 @@
 #++
 
 class Hook < ActiveRecord::Base
+  include Gitorious::Authorization
   belongs_to :repository
   belongs_to :user
 
   validates_presence_of :user, :url
-  validates_presence_of :repository, :unless => Proc.new { |hook| hook.user && hook.user.site_admin? }, :message => "is required for non admins"
+  validates_presence_of :repository, :unless => Proc.new { |hook| hook.user && hook.site_admin?(hook.user) }, :message => "is required for non admins"
   validate :valid_url_format
 
   def self.global_hooks
