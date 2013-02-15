@@ -1,6 +1,7 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012 John VanderPol <john.vanderpol@orbitz.com>
 #   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -22,7 +23,6 @@ require "test_helper"
 class HookTest < ActiveSupport::TestCase
   should belong_to(:repository)
   should validate_presence_of(:user)
-  should validate_presence_of(:repository)
   should validate_presence_of(:url)
 
   context "URL validation" do
@@ -36,6 +36,30 @@ class HookTest < ActiveSupport::TestCase
       hook = Hook.new(:url => "https://gitorious.org/web-hooks")
       assert !hook.valid?
       assert_not_nil hook.errors[:url]
+    end
+  end
+
+  context "Global hooks" do
+    should "find hooks not associated to a repository" do
+      Hook.new(:url => "http://foo.com", :user => users(:johan)).save!
+      assert_equal 1, Hook.global_hooks.size
+    end
+
+    should "not find hooks associated to a repository" do
+      Hook.new(:url => "http://foo.com", :user => users(:johan), :repository => repositories(:johans)).save!
+      assert_equal 0, Hook.global_hooks.size
+    end
+
+    should "be global" do
+      assert Hook.new(:url => "http://foo.com").global?
+      assert !Hook.new(:url => "http://foo.com", :repository => repositories(:johans)).global?
+    end
+
+    should "only be created by admins" do
+      hook = Hook.new(:url => "http://foo.com", :user => users(:moe))
+      assert !hook.valid?
+      refute_nil hook.errors[:repository]
+      refute_equal 0, hook.errors[:repository].length
     end
   end
 
