@@ -76,8 +76,13 @@ class UserTest < ActiveSupport::TestCase
 
   should "not send activation mail when user is already activated" do
     Mailer.expects(:deliver_signup_notification).never
-    u = create_user
+    u = User.new({ :email => "quire@example.com" })
+    u.terms_of_use = "1"
+    u.aasm_state = "pending"
+    u.login = "quire"
+    u.password = u.password_confirmation = "quire"
     u.activated_at = Time.now
+    u.activation_code = nil
 
     u.save!
   end
