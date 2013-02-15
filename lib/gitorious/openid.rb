@@ -18,6 +18,10 @@
 
 module Gitorious
   module OpenID
+    def self.enabled?
+      Gitorious::Authentication::Configuration.openid_enabled?
+    end
+
     def self.default_provider_url
       Gitorious::Configuration.get("default_openid_provider_url", "")
     end

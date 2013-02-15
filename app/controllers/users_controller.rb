@@ -35,6 +35,7 @@ class UsersController < ApplicationController
   before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
   before_filter :require_public_user, :only => :show
   before_filter :require_registration_enabled, :only => [:new, :create]
+  before_filter :require_openid_enabled, :only => [:openid_build, :openid_create]
 
   renders_in_global_context
   layout :decide_layout
@@ -275,5 +276,9 @@ class UsersController < ApplicationController
 
   def require_registration_enabled
     render_unauthorized if !Gitorious.registrations_enabled?
+  end
+
+  def require_openid_enabled
+    render_unauthorized if !Gitorious::OpenID.enabled?
   end
 end

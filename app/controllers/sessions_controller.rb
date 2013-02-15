@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
@@ -32,7 +32,6 @@ class SessionsController < ApplicationController
   renders_in_site_specific_context
   layout "second_generation/application"
   before_filter :validate_request_host, :only => :create
-  helper_method :openid_allowed?
 
   def new
   end
@@ -71,7 +70,7 @@ class SessionsController < ApplicationController
   # if user does not exist, it gets created and activated,
   # else if the user already exists with same identity_url, it just logs in
   def open_id_authentication(openid_url)
-    if !openid_allowed?
+    if !Gitorious::OpenID.enabled?
       flash[:error] = "OpenID authentication is disabled"
       redirect_to :action => "new" and return
     end
@@ -159,9 +158,5 @@ class SessionsController < ApplicationController
       flash[:notice] = "Logged in successfully"
       redirect_back_or_default(redirection_url)
     end
-  end
-
-  def openid_allowed?
-    Gitorious::Authentication::Configuration.openid_enabled?
   end
 end

@@ -573,6 +573,27 @@ class UsersControllerTest < ActionController::TestCase
 
       assert_redirected_to "/"
     end
+
+    should "disallow build when open id is disabled" do
+      Gitorious::OpenID.stubs(:enabled?).returns(false)
+      get :openid_build, {}, @valid_session_options
+
+      assert_response 403
+    end
+
+    should "disallow create when openid is disabled" do
+      Gitorious::OpenID.stubs(:enabled?).returns(false)
+
+      post :openid_create, {:user => {
+          :fullname => "Moe Schmoe",
+          :email => "moe@schmoe.example",
+          :login => "schmoe",
+          :terms_of_use => "1"
+        }
+      }, @valid_session_options
+
+      assert_response 403
+    end
   end
 
   context "With private repositories" do

@@ -28,7 +28,7 @@
     <div class="form-wrapper" id="login">
       <div id="log-in">
         <h1>Log in to <%= Gitorious.site_name %></h1>
-        <% if openid_allowed? %>
+        <% if Gitorious::OpenID.enabled? %>
           <p class="openid-switch">Or log in with <a href="#" class="foo1">OpenID</a>.</p>
         <% end %>
         <p class="regular-switch" style="display: none">Or log in with your <a href="#" class="foo2">regular account</a>.</p>
@@ -65,7 +65,7 @@
             </li>
           </ul>
         </div>
-        <% if openid_allowed? %>
+        <% if Gitorious::OpenID.enabled? %>
         <div id="openid_login_fields" class="login_hidden">
           <ul>
             <li>

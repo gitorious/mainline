@@ -58,7 +58,7 @@ class SessionsControllerTest < ActionController::TestCase
   end
 
   should "not allow openid login if disabled" do
-    @controller.stubs(:openid_allowed?).returns(false)
+    Gitorious::OpenID.stubs(:enabled?).returns(false)
     post :create, :openid_url => "http://my.gitorious.org"
     assert_redirected_to :action => "new"
   end
