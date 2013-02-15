@@ -91,11 +91,11 @@ archive_work_dir: "/var/git/tarballs-work"
 #client_host: localhost
 #client_port: 80
 
-# Host for pulling and pushing over SSH. Gitorious currently does not
-# support running the SSH daemon on any other port than the default
-# 22. The full SSH URLs will include the name of the Gitorious user (as
-# configured elsewhere in this file). The default is the value of the
-# `host` setting.
+# Host for pulling and pushing over SSH. The full SSH URLs will
+# include the name of the Gitorious user (as configured elsewhere in
+# this file). The default is the value of the `host` setting. If any
+# other port than the SSH default 22 is used, it will also be part of
+# the visible URL.
 #
 # SSH URLs are normally only displayed for users with push access.
 # However, if both Git/HTTP and the Git daemon are disabled, SSH URLs
@@ -103,6 +103,7 @@ archive_work_dir: "/var/git/tarballs-work"
 # allowed to clone over SSH.
 #enable_ssh_daemon: true
 #ssh_daemon_host: gitorious.local
+#ssh_daemon_port: 22
 
 # Host and port used to reach the Gitorious git-daemon. Note that the
 # git-daemon service must be run separately from Gitorious. See

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2010 Marius Mårnes Mathiesen <marius@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -76,7 +76,9 @@ module Gitorious
     end
 
     def url(path)
-      "#{user}@#{host_port}#{path.sub(/^\/?/, ':')}"
+      hp = host_port
+      separator = host_port =~ /:/ ? "/" : ":"
+      "#{user}@#{host_port}#{path.sub(/^\/?/, separator)}"
     end
 
     def default_port; 22; end
