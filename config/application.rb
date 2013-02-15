@@ -111,7 +111,7 @@ module Gitorious
       else
         Gitorious::Application.config.middleware.use(ExceptionNotifier, {
           :email_prefix => "[Gitorious] ",
-          :sender_address => %{"Exception notifier" <notifier@gitorious>},
+          :sender_address => Gitorious.email_sender,
           :exception_recipients => exception_recipients
         })
       end
