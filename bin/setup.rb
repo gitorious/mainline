@@ -32,7 +32,11 @@ module Gitorious
         if git_user = gitorious_config("gitorious_user")
           etc_user = Etc.getpwnam(git_user)
           uid = etc_user.uid
-          gid = etc_user.gid
+          if git_group = Etc.getgrnam(git_user)
+            gid = git_group.gid
+          else
+            gid = etc_user.gid
+          end
           ENV["HOME"] = etc_user.dir
           current_userid = Process.euid
           if current_userid == uid
