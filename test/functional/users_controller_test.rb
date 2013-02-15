@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #
@@ -279,6 +279,30 @@ class UsersControllerTest < ActionController::TestCase
     should "GET /users/forgot_password" do
       get :forgot_password
       assert_response :success
+    end
+  end
+
+  context "user registrations" do
+    should "not allow new if configured off" do
+      Gitorious::Configuration.override("enable_registrations" => false) do
+        get :new
+
+        assert_response 403
+      end
+    end
+
+    should "not accept creation of users if configured off" do
+      Gitorious::Configuration.override("enable_registrations" => false) do
+        post(:create, :user => {
+          :login => "quire",
+          :email => "quire@example.com",
+          :password => "quire",
+          :password_confirmation => "quire",
+          :terms_of_use => "1"
+        })
+
+        assert_response 403
+      end
     end
   end
 

@@ -197,6 +197,10 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
     @site_name = Gitorious::Configuration.get("site_name", "Gitorious")
   end
 
+  def self.registrations_enabled?
+    Gitorious::Configuration.get("enable_registrations", Gitorious.public?)
+  end
+
   def self.configured?
     @configured
   end

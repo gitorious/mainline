@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -34,6 +34,7 @@ class UsersController < ApplicationController
     :only => [:edit, :update, :password, :update_password, :avatar]
   before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
   before_filter :require_public_user, :only => :show
+  before_filter :require_registration_enabled, :only => [:new, :create]
 
   renders_in_global_context
   layout :decide_layout
@@ -270,5 +271,9 @@ class UsersController < ApplicationController
                                                       :include => [:user, :project])
       end
     end
+  end
+
+  def require_registration_enabled
+    render_unauthorized if !Gitorious.registrations_enabled?
   end
 end

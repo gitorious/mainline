@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2011-2012 Gitorious AS
+  #   Copyright (C) 2011-2013 Gitorious AS
   #
   #   This program is free software: you can redistribute it and/or modify
   #   it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,9 @@
     </div>
     <div id="call-to-actions">
       <ul>
-        <li id="sign-up"><%= link_to t("views.layout.register"), new_user_path %></li>
+        <% if Gitorious.registrations_enabled? -%>
+          <li id="sign-up"><%= link_to t("views.layout.register"), new_user_path %></li>
+        <% end %>
         <li id="or"></li>
         <li id="log-in"><%= link_to "Login", login_path %></li>
       </ul>

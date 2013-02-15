@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -30,7 +31,7 @@
   </li>
   <li class="secondary subtle"><%= link_to t("views.layout.logout"), logout_path -%></li>
 <%- else -%>
-  <% if Gitorious.public? -%>
+  <% if Gitorious.registrations_enabled? -%>
     <li class="secondary"><%= link_to t("views.layout.register"), new_user_path -%></li>
   <% end -%>
   <li class="secondary"><%= link_to t("views.layout.login"), login_path -%></li>
