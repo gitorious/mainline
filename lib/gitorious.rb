@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -96,7 +96,8 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
     return @ssh_daemon if @ssh_daemon && cache?
     return nil if !Gitorious::Configuration.get("enable_ssh_daemon", true)
     host = Gitorious::Configuration.get("ssh_daemon_host") { Gitorious.host }
-    @ssh_daemon = Gitorious::GitSshMountPoint.new(Gitorious.user, host)
+    port = Gitorious::Configuration.get("ssh_daemon_port") { 22 }
+    @ssh_daemon = Gitorious::GitSshMountPoint.new(Gitorious.user, host, port)
   end
 
   def self.git_http
