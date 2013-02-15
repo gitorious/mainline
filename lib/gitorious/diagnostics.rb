@@ -253,7 +253,7 @@ module Gitorious
     private
      
     def atleast_one_process_name_matching(str)
-      matching_processes_count = (`ps -ef | grep #{str} | grep -v grep | wc -l`.to_i)      
+      matching_processes_count = (`ps -efww | grep #{str} | grep -v grep | wc -l`.to_i)
       matching_processes_count > 0
     end
 
