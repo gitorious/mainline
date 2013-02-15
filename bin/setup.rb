@@ -8,19 +8,19 @@
 
 module Gitorious
   class CLI
-    def run_with_gitorious_environment
-      setup_environment
+    def run_with_gitorious_environment(options={})
+      setup_environment(options)
       require_valid_user!
       yield
     end
 
-    def setup_environment
+    def setup_environment(options)
       require "pathname"
       require "rubygems"
       ENV["BUNDLE_GEMFILE"] = (Pathname(rails_root) + "Gemfile").to_s
       ENV["RAILS_ENV"] ||= "production"
       Dir.chdir(rails_root)
-      require "bundler/setup"
+      require "bundler/setup" unless options[:skip_bundler]
     end
 
     def rails_root
