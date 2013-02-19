@@ -77,7 +77,7 @@ module Gitorious
     # requiring ProjectProposal is not attempted.
     #
     def require_configurable_singletons!
-      # Load so configure_singletons will configure them
+      # Load so configure_application! will configure them
       root = Pathname(@root)
       require(root + "app/models/repository_root")
       require(root + "app/models/project_license")
