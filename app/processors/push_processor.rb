@@ -38,7 +38,7 @@ class PushProcessor
   end
 
   def process_merge_request
-    return if spec.action_delete?
+    return if spec.action_delete? or spec.action_create?
     merge_request.update_from_push!
   end
 

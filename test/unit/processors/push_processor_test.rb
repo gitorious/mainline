@@ -111,6 +111,14 @@ class PushProcessorTest < ActiveSupport::TestCase
         @processor.consume(@payload.to_json)
       end
     end
+
+    should "not process if action is create" do
+      @payload["message"] = "#{NULL_SHA} #{SHA} refs/merge-requests/19"
+      @processor.stubs(:merge_request).returns(@merge_request)
+      @merge_request.expects(:update_from_push!).never
+
+      @processor.consume(@payload.to_json)
+    end
   end
 
   context "Regular push" do
