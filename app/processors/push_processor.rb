@@ -43,7 +43,7 @@ class PushProcessor
   end
 
   def process_merge_request
-    return if spec.action_delete?
+    return if spec.action_delete? or spec.action_create?
     merge_request.update_from_push!
   end
 
@@ -75,7 +75,7 @@ class PushProcessor
   end
 
   private
-  
+
   def merge_request
     @repository.merge_requests.find_by_sequence_number!(@spec.ref_name.to_i)
   end

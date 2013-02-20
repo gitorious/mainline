@@ -65,7 +65,7 @@ class PushProcessorTest < ActiveSupport::TestCase
         :message => "#{NULL_SHA} #{SHA} refs/heads/master"
       }.to_json
     end
-    
+
     should "be re-established" do
       @processor.expects(:verify_connections!)
       @processor.consume(@json)
@@ -112,6 +112,14 @@ class PushProcessorTest < ActiveSupport::TestCase
       assert_nothing_raised do
         @processor.consume(@payload.to_json)
       end
+    end
+
+    should "not process if action is create" do
+      @payload["message"] = "#{NULL_SHA} #{SHA} refs/merge-requests/19"
+      @processor.stubs(:merge_request).returns(@merge_request)
+      @merge_request.expects(:update_from_push!).never
+
+      @processor.consume(@payload.to_json)
     end
 
     should_eventually "locate the correct merge request" do
