@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
 
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
-  attr_accessible :email, :fullname, :url, :terms_of_use, :identity_url
+  attr_accessible :email, :fullname, :url, :terms_of_use, :identity_url, :public_email
 
   # For new users we are a little more strict than for existing ones.
   USERNAME_FORMAT = /[a-z0-9\-_\.]+/i.freeze

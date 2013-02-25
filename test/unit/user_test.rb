@@ -549,6 +549,17 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  should "mass assign public_email" do
+    user = create_user
+    user.attributes = { :public_email => true }
+    user.save
+    assert user.public_email?
+
+    user.attributes = { :public_email => false }
+    user.save
+    refute user.public_email?
+  end
+
   protected
   def create_user(options = {})
     login = options.delete(:login) || "quire"
