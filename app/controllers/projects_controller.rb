@@ -21,6 +21,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious/project_xml_serializer"
 
 class ProjectsController < ApplicationController
   include ProjectFilters
@@ -56,7 +57,11 @@ class ProjectsController < ApplicationController
         @active_recently = filter(Project.most_active_recently)
         @tags = Project.top_tags
       }
-      format.xml  { render :xml => @projects }
+
+      format.xml do
+        render(:xml => Gitorious::ProjectXMLSerializer.new(@projects).render(current_user))
+      end
+
       format.atom { }
     end
   end
