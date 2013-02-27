@@ -449,6 +449,19 @@ class ProjectTest < ActiveSupport::TestCase
       @project.merge_request_states = "Foo\nBar"
       assert_equal ['Foo','Bar'], @project.merge_request_custom_states
     end
+
+    should "allow mass assignment" do
+      statuses = @project.merge_request_statuses.inject({}) do |h, mrs|
+        h[h.length.to_s] = { "id" => mrs.id, "state" => mrs.state, "_destroy" => "",
+          "name" => mrs.name, "description" => mrs.description, "color" => mrs.color }
+        h
+      end
+      statuses["1361955144388"] = { "state" => "5", "name" => "Newz", "description" => "", "color" => "" }
+      @project.attributes = { "merge_request_statuses_attributes" => statuses }
+      @project.save
+
+      assert_equal @project.reload.merge_request_statuses.last.name, "Newz"
+    end
   end
 
   should "create default merge_request_statuses on creation" do
