@@ -1914,7 +1914,7 @@ table.markdown_help {
 #system_message {
     background: #ffc;
     border-bottom: 1px solid #333;
-    margin: 0;
+    margin: 0 0 45px;
 }
 
 #system_message p {
@@ -3356,7 +3356,7 @@ body#users h2.activities small {
 
 .diagnostic-true-indicator {
     color: green;
-} 
+}
 .diagnostic-false-indicator {
     color: red;
 }
