@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 #--
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,19 +16,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
-incpath = File.dirname(__FILE__)
-$: << incpath
-
-require "pre_receive_guard"
-require 'logger'
+require "pathname"
+$: << File.join(File.dirname(Pathname.new(__FILE__).realpath), "../../lib")
+require "gitorious/custom_hook"
+require "gitorious/ssh/pre_receive_guard"
+require "logger"
 
 logger = if ENV["GITORIOUS_BASE_DIR"]
            Logger.new(File.join(ENV["GITORIOUS_BASE_DIR"], "log/pre_receive_guard.log"))
          else
            Logger.new("/tmp/pre_receive_guard.log")
          end
-
 
 hook_input_lines = ""
 
@@ -88,34 +87,15 @@ while data = gets
     pre_receive_guard.gitorious_says "Temporary interuption. Please try again shortly"
     exit!(1)
   end
-
-
 end
 
-require 'pathname'
-def custom_hook_path
-  real_path_of_this = Pathname.new(File.dirname(__FILE__)).realpath
-  full_path_of_this = File.expand_path(real_path_of_this)
-  custom_prereceive_path = full_path_of_this + "/custom-pre-receive"
-end
+hook = Gitorious::CustomHook.new("pre-receive", ENV["RAILS_ENV"] || "production")
 
-def run_custom_hook_if_present(input)
-  if (File.exist?(custom_hook_path) && File.executable?(custom_hook_path))
-    cmd = %Q{#{custom_hook_path} 2>&1}
-    IO.popen(cmd, 'w+') do |subprocess|
-      subprocess.write(input)
-      subprocess.close_write
-      subprocess.read.split("\n").each do |l|
-        puts "#{l}\n"
-      end
-    end
+if hook.executable?
+  status = hook.execute([], hook_input_lines)
 
-    custom_hook_status = $?
-    if !custom_hook_status.success?
-      puts "not success, exiting with its code"
-      exit(custom_hook_status.exitstatus)
-    end
+  if !status.success?
+    puts "Custom pre-receive hook failed, exiting with its code"
+    exit(status.exitstatus)
   end
 end
-
-run_custom_hook_if_present(hook_input_lines)
