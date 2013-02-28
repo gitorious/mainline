@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
-
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,37 +15,19 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
-reference_name = ARGV[0]
-sha_before = ARGV[1]
-sha_after = ARGV[2]
+require "pathname"
+$: << File.join(File.dirname(Pathname.new(__FILE__).realpath), "../../lib")
+require "gitorious/custom_hook"
 
 # NOTE: Any core Gitorious update operations goes here at the top (none so far).
 
-require 'pathname'
-def custom_hook_path
-  real_path_of_this = Pathname.new(File.dirname(__FILE__)).realpath
-  full_path_of_this = File.expand_path(real_path_of_this)
-  custom_prereceive_path = full_path_of_this + "/custom-update"
+hook = Gitorious::CustomHook.new("update", ENV["RAILS_ENV"] || "production")
+
+if hook.executable?
+  status = hook.execute(ARGV)
+
+  if !status.success?
+    puts "Custom update hook failed, exiting with its code"
+    exit(status.exitstatus)
+  end
 end
-
-def run_custom_hook_if_present(ref, sha1, sha2)
-  if (File.exist?(custom_hook_path) && File.executable?(custom_hook_path))
-    cmd = %Q{#{custom_hook_path} #{ref} #{sha1} #{sha2} 2>&1}
-    IO.popen(cmd, 'w+') do |subprocess|
-      subprocess.write("")
-      subprocess.close_write
-      subprocess.read.split("\n").each do |l|
-        puts "#{l}\n"
-      end
-    end
-
-    custom_hook_status = $?
-    if !custom_hook_status.success?
-      puts "not success, exiting with its code"
-      exit(custom_hook_status.exitstatus)
-    end
-  end  
-end
-
-run_custom_hook_if_present(reference_name, sha_before, sha_after)
