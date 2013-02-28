@@ -16,6 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "pathname"
+require "yaml"
 
 module Gitorious
   class CustomHook
@@ -26,16 +27,11 @@ module Gitorious
 
     def path
       return @file if defined?(@file)
-      @file = File.join(File.dirname(__FILE__), "../../data/hooks/custom-#{@hook}")
+      root = File.expand_path(File.join(File.dirname(__FILE__), "../../"))
+      @file = File.join(root, "data/hooks/custom-#{@hook}")
       return File.expand_path(@file) if File.executable?(@file)
-
-      if !defined?(Gitorious::Configuration)
-        require "gitorious/configuration_loader"
-        loader = Gitorious::ConfigurationLoader.new
-        loader.configure_application!(@env)
-      end
-
-      @file = Gitorious::Configuration.get("custom_#{@hook.gsub(/\-/, '_')}_hook")
+      config = defined?(GitoriousConfig) ? GitoriousConfig : YAML::load_file(root + "/config/gitorious.yml")
+      @file = config["custom_#{@hook.gsub(/\-/, '_')}_hook"]
     end
 
     def exists?
