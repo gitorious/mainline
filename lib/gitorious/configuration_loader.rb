@@ -42,7 +42,7 @@ require "yaml"
 #     # require config/environment.rb first, or configure the load path properly
 #     # some other way
 #     loader.require_configurable_singletons!
-#     loader.configure_application!
+#     loader.configure_application!(env)
 #
 #     Gitorious.git_client.port # git_client_port from gitorious.yml
 #
