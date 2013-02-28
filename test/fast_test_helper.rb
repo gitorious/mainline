@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "minitest/autorun"
-require "mocha"
+require "mocha/setup"
 require "pathname"
 require((defined?(Rails) ? Rails.root : "") + "config/initializers/gitorious_config")
 
