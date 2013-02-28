@@ -1,0 +1,94 @@
+#!/bin/sh
+# Sphinx init script
+### BEGIN INIT INFO
+# Provides: thinking-sphinx
+# Required-Start: mysqld
+# Defalt-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Description: Thinking Sphinx init script
+### END INIT INFO
+
+# Include useful init functions, RHEL/CentOS only
+# YMMV on other platforms
+. /etc/rc.d/init.d/functions
+
+
+PIDFILE=/var/www/gitorious/app/log/searchd.production.pid
+RAKE=/var/www/gitorious/app/bin/rake
+RESULT=0
+prog="Thinking Sphinx"
+_running() {
+    ps -p `cat $PIDFILE 2>/dev/null` >/dev/null 2>&1
+    RUNNING=$?
+}
+status() {
+    _running
+    RESULT=$RUNNING
+    if [ $RESULT -eq 0 ];then
+	action $"$prog " /bin/true
+    else
+	action $"$prog " /bin/false
+    fi
+    return $RESULT
+}
+
+stop() {
+    # Incredible as it may seem, the LSB specifies that a missing PID
+    # file means we're already down
+    if [ ! -f $PIDFILE ]; then
+	action $"Stopping $prog" /bin/true
+	RESULT=0
+    else
+	$RAKE ts:stop >/dev/null 2>&1
+	RESULT=$?
+	if [ $RESULT -eq 0 ]; then
+	    action $"Stopping $prog" /bin/true
+	else
+	    action $"Stopping $prog" /bin/false
+	fi
+    fi
+    return $RESULT
+}
+
+start() {
+    _running
+    # No need to start if we're already running
+    if [ $RUNNING -eq 0 ]; then
+	action $"$prog already running " /bin/true
+    else
+	$RAKE ts:start >/dev/null 2>&1
+	RESULT=$?
+	if [ $RESULT -eq 0 ]; then
+	    action $"Starting $prog" /bin/true
+	else
+	    action $"Starting $prog" /bin/false
+	fi
+    fi
+    return $?
+}
+
+restart() {
+    stop
+    start
+}
+
+
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    status)
+	status
+	;;
+    restart)
+	restart
+	;;
+    *)
+	echo "Usage: $0 {start|stop|status|restart}"
+	RESULT=1
+esac
+
+exit $?
