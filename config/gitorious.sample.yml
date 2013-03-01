@@ -383,6 +383,15 @@ production:
   # Should LDAP be used for authorization?
   # use_ldap_authorization: true
 
+  # Site-wide custom git hooks. For more information, see the samples in
+  # data/hooks/custom-pre-receive.sample
+  # data/hooks/custom-post-receive.sample
+  # data/hooks/custom-update.sample
+  #
+  # custom_pre_receive_hook: /path/to/executable/script
+  # custom_post_receive_hook: /path/to/executable/script
+  # custom_update_hook: /path/to/executable/script
+
 development:
 
 test:
