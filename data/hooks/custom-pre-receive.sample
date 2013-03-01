@@ -8,9 +8,14 @@
 # not version controlled. Content of this script can be changed to
 # regular shellscript, no need to be ruby code.
 
-# Called at the end of the standard Gitorious pre-receive hook.
-# Like the regular pre-receive hook, the custom pre-receive hook
-# receives pushed references on stdin, one line per pushed reference.
+# Alternatively, enable custom pre-receive hook by configuring the
+# path to an executable script in gitorious.yml:
+#
+# custom_pre_receive_hook: /my/hook
+
+# Called at the end of the standard Gitorious pre-receive hook. Like
+# the regular pre-receive hook, the custom pre-receive hook receives
+# pushed references on stdin, one line per pushed reference.
 
 # Example: pushing 'master' and 'testbranch' will pass something like
 # this to stdin
