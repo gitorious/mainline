@@ -4,11 +4,16 @@
 # -----------------------
 
 # Enable by renaming from custom-update.sample to custom-update. Once
-# renamed, it can be customized freely and is not version
-# controlled. Content of this script can be changed to regular
-# shellscript, no need to be ruby code.
+# renamed, it can be customized freely and is not version controlled.
+# Content of this script can be changed to regular shellscript, no
+# need to be ruby code.
 
-# Called at the end of the standard Gitorious update hook.  Like the
+# Alternatively, enable custom update hook by configuring the path to
+# an executable script in gitorious.yml:
+#
+# custom_update_hook: /my/hook
+
+# Called at the end of the standard Gitorious update hook. Like the
 # regular update hook, the custom update hook is called once per
 # pushed reference, taking the name of the reference, original commit
 # sha and attempted new commit sha as params.

@@ -4,13 +4,18 @@
 # -----------------------
 
 # Enable by renaming from custom-post-receive.sample to
-# custom-post-receive. Once renamed, it can be customized freely and is
-# not version controlled. Content of this script can be changed to
+# custom-post-receive. Once renamed, it can be customized freely and
+# is not version controlled. Content of this script can be changed to
 # regular shellscript, no need to be ruby code.
 
-# Called at the end of the standard Gitorious post-receive hook.
-# Like the regular post-receive hook, the custom post-receive hook
-# receives pushed references on stdin, one line per pushed reference.
+# Alternatively, enable custom post-receive hook by configuring the
+# path to an executable script in gitorious.yml:
+#
+# custom_post_receive_hook: /my/hook
+
+# Called at the end of the standard Gitorious post-receive hook. Like
+# the regular post-receive hook, the custom post-receive hook receives
+# pushed references on stdin, one line per pushed reference.
 
 # Example: pushing 'master' and 'testbranch' will pass something like
 # this to stdin
@@ -23,9 +28,10 @@
 
 # exit!(EXITCODE), or raising exceptions will cause an abort at this
 # point, but note that the actual git push operation has already gone
-# through so doing an unexpected exit serves little or no  purpose.
+# through so doing an unexpected exit serves little or no purpose.
 
-# More on the "pre-receive", "post-receive" and "update" serverside hooks:
+# More on the "pre-receive", "post-receive" and "update" serverside
+# hooks:
 # http://git-scm.com/book/en/Customizing-Git-Git-Hooks#Server-Side-Hooks
 
 puts "[DEBUG] CUSTOM POST-RECEIVE HOOK STARTS"
