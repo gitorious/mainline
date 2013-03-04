@@ -18,7 +18,7 @@
 
 
 require File.dirname(__FILE__) + '/../../test_helper'
-require File.dirname(__FILE__) + '/../../../data/hooks/pre_receive_guard'
+require File.dirname(__FILE__) + '/../../../lib/gitorious/ssh/pre_receive_guard'
 
 class PreReceiveGuardTest < ActiveSupport::TestCase
   context 'In general' do
@@ -28,7 +28,7 @@ class PreReceiveGuardTest < ActiveSupport::TestCase
           'SSH_ORIGINAL_COMMAND'  => 'git-receive-pack foo.git'}
       @guard = Gitorious::SSH::PreReceiveGuard.new(@env, "#{'0'*10} #{'fca'*10} refs/merge-requests/123")
     end
-    
+
     should 'know if the hook is called via SSH and allow pushes if local' do
       assert !@guard.local_connection?
       @env.delete('SSH_ORIGINAL_COMMAND')
@@ -47,18 +47,18 @@ class PreReceiveGuardTest < ActiveSupport::TestCase
         "#{'aaa'*10} #{'bbb'*10} refs/merge-requests/123\n")
       assert !guard.deny_force_pushes?
     end
-    
+
     should "deny fast forwards if the correct env var is set" do
       @env["GITORIOUS_DENY_FORCE_PUSHES"] = "true"
       guard = Gitorious::SSH::PreReceiveGuard.new(@env,
         "#{'0'*10} #{'fca'*10} refs/heads/master")
       assert guard.deny_force_pushes?
     end
-    
+
     should 'build the correct authentication URL' do
       assert_equal "http://gitorious.example/repositories/writable_by?user=john&git_path=#{CGI.escape('refs/merge-requests/123')}", @guard.authentication_url
     end
-    
+
     should 'extract the Git target correctly' do
       assert_equal 'refs/merge-requests/123', @guard.git_target
     end
@@ -68,7 +68,7 @@ class PreReceiveGuardTest < ActiveSupport::TestCase
         "#{'0'*10} #{'fca'*10} refs/heads/master\n")
       assert_equal "refs/heads/master", guard.git_target
     end
-    
+
     should 'not allow push when Gitorious says no' do
       @guard.stubs(:get_via_http).returns('false')
       assert !@guard.allow_push?

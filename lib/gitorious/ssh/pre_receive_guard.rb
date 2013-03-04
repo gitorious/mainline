@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,18 +16,16 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
-
 require "open-uri"
-require 'cgi'
+require "cgi"
 
 module Gitorious
-  module SSH  
+  module SSH
     class PreReceiveGuard
       # env is a Hash representing ENV
       def initialize(env, git_spec)
         @env  = env.dup
-        @query_url = @env['GITORIOUS_WRITABLE_BY_URL']
+        @query_url = @env["GITORIOUS_WRITABLE_BY_URL"]
         @git_spec   = git_spec
       end
       attr_reader :git_spec
@@ -35,9 +34,9 @@ module Gitorious
       def git_target
         @git_spec.split(/\s/, 3).last.chomp
       end
-      
+
       def local_connection?
-        !@env.include? 'SSH_ORIGINAL_COMMAND'
+        !@env.include? "SSH_ORIGINAL_COMMAND"
       end
 
       def merge_request_update?
@@ -47,19 +46,19 @@ module Gitorious
       def authentication_url
         @query_url + "&git_path=#{CGI.escape(git_target)}"
       end
-  
+
       def allow_push?
         return true if local_connection?
         result = get_via_http(authentication_url)
-        return result == 'true'
+        return result == "true"
       end
 
       def deny_force_pushes?
         return false if local_connection?
         return false if merge_request_update?
-        @env['GITORIOUS_DENY_FORCE_PUSHES'] == "true"
+        @env["GITORIOUS_DENY_FORCE_PUSHES"] == "true"
       end
-      
+
       def get_via_http(url)
         open(url).read
       end

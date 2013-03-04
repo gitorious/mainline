@@ -30,8 +30,15 @@ module Gitorious::Messaging::SyncAdapter
   def self.load_processor(identifier)
     self.load_env if !defined?(Rails)
     queue = Publisher::QUEUES[identifier.to_s]
-    require "processors/#{queue}_processor"
-    Object.const_get("#{queue.split("_").collect(&:capitalize)}Processor")
+
+    begin
+      require "processors/#{queue}_processor"
+    rescue LoadError => err
+      self.load_env
+      require "processors/#{queue}_processor"
+    end
+
+    Object.const_get("#{queue.split("_").collect(&:capitalize).join}Processor")
   end
 
   module Publisher
