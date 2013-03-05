@@ -119,6 +119,8 @@ GEM
     multi_json (1.5.1)
     multi_xml (0.5.1)
     multipart-post (1.1.5)
+    mutations (0.5.10)
+      activesupport
     mysql2 (0.3.11)
     net-ldap (0.3.1)
     nokogiri (1.5.5)
@@ -273,6 +275,7 @@ DEPENDENCIES
   mime-types (~> 1.16)
   minitest (= 4.2.0)
   mocha (= 0.9.10)
+  mutations
   mysql2
   net-ldap (~> 0.3)
   nokogiri (~> 1.5)

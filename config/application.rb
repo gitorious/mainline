@@ -44,6 +44,7 @@ module Gitorious
     # Add additional load paths for your own custom dirs
     config.autoload_paths << (Rails.root + "lib/gitorious").to_s
     config.autoload_paths << (Rails.root + "app").to_s
+    config.autoload_paths << (Rails.root + "mutations").to_s
     config.autoload_paths << (Rails.root + "finders").to_s
 
     # Avoid class cache errors like "A copy of Gitorious::XYZ has been removed

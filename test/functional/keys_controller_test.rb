@@ -117,21 +117,6 @@ class KeysControllerTest < ActionController::TestCase
     end
   end
 
-module KeyStubs
-    def valid_key
-    <<-EOS
-ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFz
-c2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRi
-Z2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4
-Zm9mcWU= foo@example.com
-EOS
-    end
-
-    def invalid_key
-      "ooger booger wooger@burger"
-    end
-end
-
   context "create" do
     include KeyStubs
 
@@ -153,18 +138,13 @@ end
     end
 
     should "scope to the current user" do
-      post :create, :user_id => @user.to_param, :ssh_key => { :key => valid_key }
-      assert_equal users(:johan).id, assigns(:ssh_key).user_id
+      assert_difference "@user.ssh_keys.count" do
+        post :create, :user_id => @user.to_param, :ssh_key => { :key => valid_key }
+      end
     end
 
     should "POST account/keys/create is successful" do
       post :create, :user_id => @user.to_param, :ssh_key => {:key => valid_key}
-      assert_response :redirect
-    end
-
-    should "publish a creation message to the message queue" do
-      SshKey.any_instance.expects(:publish_creation_message)
-      post :create, :ssh_key => {:key => valid_key}, :user_id => @user.to_param
       assert_response :redirect
     end
   end
@@ -176,7 +156,7 @@ end
       authorize_as :johan
     end
 
-    should " require login" do
+    should "require login" do
       authorize_as(nil)
       post :create, :ssh_key => {:key => valid_key}, :format => "xml", :user_id => @user.to_param
       assert_response 401
@@ -189,9 +169,10 @@ end
       assert_redirected_to user_path(users(:moe))
     end
 
-    should "scopes to the current_user" do
-      post :create, :ssh_key => {:key => valid_key}, :format => "xml", :user_id => @user.to_param
-      assert_equal users(:johan).id, assigns(:ssh_key).user_id
+    should "scope to the current_user" do
+      assert_difference "@user.ssh_keys.count" do
+        post :create, :ssh_key => {:key => valid_key}, :format => "xml", :user_id => @user.to_param
+      end
     end
 
     should "POST account/keys/create is successful" do

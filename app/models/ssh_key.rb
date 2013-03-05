@@ -33,7 +33,7 @@ class SshKey < ActiveRecord::Base
   validates_presence_of :user_id, :key
   validates_uniqueness_of :key, :message => "is already in use - please use/generate a different keypair."
 
-  # we only allow people to create/destroy keys after_update  :create_update_task
+  # we only allow people to create/destroy keys
   after_destroy :publish_deletion_message
 
   def self.human_name

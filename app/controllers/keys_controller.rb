@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -41,19 +41,26 @@ class KeysController < ApplicationController
   end
 
   def create
-    @ssh_key = current_user.ssh_keys.new
-    @ssh_key.key = params[:ssh_key][:key]
-    @root = Breadcrumb::NewKey.new(current_user)
+    outcome = SshKeyCreator.run(params[:ssh_key], :user_id => current_user.id)
 
     respond_to do |format|
-      if @ssh_key.save
-        @ssh_key.publish_creation_message
-        flash[:notice] = I18n.t "keys_controller.create_notice"
+      if outcome.success?
+        flash[:notice] = I18n.t("keys_controller.create_notice")
         format.html { redirect_to user_keys_path(current_user) }
-        format.xml  { render :xml => @ssh_key, :status => :created, :location => user_key_path(current_user, @ssh_key) }
+        format.xml do
+          render(:xml => outcome.result,
+                 :status => :created,
+                 :location => user_key_path(current_user, outcome.result))
+        end
       else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @ssh_key.errors, :status => :unprocessable_entity }
+        format.html do
+          @root = Breadcrumb::NewKey.new(current_user)
+          render :action => "new"
+        end
+        format.xml do
+          render(:xml => outcome.errors.message,
+                 :status => :unprocessable_entity)
+        end
       end
     end
   end
