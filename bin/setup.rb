@@ -5,6 +5,7 @@
 # - if so: check if we are it
 # - if not and we are root: setuid+setgid to that user
 # - if not and we are not root, fail
+require "etc"
 
 module Gitorious
   class CLI
