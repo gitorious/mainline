@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "group_finder"
+require "ldap_group_finder"
 
 class Team
   def self.group_implementation
@@ -56,7 +58,7 @@ class Team
 
   # Return a (class level) finder
   def self.group_finder
-    group_implementation == LdapGroup ? Finders::LdapGroupFinder.new : Finders::GroupFinder.new
+    group_implementation == LdapGroup ? LdapGroupFinder.new : GroupFinder.new
   end
 
   def self.method_missing(name, *args, &block)
