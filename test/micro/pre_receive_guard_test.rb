@@ -17,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "fast_test_helper"
-require "data/hooks/pre_receive_guard"
+require "gitorious/ssh/pre_receive_guard"
 
 class PreReceiveGuardTest < MiniTest::Shoulda
   context "In general" do
