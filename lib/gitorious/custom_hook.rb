@@ -30,8 +30,7 @@ module Gitorious
       root = File.expand_path(File.join(File.dirname(__FILE__), "../../"))
       @file = File.join(root, "data/hooks/custom-#{@hook}")
       return File.expand_path(@file) if File.executable?(@file)
-      config = defined?(GitoriousConfig) ? GitoriousConfig : YAML::load_file(root + "/config/gitorious.yml")
-      config = config[@env] || {}
+      config = defined?(GitoriousConfig) ? GitoriousConfig : YAML::load_file(root + "/config/gitorious.yml")[@env]
       @file = config["custom_#{@hook.gsub(/\-/, '_')}_hook"]
     end
 
