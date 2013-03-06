@@ -37,10 +37,15 @@ module Gitorious
       end
 
       def can_read_project?(user, project)
-        can_read_protected_content?(user, project)
+        return true if can_read_protected_content?(user, project)
+        project.repositories.mainlines.each do |repo|
+          return true if can_read_repository?(user, repo)
+        end
+        return false
       end
 
       def can_read_repository?(user, repository)
+        return true if can_push?(user, repository)
         if !repository.project.nil?
           return false if !can_read_protected_content?(user, repository.project)
         end
