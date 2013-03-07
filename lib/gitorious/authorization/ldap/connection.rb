@@ -27,7 +27,7 @@ module Gitorious
 
         def bind_as(bind_user_dn, bind_user_pass)
           connection = Net::LDAP.new({:host => options[:host], :port => options[:port], :encryption => options[:encryption]})
-          connection.auth(bind_user_dn, bind_user_pass)
+          connection.auth(bind_user_dn, bind_user_pass) unless bind_user_dn.nil?
           begin
             if connection.bind
               yield BoundConnection.new(connection)
