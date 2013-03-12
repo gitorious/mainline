@@ -295,7 +295,7 @@ Gitorious::Application.routes.draw do
       match "/commit/:id" => "commits#show", :as => :commit, :id => /.*/
 
       match "/graph" => "graphs#index", :as => :graph
-      match "/graph/*branch" => "graphs#index", :as => :graph_in_ref
+      match "/graph/*branch" => "graphs#index", :as => :graph_in_ref, :branch => /.*/
 
       match "/trees/" => "trees#index", :as => :trees
       match "/trees/*branch_and_path" => "trees#show", :as => :tree
