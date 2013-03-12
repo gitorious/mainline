@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,10 +15,12 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#   Thanks for valuable input from joernchen of Phenoelit 
+#   Thanks for valuable input from joernchen of Phenoelit
 #
 #++
 require "timeout"
+require "shellwords"
+
 module Gitorious
 
   # Grit is too helpful with escaping the output for our somewhat special needs
@@ -32,17 +34,14 @@ module Gitorious
       raise GitTimeout, "Execution expired"
     end
 
-    def graph_log(git_dir, *options)
+    def graph_log(git_dir, options = [], branch = nil)
       log_format = '%H§%P§%ai§%ae§%d§%s§'
       pretty_format = %Q{format:"#{log_format}"}
 
       command = "#{GitoriousConfig['git_binary']} --git-dir=#{git_dir} log --graph --pretty=#{pretty_format} "
-      command << sanitize(options.join(" "))
+      command << (options || []).join(" ")
+      command << Shellwords.escape(branch) unless branch.nil?
       execute(command)
-    end
-
-    def sanitize(input)
-      input.gsub(/[^a-zA-Z0-9\/\s=\-]/,"")
     end
 
     class GitTimeout < ::Timeout::Error

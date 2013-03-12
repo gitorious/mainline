@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -51,9 +51,9 @@ module Api
 
     private
     def graph_log(repo, type, branch = nil)
-      args = [repo.full_repository_path, "--decorate=full", "-100", type]
-      args << desplat_path(branch) if branch
-      git_shell.send(:graph_log, *args)
+      args = ["--decorate=full", "-100", type]
+      branch = desplat_path(branch) unless branch.nil?
+      git_shell.send(:graph_log, repo.full_repository_path, args, branch)
     end
 
     def git_shell
