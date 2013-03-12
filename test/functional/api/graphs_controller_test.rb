@@ -46,7 +46,7 @@ class Api::GraphsControllerTest < ActionController::TestCase
   context "Graphing the log" do
     should "render JSON" do
       path = @repo.full_repository_path
-      mock_shell.with(path, "--decorate=full", "-100", "").returns("")
+      mock_shell.with(path, ["--decorate=full", "-100", ""], nil).returns("")
       get :show, params
       assert_response :success
     end
@@ -72,26 +72,26 @@ class Api::GraphsControllerTest < ActionController::TestCase
     end
 
     should "render graph for specific sha-ish" do
-      mock_shell.with(@repo.full_repository_path, "--decorate=full", "-100", "", "refactor").returns("")
+      mock_shell.with(@repo.full_repository_path, ["--decorate=full", "-100", ""], "refactor").returns("")
       get :show, params(:branch => "refactor")
 
       assert_response :success
     end
 
     should "render graph --all for specific sha-ish" do
-      mock_shell.with(@repo.full_repository_path, "--decorate=full", "-100", "--all", "refactor").returns("")
+      mock_shell.with(@repo.full_repository_path, ["--decorate=full", "-100", "--all"], "refactor").returns("")
       get :show, params(:branch => "refactor", :type => "all")
       assert_response :success
     end
 
     should "treat type != all as blank" do
-      mock_shell.with(@repo.full_repository_path, "--decorate=full", "-100", "", "branch2").returns("")
+      mock_shell.with(@repo.full_repository_path, ["--decorate=full", "-100", ""], "branch2").returns("")
       get :show, params(:branch => "branch2", :type => "sumptn")
       assert_response :success
     end
 
     should "handle branch with slash in it" do
-      mock_shell.with(@repo.full_repository_path, "--decorate=full", "-100", "", "some/such").returns("")
+      mock_shell.with(@repo.full_repository_path, ["--decorate=full", "-100", ""], "some/such").returns("")
       get :show, params(:branch => "some%2Fsuch")
       assert_response :success
     end
@@ -108,7 +108,7 @@ class Api::GraphsControllerTest < ActionController::TestCase
     end
 
     should "allow authorized user to graph branch" do
-      mock_shell.with(@repo.full_repository_path, "--decorate=full", "-100", "").returns("")
+      mock_shell.with(@repo.full_repository_path, ["--decorate=full", "-100", ""], nil).returns("")
       login_as :johan
       get :show, params
       assert_response 200
@@ -126,7 +126,7 @@ class Api::GraphsControllerTest < ActionController::TestCase
     end
 
     should "allow authorized user to graph branch" do
-      mock_shell.with(@repo.full_repository_path, "--decorate=full", "-100", "").returns("")
+      mock_shell.with(@repo.full_repository_path, ["--decorate=full", "-100", ""], nil).returns("")
       login_as :johan
       get :show, params
       assert_response 200

@@ -25,14 +25,17 @@ class GitShellTest < MiniTest::Shoulda
     end
 
     should "sanitize parameters sent to it" do
-      @shell.expects(:sanitize).returns("")
-      @shell.expects(:execute).returns(nil)
-      @shell.graph_log(nil, nil)
+      expected = "/usr/bin/git --git-dir=/dir.git log --graph " +
+        "--pretty=format:\"%H§%P§%ai§%ae§%d§%s§\" "
+      @shell.expects(:execute).with(expected)
+      @shell.graph_log("/dir.git")
     end
 
     should "remove anything but valid git object names" do
-      input = "`id>/tmp/command`"
-      assert_equal("id/tmp/command", @shell.sanitize(input))
+      expected = "/usr/bin/git --git-dir=/project.git log --graph " +
+        "--pretty=format:\"%H§%P§%ai§%ae§%d§%s§\" \\`id\\>/tmp/command\\`"
+      @shell.expects(:execute).with(expected)
+      @shell.graph_log("/project.git", [], "`id>/tmp/command`")
     end
   end
 end
