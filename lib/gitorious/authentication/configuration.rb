@@ -27,7 +27,7 @@ module Gitorious
 
       def self.reset!
         authentication_methods.clear
-        @openid_enabled = true
+        @openid_disabled = false
       end
 
       def self.use_default_configuration

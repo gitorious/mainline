@@ -68,7 +68,7 @@ class Gitorious::Authentication::ConfigurationTest < MiniTest::Shoulda
     end
 
     should "by default be enabled" do
-      assert Gitorious::Authentication::Configuration.openid_enabled?
+      assert Gitorious::Authentication::Configuration.openid_enabled?, "Openid should be enabled. Current methods are #{Gitorious::Authentication::Configuration.authentication_methods.inspect}"
     end
 
     should "disable OpenID" do
