@@ -32,5 +32,8 @@ class SshKeyCreator < Mutations::Command
     end
 
     ssh_key
+  rescue ActiveRecord::RecordInvalid
+    messages = ssh_key.errors.full_messages
+    ssh_key.errors.each { |k, m| add_error(k, :validation, messages.shift) }
   end
 end
