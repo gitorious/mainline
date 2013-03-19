@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -254,10 +254,10 @@ class ProjectsControllerTest < ActionController::TestCase
         }
       end
       assert_response :redirect
-      assert_redirected_to(new_project_repository_path(assigns(:project)))
+      assert_redirected_to(new_project_repository_path(Project.last))
 
-      assert_equal users(:johan), assigns(:project).user
-      assert_equal users(:johan), assigns(:project).owner
+      assert_equal users(:johan), Project.last.user
+      assert_equal users(:johan), Project.last.owner
     end
 
     should "create project with full form payload" do
@@ -289,7 +289,7 @@ class ProjectsControllerTest < ActionController::TestCase
       end
       assert_response :success
       assert_template "projects/new"
-      assert !assigns(:project).valid?
+      assert !Project.create.valid?
     end
 
     should "Create an event when successfully POSTing to create" do
@@ -302,8 +302,8 @@ class ProjectsControllerTest < ActionController::TestCase
           :owner_type => "User"
         }
       end
-      assert_equal 1, assigns(:project).reload.events.count
-      event = assigns(:project).events.first
+      assert_equal 1, Project.last.events.count
+      event = Project.last.events.first
       assert_equal Action::CREATE_PROJECT, event.action
     end
 
@@ -337,10 +337,10 @@ class ProjectsControllerTest < ActionController::TestCase
         }
       end
       assert_response :redirect
-      assert_redirected_to(new_project_repository_path(assigns(:project)))
+      assert_redirected_to(new_project_repository_path(Project.last))
 
-      assert_equal users(:johan), assigns(:project).user
-      assert_equal group, assigns(:project).owner
+      assert_equal users(:johan), Project.last.user
+      assert_equal group, Project.last.owner
     end
 
     should "redirect to new_user_key_path when POST projects/create if no keys on user" do
@@ -648,7 +648,7 @@ class ProjectsControllerTest < ActionController::TestCase
       }
       assert_nil flash[:error]
       assert_response :redirect
-      assert_redirected_to new_project_repository_path(assigns(:project))
+      assert_redirected_to new_project_repository_path(Project.last)
     end
   end
 

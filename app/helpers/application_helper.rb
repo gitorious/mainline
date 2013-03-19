@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
@@ -592,11 +592,9 @@ module ApplicationHelper
 
   # Temporary - Rails 3 removed error_messages_for
   def error_messages(model)
-    return "" if !model.errors.any?
-    errors = model.errors
-    result = errors.full_messages.inject("") do |memo, obj|
-      memo << content_tag(:li, obj)
-    end
+    errors = model.is_a?(Array) ? model : model.errors.full_messages
+    return "" if !errors.any?
+    result = errors.inject("") { |memo, obj| memo << content_tag(:li, obj) }
     header = content_tag(:h2, pluralize(errors.size, "error"))
     "<div class=\"errorExplanation\" id=\"errorExplanation\">#{header}<ul>#{result}</ul></div>".html_safe
   end

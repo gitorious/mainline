@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -18,10 +18,11 @@
 #++
 
 class MergeRequestStatus < ActiveRecord::Base
+  COLOR_REGEXP = /^#[0-9a-f]{3}{1,2}$/i
   belongs_to :project
 
   validates_presence_of :project, :state, :name
-  validates_format_of :color, :with => /#[0-9a-f]{3,6}/i,
+  validates_format_of :color, :with => COLOR_REGEXP,
     :message => "should be hex encoded (eg '#cccccc', like in CSS)", :allow_blank => true
 
   before_save :synchronize_merge_request_statuses

@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2011-2012 Gitorious AS
+  #   Copyright (C) 2011-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
   #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -23,7 +23,7 @@
 
 <%= breadcrumbs_from(@root) -%>
 <h2 class="content-header"><%= t("views.projects.new_title") %></h2>
-<%= error_messages(@project) -%>
+<%= error_messages(@errors || @project) -%>
 <%= form_for @project, :url => projects_path, :builder => GitoriousFormBuilder  do |f| -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
 

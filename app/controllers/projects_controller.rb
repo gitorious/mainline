@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -105,22 +105,14 @@ class ProjectsController < ApplicationController
   end
 
   def create
-    owner_id = params[:project].delete(:owner_id)
-    @project = Project.new(params[:project])
-    @root = Breadcrumb::NewProject.new
-    @project.user = current_user
-    @project.owner = case params[:project][:owner_type]
-      when "User"
-        current_user
-      when "Group"
-        Team.find(owner_id)
-      end
-
-    if @project.save
-      @project.make_private if projects_private_on_creation?
-      @project.create_event(Action::CREATE_PROJECT, @project, current_user)
-      redirect_to new_project_repository_path(@project)
+    add_params = { :user_id => current_user.id, :private_project => params[:private_project] }
+    outcome = ProjectCreator.run(params[:project], add_params)
+    if outcome.success?
+      redirect_to new_project_repository_path(outcome.result)
     else
+      @root = Breadcrumb::NewProject.new
+      @errors = outcome.errors.message_list
+      @project = Project.new
       render :action => "new"
     end
   end
@@ -206,10 +198,6 @@ class ProjectsController < ApplicationController
                        :page => page,
                        :include => [:tags, { :repositories => :project } ])
     end
-  end
-
-  def projects_private_on_creation?
-    Gitorious.private_repositories? && (params[:private_project] || Gitorious.repositories_default_private?)
   end
 
   def paginated_events

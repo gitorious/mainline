@@ -328,6 +328,11 @@ class Project < ActiveRecord::Base
     @reserved_slugs.concat(slugs)
   end
 
+  def self.private_on_create?(params = {})
+    return false if !Gitorious.private_repositories?
+    params[:private_project] || Gitorious.repositories_default_private?
+  end
+
   protected
   def create_wiki_repository
     self.wiki_repository = Repository.create!({
