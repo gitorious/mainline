@@ -40,4 +40,26 @@ class SshKeyCreatorTest < ActiveSupport::TestCase
     SshKey.any_instance.expects(:publish_creation_message)
     assert SshKeyCreator.run(:user_id => user.id, :key => valid_key).success?
   end
+
+  should "fail for duplicate key" do
+    SshKey.any_instance.stubs(:publish_creation_message)
+    user = users(:moe)
+    SshKeyCreator.run(:user_id => user.id, :key => valid_key)
+
+    assert_no_difference "user.ssh_keys.count" do
+      outcome = SshKeyCreator.run(:user_id => user.id, :key => valid_key)
+      refute outcome.success?
+      refute_nil outcome.errors.message[:key]
+    end
+  end
+
+  should "fail for missing user" do
+    SshKey.any_instance.stubs(:publish_creation_message)
+
+    assert_no_difference "SshKey.count" do
+      outcome = SshKeyCreator.run(:key => valid_key)
+      refute outcome.success?
+      refute_nil outcome.errors.message["user_id"]
+    end
+  end
 end
