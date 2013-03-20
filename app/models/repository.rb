@@ -754,6 +754,11 @@ class Repository < ActiveRecord::Base
     repo_public? && project.public?
   end
 
+  def self.private_on_create?(params = {})
+    return false if !Gitorious.private_repositories?
+    params[:private_repository] || Gitorious.repositories_default_private?
+  end
+
   protected
   def sharded_hashed_path(h)
     first = h[0,3]

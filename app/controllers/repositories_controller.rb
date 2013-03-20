@@ -101,24 +101,22 @@ class RepositoriesController < ApplicationController
   end
 
   def create
-    @repository = @project.repositories.new(params[:repository])
-    @root = Breadcrumb::NewRepository.new(@project)
-    @repository.kind = Repository::KIND_PROJECT_REPO
-    @repository.owner = @project.owner
-    @repository.user = current_user
-    @repository.merge_requests_enabled = params[:repository][:merge_requests_enabled]
+    hash = params[:repository].merge({
+        :user => current_user,
+        :project => @project,
+        :private_repository => params[:private_repository]
+      })
+    outcome = RepositoryCreator.run(hash)
 
-    if @repository.save
-      @repository.make_private if repos_private_on_creation?
+    if outcome.success?
       flash[:success] = I18n.t("repositories_controller.create_success")
-      redirect_to [@repository.project_or_owner, @repository]
+      redirect_to [outcome.result.project, outcome.result]
     else
+      @repository = RepositoryCreator.build(hash)
+      @repository.valid? # Trigger validation, so errors are available ...
+      @root = Breadcrumb::NewRepository.new(@project)
       render :action => "new"
     end
-  end
-
-  def repos_private_on_creation?
-    Gitorious.private_repositories? && (params[:private_repository] || Gitorious.repositories_default_private?)
   end
 
   undef_method :clone
