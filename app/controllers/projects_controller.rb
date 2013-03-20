@@ -112,7 +112,7 @@ class ProjectsController < ApplicationController
     else
       @root = Breadcrumb::NewProject.new
       @errors = outcome.errors.message_list
-      @project = Project.new
+      @project = ProjectCreator.build(params[:project].merge(add_params))
       render :action => "new"
     end
   end

@@ -40,19 +40,7 @@ class ProjectCreator < Mutations::Command
   end
 
   def execute
-    project = Project.new(:title => title,
-                          :description => description,
-                          :slug => slug,
-                          :license => license,
-                          :home_url => home_url,
-                          :mailinglist_url => mailinglist_url,
-                          :bugtracker_url => bugtracker_url,
-                          :wiki_enabled => wiki_enabled,
-                          :tag_list => tag_list)
-    project.site_id = site_id unless site_id.nil?
-    project.user_id = user_id
-    project.owner_type = owner_type
-    project.owner_id = owner_type == "User" ? user_id : owner_id
+    project = self.class.build(inputs)
 
     if !project.save
       messages = project.errors.full_messages
@@ -62,6 +50,24 @@ class ProjectCreator < Mutations::Command
 
     project.make_private if Project.private_on_create?(inputs)
     project.create_event(Action::CREATE_PROJECT, project, User.find(user_id))
+    project
+  end
+
+  def self.build(params)
+    project = Project.new(:title => params[:title],
+                          :slug => params[:slug],
+                          :description => params[:description],
+                          :license => params[:license],
+                          :home_url => params[:home_url],
+                          :mailinglist_url => params[:mailinglist_url],
+                          :bugtracker_url => params[:bugtracker_url],
+                          :wiki_enabled => params[:wiki_enabled],
+                          :tag_list => params[:tag_list])
+    uid = params[:user_id]
+    project.user_id = uid
+    project.site_id = params[:site_id] unless params[:site_id].nil?
+    project.owner_type = params[:owner_type]
+    project.owner_id = params[:owner_type] == "User" ? uid : params[:owner_id]
     project
   end
 end
