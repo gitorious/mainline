@@ -105,7 +105,7 @@ class ProjectsController < ApplicationController
   end
 
   def create
-    add_params = { :user_id => current_user.id, :private_project => params[:private_project] }
+    add_params = { :user => current_user, :private_project => params[:private_project] }
     outcome = ProjectCreator.run(params[:project], add_params)
     if outcome.success?
       redirect_to new_project_repository_path(outcome.result)

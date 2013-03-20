@@ -35,10 +35,23 @@ class ProjectCreatorTest < ActiveSupport::TestCase
     }
 
     assert_difference("Project.count") do
-      outcome = ProjectCreator.run(params, { :user_id => user.id })
+      outcome = ProjectCreator.run(params, { :user => { :id => user.id } })
       assert outcome.success?, outcome.errors.inspect
       assert_equal "My new project", outcome.result.description
       assert_equal user, outcome.result.owner
+    end
+  end
+
+  should "create project for user object" do
+    assert_difference("Project.count") do
+      outcome = ProjectCreator.run({
+          "title" => "Big blob",
+          "slug" => "big-blob",
+          "description" => "My new project",
+          "user" => users(:moe)
+        })
+
+      assert outcome.success?, outcome.errors.inspect
     end
   end
 
@@ -51,7 +64,7 @@ class ProjectCreatorTest < ActiveSupport::TestCase
       "description" => "My new project"
     }
 
-    outcome = ProjectCreator.run(params, { :user_id => user.id })
+    outcome = ProjectCreator.run(params, { :user => { :id => user.id } })
     assert_equal user, outcome.result.owner
   end
 
@@ -74,7 +87,7 @@ class ProjectCreatorTest < ActiveSupport::TestCase
     params = {
       "slug" => "big-blob",
       "description" => "My new project",
-      "user_id" => users(:moe).id
+      "user" => { :id => users(:moe).id }
     }
 
     outcome = ProjectCreator.run(params)
@@ -122,7 +135,7 @@ class ProjectCreatorTest < ActiveSupport::TestCase
       "title" => "My project",
       "slug" => "big-blob",
       "description" => "My new project",
-      "user_id" => users(:moe).id
+      "user" => { "id" => users(:moe).id }
     }.merge(attrs)
   end
 end

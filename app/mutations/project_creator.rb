@@ -16,11 +16,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "mutations"
+require "model_finder"
 
 class ProjectCreator < Mutations::Command
   required do
     string :title
-    integer :user_id
+    model :user, :builder => ModelFinder::User
     string :slug
     string :description
   end
@@ -49,21 +50,23 @@ class ProjectCreator < Mutations::Command
     end
 
     project.make_private if Project.private_on_create?(inputs)
-    project.create_event(Action::CREATE_PROJECT, project, User.find(user_id))
+    project.create_event(Action::CREATE_PROJECT, project, user)
     project
   end
 
   def self.build(params)
-    project = Project.new(:title => params[:title],
-                          :slug => params[:slug],
-                          :description => params[:description],
-                          :license => params[:license],
-                          :home_url => params[:home_url],
-                          :mailinglist_url => params[:mailinglist_url],
-                          :bugtracker_url => params[:bugtracker_url],
-                          :wiki_enabled => params[:wiki_enabled],
-                          :tag_list => params[:tag_list])
-    uid = params[:user_id]
+    project = Project.new({
+        :title => params[:title],
+        :slug => params[:slug],
+        :description => params[:description],
+        :license => params[:license],
+        :home_url => params[:home_url],
+        :mailinglist_url => params[:mailinglist_url],
+        :bugtracker_url => params[:bugtracker_url],
+        :wiki_enabled => params[:wiki_enabled],
+        :tag_list => params[:tag_list]
+      })
+    uid = params[:user].is_a?(Hash) ? params[:user][:id] : params[:user].id
     project.user_id = uid
     project.site_id = params[:site_id] unless params[:site_id].nil?
     project.owner_type = params[:owner_type]
