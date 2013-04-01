@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -46,7 +46,8 @@ module Gitorious::Messaging::SyncAdapter
       "/queue/GitoriousRepositoryCreation" => "repository_creation",
       "/queue/GitoriousRepositoryDeletion" => "repository_deletion",
       "/queue/GitoriousPush" => "push",
-      "/queue/GitoriousSshKeys" => "ssh_key",
+      "/queue/GitoriousDestroySshKey" => "destroy_ssh_key",
+      "/queue/GitoriousNewSshKey" => "new_ssh_key",
       "/queue/GitoriousRepositoryArchiving" => "repository_archiving",
       "/queue/GitoriousEmailNotifications" => "message_forwarding",
       "/queue/GitoriousMergeRequestCreation" => "merge_request",

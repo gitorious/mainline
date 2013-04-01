@@ -21,6 +21,7 @@
 #++
 
 class KeysController < ApplicationController
+  include Gitorious::Messaging::Publisher
   before_filter :login_required
   before_filter :find_user
   before_filter :require_current_user
@@ -41,25 +42,26 @@ class KeysController < ApplicationController
   end
 
   def create
-    outcome = SshKeyCreator.run(params[:ssh_key], :user_id => current_user.id)
+    outcome = CreateSshKey.new(self, current_user).execute(params[:ssh_key])
 
     respond_to do |format|
-      if outcome.success?
+      outcome.success do |result|
         flash[:notice] = I18n.t("keys_controller.create_notice")
-        format.html { redirect_to user_keys_path(current_user) }
+        format.html { redirect_to(user_keys_path(current_user)) }
         format.xml do
-          render(:xml => outcome.result,
-                 :status => :created,
-                 :location => user_key_path(current_user, outcome.result))
+          key_path = user_key_path(current_user, result)
+          render(:xml => result, :status => :created, :location => key_path)
         end
-      else
+      end
+
+      outcome.failure do |key|
         format.html do
+          @ssh_key = key
           @root = Breadcrumb::NewKey.new(current_user)
           render :action => "new"
         end
         format.xml do
-          render(:xml => outcome.errors.message,
-                 :status => :unprocessable_entity)
+          render(:xml => key.errors.full_messages, :status => :unprocessable_entity)
         end
       end
     end

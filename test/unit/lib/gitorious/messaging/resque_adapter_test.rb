@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -30,7 +30,8 @@ class MessagingResqueAdapterTest < ActiveSupport::TestCase
       { "/queue/GitoriousRepositoryCreation" => RepositoryCreationProcessor,
         "/queue/GitoriousRepositoryDeletion" => RepositoryDeletionProcessor,
         "/queue/GitoriousPush" => PushProcessor,
-        "/queue/GitoriousSshKeys" => SshKeyProcessor,
+        "/queue/GitoriousDestroySshKey" => DestroySshKeyProcessor,
+        "/queue/GitoriousNewSshKey" => NewSshKeyProcessor,
         "/queue/GitoriousRepositoryArchiving" => RepositoryArchivingProcessor,
         "/queue/GitoriousEmailNotifications" => MessageForwardingProcessor,
         "/queue/GitoriousMergeRequestCreation" => MergeRequestProcessor,

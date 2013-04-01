@@ -4,10 +4,23 @@ GIT
   specs:
     rots (0.2.1)
 
+GIT
+  remote: https://github.com/solnic/virtus.git
+  revision: 97a161f19d20a961094112464075c284d68d35e4
+  specs:
+    virtus (1.0.0.beta1)
+      abstract_type (~> 0.0.5)
+      adamantium (~> 0.0.7)
+      backports (~> 3.0, >= 3.1.0)
+      coercible (~> 0.2)
+      descendants_tracker (~> 0.0.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
     SystemTimer (1.2.3)
+    abstract_type (0.0.5)
+      backports (~> 3.0, >= 3.0.3)
     actionmailer (3.2.12)
       actionpack (= 3.2.12)
       mail (~> 2.4.4)
@@ -41,8 +54,12 @@ GEM
       multi_json (~> 1.0)
     acts-as-taggable-on (2.3.3)
       rails (~> 3.0)
+    adamantium (0.0.7)
+      backports (~> 3.0, >= 3.0.3)
+      ice_nine (~> 0.7.0)
     addressable (2.2.8)
     arel (3.0.2)
+    backports (3.1.1)
     bouncy-castle-java (1.5.0146.1)
     builder (3.0.4)
     capillary (1.0.2)
@@ -57,7 +74,11 @@ GEM
     childprocess (0.3.6)
       ffi (~> 1.0, >= 1.0.6)
     cocaine (0.4.2)
+    coercible (0.2.0)
+      backports (~> 3.0, >= 3.1.0)
+      descendants_tracker (~> 0.0.1)
     daemons (1.1.0)
+    descendants_tracker (0.0.1)
     diff-lcs (1.1.2)
     erubis (2.7.0)
     eventmachine (1.0.0)
@@ -90,6 +111,7 @@ GEM
       multi_json (~> 1.0)
       multi_xml
     i18n (0.6.1)
+    ice_nine (0.7.0)
     jdbc-mysql (5.1.13)
     journey (1.0.4)
     jruby-openssl (0.7.7)
@@ -242,6 +264,7 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    use_case (0.3.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
     will_paginate (3.0.3)
@@ -299,4 +322,6 @@ DEPENDENCIES
   thinking-sphinx (~> 2.0.10)
   trinidad
   unicorn (~> 4.3.1)
+  use_case (~> 0.3)
+  virtus!
   will_paginate (~> 3.0)

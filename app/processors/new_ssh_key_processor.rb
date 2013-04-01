@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,27 +17,23 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class SshKeyProcessor
+class NewSshKeyProcessor
   include Gitorious::Messaging::Consumer
-  consumes "/queue/GitoriousSshKeys"
+  consumes "/queue/GitoriousNewSshKey"
 
   def on_message(message)
-    command = message["command"]
-    target_id = message["target_id"]
-    args = message["arguments"]
+    id = message["id"].to_i
+    ssh_key = SshKey.find_by_id(id)
 
-    unless %w(add_to_authorized_keys delete_from_authorized_keys).include?(command)
-      raise "Unknown command"
+    if !ssh_key
+      logger.warn("NewSshKeyProcessor executing for non-existent key #{id}")
+      return
     end
 
-    logger.debug("Processor sending message: #{command} #{args}")
-    SshKey.send(command, *args)
-
-    if target_id
-      if obj = SshKey.find_by_id(target_id.to_i)
-        obj.ready = true
-        obj.save!
-      end
-    end
+    logger.debug("NewSshKeyProcessor running for key #{ssh_key}")
+    key_file = SshKeyFile.new
+    key_file.add_key(ssh_key.to_key)
+    ssh_key.ready = true
+    ssh_key.save!
   end
 end

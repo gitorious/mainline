@@ -179,7 +179,8 @@
     },
     :ssh_key => {
       :key_format_validation_message => "does not appear to be a valid public key",
-      :private_key_validation_message => "appears to be a private key. You should only share your public key"
+      :private_key_validation_message => "appears to be a private key. You should only share your public key",
+      :unique_key_validation_message => "is already in use - please use/generate a different keypair."
     },
     :views => {
       :layout => {

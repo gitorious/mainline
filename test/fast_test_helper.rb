@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -113,6 +113,11 @@ if !defined?(Rails)
 
   class Event < TestHelper::Model
     attr_accessor :action, :user, :data, :project, :target, :body
+  end
+
+  class SshKey < TestHelper::Model
+    attr_accessor :key, :user_id, :to_keyfile_format
+    def uniq?; true; end
   end
 end
 

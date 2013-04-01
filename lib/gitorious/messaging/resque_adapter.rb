@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -26,7 +26,8 @@ module Gitorious::Messaging::ResqueAdapter
       "GitoriousRepositoryCreation" => "RepositoryCreation",
       "GitoriousRepositoryDeletion" => "RepositoryDeletion",
       "GitoriousPush" => "Push",
-      "GitoriousSshKeys" => "SshKey",
+      "GitoriousDestroySshKey" => "DestroySshKey",
+      "GitoriousNewSshKey" => "NewSshKey",
       "GitoriousRepositoryArchiving" => "RepositoryArchiving",
       "GitoriousEmailNotifications" => "MessageForwarding",
       "GitoriousMergeRequestCreation" => "MergeRequest",
