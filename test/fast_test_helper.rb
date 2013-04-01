@@ -186,3 +186,11 @@ if !defined?(Rails)
     def ago; Time.now - self; end
   end
 end
+
+class MessageHub
+  attr_reader :messages
+  def publish(queue, message)
+    @messages ||= []
+    @messages << { :queue => queue, :message => message }
+  end
+end
