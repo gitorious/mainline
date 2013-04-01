@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,16 +16,16 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
-require "test_helper"
+require "ssh_key_test_helper"
 
 class KeysControllerTest < ActionController::TestCase
+  include SshKeyTestHelper
   should_render_in_global_context
 
   def setup
     setup_ssl_from_config
     @user = users(:johan)
-    SshKey.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
+    SshKeyValidator.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
   end
 
   context "index" do
@@ -33,7 +33,7 @@ class KeysControllerTest < ActionController::TestCase
       login_as :johan
     end
 
-    should "requires login" do
+    should "require login" do
       session[:user_id] = nil
       get :index, :user_id => @user.to_param
       assert_response :redirect
@@ -47,7 +47,7 @@ class KeysControllerTest < ActionController::TestCase
       assert_redirected_to user_path(users(:moe))
     end
 
-    should "GET account/keys is successful" do
+    should "GET account/keys successfully" do
       get :index, :user_id => @user.to_param
       assert_response :success
     end
@@ -88,7 +88,6 @@ class KeysControllerTest < ActionController::TestCase
   end
 
   context "new" do
-
     setup do
       login_as :johan
     end
@@ -106,20 +105,18 @@ class KeysControllerTest < ActionController::TestCase
       assert_redirected_to user_path(users(:moe))
     end
 
-    should "GET account/keys is successful" do
+    should "GET account/keys successfully" do
       get :new, :user_id => @user.to_param
       assert_response :success
     end
 
-    should "scopes to the current_user" do
+    should "scope to current user" do
       get :new, :user_id => @user.to_param
       assert_equal users(:johan).id, assigns(:ssh_key).user_id
     end
   end
 
   context "create" do
-    include KeyStubs
-
     setup do
       login_as :johan
     end
@@ -143,15 +140,13 @@ class KeysControllerTest < ActionController::TestCase
       end
     end
 
-    should "POST account/keys/create is successful" do
+    should "POST account/keys/create successfully" do
       post :create, :user_id => @user.to_param, :ssh_key => {:key => valid_key}
       assert_response :redirect
     end
   end
 
   context "create.xml" do
-    include KeyStubs
-
     setup do
       authorize_as :johan
     end
@@ -175,7 +170,7 @@ class KeysControllerTest < ActionController::TestCase
       end
     end
 
-    should "POST account/keys/create is successful" do
+    should "POST account/keys/create successfully" do
       post :create, :ssh_key => {:key => valid_key}, :format => "xml", :user_id => @user.to_param
       assert_response 201
     end

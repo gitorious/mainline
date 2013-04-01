@@ -19,38 +19,12 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "tempfile"
 
 class SshKey < ActiveRecord::Base
-  include Gitorious::Messaging::Publisher
   belongs_to :user
-
-  SSH_KEY_FORMAT = /^ssh\-[a-z0-9]{3,4} [a-z0-9\+=\/]+ SshKey:(\d+)?-User:(\d+)?$/ims.freeze
-  SSH_PRIVATE_KEY_FORMAT = /^-+.*PRIVATE.*-+$/ims.freeze
-
-  validate :valid_ssh_key
-  validates_presence_of :user_id, :key
-  validates_uniqueness_of :key, :message => "is already in use - please use/generate a different keypair."
-
-  # we only allow people to create/destroy keys
-  after_destroy :publish_deletion_message
 
   def self.human_name
     I18n.t("activerecord.models.ssh_key")
-  end
-
-  def valid_ssh_key
-    if key =~ SSH_PRIVATE_KEY_FORMAT
-      errors.add(:key, I18n.t("ssh_key.private_key_validation_message")) and return
-    end
-
-    if to_keyfile_format !~ SSH_KEY_FORMAT
-      errors.add(:key, I18n.t("ssh_key.key_format_validation_message"))
-    end
-
-    unless valid_key_using_ssh_keygen?
-      errors.add(:key, "is not recognized as a valid public key")
-    end
   end
 
   def wrapped_key(cols=72)
@@ -67,37 +41,6 @@ class SshKey < ActiveRecord::Base
   # The internal format we use to represent the pubkey for the sshd daemon
   def to_keyfile_format
     %Q{#{self.algorithm} #{self.encoded_key} SshKey:#{self.id}-User:#{self.user_id}}
-  end
-
-  def self.add_to_authorized_keys(keydata, key_file_class=SshKeyFile)
-    key_file = key_file_class.new
-    key_file.add_key(keydata)
-  end
-
-  def self.delete_from_authorized_keys(keydata, key_file_class=SshKeyFile)
-    key_file = key_file_class.new
-    key_file.delete_key(keydata)
-  end
-
-  def publish_creation_message
-    raise ActiveRecord::RecordInvalid.new(self) if new_record?
-    options = ({:target_class => self.class.name,
-                 :command => "add_to_authorized_keys",
-                 :arguments => [self.to_key],
-                 :target_id => self.id,
-                 :identifier => "ssh_key_#{id}"})
-
-    publish("/queue/GitoriousSshKeys", options)
-  end
-
-  def publish_deletion_message
-    options = ({
-                 :target_class => self.class.name,
-                 :command => "delete_from_authorized_keys",
-                 :arguments => [self.to_key],
-                 :identifier => "ssh_key_#{id}"})
-
-    publish("/queue/GitoriousSshKeys", options)
   end
 
   def components
@@ -123,16 +66,12 @@ class SshKey < ActiveRecord::Base
                      end
   end
 
-  def valid_key_using_ssh_keygen?
-    temp_key = Tempfile.new("ssh_key_#{Time.now.to_i}")
-    temp_key.write(self.key)
-    temp_key.close
-    system("ssh-keygen -l -f #{temp_key.path}")
-    temp_key.delete
-    return $?.success?
-  end
-
   def key=(key)
     self[:key] = key.to_s.strip.gsub(/(\r|\n)*/m, "")
+  end
+
+  def uniq?
+    existing = SshKey.find_by_key(key)
+    existing.nil? || existing == self
   end
 end

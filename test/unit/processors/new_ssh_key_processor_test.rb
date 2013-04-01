@@ -15,25 +15,30 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "mutations"
+require "ssh_key_test_helper"
 
-class SshKeyCreator < Mutations::Command
-  required do
-    string :key
-    integer :user_id
+class NewSshKeyProcessorTest < ActiveSupport::TestCase
+  include SshKeyTestHelper
+
+  should "add key to the authorized keys file" do
+    ssh_key = new_key
+    ssh_key.save!
+    SshKeyFile.any_instance.expects(:add_key).with(ssh_key.to_key).returns(true)
+
+    NewSshKeyProcessor.new.on_message("id" => ssh_key.id)
   end
 
-  def execute
-    ssh_key = User.find(user_id.to_i).ssh_keys.new
-    ssh_key.key = key
+  should "not add non-existent key to the authorized keys file" do
+    SshKeyFile.any_instance.expects(:add_key).never
+    NewSshKeyProcessor.new.on_message("id" => 666)
+  end
 
-    if ssh_key.save!
-      ssh_key.publish_creation_message
-    end
+  should "mark ssh key as ready" do
+    ssh_key = new_key
+    ssh_key.save!
+    SshKeyFile.any_instance.stubs(:add_key)
+    NewSshKeyProcessor.new.on_message("id" => ssh_key.id)
 
-    ssh_key
-  rescue ActiveRecord::RecordInvalid
-    messages = ssh_key.errors.full_messages
-    ssh_key.errors.each { |k, m| add_error(k, :validation, messages.shift) }
+    assert ssh_key.reload.ready?
   end
 end

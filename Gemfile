@@ -22,6 +22,8 @@ gem "thinking-sphinx", "~> 2.0.10"
 gem "rails_autolink", "~> 1.0"
 gem "mysql2", :platforms => :ruby
 gem "highline"
+gem "use_case", "~> 0.3"
+gem "virtus", :git => "https://github.com/solnic/virtus.git"
 gem "mutations"
 
 group :openid do

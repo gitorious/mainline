@@ -203,18 +203,3 @@ class FakeMail
   attr_reader :delivered
   def deliver; @delivered = true; end
 end
-
-module KeyStubs
-  def valid_key
-    <<-EOS
-ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFz
-c2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRi
-Z2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4
-Zm9mcWU= foo@example.com
-EOS
-  end
-
-  def invalid_key
-    "ooger booger wooger@burger"
-  end
-end
