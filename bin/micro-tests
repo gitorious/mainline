@@ -2,7 +2,13 @@
 require "pathname"
 rails_root = Pathname(__FILE__) + "../../"
 Dir.chdir(rails_root)
-tests = Dir.glob("test/micro/**/*.rb").join(" ")
+
+if ARGV.length > 0
+  tests = ARGV.map { |a| "test/micro/#{a}_test.rb" }.join(" ")
+else
+  tests = Dir.glob("test/micro/**/*.rb").join(" ")
+end
+
 command = "bundle exec ruby -I.:app:app/presenters:lib:test -e '%w[#{tests}].each { |t| require(t) }'"
 puts command
 system command
