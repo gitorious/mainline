@@ -19,8 +19,9 @@ require "use_case"
 require "virtus"
 
 class DestroySshKeyCommand
-  def initialize(hub)
+  def initialize(hub, user)
     @hub = hub
+    @user = user
   end
 
   def execute(ssh_key)
@@ -29,23 +30,22 @@ class DestroySshKeyCommand
   end
 
   def build(params)
-    params.ssh_key
+    @user.ssh_keys.find(params.id)
   end
 end
 
 class DestroySshKeyParams
   include Virtus
-  attribute :ssh_key, SshKey
-  attribute :ssh_key_id, Integer
-  def ssh_key; @ssh_key ||= SshKey.find(@ssh_key_id); end
+  attribute :id, Integer
 end
 
 class DestroySshKey
   include UseCase
 
-  def initialize(app)
+  def initialize(app, user)
+    pre_condition(UserRequired.new(user))
     input_class(DestroySshKeyParams)
-    cmd = DestroySshKeyCommand.new(app)
+    cmd = DestroySshKeyCommand.new(app, user)
     builder(cmd)
     validator(SshKeyValidator)
     command(cmd)

@@ -22,25 +22,20 @@ class DestroySshKeyTest < ActiveSupport::TestCase
 
   def setup
     @hub = MessageHub.new
-    @uc = DestroySshKey.new(@hub)
     @ssh_key = new_key
     @ssh_key.save
+    @uc = DestroySshKey.new(@hub, @ssh_key.user)
     SshKeyValidator.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
   end
 
   should "remove SSH key" do
-    outcome = @uc.execute(:ssh_key => @ssh_key)
+    outcome = @uc.execute(:id => @ssh_key.id)
     assert outcome.success?, outcome.to_s
     assert_nil SshKey.find_by_id(@ssh_key.id)
   end
 
-  should "remove SSH key by id" do
-    outcome = @uc.execute(:ssh_key_id => @ssh_key.id)
-    assert outcome.success?, outcome.to_s
-  end
-
   should "publish a message to the message queue" do
-    outcome = @uc.execute(:ssh_key => @ssh_key)
+    outcome = @uc.execute(:id => @ssh_key.id)
 
     assert outcome.success?, outcome.to_s
     assert_equal 1, @hub.messages.length
@@ -51,8 +46,16 @@ class DestroySshKeyTest < ActiveSupport::TestCase
 
   should "fail for invalid key" do
     assert_no_difference "SshKey.count" do
-      outcome = @uc.execute(:ssh_key => SshKey.new(:key => invalid_key))
+      outcome = @uc.execute(:id => SshKey.new(:key => invalid_key))
       refute outcome.success?
     end
+  end
+
+  should "fail when attempting to remove key not belonging to user" do
+    ssh_key = new_key(:user => users(:moe))
+    ssh_key.save
+    uc = DestroySshKey.new(@hub, users(:mike))
+    outcome = @uc.execute(:id => ssh_key.id)
+    refute outcome.success?
   end
 end
