@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2013 Gitorious AS
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
 #
@@ -46,6 +47,14 @@ class SshKeyFile
       file.puts new_data
       file.flock(File::LOCK_EX)
     end
+  end
+
+  def self.format(key)
+    "### START KEY #{key.id || 'nil'} ###\n" +
+      "command=\"gitorious #{key.user.login}\",no-port-forwarding," +
+      "no-X11-forwarding,no-agent-forwarding,no-pty #{key.algorithm} " +
+      "#{key.encoded_key} SshKey:#{key.id}-User:#{key.user.id}\n" +
+      "### END KEY #{key.id || "nil"} ###\n"
   end
 
   protected

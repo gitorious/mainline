@@ -23,28 +23,29 @@ class DestroySshKeyTest < ActiveSupport::TestCase
   def setup
     @hub = MessageHub.new
     @uc = DestroySshKey.new(@hub)
+    @ssh_key = new_key
+    @ssh_key.save
     SshKeyValidator.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
   end
 
   should "remove SSH key" do
-    ssh_key = SshKey.first
-    outcome = @uc.execute(:ssh_key => ssh_key)
+    outcome = @uc.execute(:ssh_key => @ssh_key)
     assert outcome.success?, outcome.to_s
-    assert_nil SshKey.find_by_id(ssh_key.id)
+    assert_nil SshKey.find_by_id(@ssh_key.id)
   end
 
   should "remove SSH key by id" do
-    ssh_key = SshKey.first
-    outcome = @uc.execute(:ssh_key_id => ssh_key.id)
+    outcome = @uc.execute(:ssh_key_id => @ssh_key.id)
     assert outcome.success?, outcome.to_s
   end
 
   should "publish a message to the message queue" do
-    outcome = @uc.execute(:ssh_key => SshKey.first)
+    outcome = @uc.execute(:ssh_key => @ssh_key)
 
-    assert outcome.success?
+    assert outcome.success?, outcome.to_s
     assert_equal 1, @hub.messages.length
-    expected = { :queue => "/queue/GitoriousDestroySshKey", :message => { :key => outcome.result.to_key } }
+    key = SshKeyFile.format(outcome.result)
+    expected = { :queue => "/queue/GitoriousDestroySshKey", :message => { :key => key } }
     assert_equal(expected, @hub.messages.first)
   end
 

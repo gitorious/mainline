@@ -17,14 +17,6 @@
 #++
 require "ssh_key_test_helper"
 
-class MessageHub
-  attr_reader :messages
-  def publish(queue, message)
-    @messages ||= []
-    @messages << { :queue => queue, :message => message }
-  end
-end
-
 class CreateSshKeyTest < ActiveSupport::TestCase
   include SshKeyTestHelper
 

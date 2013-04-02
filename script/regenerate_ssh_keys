@@ -18,6 +18,6 @@ require "./config/environment"
 key_file = SshKeyFile.new(filename)
 SshKey.where(:ready => true).each do |ssh_key|
   if ssh_key.user
-    key_file.add_key(ssh_key.to_key)
+    key_file.add_key(SshKeyFile.format(ssh_key))
   end
 end

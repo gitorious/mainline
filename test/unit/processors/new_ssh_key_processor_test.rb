@@ -23,7 +23,7 @@ class NewSshKeyProcessorTest < ActiveSupport::TestCase
   should "add key to the authorized keys file" do
     ssh_key = new_key
     ssh_key.save!
-    SshKeyFile.any_instance.expects(:add_key).with(ssh_key.to_key).returns(true)
+    SshKeyFile.any_instance.expects(:add_key).with(SshKeyFile.format(ssh_key)).returns(true)
 
     NewSshKeyProcessor.new.on_message("id" => ssh_key.id)
   end

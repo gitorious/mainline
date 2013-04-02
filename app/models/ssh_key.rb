@@ -31,18 +31,6 @@ class SshKey < ActiveRecord::Base
     key.gsub(/(.{1,#{cols}})/, "\\1\n").strip
   end
 
-  def to_key
-    %Q{### START KEY #{self.id || "nil"} ###\n} +
-      %Q{command="gitorious #{user.login}",no-port-forwarding,} +
-      %Q{no-X11-forwarding,no-agent-forwarding,no-pty #{to_keyfile_format}} +
-      %Q{\n### END KEY #{self.id || "nil"} ###\n}
-  end
-
-  # The internal format we use to represent the pubkey for the sshd daemon
-  def to_keyfile_format
-    %Q{#{self.algorithm} #{self.encoded_key} SshKey:#{self.id}-User:#{self.user_id}}
-  end
-
   def components
     key.to_s.strip.split(" ", 3)
   end
