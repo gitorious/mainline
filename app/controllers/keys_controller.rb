@@ -77,11 +77,14 @@ class KeysController < ApplicationController
   end
 
   def destroy
-    @ssh_key = current_user.ssh_keys.find(params[:id])
-    if @ssh_key.destroy
-      flash[:notice] = I18n.t "keys_controller.destroy_notice"
+    outcome = DestroySshKey.new(self, current_user).execute(params)
+
+    outcome.success do
+      flash[:notice] = I18n.t("keys_controller.destroy_notice")
+      redirect_to(user_keys_path(current_user)) and return
     end
-    redirect_to user_keys_path(current_user)
+
+    render(:text => "Bad request", :status => 400)
   end
 
   protected
