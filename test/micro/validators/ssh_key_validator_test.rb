@@ -22,8 +22,7 @@ class SshKeyValidatorTest < MiniTest::Shoulda
   def new_key(opts={})
     SshKey.new({
         :user_id => 1,
-        :key => "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com",
-        :to_keyfile_format => "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= SshKey:1-User:1"
+        :key => "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com"
     }.merge(opts))
   end
 
@@ -52,33 +51,19 @@ class SshKeyValidatorTest < MiniTest::Shoulda
     validator.stubs(:valid_key_using_ssh_keygen?).returns(true)
     refute validator.valid?
 
-    ssh_key.to_keyfile_format = ssh_key.key = "foo bar@baz"
+    ssh_key.key = "foo bar@baz"
     refute validator.valid?
 
-    ssh_key.to_keyfile_format = ssh_key.key = "ssh-somealgo as23d$%&asdasdasd bar@baz"
+    ssh_key.key = "ssh-somealgo as23d$%&asdasdasd bar@baz"
     refute validator.valid?
 
-    ssh_key.to_keyfile_format = ssh_key.key = "ssh-somealgo as23d$%&asdasdasd bar@baz"
+    ssh_key.key = "ssh-somealgo as23d$%&asdasdasd bar@baz"
     refute validator.valid?
-
-    ssh_key.key = "ssh-rsa asdasda2\n34as+d=\n bar@baz"
-    ssh_key.to_keyfile_format = "ssh-rsa asdasda234as+d= SshKey:1-User:1"
-    assert validator.valid?, validator.errors.inspect
-
-    ssh_key.key = "ssh-rsa asdasda2\n34as+d=\n bar@baz.grogg.zing"
-    ssh_key.to_keyfile_format = "ssh-rsa asdasda234as+d= SshKey:1-User:1"
-    assert validator.valid?
-
-    ssh_key.key = "ssh-rsa asdasda2\n34as+d=\n bar@127.0.0.1"
-    ssh_key.to_keyfile_format = "ssh-rsa asdasda234as+d= SshKey:1-User:1"
-    assert validator.valid?
 
     ssh_key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE foo@steakhouse.local"
-    ssh_key.to_keyfile_format = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE SshKey:1-User:1"
     assert validator.valid?
 
     ssh_key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE foo@steak_house.local"
-    ssh_key.to_keyfile_format = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE SshKey:1-User:1"
     assert validator.valid?
   end
 
@@ -143,13 +128,6 @@ EOF
     assert validator.valid?
 
     ssh_key = new_key(:key => "#{k}\n#{k}")
-    assert validator.valid?
-  end
-
-  should "ignore newlines" do
-    ssh_key = new_key(:key => "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG\n9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cm\nVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com")
-    validator = SshKeyValidator.new(ssh_key)
-    validator.stubs(:valid_key_using_ssh_keygen?).returns(true)
     assert validator.valid?
   end
 end

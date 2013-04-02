@@ -27,12 +27,16 @@ class SshKeyTest < ActiveSupport::TestCase
     ssh = new_key(:key => "#{k}\r#{k}")
     assert_equal "ssh-rsa", ssh.algorithm
     assert_equal encoded_key, ssh.encoded_key
-    assert_equal "ssh-rsa #{encoded_key}", ssh.to_keyfile_format.split(" ")[0..1].join(" ")
 
     ssh = new_key(:key => "#{k}\n#{k}")
     assert_equal "ssh-rsa", ssh.algorithm
     assert_equal encoded_key, ssh.encoded_key
-    assert_equal "ssh-rsa #{encoded_key}", ssh.to_keyfile_format.split(" ")[0..1].join(" ")
+  end
+
+  should "clean out newlines" do
+    ssh_key = new_key(:key => "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG\n9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cm\nVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com")
+
+    refute_match /\n/, ssh_key.key
   end
 
   should "strip newlines in key" do
@@ -59,26 +63,6 @@ anB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216
 ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com
 EOS
     assert_equal expected_wrapped.strip, ssh.wrapped_key
-  end
-
-  should "return the algorithm and encoded key with our own comment with to_keyfile" do
-    key = new_key
-    key.save! # It needs an id
-    expected_format = "#{key.algorithm} #{key.encoded_key} SshKey:#{key.id}-User:#{key.user_id}"
-
-    assert_equal expected_format, key.to_keyfile_format
-  end
-
-  should "return a proper ssh key with to_key" do
-    ssh_key = new_key
-    ssh_key.save! # It needs an id
-
-    exp_key = %Q{### START KEY #{ssh_key.id} ###\n} +
-      %Q{command="gitorious #{users(:johan).login}",no-port-forwarding,} +
-      %Q{no-X11-forwarding,no-agent-forwarding,no-pty #{ssh_key.to_keyfile_format}} +
-      %Q{\n### END KEY #{ssh_key.id} ###\n}
-
-    assert_equal exp_key, ssh_key.to_key
   end
 
   context "Parsing the key" do

@@ -116,7 +116,7 @@ if !defined?(Rails)
   end
 
   class SshKey < TestHelper::Model
-    attr_accessor :key, :user_id, :to_keyfile_format
+    attr_accessor :key, :user_id
     def uniq?; true; end
   end
 end

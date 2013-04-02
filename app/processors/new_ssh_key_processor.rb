@@ -32,7 +32,7 @@ class NewSshKeyProcessor
 
     logger.debug("NewSshKeyProcessor running for key #{ssh_key}")
     key_file = SshKeyFile.new
-    key_file.add_key(ssh_key.to_key)
+    key_file.add_key(SshKeyFile.format(ssh_key))
     ssh_key.ready = true
     ssh_key.save!
   end
