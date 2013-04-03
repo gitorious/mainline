@@ -164,7 +164,8 @@
     :project => {
       :format_slug_validation => "must match something in the range of [a-z0-9_\-]+",
       :url_format_error => "Must be a valid URL",
-      :http_required => "Must begin with http(s)"
+      :http_required => "Must begin with http(s)",
+      :unique_slug_validation_message => "is already in use - please use a different one."
     },
     :user => {
       :invalid_url => "Invalid url",

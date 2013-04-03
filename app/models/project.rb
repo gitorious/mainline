@@ -26,7 +26,6 @@
 
 class Project < ActiveRecord::Base
   acts_as_taggable
-  include RecordThrottling
   include UrlLinting
   include Watchable
   include Gitorious::Authorization
@@ -54,30 +53,6 @@ class Project < ActiveRecord::Base
   attr_accessible(:title, :description, :user, :slug, :license, :home_url,
                   :mailinglist_url, :bugtracker_url, :owner, :wiki_enabled,
                   :owner_type, :tag_list, :merge_request_statuses_attributes)
-
-  NAME_FORMAT = /[a-z0-9_\-]+/.freeze
-  validates_presence_of :title, :user_id, :slug, :description, :owner_id
-  validates_uniqueness_of :slug, :case_sensitive => false
-  validates_format_of :slug, :with => /^#{NAME_FORMAT}$/i,
-    :message => I18n.t( "project.format_slug_validation")
-  validates_exclusion_of :slug, :in => lambda { |p| Project.reserved_slugs }
-
-  URL_FORMAT = %r{\Ahttps?:\/\/([^\s:@]+:[^\s:@]*@)?[A-Za-z\d\-]+(\.[A-Za-z\d\-]+)+\.?(:\d{1,5})?([\/?]\S*)?\Z}i
-  validates_format_of :home_url, :with => URL_FORMAT, :allow_nil => true, :message => I18n.t("project.ssl_required")
-  validates_format_of :mailinglist_url, :with => URL_FORMAT, :allow_nil => true, :message => I18n.t("project.ssl_required")
-  validates_format_of :bugtracker_url, :with => URL_FORMAT, :allow_nil => true, :message => I18n.t("project.ssl_required")
-
-  before_validation :downcase_slug
-  after_create :create_wiki_repository
-  after_create :create_default_merge_request_statuses
-  after_create :add_as_favorite
-
-  throttle_records :create, :limit => 5,
-    :counter => proc{|record|
-      record.user.projects.where("created_at > ?", 5.minutes.ago).count
-    },
-    :conditions => proc{|record| {:user_id => record.user.id} },
-    :timeframe => 5.minutes
 
   def self.human_name
     I18n.t("activerecord.models.project")
@@ -319,6 +294,15 @@ class Project < ActiveRecord::Base
     self.suspended_at = Time.now
   end
 
+  def slug=(slug)
+    self[:slug] = (slug || "").downcase
+  end
+
+  def uniq?
+    project = Project.where("lower(slug) = ?", slug).first
+    project.nil? || project == self
+  end
+
   def self.reserved_slugs
     @reserved_slugs ||= []
   end
@@ -331,28 +315,5 @@ class Project < ActiveRecord::Base
   def self.private_on_create?(params = {})
     return false if !Gitorious.private_repositories?
     params[:private_project] || Gitorious.repositories_default_private?
-  end
-
-  protected
-  def create_wiki_repository
-    self.wiki_repository = Repository.create!({
-      :user => self.user,
-      :name => self.slug + Repository::WIKI_NAME_SUFFIX,
-      :kind => Repository::KIND_WIKI,
-      :project => self,
-      :owner => self.owner,
-    })
-  end
-
-  def create_default_merge_request_statuses
-    MergeRequestStatus.create_defaults_for_project(self)
-  end
-
-  def downcase_slug
-    slug.downcase! if slug
-  end
-
-  def add_as_favorite
-    watched_by!(self.user)
   end
 end
