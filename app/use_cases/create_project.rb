@@ -77,7 +77,7 @@ end
 
 class ProjectProposalRequired
   def initialize(user); @user = user; end
-  def satiesfied?(params); !ProjectProposal.required?(@user); end
+  def satisfied?(params); !ProjectProposal.required?(@user); end
 end
 
 class CreateProject

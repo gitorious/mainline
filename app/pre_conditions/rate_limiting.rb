@@ -23,7 +23,7 @@ class RateLimiting
     @options = options
   end
 
-  def satiesfied?(params)
+  def satisfied?(params)
     RecordThrottling.allowed?(@scope, @actor, @options)
   end
 end
