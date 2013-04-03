@@ -51,7 +51,7 @@ johans_moe_clone:
   hashed_path: e9c/217/f61aac09621d9fdb68665acd359b4d0686
 
 johans_wiki:
-  name: <%= "mainline#{Repository::WIKI_NAME_SUFFIX}" %>
+  name: <%= "mainline#{WikiRepository::NAME_SUFFIX}" %>
   project_id: 1
   user_id: 1
   created_at: <%= Time.now %>
