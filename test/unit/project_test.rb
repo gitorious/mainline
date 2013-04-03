@@ -278,32 +278,6 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
-  context "Thottling" do
-    setup{ Project.destroy_all }
-
-    should "throttle on create by default" do
-      assert_nothing_raised do
-        5.times{|i| create_project(:slug => "wifebeater#{i}").save! }
-      end
-
-      assert_no_difference("Project.count") do
-        assert_raises(RecordThrottling::LimitReachedError) do
-          create_project(:slug => "wtf-are-you-doing-bro").save!
-        end
-      end
-    end
-
-    should "not throttle if throttling disabled" do
-      RecordThrottling.disable
-      assert_nothing_raised(RecordThrottling::LimitReachedError) do
-        6.times{|i| create_project(:slug => "spammerProject#{i}").save! }
-      end
-    end
-
-    # Ensure throttling is reset
-    teardown{ RecordThrottling.reset_to_default }
-  end
-
   context "Oauth" do
     setup do
       @project = projects(:johans)

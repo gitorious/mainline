@@ -152,31 +152,13 @@ class ProjectsControllerTest < ActionController::TestCase
             :title => "project x",
             :slug => "projectx",
             :description => "projectx's description",
-            :owner_type => "User"
-          },
-          :private_project => "1"
-        end
-
-        assert can_read?(users(:johan), Project.last)
-        assert !can_read?(users(:mike), Project.last)
-        assert !can_read?(nil, Project.last)
-      end
-
-      should "create public project" do
-        login_as :johan
-
-        assert_difference("Project.count") do
-          post :create, :project => {
-            :title => "project x",
-            :slug => "projectx",
-            :description => "projectx's description",
-            :owner_type => "User"
+            :owner_type => "User",
+            :private_project => "1"
           }
         end
 
-        assert can_read?(nil, Project.last)
+        assert Project.last.private?
       end
-
     end
 
     context "with disabled private repos" do
@@ -192,22 +174,6 @@ class ProjectsControllerTest < ActionController::TestCase
         login_as :johan
         get :show, :id => projects(:johans).to_param
         assert_no_match /Manage access/, @response.body
-      end
-
-      should "not allow creating private project" do
-        login_as :johan
-
-        assert_difference("Project.count") do
-          post :create, :project => {
-            :title => "project x",
-            :slug => "projectx",
-            :description => "projectx's description",
-            :owner_type => "User"
-          },
-          :private => true
-        end
-
-        assert can_read?(nil, Project.last)
       end
     end
 
@@ -245,6 +211,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
     should "create project for POST projects/create with valid data" do
       login_as :johan
+
       assert_difference("Project.count") do
         post :create, :project => {
           :title => "project x",
@@ -253,9 +220,9 @@ class ProjectsControllerTest < ActionController::TestCase
           :owner_type => "User"
         }
       end
+
       assert_response :redirect
       assert_redirected_to(new_project_repository_path(Project.last))
-
       assert_equal users(:johan), Project.last.user
       assert_equal users(:johan), Project.last.owner
     end
@@ -289,27 +256,11 @@ class ProjectsControllerTest < ActionController::TestCase
       end
       assert_response :success
       assert_template "projects/new"
-      assert !Project.create.valid?
-    end
-
-    should "Create an event when successfully POSTing to create" do
-      login_as :johan
-      assert_difference("Event.count") do
-        post :create, :project => {
-          :title => "project x",
-          :slug => "projectx",
-          :description => "projectx's description",
-          :owner_type => "User"
-        }
-      end
-      assert_equal 1, Project.last.events.count
-      event = Project.last.events.first
-      assert_equal Action::CREATE_PROJECT, event.action
     end
 
     should "render an error page if the create was throttled" do
       login_as :johan
-      Project.any_instance.expects(:save).raises(RecordThrottling::LimitReachedError)
+      ProjectRateLimiting.any_instance.stubs(:satisfied?).returns(false)
       assert_no_difference("Project.count") do
         post :create, :project =>  {
           :title => "project x",
