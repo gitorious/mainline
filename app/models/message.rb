@@ -36,12 +36,13 @@ class Message < ActiveRecord::Base
   validates_presence_of :subject, :body
   validates_presence_of :recipient, :sender
 
-  throttle_records :create, :limit => 10,
-    :counter => proc{|msg|
-      msg.sender.sent_messages.where("created_at > ?", 1.day.ago).count
-    },
-    :conditions => proc{|msg| {:sender_id => msg.sender.id, :notifiable_type => nil} },
-    :timeframe => 15.minutes
+  throttle_records(:create, {
+      :limit => 10,
+      :actor => proc { |msg| msg.sender },
+      :counter => proc { |sender| sender.sent_messages.where("created_at > ?", 1.day.ago).count },
+      :conditions => proc { |sender| { :sender_id => sender.id, :notifiable_type => nil } },
+      :timeframe => 15.minutes
+    })
 
   state_machine :aasm_state, :initial => :unread do
     event :read do

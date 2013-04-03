@@ -71,12 +71,13 @@ class Repository < ActiveRecord::Base
   after_create :build_repository
   after_destroy :post_repo_deletion_message
 
-  throttle_records :create, :limit => 5,
-    :counter => proc{|record|
-      record.user.repositories.where("created_at > ?", 5.minutes.ago).count
-    },
-    :conditions => proc { |record| { :user_id => record.user.id } },
-    :timeframe => 5.minutes
+  throttle_records(:create, {
+      :limit => 5,
+      :actor => proc { |repository| repository.user },
+      :counter => proc { |user| user.repositories.where("created_at > ?", 5.minutes.ago).count },
+      :conditions => proc { |user| { :user_id => user.id } },
+      :timeframe => 5.minutes
+    })
 
   scope :by_users,  :conditions => { :kind => KIND_USER_REPO } do
     def fresh(limit = 10)
