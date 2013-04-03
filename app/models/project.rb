@@ -314,6 +314,6 @@ class Project < ActiveRecord::Base
 
   def self.private_on_create?(params = {})
     return false if !Gitorious.private_repositories?
-    params[:private_project] || Gitorious.repositories_default_private?
+    params[:private] || Gitorious.repositories_default_private?
   end
 end
