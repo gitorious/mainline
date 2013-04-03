@@ -104,7 +104,7 @@ class ProjectsController < ApplicationController
   end
 
   def create
-    input = { :private_project => params[:private_project] }.merge(params[:project])
+    input = { :private => params[:private] }.merge(params[:project])
     outcome = CreateProject.new(current_user).execute(input)
 
     outcome.success do |result|

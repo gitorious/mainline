@@ -84,9 +84,8 @@ class CreateProjectTest < ActiveSupport::TestCase
 
   should "create private project" do
     Gitorious.stubs(:private_repositories?).returns(true)
-    outcome = CreateProject.new(users(:moe)).execute(project_options({
-          :private_project => "1"
-        }))
+    params = project_options({ :private => "1" })
+    outcome = CreateProject.new(users(:moe)).execute(params)
 
     assert outcome.result.private?
     assert can_read?(users(:moe), outcome.result)
@@ -94,18 +93,16 @@ class CreateProjectTest < ActiveSupport::TestCase
 
   should "create public project" do
     Gitorious.stubs(:private_repositories?).returns(true)
-    outcome = CreateProject.new(users(:moe)).execute(project_options({
-          :private_project => "0"
-        }))
+    params = project_options({ :private => "0" })
+    outcome = CreateProject.new(users(:moe)).execute(params)
 
     assert outcome.result.public?
   end
 
   should "not create private project if not enabled" do
     Gitorious.stubs(:private_repositories?).returns(false)
-    outcome = CreateProject.new(users(:moe)).execute(project_options({
-          :private_project => "1"
-        }))
+    params = project_options({ :private => "1" })
+    outcome = CreateProject.new(users(:moe)).execute(params)
 
     assert outcome.result.public?
   end

@@ -153,7 +153,7 @@ class ProjectsControllerTest < ActionController::TestCase
             :slug => "projectx",
             :description => "projectx's description",
             :owner_type => "User",
-            :private_project => "1"
+            :private => "1"
           }
         end
 

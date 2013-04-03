@@ -28,7 +28,7 @@ class NewProjectParams
   attribute :default_merge_request_status_id, Integer
   attribute :owner_type, String, :default => "User"
   attribute :owner_id, Integer
-  attribute :private_project, Boolean, :default => false
+  attribute :private, Boolean, :default => false
   attribute :license, String
   attribute :home_url, String
   attribute :mailinglist_url, String
@@ -44,7 +44,7 @@ class CreateProjectCommand
   end
 
   def build(params)
-    @private = params.private_project
+    @private = params.private
     project = Project.new({
         :title => params.title,
         :slug => params.slug,
@@ -69,7 +69,7 @@ class CreateProjectCommand
     WikiRepository.create!(project)
     MergeRequestStatus.create_defaults_for_project(project)
     project.watched_by!(@user)
-    project.make_private if Project.private_on_create?(:private_project => @private)
+    project.make_private if Project.private_on_create?(:private => @private)
     project.create_event(Action::CREATE_PROJECT, project, @user)
     project
   end
