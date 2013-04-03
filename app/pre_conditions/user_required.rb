@@ -18,5 +18,5 @@
 
 class UserRequired
   def initialize(user); @user = user; end
-  def satiesfied?(params); !@user.nil?; end
+  def satisfied?(params); !@user.nil?; end
 end
