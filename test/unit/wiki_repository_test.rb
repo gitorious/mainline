@@ -34,6 +34,7 @@ class WikiRepositoryTest < ActiveSupport::TestCase
     assert_equal "entombed#{WikiRepository::NAME_SUFFIX}", wiki.name
     assert_equal Repository::KIND_WIKI, wiki.kind
     refute project.repositories.include?(wiki)
+    assert project.cloneable_repositories.include?(wiki)
     assert_equal project.owner, wiki.owner
   end
 end
