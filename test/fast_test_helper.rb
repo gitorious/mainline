@@ -61,6 +61,7 @@ module TestHelper
     def save; @is_new = false; end
     def save!; save; end
     def new_record?; @is_new; end
+    def uniq?; true; end
     def self.first; new; end
   end
 end
@@ -96,7 +97,8 @@ if !defined?(Rails)
   end
 
   class Project < TestHelper::Model
-    attr_accessor :title, :slug, :description, :events
+    attr_accessor :title, :slug, :description, :events, :user, :owner, :user_id,
+      :home_url, :mailinglist_url, :bugtracker_url, :owner_id
 
     def create_event(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
       self.events ||= []
@@ -109,6 +111,8 @@ if !defined?(Rails)
         :date => date
       })
     end
+
+    def self.reserved_slugs; []; end
   end
 
   class Event < TestHelper::Model
@@ -117,7 +121,6 @@ if !defined?(Rails)
 
   class SshKey < TestHelper::Model
     attr_accessor :key, :user_id
-    def uniq?; true; end
   end
 end
 
