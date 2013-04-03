@@ -20,7 +20,7 @@ Project.all.each_with_index do |project, index|
     project.transaction do
       puts "Creating wiki repo for #{project.slug} (#{index+1}/#{project_count})"
       wiki_repo = Repository.new({
-        :name => project.slug + Repository::WIKI_NAME_SUFFIX,
+        :name => project.slug + WikiRepository::NAME_SUFFIX,
         :kind => Repository::KIND_WIKI,
         :mainline => false,
         :user => project.user,

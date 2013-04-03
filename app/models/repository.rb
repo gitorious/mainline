@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
@@ -39,10 +39,6 @@ class Repository < ActiveRecord::Base
   KIND_USER_REPO = 3
   KIND_TRACKING_REPO = 4
   KINDS_INTERNAL_REPO = [KIND_WIKI, KIND_TRACKING_REPO]
-
-  WIKI_NAME_SUFFIX = "-gitorious-wiki"
-  WIKI_WRITABLE_EVERYONE = 0
-  WIKI_WRITABLE_PROJECT_MEMBERS = 1
 
   belongs_to  :user
   belongs_to  :project

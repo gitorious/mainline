@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -109,7 +109,7 @@ class PagesControllerTest < ActionController::TestCase
 
   context "write permissions restricted to project members" do
     setup do
-      @repo.update_attribute(:wiki_permissions, Repository::WIKI_WRITABLE_PROJECT_MEMBERS)
+      @repo.update_attribute(:wiki_permissions, WikiRepository::WRITABLE_PROJECT_MEMBERS)
     end
 
     should "redirect back for non-projectmembers" do

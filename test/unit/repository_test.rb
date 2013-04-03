@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -388,14 +388,14 @@ class RepositoryTest < ActiveSupport::TestCase
       end
 
       should "be writable by everyone" do
-        @repository.wiki_permissions = Repository::WIKI_WRITABLE_EVERYONE
+        @repository.wiki_permissions = WikiRepository::WRITABLE_EVERYONE
         [:johan, :mike, :moe].each do |login|
           assert can_push?(users(login), @repository), "not writable_by #{login}"
         end
       end
 
       should "only be writable by project members" do
-        @repository.wiki_permissions = Repository::WIKI_WRITABLE_PROJECT_MEMBERS
+        @repository.wiki_permissions = WikiRepository::WRITABLE_PROJECT_MEMBERS
         assert @repository.project.member?(users(:johan))
         assert can_push?(users(:johan), @repository)
 
