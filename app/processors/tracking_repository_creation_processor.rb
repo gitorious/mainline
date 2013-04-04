@@ -16,17 +16,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class RepositoryCreationProcessor
+class TrackingRepositoryCreationProcessor
   include Gitorious::Messaging::Consumer
-  consumes "/queue/GitoriousRepositoryCreation"
+  consumes "/queue/GitoriousTrackingRepositoryCreation"
 
   def on_message(message)
     repository = Repository.find(message["id"].to_i)
-    logger.info("Processing new project repository: #<Repository id: #{repository.id}, path: #{repository.repository_plain_path}>")
-    full_path = RepositoryRoot.expand(repository.gitdir)
-    GitBackend.create(full_path.to_s)
-    RepositoryHooks.create(full_path)
-    repository.ready = true
-    repository.save!
+    logger.info("Processing new tracking repository: #<Repository id: #{repository.id}, path: #{repository.repository_plain_path}>")
+    RepositoryCloner.clone(repository.parent.real_gitdir, repository.gitdir)
   end
 end

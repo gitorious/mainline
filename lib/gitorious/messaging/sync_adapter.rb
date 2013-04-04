@@ -44,6 +44,8 @@ module Gitorious::Messaging::SyncAdapter
   module Publisher
     QUEUES = {
       "/queue/GitoriousRepositoryCreation" => "repository_creation",
+      "/queue/GitoriousTrackingRepositoryCreation" => "tracking_repository_creation",
+      "/queue/GitoriousWoloRepositoryCreation" => "wiki_repository_creation",
       "/queue/GitoriousRepositoryDeletion" => "repository_deletion",
       "/queue/GitoriousPush" => "push",
       "/queue/GitoriousDestroySshKey" => "destroy_ssh_key",

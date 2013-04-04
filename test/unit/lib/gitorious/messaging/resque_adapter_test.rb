@@ -28,6 +28,8 @@ class MessagingResqueAdapterTest < ActiveSupport::TestCase
   context "publisher" do
     should_map_resque_queues_to_processors(ResquePublisher) do
       { "/queue/GitoriousRepositoryCreation" => RepositoryCreationProcessor,
+        "/queue/GitoriousTrackingRepositoryCreation" => TrackingRepositoryCreationProcessor,
+        "/queue/GitoriousWikiRepositoryCreation" => WikiRepositoryCreationProcessor,
         "/queue/GitoriousRepositoryDeletion" => RepositoryDeletionProcessor,
         "/queue/GitoriousPush" => PushProcessor,
         "/queue/GitoriousDestroySshKey" => DestroySshKeyProcessor,
