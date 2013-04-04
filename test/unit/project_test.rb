@@ -387,7 +387,8 @@ class ProjectTest < ActiveSupport::TestCase
         :name => "foo-hackers", :user_id => @owner.to_param)
       @group_repo = FactoryGirl.create(:repository, :project => @project,
         :owner => @group, :name => "group-repo", :user => @owner)
-      @tracking_repo = @repo.create_tracking_repository
+      command = CreateTrackingRepositoryCommand.new(Gitorious::Hub, @repo)
+      @tracking_repo = command.execute(command.build)
     end
 
     should "find repositories matching the repo name" do
@@ -422,7 +423,8 @@ class ProjectTest < ActiveSupport::TestCase
         :name => "foo-hackers", :user_id => @owner.to_param)
       @group_repo = FactoryGirl.create(:repository, :project => @project,
         :owner => @group, :name => "group-repo", :user => @owner)
-      @tracking_repo = @repo.create_tracking_repository
+      command = CreateTrackingRepositoryCommand.new(Gitorious::Hub, @repo)
+      @tracking_repo = command.execute(command.build)
     end
 
     should "include regular repositories" do

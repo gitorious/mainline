@@ -19,6 +19,6 @@ require "gitorious/messaging"
 
 module Gitorious
   module Hub
-    include Gitorious::Messaging::Publisher
+    extend Gitorious::Messaging::Publisher
   end
 end

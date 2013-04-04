@@ -66,7 +66,6 @@ class CreateProjectCommand
 
   def execute(project)
     project.save!
-    WikiRepository.create!(project)
     MergeRequestStatus.create_defaults_for_project(project)
     project.watched_by!(@user)
     project.make_private if Project.private_on_create?(:private => @private)
@@ -83,14 +82,16 @@ end
 class CreateProject
   include UseCase
 
-  def initialize(user)
+  def initialize(app, user)
     pre_condition(UserRequired.new(user))
     pre_condition(ProjectProposalRequired.new(user))
     pre_condition(ProjectRateLimiting.new(user))
     input_class(NewProjectParams)
     cmd = CreateProjectCommand.new(user)
-    builder(cmd)
-    validator(ProjectValidator)
-    command(cmd)
+    command(cmd, :builder => cmd, :validator => ProjectValidator)
+    wiki_cmd = CreateWikiRepositoryCommand.new(app)
+    command(wiki_cmd, :builder => wiki_cmd)
+    # Make sure we return a project
+    command(lambda { |repository| repository.project })
   end
 end

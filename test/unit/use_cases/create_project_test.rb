@@ -20,7 +20,7 @@ require "test_helper"
 class CreateProjectTest < ActiveSupport::TestCase
   should "create project owned by user" do
     user = users(:moe)
-    outcome = CreateProject.new(user).execute(project_options)
+    outcome = CreateProject.new(MessageHub.new, user).execute(project_options)
 
     assert outcome.success?
     assert_equal Project.last, outcome.result
@@ -31,7 +31,7 @@ class CreateProjectTest < ActiveSupport::TestCase
   should "create project owned by team" do
     user = users(:mike)
     group = user.groups.first
-    outcome = CreateProject.new(user).execute(project_options({
+    outcome = CreateProject.new(MessageHub.new, user).execute(project_options({
           :owner_type => "Group",
           :owner_id => group.id
         }))
@@ -43,7 +43,7 @@ class CreateProjectTest < ActiveSupport::TestCase
 
   should "create project under site" do
     user = users(:mike)
-    outcome = CreateProject.new(user).execute(project_options({
+    outcome = CreateProject.new(MessageHub.new, user).execute(project_options({
           :site_id => sites(:qt).id
         }))
 
@@ -52,13 +52,13 @@ class CreateProjectTest < ActiveSupport::TestCase
   end
 
   should "create wiki repository" do
-    outcome = CreateProject.new(users(:moe)).execute(project_options)
+    outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(project_options)
 
     assert_instance_of Repository, outcome.result.wiki_repository
   end
 
   should "create default merge request statuses" do
-    outcome = CreateProject.new(users(:moe)).execute(project_options)
+    outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(project_options)
     statuses = outcome.result.merge_request_statuses
 
     assert_equal 2, statuses.count
@@ -70,14 +70,14 @@ class CreateProjectTest < ActiveSupport::TestCase
 
   should "be added to the creators favorites" do
     user = users(:moe)
-    outcome = CreateProject.new(user).execute(project_options)
+    outcome = CreateProject.new(MessageHub.new, user).execute(project_options)
 
     assert outcome.result.watched_by?(user)
   end
 
   should "create public project by default" do
     Gitorious.stubs(:private_repositories?).returns(true)
-    outcome = CreateProject.new(users(:moe)).execute(project_options)
+    outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(project_options)
 
     assert outcome.result.public?
   end
@@ -85,7 +85,7 @@ class CreateProjectTest < ActiveSupport::TestCase
   should "create private project" do
     Gitorious.stubs(:private_repositories?).returns(true)
     params = project_options({ :private => "1" })
-    outcome = CreateProject.new(users(:moe)).execute(params)
+    outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(params)
 
     assert outcome.result.private?
     assert can_read?(users(:moe), outcome.result)
@@ -94,7 +94,7 @@ class CreateProjectTest < ActiveSupport::TestCase
   should "create public project" do
     Gitorious.stubs(:private_repositories?).returns(true)
     params = project_options({ :private => "0" })
-    outcome = CreateProject.new(users(:moe)).execute(params)
+    outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(params)
 
     assert outcome.result.public?
   end
@@ -102,20 +102,20 @@ class CreateProjectTest < ActiveSupport::TestCase
   should "not create private project if not enabled" do
     Gitorious.stubs(:private_repositories?).returns(false)
     params = project_options({ :private => "1" })
-    outcome = CreateProject.new(users(:moe)).execute(params)
+    outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(params)
 
     assert outcome.result.public?
   end
 
   should "create event" do
     events = Event.count
-    CreateProject.new(users(:moe)).execute(project_options)
+    CreateProject.new(MessageHub.new, users(:moe)).execute(project_options)
 
     assert_equal events + 1, Event.count
   end
 
   should "require a user" do
-    outcome = CreateProject.new(nil).execute(project_options)
+    outcome = CreateProject.new(MessageHub.new, nil).execute(project_options)
 
     refute outcome.success?, outcome.to_s
     assert outcome.pre_condition_failed?, outcome.to_s
@@ -124,14 +124,14 @@ class CreateProjectTest < ActiveSupport::TestCase
   should "prevent user from creating project when project proposals are required" do
     user = users(:moe)
     ProjectProposal.stubs(:required?).with(user).returns(true)
-    outcome = CreateProject.new(user).execute(project_options)
+    outcome = CreateProject.new(MessageHub.new, user).execute(project_options)
 
     refute outcome.success?, outcome.to_s
     assert outcome.pre_condition_failed?, outcome.to_s
   end
 
   should "reject project failing validation" do
-    outcome = CreateProject.new(users(:moe)).execute(project_options(:slug => ""))
+    outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(project_options(:slug => ""))
 
     refute outcome.success?, outcome.to_s
     refute_nil outcome.failure.errors[:slug]
@@ -140,12 +140,12 @@ class CreateProjectTest < ActiveSupport::TestCase
   should "limit rate of project creation" do
     user = users(:moe)
     count = Project.count
-    outcome = CreateProject.new(users(:moe)).execute(project_options(:slug => "proj1"))
-    outcome = CreateProject.new(users(:moe)).execute(project_options(:slug => "proj2"))
-    outcome = CreateProject.new(users(:moe)).execute(project_options(:slug => "proj3"))
-    outcome = CreateProject.new(users(:moe)).execute(project_options(:slug => "proj4"))
-    outcome = CreateProject.new(users(:moe)).execute(project_options(:slug => "proj5"))
-    outcome = CreateProject.new(users(:moe)).execute(project_options(:slug => "proj6"))
+    outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(project_options(:slug => "proj1"))
+    outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(project_options(:slug => "proj2"))
+    outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(project_options(:slug => "proj3"))
+    outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(project_options(:slug => "proj4"))
+    outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(project_options(:slug => "proj5"))
+    outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(project_options(:slug => "proj6"))
 
     refute outcome.success?, outcome.to_s
     assert_instance_of ProjectRateLimiting, outcome.pre_condition_failed
