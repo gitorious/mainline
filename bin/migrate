@@ -53,8 +53,7 @@ end
 
 def repo_path
   gitorious_config['repository_base_path'] || # New global setting in Gitorious/Rails 3
-    gitorious_config[RAILS_ENV]['repository_base_path'] || # Fall back to regular per-env setting
-    abort "No repository_base_path setting found in your Gitorious config!"
+    gitorious_config[RAILS_ENV]['repository_base_path']  # Fall back to regular per-env setting
 end
 
 def db_name
@@ -110,5 +109,8 @@ SCRIPT
 File.open("/tmp/remote-ops.sh", 'w') { |file| file.write(remote_cmds) }
 puts `ssh #{remote_superuser}@#{target_host} 'bash -s' < /tmp/remote-ops.sh`
 puts "---------------"
+
+puts "Cleaning up..."
+puts `rm -f old_gitorious_db.sql`
 
 puts "Migration done."
