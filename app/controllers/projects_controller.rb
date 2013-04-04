@@ -105,7 +105,7 @@ class ProjectsController < ApplicationController
 
   def create
     input = { :private => params[:private] }.merge(params[:project])
-    outcome = CreateProject.new(current_user).execute(input)
+    outcome = CreateProject.new(Gitorious::Hub, current_user).execute(input)
 
     outcome.success do |result|
       redirect_to(new_project_repository_path(result))
