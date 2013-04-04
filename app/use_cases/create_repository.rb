@@ -15,9 +15,19 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "use_case"
 
-class WikiRepository
-  NAME_SUFFIX = "-gitorious-wiki"
-  WRITABLE_EVERYONE = 0
-  WRITABLE_PROJECT_MEMBERS = 1
+class CreateRepository
+  include UseCase
+
+  def initialize(app, project, user)
+    project = project.is_a?(Integer) ? Project.find(project) : project
+    user = user.is_a?(Integer) ? User.find(user) : user
+    pre_condition(UserRequired.new(user))
+    pre_condition(ProjectAdminRequired.new(app, project, user))
+    pre_condition(RepositoryRateLimiting.new(user))
+    input_class(NewRepositoryInput)
+    cmd = CreateRepositoryCommand.new(app, project, user, :kind => Repository::KIND_PROJECT_REPO)
+    command(cmd, :builder => cmd, :validator => RepositoryValidator)
+  end
 end

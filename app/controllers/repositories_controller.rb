@@ -104,7 +104,7 @@ class RepositoriesController < ApplicationController
     hash = params[:repository].merge({
         :user => current_user,
         :project => @project,
-        :private_repository => params[:private_repository]
+        :private => params[:private]
       })
     outcome = RepositoryCreator.run(hash)
 

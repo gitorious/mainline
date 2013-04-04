@@ -167,6 +167,10 @@
       :http_required => "Must begin with http(s)",
       :unique_slug_validation_message => "is already in use - please use a different one."
     },
+    :repository => {
+      :unique_name_validation_message => "is taken - please use a different one.",
+      :unique_hashed_path_validation_message => "is taken - please use a different name."
+    },
     :user => {
       :invalid_url => "Invalid url",
     },

@@ -19,12 +19,8 @@ Project.all.each_with_index do |project, index|
     next unless project.wiki_repository.blank?
     project.transaction do
       puts "Creating wiki repo for #{project.slug} (#{index+1}/#{project_count})"
-      wiki_repo = Repository.new({
-        :name => project.slug + WikiRepository::NAME_SUFFIX,
-        :kind => Repository::KIND_WIKI,
-        :mainline => false,
-        :user => project.user,
-      })
+      command = CreateWikiRepositoryCommand.new(Gitorious::Hub, project)
+      wiki_repo = command.execute(command.build)
       project.wiki_repository = wiki_repo
       wiki_repo.save!
     end

@@ -16,6 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "pathname"
+require "fileutils"
 
 class RepositoryHooks
   def self.create(path)
@@ -27,13 +28,13 @@ class RepositoryHooks
 
     target_path = hooks.relative_path_from(path)
     Dir.chdir(path) do
-      FileUtils.ln_s(target_path, "hooks")
+      FileUtils.ln_s(target_path.to_s, "hooks")
     end
   end
 
   private
   def self.ensure_symlink(src, dest)
-    return if dest.symlink? && dest.realpath.to_s = src.realpath.to_s
+    return if dest.symlink? && dest.realpath.to_s == src.realpath.to_s
     FileUtils.ln_sf(src.realpath.to_s, dest.expand_path.to_s)
   end
 end

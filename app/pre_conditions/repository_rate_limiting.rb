@@ -16,8 +16,15 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class WikiRepository
-  NAME_SUFFIX = "-gitorious-wiki"
-  WRITABLE_EVERYONE = 0
-  WRITABLE_PROJECT_MEMBERS = 1
+class RepositoryRateLimiting < RateLimiting
+  def initialize(user, options = {})
+    super(Repository, user, {
+        :limit => 5,
+        :counter => (proc do |user|
+            user.repositories.where("created_at > ?", 5.minutes.ago).count
+          end),
+        :conditions => proc { |user| { :user_id => user.id } },
+        :timeframe => 5.minutes
+      }.merge(options))
+  end
 end
