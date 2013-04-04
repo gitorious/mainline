@@ -16,13 +16,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "test_helper"
-require "create_repository"
+require "create_project_repository"
 
 class App < MessageHub
   def admin?(actor, subject); true; end
 end
 
-class CreateRepositoryTest < ActiveSupport::TestCase
+class CreateProjectRepositoryTest < ActiveSupport::TestCase
   def setup
     @app = App.new
     @user = users(:moe)
@@ -30,7 +30,7 @@ class CreateRepositoryTest < ActiveSupport::TestCase
   end
 
   should "fail without user" do
-    outcome = CreateRepository.new(@app, @project, nil).execute(params)
+    outcome = CreateProjectRepository.new(@app, @project, nil).execute(params)
 
     refute outcome.success?, outcome.to_s
     assert outcome.pre_condition_failed?, outcome.to_s
@@ -38,7 +38,7 @@ class CreateRepositoryTest < ActiveSupport::TestCase
 
   should "reject creating repository in project where user has no admin rights" do
     @app.stubs(:admin?).returns(false)
-    outcome = CreateRepository.new(@app, @project, @user).execute(params)
+    outcome = CreateProjectRepository.new(@app, @project, @user).execute(params)
 
     refute outcome.success?, outcome.to_s
     assert outcome.pre_condition_failed?, outcome.to_s
@@ -46,7 +46,7 @@ class CreateRepositoryTest < ActiveSupport::TestCase
 
   should "limit rate of repository creation" do
     count = Repository.count
-    use_case = CreateRepository.new(@app, @project, @user)
+    use_case = CreateProjectRepository.new(@app, @project, @user)
     outcome = use_case.execute(params(:name => "repo1"))
     outcome = use_case.execute(params(:name => "repo2"))
     outcome = use_case.execute(params(:name => "repo3"))
@@ -60,7 +60,7 @@ class CreateRepositoryTest < ActiveSupport::TestCase
   end
 
   should "create repository" do
-    outcome = CreateRepository.new(@app, @project, @user).execute(params)
+    outcome = CreateProjectRepository.new(@app, @project, @user).execute(params)
 
     assert outcome.success?, outcome.to_s
     assert_equal "my_repo", outcome.result.name
@@ -70,7 +70,7 @@ class CreateRepositoryTest < ActiveSupport::TestCase
   end
 
   should "fail repository validation" do
-    outcome = CreateRepository.new(@app, @project, @user).execute(params(:name => nil))
+    outcome = CreateProjectRepository.new(@app, @project, @user).execute(params(:name => nil))
 
     refute outcome.success?, outcome.to_s
     refute_nil outcome.failure.errors[:name]
@@ -78,7 +78,7 @@ class CreateRepositoryTest < ActiveSupport::TestCase
 
   should "use a sharded hashed path if RepositoryRoot is configured to" do
     RepositoryRoot.stubs(:shard_dirs?).returns(true)
-    outcome = CreateRepository.new(@app, @project, @user).execute(params)
+    outcome = CreateProjectRepository.new(@app, @project, @user).execute(params)
     repository = outcome.result
 
     refute_nil repository.hashed_path

@@ -17,7 +17,7 @@
 #++
 require "use_case"
 
-class CreateRepository
+class CreateProjectRepository
   include UseCase
 
   def initialize(app, project, user)
@@ -27,7 +27,7 @@ class CreateRepository
     pre_condition(ProjectAdminRequired.new(app, project, user))
     pre_condition(RepositoryRateLimiting.new(user))
     input_class(NewRepositoryInput)
-    cmd = CreateRepositoryCommand.new(app, project, user, :kind => Repository::KIND_PROJECT_REPO)
+    cmd = CreateProjectRepositoryCommand.new(app, project, user)
     command(cmd, :builder => cmd, :validator => RepositoryValidator)
   end
 end
