@@ -24,6 +24,8 @@ module Gitorious::Messaging::ResqueAdapter
     QUEUES = {
       # Maps queue => processor class (see app/processors)
       "GitoriousRepositoryCreation" => "RepositoryCreation",
+      "GitoriousTrackingRepositoryCreation" => "TrackingRepositoryCreation",
+      "GitoriousWikiRepositoryCreation" => "WikiRepositoryCreation",
       "GitoriousRepositoryDeletion" => "RepositoryDeletion",
       "GitoriousPush" => "Push",
       "GitoriousDestroySshKey" => "DestroySshKey",

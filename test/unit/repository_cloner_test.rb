@@ -15,18 +15,22 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "test_helper"
+require "pathname"
 
-class RepositoryCreationProcessor
-  include Gitorious::Messaging::Consumer
-  consumes "/queue/GitoriousRepositoryCreation"
+class TrackingRepositoryCreationProcessorTest < ActiveSupport::TestCase
+  should "clone repository and return path to clone" do
+    GitBackend.expects(:clone).with("/tmp/git/repositories/dest", "/tmp/git/repositories/source")
+    path = RepositoryCloner.clone("source", "dest")
 
-  def on_message(message)
-    repository = Repository.find(message["id"].to_i)
-    logger.info("Processing new project repository: #<Repository id: #{repository.id}, path: #{repository.repository_plain_path}>")
-    full_path = RepositoryRoot.expand(repository.gitdir)
-    GitBackend.create(full_path.to_s)
-    RepositoryHooks.create(full_path)
-    repository.ready = true
-    repository.save!
+    assert_equal Pathname("/tmp/git/repositories/dest"), path
+  end
+
+  should "clone repository and create hooks" do
+    GitBackend.expects(:clone).with("/tmp/git/repositories/dest", "/tmp/git/repositories/source")
+    RepositoryHooks.expects(:create).with(Pathname("/tmp/git/repositories/dest"))
+    path = RepositoryCloner.clone_with_hooks("source", "dest")
+
+    assert_equal Pathname("/tmp/git/repositories/dest"), path
   end
 end

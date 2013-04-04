@@ -55,14 +55,25 @@ module TestHelper
       attributes.each { |k, v| send(:"#{k}=", v) }
     end
 
+    def save
+      @is_new = false
+      self.class.register
+    end
+
     def write_attribute(key, val); end
     def update_attribute(key, val); end
     def valid?; end
-    def save; @is_new = false; end
     def save!; save; end
     def new_record?; @is_new; end
     def uniq?; true; end
     def self.first; new; end
+    def self.count; @count || 0; end
+
+    private
+    def self.register
+      @count ||= 0
+      @count += 1
+    end
   end
 end
 
@@ -88,11 +99,45 @@ if !defined?(Rails)
   end
 
   class Repository < TestHelper::Model
-    attr_accessor :project, :user, :name, :hooks, :description, :browse_url,
-      :clones, :owner
+    attr_accessor :id, :project, :user, :name, :hooks, :description, :browse_url,
+      :clones, :owner, :user_id, :owner_id, :project_id,
+      :merge_requests_enabled, :kind, :parent, :content_memberships
 
-    def last_pushed_at
-      Time.now
+    def committerships
+      return @cs if @cs
+      @cs = []
+      def @cs.create_for_owner!(owner); end
+      @cs
+    end
+
+    def add_member(member)
+      self.content_memberships ||= []
+      self.content_memberships << member
+    end
+
+    def make_private; @private = true; end
+    def private?; @private; end
+    def public?; !private?; end
+    def last_pushed_at; Time.now; end
+    def uniq_name?; true; end
+    def uniq_hashed_path?; true; end
+    def internal?; false; end
+    def watched_by!(watcher); end
+    def project_repo?; true; end
+    def tracking_repo?; false; end
+    def real_gitdir; ""; end
+    def set_repository_path; end
+    def self.reserved_names; []; end
+    def self.private_on_create?(repo); false; end
+  end
+
+  class RepositoryCollection < Array
+    def initialize(project); @project = project; end
+
+    def new(params)
+      repository = Repository.new(params.merge(:project => @project))
+      self << repository
+      repository
     end
   end
 
@@ -112,6 +157,13 @@ if !defined?(Rails)
       })
     end
 
+    def repositories
+      @repositories ||= RepositoryCollection.new(self)
+    end
+
+    def public?; true end
+    def private?; false end
+    def create_new_repository_event(repository); end
     def self.reserved_slugs; []; end
   end
 
@@ -121,6 +173,10 @@ if !defined?(Rails)
 
   class SshKey < TestHelper::Model
     attr_accessor :key, :user_id
+  end
+
+  class WikiRepository
+    NAME_SUFFIX = "-gitorious-wiki"
   end
 end
 

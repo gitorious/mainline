@@ -15,18 +15,24 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "test_helper"
+require "pathname"
 
-class RepositoryCreationProcessor
-  include Gitorious::Messaging::Consumer
-  consumes "/queue/GitoriousRepositoryCreation"
+class TrackingRepositoryCreationProcessorTest < ActiveSupport::TestCase
+  def setup
+    @parent = repositories(:moes)
+    @repository = Repository.new({
+        :parent => @parent,
+        :name => "tracking",
+        :kind => Repository::KIND_TRACKING_REPO,
+        :project => @parent.project
+      })
+    @repository.save!
+    @processor = TrackingRepositoryCreationProcessor.new
+  end
 
-  def on_message(message)
-    repository = Repository.find(message["id"].to_i)
-    logger.info("Processing new project repository: #<Repository id: #{repository.id}, path: #{repository.repository_plain_path}>")
-    full_path = RepositoryRoot.expand(repository.gitdir)
-    GitBackend.create(full_path.to_s)
-    RepositoryHooks.create(full_path)
-    repository.ready = true
-    repository.save!
+  should "clone git repository without hooks" do
+    RepositoryCloner.expects(:clone).with("b13/de7/574a4a04fb250257dcb5a7d6ef01dcf290.git", "moes-project/tracking.git")
+    @processor.on_message("id" => @repository.id)
   end
 end
