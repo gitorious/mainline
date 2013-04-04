@@ -16,8 +16,14 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class WikiRepository
-  NAME_SUFFIX = "-gitorious-wiki"
-  WRITABLE_EVERYONE = 0
-  WRITABLE_PROJECT_MEMBERS = 1
+class ProjectAdminRequired
+  def initialize(auth, project, user)
+    @auth = auth
+    @project = project
+    @user = user
+  end
+
+  def satisfied?(params)
+    @auth.admin?(@user, @project.owner)
+  end
 end

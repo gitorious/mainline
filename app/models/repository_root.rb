@@ -15,6 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "pathname"
 
 class RepositoryRoot
   def self.default_base_path
@@ -31,5 +32,9 @@ class RepositoryRoot
 
   def self.shard_dirs!
     @shard_dirs = true
+  end
+
+  def self.expand(path)
+    (Pathname(RepositoryRoot.default_base_path) + path).expand_path
   end
 end

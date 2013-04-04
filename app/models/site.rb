@@ -38,7 +38,7 @@ class Site < ActiveRecord::Base
 
   def generate_wiki_git_path
     if(!self.id) then raise "Refusing to generate a git path without a site id" end
-    Repository.full_path_from_partial_path(wiki_repo_name)
+    RepositoryRoot.expand(wiki_repo_name)
   end
 
   def wiki_repo_name
@@ -65,6 +65,4 @@ class Site < ActiveRecord::Base
     FileUtils.touch(wiki_git_path+"/hooks/pre-receive");
     FileUtils.chmod(0755, wiki_git_path+"/hooks/pre-receive");
   end
-
-
 end

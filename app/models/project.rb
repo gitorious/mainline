@@ -303,6 +303,15 @@ class Project < ActiveRecord::Base
     project.nil? || project == self
   end
 
+  def create_new_repository_event(repository)
+    create_event(Action::ADD_PROJECT_REPOSITORY,
+      repository,
+      repository.user,
+      nil,
+      nil,
+      date = repository.created_at)
+  end
+
   def self.reserved_slugs
     @reserved_slugs ||= []
   end

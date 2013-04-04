@@ -1279,7 +1279,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         post(:create,
           :project_id => @project.to_param,
           :repository => { :name => "my-new-repo" },
-          :private_repository => "1")
+          :private => "1")
 
         assert_response :redirect
         assert Repository.last.private?

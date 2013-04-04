@@ -28,8 +28,12 @@ class CreateProjectRepositoryCommand < CreateRepositoryCommand
     create_owner_committership(repository)
     repository.make_private if Repository.private_on_create?(:private => private?)
     repository.watched_by!(repository.user)
+    schedule_creation(repository)
     repository.project.create_new_repository_event(repository)
-    @app.publish("/queue/GitoriousRepositoryCreation", { :id => repository.id })
     repository
+  end
+
+  def schedule_creation(repository)
+    @app.publish("/queue/GitoriousRepositoryCreation", { :id => repository.id })
   end
 end
