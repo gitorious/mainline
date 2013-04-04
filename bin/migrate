@@ -1,0 +1,114 @@
+#!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
+
+# Migrate repository and db/metadata from current gitorious
+# installation to newer Gitorious site running on the new site. Uses
+# rsync to transfer the git repositories and database dump, then
+# imports that data remotely on the new site using ssh.
+
+# Assumptions:
+
+# Requires a working Gitorious site on the remote host
+# All data on the remote Gitorious host will be overwritten
+# Requires the myqsldump tool on the local host.
+# Requires at least v2.4.x in the remote gitorious target host
+
+# FIXME Does not currently transfer custom hooks, uploaded user avatar pictures.
+# FIXME: check last cmd status after each step, report back
+
+if ARGV.size != 8
+   puts <<USAGE
+Usage:
+bin/migrate TARGET-HOST REMOTE-SUPERUSER REMOTE-GIT-USER REMOTE-GITORIOUS-ROOT-DIR REMOTE-REPO-BASE-DIR REMOTE-DB-USER REMOTE-DB-PW REMOTE-DB-NAME
+
+Example:
+bin/migrate cleanroom.test root git /var/www/gitorious/app /var/www/gitorious/repositories gitorious 383364a94e5536ea833de8de17398bc6e9f7cdd6 gitorious_production
+USAGE
+   exit
+else
+  target_host = ARGV[0]
+  remote_superuser = ARGV[1]
+  remote_gitorious_user = ARGV[2]
+  remote_gitorious_root = ARGV[3]
+  remote_repo_root = ARGV[4]
+  remote_db_user = ARGV[5]
+  remote_db_pw = ARGV[6]
+  remote_db_name = ARGV[7]
+end
+
+
+require "pathname"
+gitorious_root = Pathname.new(__FILE__).dirname.realpath.to_s.gsub("/bin", "")
+Dir.chdir gitorious_root
+RAILS_ENV = ENV["RAILS_ENV"] || "production"
+require 'yaml'
+
+def db_config
+  @db_config ||= YAML::load(File.open('config/database.yml'))
+end
+
+def gitorious_config
+  @gitorious_config ||= YAML::load(File.open('config/gitorious.yml'))
+end
+
+def repo_path
+  gitorious_config['repository_base_path'] || # New global setting in Gitorious/Rails 3
+    gitorious_config[RAILS_ENV]['repository_base_path'] || # Fall back to regular per-env setting
+    abort "No repository_base_path setting found in your Gitorious config!"
+end
+
+def db_name
+  db_config[RAILS_ENV]['database']
+end
+
+def database_credential_options
+  "-u#{db_config[RAILS_ENV]['username']} -p#{db_config[RAILS_ENV]['password']}"
+end
+
+puts "⚠ You will now start migrating your local hosted gitorious repositories and metadata to the new host."
+puts "Any current git repos and user/team project/repo metadata in the target Gitorious site will be overwritten!"
+puts "Press [enter] to proceed"
+user_input = STDIN.gets
+
+puts "Initializing..."
+puts `rm -f old_gitorious_db.sql`
+
+puts "Backing up mysql state..."
+puts `mysqldump #{database_credential_options} #{db_name} > old_gitorious_db.sql`
+
+puts "Transferring repos to new Gitorious host..."
+puts `rsync -rlH #{repo_path}/ #{remote_superuser}@#{target_host}:#{remote_repo_root}/`
+
+puts "Transferring db state to new Gitorious host..."
+puts `rsync old_gitorious_db.sql #{remote_superuser}@#{target_host}:#{remote_gitorious_root}/old_gitorious_db.sql`
+
+puts "Running remote commands on #{target_host}..."
+puts "---------------"
+remote_cmds = <<SCRIPT
+
+  cd #{remote_gitorious_root}
+
+  echo "Restoring mysql state..."
+  mysql -u#{remote_db_user} -p#{remote_db_pw} #{remote_db_name} < old_gitorious_db.sql
+
+  echo "Running db:migrate rake task to upgrade database structure..."
+  bin/rake db:migrate
+
+  echo "Rebuilding ~/.ssh/authorized_keys from user keys in database..."
+  rm -f ~#{remote_gitorious_user}/.ssh/authorized_keys; bundle exec script/regenerate_ssh_keys ~#{remote_gitorious_user}/.ssh/authorized_keys
+
+  echo "Making sure the gitorious user owns everything..."
+  chown -R #{remote_gitorious_user}:#{remote_gitorious_user} #{remote_gitorious_root}
+  chown -R #{remote_gitorious_user}:#{remote_gitorious_user} #{remote_repo_root}
+  chown -R #{remote_gitorious_user}:#{remote_gitorious_user} ~#{remote_gitorious_user}/.ssh/authorized_keys
+
+  echo "Recreating symlink to common hooks..."
+  rm -f  #{remote_repo_root}/.hooks
+  ln -s #{remote_gitorious_root}/data/hooks #{remote_repo_root}/.hooks
+
+SCRIPT
+File.open("/tmp/remote-ops.sh", 'w') { |file| file.write(remote_cmds) }
+puts `ssh #{remote_superuser}@#{target_host} 'bash -s' < /tmp/remote-ops.sh`
+puts "---------------"
+
+puts "Migration done."
