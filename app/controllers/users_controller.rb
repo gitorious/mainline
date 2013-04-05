@@ -110,7 +110,7 @@ class UsersController < ApplicationController
     else
       flash[:error] = I18n.t "users_controller.activate_error"
     end
-    redirect_back_or_default('/')
+    redirect_back_or_default(root_path)
   end
 
   def forgot_password
