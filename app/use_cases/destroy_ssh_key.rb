@@ -43,11 +43,8 @@ class DestroySshKey
   include UseCase
 
   def initialize(app, user)
-    pre_condition(UserRequired.new(user))
     input_class(DestroySshKeyParams)
-    cmd = DestroySshKeyCommand.new(app, user)
-    builder(cmd)
-    validator(SshKeyValidator)
-    command(cmd)
+    add_pre_condition(UserRequired.new(user))
+    step(DestroySshKeyCommand.new(app, user), :validator => SshKeyValidator)
   end
 end

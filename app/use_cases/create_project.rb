@@ -46,15 +46,15 @@ class CreateProjectCommand
   def build(params)
     @private = params.private
     project = Project.new({
-        :title => params.title,
-        :slug => params.slug,
-        :description => params.description,
-        :license => params.license,
-        :home_url => params.home_url,
+        :title           => params.title,
+        :slug            => params.slug,
+        :description     => params.description,
+        :license         => params.license,
+        :home_url        => params.home_url,
         :mailinglist_url => params.mailinglist_url,
-        :bugtracker_url => params.bugtracker_url,
-        :wiki_enabled => params.wiki_enabled,
-        :tag_list => params.tag_list
+        :bugtracker_url  => params.bugtracker_url,
+        :wiki_enabled    => params.wiki_enabled,
+        :tag_list        => params.tag_list
       })
     uid = @user.id
     project.user_id = uid
@@ -83,15 +83,12 @@ class CreateProject
   include UseCase
 
   def initialize(app, user)
-    pre_condition(UserRequired.new(user))
-    pre_condition(ProjectProposalRequired.new(user))
-    pre_condition(ProjectRateLimiting.new(user))
     input_class(NewProjectParams)
-    cmd = CreateProjectCommand.new(user)
-    command(cmd, :builder => cmd, :validator => ProjectValidator)
-    wiki_cmd = CreateWikiRepositoryCommand.new(app)
-    command(wiki_cmd, :builder => wiki_cmd)
-    # Make sure we return a project
-    command(lambda { |repository| repository.project })
+    add_pre_condition(UserRequired.new(user))
+    add_pre_condition(ProjectProposalRequired.new(user))
+    add_pre_condition(ProjectRateLimiting.new(user))
+    step(CreateProjectCommand.new(user), :validator => ProjectValidator)
+    step(CreateWikiRepositoryCommand.new(app))
+    step(lambda { |repository| repository.project })
   end
 end
