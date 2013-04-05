@@ -65,9 +65,10 @@ module Gitorious
         if git_user = Gitorious.user
           etc_user = Etc.getpwnam(git_user)
           uid = etc_user.uid
-          if git_group = Etc.getgrnam(git_user)
+          begin
+            git_group = Etc.getgrnam(git_user)
             gid = git_group.gid
-          else
+          rescue
             gid = etc_user.gid
           end
           ENV["HOME"] = etc_user.dir
