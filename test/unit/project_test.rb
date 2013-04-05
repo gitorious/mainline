@@ -437,7 +437,9 @@ class ProjectTest < ActiveSupport::TestCase
     end
 
     should "include wiki repositories" do
-      WikiRepository.create!(@project)
+      cmd = CreateWikiRepositoryCommand.new(MessageHub.new)
+      cmd.execute(cmd.build(@project))
+
       wiki = @project.wiki_repository
       assert_not_nil wiki
       assert @project.cloneable_repositories.include?(wiki)

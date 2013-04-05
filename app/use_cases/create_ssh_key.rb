@@ -53,10 +53,7 @@ class CreateSshKey
   def initialize(hub, user)
     user = User.find(user) if user.is_a?(Integer)
     input_class(NewSshKeyParams)
-    pre_condition(UserRequired.new(user))
-    cmd = CreateSshKeyCommand.new(hub, user)
-    builder(cmd)
-    validator(SshKeyValidator)
-    command(cmd)
+    add_pre_condition(UserRequired.new(user))
+    step(CreateSshKeyCommand.new(hub, user), :validator => SshKeyValidator)
   end
 end
