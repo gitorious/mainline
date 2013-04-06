@@ -34,6 +34,7 @@ module Gitorious
         @project_name, @repository_name = strainer.path.split("/", 2)
         @repository_name.gsub!(/\.git$/, "")
         @user_name = username
+        @root_path = Gitorious.client.rootpath
         @configuration = {}
         load_config
       end
@@ -83,7 +84,7 @@ module Gitorious
 
       def configuration
         if @configuration.empty?
-          query_url = "/#{@project_name}/#{@repository_name}/config?username=#@user_name"
+          query_url = "#{@root_path}/#{@project_name}/#{@repository_name}/config?username=#@user_name"
           # $stderr.puts "Querying #{query_url}" if $DEBUG
           resp = connection.get(query_url)
           # $stderr.puts resp
@@ -115,7 +116,7 @@ module Gitorious
 
       # Returns an actual URI object
       def writable_by_query_uri
-        path = "/#{@project_name}/#{@repository_name}/writable_by"
+        path = "#{@root_path}/#{@project_name}/#{@repository_name}/writable_by"
         query = "username=#{@user_name}"
         host = Gitorious.client.host
         _port = Gitorious.client.port

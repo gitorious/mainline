@@ -19,16 +19,17 @@
 
 module Gitorious
   class MountPoint
-    attr_reader :host, :port, :scheme
+    attr_reader :host, :port, :scheme, :rootpath
 
-    def initialize(host, port = nil, scheme = nil)
+    def initialize(host, port = nil, scheme = nil, rootpath = nil)
       @host = host.split(":").first
       @port = (port || default_port).to_i
       @scheme = scheme || default_scheme
+      @rootpath = rootpath
     end
 
     def url(path)
-      "#{scheme}://#{host_port}#{path.sub(/^\/?/, '/')}"
+      "#{scheme}://#{host_port}#{rootpath}#{path.sub(/^\/?/, '/')}"
     end
 
     def host_port

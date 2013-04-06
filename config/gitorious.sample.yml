@@ -58,13 +58,18 @@ archive_cache_dir: "/var/git/tarballs"
 # Temporary tarball work directory
 archive_work_dir: "/var/git/tarballs-work"
 
-# The host, port and scheme users reach Gitorious with. Used to
+# The host, port, path and scheme users reach Gitorious with. Used to
 # generate URLs where full URLs are required (e.g. in emails etc). The
 # scheme defaults to https. When the scheme is https, the port
-# defaults to 443, otherwise it defaults to 80. None of these settings
-# affect your deployment, they only influence how Gitorious generates
-# full URLs. If you stay with the default SSL configuration (highly
-# recommended), you must configure your web server accordingly.
+# defaults to 443, otherwise it defaults to 80. Path is empty by default,
+# i.e. Gitorious is deployed in default mode to the root of
+# the HTTP server. If Rails running Gitorious is configured to use
+# a non-default root path by e.g. starting with RAILS_RELATIVE_URL_ROOT
+# environment variable set to "/git", then set `path` to the same value.
+# None of these settings affect your deployment, they only influence how
+# Gitorious generates full URLs. If you stay with the default SSL
+# configuration (highly recommended), you must configure your web server
+# accordingly.
 #
 # NB! Gitorious 2.x used a use_ssl setting that made Gitorious force
 # users onto https when attempting to login. This behavior is gone. If
@@ -77,19 +82,22 @@ archive_work_dir: "/var/git/tarballs-work"
 #scheme: https
 #host: gitorious.local
 #port: 443
+#path:
 
 # Internal scripts will make HTTP requests to Gitorious for certain
 # kinds of information (e.g. bin/gitorious uses HTTP to figure out
 # where a repo resides on disk and so on). For this to work, you must
-# provide a hostname and port that resolves locally on the server, and
-# that serves Gitorious. In most cases, you can use the host and port
-# users use to reach Gitorious, but you may also optimize network
-# access by using a local host and port. Remember to make sure your
+# provide a hostname, port and path that resolves locally on the server,
+# and that serves Gitorious. In most cases, you can use the host, port
+# and path users use to reach Gitorious, but you may also optimize network
+# access by using a local host, port and path. Remember to make sure your
 # frontend web server knows about these as well. Internal requests do
 # not use SSL, so if you're serving SSL-only to your users, make sure
-# your application can be reached over HTTP locally.
+# your application can be reached over HTTP locally. `client_path`
+# defaults to the value set for `path` above.
 #client_host: localhost
 #client_port: 80
+#client_path:
 
 # Host for pulling and pushing over SSH. The full SSH URLs will
 # include the name of the Gitorious user (as configured elsewhere in
@@ -116,13 +124,14 @@ archive_work_dir: "/var/git/tarballs-work"
 #git_daemon_host: gitorious.local
 #git_daemon_port: 9418
 
-# Host and port used for Git over HTTP. See the main `host` and `port`
-# settings for further explanation. These default to whatever the main
-# `host` and `port` are set to. Disabling Git/HTTP will hide all Git
-# HTTP URLs from the UI.
+# Host, port and path used for Git over HTTP. See the main `host`, `path`
+# and `port` settings for further explanation. These default to whatever
+# the main `host`, `path` and `port` are set to. Disabling Git/HTTP will
+# hide all Git HTTP URLs from the UI.
 #enable_git_http: true
 #git_http_host: gitorious.local
 #git_http_port: 443
+#git_http_path:
 #git_http_scheme: https
 
 # Give a hint about which frontend web server is being used. When

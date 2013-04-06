@@ -32,11 +32,12 @@ module Gitorious
     NOT_ALLOWED_RESPONSE = [403, { "Content-Type" => "text/html" }, []]
 
     def self.call(env)
-      match = /(.*\.git)(.*)/.match(env["PATH_INFO"])
-      return NOT_FOUND_RESPONSE if match.nil?
+      match = /^(\/.*)?(\/[^\/]+\/[^\/]+\.git)(.*)$/.match(env["PATH_INFO"])
       return NOT_ALLOWED_RESPONSE if Gitorious.git_http.nil?
-      path = match[1]
-      rest = match[2]
+      return NOT_FOUND_RESPONSE if match.nil?
+      return NOT_FOUND_RESPONSE if (!match[1].nil? && match[1] != Gitorious.git_http.rootpath)
+      path = match[2]
+      rest = match[3]
 
       begin
         repo = Repository.find_by_path(path)

@@ -69,12 +69,14 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
     host = Gitorious::Configuration.get("host", "gitorious.local")
     port = Gitorious::Configuration.get("port")
     scheme = Gitorious::Configuration.get("scheme")
-    @site = Gitorious::HttpMountPoint.new(host, port, scheme)
+    path = Gitorious::Configuration.get("path")
+    @site = Gitorious::HttpMountPoint.new(host, port, scheme, path)
   end
 
   def self.scheme; site.scheme; end
   def self.host; site.host; end
   def self.port; site.port; end
+  def self.path; site.rootpath; end
   def self.ssl?; site.ssl?; end
   def self.url(path); site.url(path); end
 
@@ -82,7 +84,8 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
     return @client if @client && cache?
     host = Gitorious::Configuration.get("client_host", "localhost")
     port = Gitorious::Configuration.get("client_port")
-    @client = Gitorious::HttpMountPoint.new(host, port)
+    path = Gitorious::Configuration.get("client_path") { Gitorious.path }
+    @client = Gitorious::HttpMountPoint.new(host, port, "http", path)
   end
 
   def self.git_daemon
@@ -107,7 +110,8 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
     host = Gitorious::Configuration.get("git_http_host") { Gitorious.host }
     port = Gitorious::Configuration.get("git_http_port") { Gitorious.port }
     scheme = Gitorious::Configuration.get("git_http_scheme") { Gitorious.scheme }
-    @git_http = Gitorious::HttpMountPoint.new(host, port, scheme)
+    path = Gitorious::Configuration.get("git_http_path") { Gitorious.path }
+    @git_http = Gitorious::HttpMountPoint.new(host, port, scheme, path)
   end
 
   def self.email_sender
