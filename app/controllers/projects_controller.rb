@@ -111,11 +111,12 @@ class ProjectsController < ApplicationController
       redirect_to(new_project_repository_path(result))
     end
 
-    outcome.pre_condition_failed do |pc|
-      return render_throttled_record if pc.is_a?(RateLimiting)
-      key = "projects_controller.create_only_for_site_admins"
-      flash[:error] = I18n.t(key) if pc.is_a?(ProjectProposalRequired)
-      redirect_to(projects_path)
+    pre_condition_failed(outcome) do |f|
+      f.otherwise do |pc|
+        key = "projects_controller.create_only_for_site_admins"
+        flash[:error] = I18n.t(key) if pc.is_a?(ProjectProposalRequired)
+        redirect_to(projects_path)
+      end
     end
 
     outcome.failure do |project|
