@@ -535,7 +535,7 @@ class MergeRequest < ActiveRecord::Base
     payload = {
       :merge_request_id => id.to_s,
       :action => "delete",
-      :target_path => target_repository.full_repository_path.to_s,
+      :target_path => target_repository.full_repository_path,
       :target_name => target_repository.url_path,
       :merge_branch_name => merge_branch_name,
       :source_repository_id => source_repository.id,

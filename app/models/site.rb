@@ -38,7 +38,7 @@ class Site < ActiveRecord::Base
 
   def generate_wiki_git_path
     if(!self.id) then raise "Refusing to generate a git path without a site id" end
-    RepositoryRoot.expand(wiki_repo_name)
+    RepositoryRoot.expand(wiki_repo_name).to_s
   end
 
   def wiki_repo_name
@@ -46,11 +46,11 @@ class Site < ActiveRecord::Base
   end
 
   def wiki
-    if(!self.wiki_git_path) then init_wiki_git_path end
-    if(!File.exist? wiki_git_path)
+    init_wiki_git_path if !self.wiki_git_path
+
+    if !File.exist?(wiki_git_path)
       FileUtils.mkdir_p(wiki_git_path, :mode => 0755)
-      repo_name = File.basename(wiki_git_path)
-      Repository.create_git_repository(repo_name)
+      GitBackend.create(RepositoryRoot.expand(wiki_git_path).to_s)
       setup_minimal_hooks
     end
     Grit::Repo.new(wiki_git_path)

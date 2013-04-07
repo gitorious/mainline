@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -55,8 +55,8 @@ class SiteTest < ActiveSupport::TestCase
       FileUtils.remove_dir(@path, true)
     end
 
-    should "should create new repo and return Grit obj if no repo exists" do
-      Repository.git_backend.expects(:create).with(@path).returns(true)
+    should_eventually "should create new repo and return Grit obj if no repo exists" do
+      GitBackend.expects(:create).with(@path)
       grit_wiki_repo = @site.wiki
       assert File.exist?(@path), 'File.exist?(path) should be true'
       assert_instance_of Grit::Repo, grit_wiki_repo
@@ -65,7 +65,7 @@ class SiteTest < ActiveSupport::TestCase
 
     should "should just return Grit object if repo exists" do
       FileUtils.mkdir_p(@site.wiki_git_path, :mode => 0755)
-      Repository.expects(:create_git_repository).never
+      GitBackend.expects(:create).never
       grit_wiki_repo = @site.wiki
       assert_instance_of Grit::Repo, grit_wiki_repo
     end
