@@ -110,7 +110,8 @@ class CreateProjectRepositoryCommandTest < MiniTest::Shoulda
 
     should "create event" do
       repository = @command.build(params)
-      @project.expects(:create_new_repository_event).with(repository)
+      repository.created_at = Time.now
+      @project.expects(:create_event).with(19, repository, @user, nil, nil, repository.created_at)
       @command.execute(repository)
     end
 

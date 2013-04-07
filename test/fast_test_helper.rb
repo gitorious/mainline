@@ -50,6 +50,8 @@ OTHER_SHA = "a" * 40
 
 module TestHelper
   class Model
+    attr_accessor :id, :created_at, :updated_at
+
     def initialize(attributes = {})
       @is_new = true
       attributes.each { |k, v| send(:"#{k}=", v) }
@@ -99,8 +101,8 @@ if !defined?(Rails)
   end
 
   class Repository < TestHelper::Model
-    attr_accessor :id, :project, :user, :name, :hooks, :description, :browse_url,
-      :clones, :owner, :user_id, :owner_id, :project_id,
+    attr_accessor :project, :user, :name, :hooks, :description, :browse_url,
+      :clones, :owner, :user_id, :owner_id, :project_id, :parent_id,
       :merge_requests_enabled, :kind, :parent, :content_memberships
 
     def committerships
@@ -175,8 +177,16 @@ if !defined?(Rails)
     attr_accessor :key, :user_id
   end
 
+  class Group < TestHelper::Model
+  end
+
   class WikiRepository
     NAME_SUFFIX = "-gitorious-wiki"
+  end
+
+  class Action
+    ADD_PROJECT_REPOSITORY = 19
+    CLONE_REPOSITORY = 3
   end
 end
 
