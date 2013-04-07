@@ -36,11 +36,10 @@ class CreateTrackingRepositoryCommand < CreateRepositoryCommand
   end
 
   def execute(repository)
-    repository.set_repository_path
-    repository.save!
-    create_owner_committership(repository)
+    save(repository)
+    initialize_committership(repository)
     initialize_membership(repository)
-    @app.publish("/queue/GitoriousTrackingRepositoryCreation", { :id => repository.id })
+    schedule_creation(repository, :queue => "GitoriousTrackingRepositoryCreation")
     repository
   end
 end

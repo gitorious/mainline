@@ -50,14 +50,30 @@ class CreateRepositoryCommand
     @private
   end
 
-  def create_owner_committership(repository)
+  def save(repository)
+    repository.set_repository_path
+    repository.save!
+  end
+
+  def initialize_favorite(repository)
+    repository.watched_by!(repository.user)
+  end
+
+  def initialize_committership(repository)
     repository.committerships.create_for_owner!(repository.owner)
   end
 
-  # Used by clones and tracking repos
   def initialize_membership(repo)
-    return if repo.parent.public?
-    repo.make_private
-    repo.parent.content_memberships.each { |m| repo.add_member(m.member) }
+    private_on_create = Repository.private_on_create?(:private => private?)
+    repo.make_private if private_on_create || (repo.parent && repo.parent.private?)
+
+    if repo.parent && repo.parent.private?
+      repo.parent.content_memberships.each { |m| repo.add_member(m.member) }
+    end
+  end
+
+  def schedule_creation(repository, options)
+    args = { :id => repository.id }
+    @app.publish("/queue/#{options[:queue]}", args)
   end
 end
