@@ -451,4 +451,13 @@ class ApplicationController < ActionController::Base
   end
 
   helper_method :unshifted_polymorphic_path
+
+  def pre_condition_failed(outcome, &block)
+    outcome.pre_condition_failed do |f|
+      f.when(:user_required) { redirect_to(login_path) }
+      f.when(:rate_limiting) { render_throttled_record }
+      f.when(:authorization_required) { render_unauthorized }
+      block.call(f)
+    end
+  end
 end
