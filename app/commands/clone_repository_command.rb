@@ -34,7 +34,8 @@ class CloneRepositoryCommand < CreateRepositoryCommand
 
   def build(params)
     clone = super(params)
-    clone.name ||= params.login ? "#{params.login}s-#{@repository.name}" : nil
+    login = params.login || @user.login
+    clone.name ||= login ? "#{login}s-#{@repository.name}" : nil
     clone.parent = @repository
 
     if params.owner_type == "Group"

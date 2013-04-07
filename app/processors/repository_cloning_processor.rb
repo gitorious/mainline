@@ -16,16 +16,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class RateLimiting
-  def initialize(scope, actor, options)
-    @scope = scope
-    @actor = actor
-    @options = options
-  end
+class RepositoryCloningProcessor
+  include Gitorious::Messaging::Consumer
+  consumes "/queue/GitoriousRepositoryCloning"
 
-  def satisfied?(params)
-    RecordThrottling.allowed?(@scope, @actor, @options)
+  def on_message(message)
+    repository = Repository.find(message["id"].to_i)
+    logger.info("Processing new repository clone: #<Repository id: #{repository.id}, :parent: #{repository.parent.repository_plain_path}, path: #{repository.repository_plain_path}>")
+    RepositoryCloner.clone(repository.parent.real_gitdir, repository.gitdir)
   end
-
-  def self.symbol; :rate_limiting; end
 end

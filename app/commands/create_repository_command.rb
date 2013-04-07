@@ -72,7 +72,7 @@ class CreateRepositoryCommand
     end
   end
 
-  def schedule_creation(repository, options)
+  def schedule_creation(repository, options = { :queue => "GitoriousRepositoryCreation" })
     args = { :id => repository.id }
     @app.publish("/queue/#{options[:queue]}", args)
   end

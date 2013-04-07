@@ -15,17 +15,18 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "use_case"
 
-class RateLimiting
-  def initialize(scope, actor, options)
-    @scope = scope
-    @actor = actor
-    @options = options
+class PrepareRepositoryClone
+  include UseCase
+
+  def initialize(app, repository, user)
+    input_class(CloneRepositoryInput)
+    add_pre_condition(UserRequired.new(user))
+    add_pre_condition(CommitsRequired.new(repository))
+    add_pre_condition(RepositoryRateLimiting.new(user))
+    add_pre_condition(AuthorizationRequired.new(app, user, repository))
+    clone_command = CloneRepositoryCommand.new(app, repository, user)
+    step(lambda { |params| clone_command.build(params) })
   end
-
-  def satisfied?(params)
-    RecordThrottling.allowed?(@scope, @actor, @options)
-  end
-
-  def self.symbol; :rate_limiting; end
 end

@@ -24,7 +24,6 @@ gem "mysql2", :platforms => :ruby
 gem "highline"
 gem "use_case", "~> 0.8"
 gem "virtus", :git => "https://github.com/solnic/virtus.git"
-gem "mutations"
 
 group :openid do
   gem "ruby-yadis", "0.3.4", :require => "yadis"

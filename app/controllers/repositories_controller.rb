@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -22,9 +22,10 @@
 #++
 
 class RepositoriesController < ApplicationController
+  include Gitorious::Messaging::Publisher
   before_filter :login_required,
     :except => [:index, :show, :writable_by, :repository_config, :search_clones]
-  before_filter :find_repository_owner, :except => [:writable_by, :repository_config]
+  before_filter :find_repository_owner, :except => [:writable_by, :repository_config, :clone, :create_clone]
   before_filter :unauthorized_repository_owner_and_project, :only => [:writable_by, :repository_config]
   before_filter :require_owner_adminship, :only => [:new, :create]
   before_filter :find_and_require_repository_adminship,
@@ -73,15 +74,15 @@ class RepositoriesController < ApplicationController
 
   def paginated_events
     paginate(page_free_redirect_options) do
-      if !Gitorious.private_repositories?
-        Rails.cache.fetch("new_paginated_events_in_repo_#{@repository.id}:#{params[:page] || 1}", :expires_in => 1.minute) do
-          marshalable_events(unfiltered_paginated_events)
-        end
-      else
+      # if !Gitorious.private_repositories?
+      #   Rails.cache.fetch("new_paginated_events_in_repo_#{@repository.id}:#{params[:page] || 1}", :expires_in => 1.minute) do
+      #     marshalable_events(unfiltered_paginated_events)
+      #   end
+      # else
         filter_paginated(params[:page], Event.per_page) do |page|
           unfiltered_paginated_events
         end
-      end
+      # end
     end
   end
 
@@ -101,76 +102,70 @@ class RepositoriesController < ApplicationController
   end
 
   def create
-    hash = params[:repository].merge({
-        :user => current_user,
-        :project => @project,
-        :private => params[:private]
-      })
-    outcome = RepositoryCreator.run(hash)
+    cmd = CreateProjectRepository.new(self, @project, current_user)
+    outcome = cmd.execute({ :private => params[:private] }.merge(params[:repository]))
 
-    if outcome.success?
-      flash[:success] = I18n.t("repositories_controller.create_success")
-      redirect_to [outcome.result.project, outcome.result]
-    else
-      @repository = RepositoryCreator.build(hash)
-      @repository.valid? # Trigger validation, so errors are available ...
+    outcome.pre_condition_failed do |f|
+      f.when(:project_admin_required) { |c| respond_denied_and_redirect_to(@project) }
+    end
+
+    outcome.failure do |repository|
+      @repository = repository
       @root = Breadcrumb::NewRepository.new(@project)
       render :action => "new"
+    end
+
+    outcome.success do |result|
+      flash[:success] = I18n.t("repositories_controller.create_success")
+      redirect_to([result.project, result])
     end
   end
 
   undef_method :clone
 
   def clone
-    @repository_to_clone = repository_to_clone
-    @root = Breadcrumb::CloneRepository.new(@repository_to_clone)
-    unless @repository_to_clone.has_commits?
-      flash[:error] = I18n.t "repositories_controller.new_clone_error"
-      redirect_to [@repository_to_clone.project, @repository_to_clone]
-      return
+    project = Project.find_by_slug!(params[:project_id])
+    repository = project.repositories.find_by_name!(params[:id])
+    outcome = PrepareRepositoryClone.new(self, repository, current_user).execute({})
+
+    pre_condition_failed(outcome) do |f|
+      f.when(:commits_required) { |c| commits_required(repository) }
     end
-    @repository = Repository.new_by_cloning(@repository_to_clone, current_user.login)
+
+    outcome.success do |result|
+      @root = Breadcrumb::CloneRepository.new(repository)
+      @repository_to_clone = repository
+      @repository = result
+      @owner = @repository.project
+    end
   end
 
   def create_clone
-    @repository_to_clone = repository_to_clone
-    @root = Breadcrumb::CloneRepository.new(@repository_to_clone)
-    unless @repository_to_clone.has_commits?
+    project = Project.find_by_slug!(params[:project_id])
+    repository = project.repositories.find_by_name!(params[:id])
+    outcome = CloneRepository.new(self, repository, current_user).execute(params[:repository])
+
+    pre_condition_failed(outcome) do |f|
+      f.when(:commits_required) { |c| commits_required(repository) }
+    end
+
+    outcome.failure do |clone|
+      # TODO: Eventually get rid of these
+      @repository = clone
+      @repository_to_clone = repository
+      @root = Breadcrumb::CloneRepository.new(repository)
+
       respond_to do |format|
-        format.html do
-          flash[:error] = I18n.t "repositories_controller.create_clone_error"
-          redirect_to [@repository_to_clone.project, @repository_to_clone]
-        end
-        format.xml do
-          render :text => I18n.t("repositories_controller.create_clone_error"),
-            :location => [@repository_to_clone.project, @repository_to_clone], :status => :unprocessable_entity
-        end
-      end
-      return
-    end
-
-    @repository = Repository.new_by_cloning(@repository_to_clone)
-    @repository.name = params[:repository][:name]
-    @repository.user = current_user
-    case params[:repository][:owner_type]
-    when "User"
-      @repository.owner = current_user
-      @repository.kind = Repository::KIND_USER_REPO
-    when "Group"
-      @repository.owner = current_user.groups.find(params[:repository][:owner_id])
-      @repository.kind = Repository::KIND_TEAM_REPO
-    end
-
-    respond_to do |format|
-      if @repository.save
-        @owner.create_event(Action::CLONE_REPOSITORY, @repository, current_user, @repository_to_clone.id)
-
-        location = project_repository_path(@repository.project, @repository)
-        format.html { redirect_to location }
-        format.xml  { render :xml => @repository, :status => :created, :location => location }
-      else
         format.html { render :action => "clone" }
-        format.xml  { render :xml => @repository.errors, :status => :unprocessable_entity }
+        format.xml { render :xml => clone.errors, :status => :unprocessable_entity }
+      end
+    end
+
+    outcome.success do |clone|
+      location = project_repository_path(clone.project, clone)
+      respond_to do |format|
+        format.html { redirect_to(location) }
+        format.xml { render :xml => clone, :status => :created, :location => location }
       end
     end
   end
@@ -355,5 +350,18 @@ class RepositoriesController < ApplicationController
   def repository_to_clone
     repo = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     authorize_access_to(repo)
+  end
+
+  def commits_required(repository)
+    respond_to do |format|
+      format.html do
+        flash[:error] = I18n.t("repositories_controller.create_clone_error")
+        redirect_to [repository.project, repository]
+      end
+      format.xml do
+        render :text => I18n.t("repositories_controller.create_clone_error"),
+        :location => [repository.project, repository], :status => :unprocessable_entity
+      end
+    end
   end
 end

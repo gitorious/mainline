@@ -55,7 +55,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       setup { @params = { :project_id => @project.slug } }
       should_scope_pagination_to(:index, Repository)
     end
- end
+  end
 
   context "Searching" do
     setup do
@@ -79,7 +79,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       repo = @user.repositories.first
       repo.stubs(:git).returns(stub_everything("git mock"))
       get :show, :user_id => @user.to_param, :project_id => repo.project.to_param,
-        :id => repo.to_param
+      :id => repo.to_param
       assert_response :success
       assert_equal @user, assigns(:owner)
     end
@@ -109,21 +109,19 @@ class RepositoriesControllerTest < ActionController::TestCase
       clone_repo.stubs(:git).returns(stub_everything("git mock"))
 
       get :show, :user_id => users(:moe).to_param,
-        :project_id => clone_repo.project.to_param, :id => clone_repo.to_param
+      :project_id => clone_repo.project.to_param, :id => clone_repo.to_param
       assert_response :success
       assert_equal clone_repo, assigns(:repository)
       assert_equal users(:moe), assigns(:owner)
     end
 
     should "find the correct repository, even if the repo is named similar to another one in another project" do
-      repo_clone = Repository.new_by_cloning(repositories(:moes), users(:johan).login)
-      repo_clone.owner = users(:johan)
-      repo_clone.user = users(:johan)
-      repo_clone.name = "johansprojectrepos"
-      repo_clone.save!
+      cmd = CloneRepositoryCommand.new(MessageHub.new, repositories(:moes), users(:johan))
+      repo_clone = cmd.execute(cmd.build(CloneRepositoryInput.new(:name => "johansprojectrepos")))
 
       get :show, :user_id => users(:johan).to_param,
-        :project_id => projects(:moes).to_param, :id => repo_clone.to_param
+      :project_id => projects(:moes).to_param, :id => repo_clone.to_param
+
       assert_response :success
       assert_equal users(:johan), assigns(:owner)
       assert_equal repo_clone, assigns(:repository)
@@ -131,7 +129,7 @@ class RepositoriesControllerTest < ActionController::TestCase
 
     should "find the project repository" do
       get :show, :project_id => repositories(:johans).project.to_param,
-        :id => repositories(:johans).to_param
+      :id => repositories(:johans).to_param
       assert_response :success
       assert_equal repositories(:johans).project, assigns(:owner)
       assert_equal repositories(:johans), assigns(:repository)
@@ -158,14 +156,10 @@ class RepositoriesControllerTest < ActionController::TestCase
       repo = @group.repositories.first
       repo.stubs(:git).returns(stub_everything("git mock"))
       get :show, :project_id => repo.project.to_param,
-        :group_id => @group.to_param, :id => repo.to_param
+      :group_id => @group.to_param, :id => repo.to_param
       assert_response :success
       assert_equal @group, assigns(:owner)
     end
-  end
-
-  def do_show_get(repos)
-    get :show, :project_id => @project.slug, :id => repos.name
   end
 
   context "#show" do
@@ -196,7 +190,6 @@ class RepositoriesControllerTest < ActionController::TestCase
   end
 
   context "#show as XML" do
-
     setup do
       @project = projects(:johans)
     end
@@ -209,10 +202,6 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response :success
       assert_equal repo.to_xml, @response.body
     end
-  end
-
-  def do_clone_get()
-    get :clone, :project_id => @project.slug, :id => @repository.name
   end
 
   context "#clone" do
@@ -231,8 +220,10 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "GET projects/1/repositories/3/clone is successful" do
       Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
       @repository.stubs(:has_commits?).returns(true)
-      @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
+      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
+
       do_clone_get
+
       assert_equal nil, flash[:error]
       assert_response :success
       assert_equal @repository, assigns(:repository_to_clone)
@@ -251,16 +242,13 @@ class RepositoriesControllerTest < ActionController::TestCase
       login_as :johan
       Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
       @repository.stubs(:has_commits?).returns(false)
-      @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
+      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
+
       do_clone_get
+
       assert_redirected_to(project_repository_path(@project, @repository))
       assert_match(/cannot clone an empty/i, flash[:error])
     end
-  end
-
-  def do_create_clone_post(opts={})
-    post(:create_clone, :project_id => @project.slug, :id => @repository.name,
-      :repository => {:owner_type => "User"}.merge(opts))
   end
 
   context "#create_clone" do
@@ -279,36 +267,43 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "post projects/1/repositories/3/create_clone is successful" do
       Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
       @repository.stubs(:has_commits?).returns(true)
-      @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
+
       do_create_clone_post(:name => "foo-clone")
+
       assert_response :redirect
     end
 
     should "post projects/1/repositories/3/create_clone is successful sets the owner to the user" do
       Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
       @repository.stubs(:has_commits?).returns(true)
-      @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
+      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
+
       do_create_clone_post(:name => "foo-clone", :owner_type => "User")
+
       assert_response :redirect
-      assert_equal users(:johan), assigns(:repository).owner
-      assert_equal Repository::KIND_USER_REPO, assigns(:repository).kind
+      assert_equal users(:johan), Repository.last.owner
+      assert_equal Repository::KIND_USER_REPO, Repository.last.kind
     end
 
     should "post projects/1/repositories/3/create_clone is successful sets the owner to the group" do
       groups(:team_thunderbird).add_member(users(:johan), Role.admin)
       Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
       @repository.stubs(:has_commits?).returns(true)
-      @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
+      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
+
       do_create_clone_post(:name => "foo-clone", :owner_type => "Group", :owner_id => groups(:team_thunderbird).id)
+
       assert_response :redirect
-      assert_equal groups(:team_thunderbird), assigns(:repository).owner
-      assert_equal Repository::KIND_TEAM_REPO, assigns(:repository).kind
+      assert_equal groups(:team_thunderbird), Repository.last.owner
+      assert_equal Repository::KIND_TEAM_REPO, Repository.last.kind
     end
 
     should "redirects to new_user_key_path if no keys on user" do
       users(:johan).ssh_keys.destroy_all
       login_as :johan
+
       do_create_clone_post
+
       assert_redirected_to(new_user_key_path(users(:johan)))
     end
 
@@ -316,8 +311,10 @@ class RepositoriesControllerTest < ActionController::TestCase
       login_as :johan
       Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
       @repository.stubs(:has_commits?).returns(false)
-      @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
+      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
+
       do_create_clone_post(:name => "foobar")
+
       assert_redirected_to(project_repository_path(@project, @repository))
       assert_match(/cannot clone an empty/i, flash[:error])
     end
@@ -341,24 +338,21 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "post projects/1/repositories/3/create_copy is successful" do
       Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
       @repository.stubs(:has_commits?).returns(true)
-      @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
+      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
+
       do_create_clone_post(:name => "foo-clone")
+
       assert_response 201
     end
 
     should "renders text if repos cannot be cloned" do
       Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
       @repository.stubs(:has_commits?).returns(false)
-      @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
+      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
       do_create_clone_post(:name => "foobar")
       assert_response 422
       assert_match(/cannot clone an empty/i, @response.body)
     end
-  end
-
-  def do_writable_by_get(options={})
-    post(:writable_by, {:project_id => @project.slug, :id => @repository.name,
-      :username => "johan"}.merge(options))
   end
 
   context "#writable_by" do
@@ -382,7 +376,7 @@ class RepositoriesControllerTest < ActionController::TestCase
 
     should "get projects/1/repositories/2/writable_by?username=johan is false" do
       do_writable_by_get :username => "johan", :project_id => projects(:moes).slug,
-        :id => projects(:moes).repositories.first.name
+      :id => projects(:moes).repositories.first.name
       assert_response :success
       assert_equal "false", @response.body
     end
@@ -403,17 +397,15 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "scope to the correc project" do
-      repo_clone = Repository.new_by_cloning(repositories(:moes), users(:johan).login)
-      repo_clone.owner = users(:johan)
-      repo_clone.user = users(:johan)
-      repo_clone.name = "johansprojectrepos"
-      repo_clone.save!
+      cmd = CloneRepositoryCommand.new(MessageHub.new, repositories(:moes), users(:johan))
+      repo_clone = cmd.execute(cmd.build(CloneRepositoryInput.new(:name => "johansprojectrepos")))
 
       do_writable_by_get({
-        :user_id => users(:johan).to_param,
-        :project_id => projects(:moes).to_param,
-        :id => repo_clone.to_param,
-      })
+          :user_id => users(:johan).to_param,
+          :project_id => projects(:moes).to_param,
+          :id => repo_clone.to_param,
+        })
+
       assert_response :success
       assert_nil assigns(:project)
       assert_equal repo_clone.project, assigns(:containing_project)
@@ -424,13 +416,13 @@ class RepositoriesControllerTest < ActionController::TestCase
       project = projects(:johans)
       assert_not_nil project.site
       do_writable_by_get :project_id => project.to_param,
-        :id => project.repositories.mainlines.first.to_param
+      :id => project.repositories.mainlines.first.to_param
       assert_response :success
     end
 
     should "not identify a non-merge request git path as a merge request" do
       do_writable_by_get({
-        :git_path => "refs/heads/master"})
+          :git_path => "refs/heads/master"})
       assert_response :success
       assert_equal "true", @response.body
     end
@@ -439,10 +431,10 @@ class RepositoriesControllerTest < ActionController::TestCase
       @merge_request = merge_requests(:mikes_to_johans)
       assert !can_push?(@merge_request.user, @merge_request.target_repository)
       do_writable_by_get({
-        :username => @merge_request.user.to_param,
-        :project_id => @merge_request.target_repository.project.to_param,
-        :id => @merge_request.target_repository.to_param,
-        :git_path => "refs/merge-requests/#{@merge_request.to_param}"})
+          :username => @merge_request.user.to_param,
+          :project_id => @merge_request.target_repository.project.to_param,
+          :id => @merge_request.target_repository.to_param,
+          :git_path => "refs/merge-requests/#{@merge_request.to_param}"})
       assert_response :success
       assert_equal "true", @response.body
     end
@@ -450,10 +442,10 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "not allow other users than the owner of a merge request push to a merge request" do
       @merge_request = merge_requests(:mikes_to_johans)
       do_writable_by_get({
-        :username => "johan",
-        :project_id => @merge_request.target_repository.project.to_param,
-        :id => @merge_request.target_repository.to_param,
-        :git_path => "refs/merge-requests/#{@merge_request.to_param}"})
+          :username => "johan",
+          :project_id => @merge_request.target_repository.project.to_param,
+          :id => @merge_request.target_repository.to_param,
+          :git_path => "refs/merge-requests/#{@merge_request.to_param}"})
       assert_response :success
       assert_equal "false", @response.body
     end
@@ -461,10 +453,10 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "not allow pushes to non-existing merge requests" do
       @merge_request = merge_requests(:mikes_to_johans)
       do_writable_by_get({
-        :username => "johan",
-        :project_id => @merge_request.target_repository.project.to_param,
-        :id => @merge_request.target_repository.to_param,
-        :git_path => "refs/merge-requests/42"})
+          :username => "johan",
+          :project_id => @merge_request.target_repository.project.to_param,
+          :id => @merge_request.target_repository.to_param,
+          :git_path => "refs/merge-requests/42"})
       assert_response :success
       assert_equal "false", @response.body
     end
@@ -477,10 +469,6 @@ class RepositoriesControllerTest < ActionController::TestCase
       do_writable_by_get(:id => wiki.to_param)
       assert_response :success
     end
-  end
-
-  def do_config_get(options={})
-    get(:repository_config, {:project_id => @project.slug, :id => @repository.name}.merge(options))
   end
 
   context "#config" do
@@ -524,10 +512,6 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
   end
 
-  def do_delete(repos)
-    delete :destroy, :project_id => @project.slug, :id => repos.name
-  end
-
   context "#destroy" do
     setup do
       @project = projects(:johans)
@@ -559,7 +543,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         }, (Committership::CAN_ADMIN | Committership::CAN_COMMIT))
       assert admin?(users(:johan), repo.reload)
       delete :destroy, :project_id => repo.project.to_param,
-        :group_id => repo.owner.to_param, :id => repo.to_param
+      :group_id => repo.owner.to_param, :id => repo.to_param
       assert_equal nil, flash[:error]
       assert_equal "The repository was deleted", flash[:notice]
       assert_redirected_to(group_path(repo.owner))
@@ -582,7 +566,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       repo.save!
       login_as :mike
       get :confirm_delete, :group_id => repo.owner.to_param,
-        :project_id => repo.project.to_param, :id => repo.to_param
+      :project_id => repo.project.to_param, :id => repo.to_param
       assert_response :success
       assert_template "confirm_delete"
     end
@@ -634,6 +618,7 @@ class RepositoriesControllerTest < ActionController::TestCase
 
     should "GET new successfully, and set the owner to a project" do
       get :new, :project_id => @project.to_param
+
       assert_response :success
       assert_equal @project, assigns(:owner)
     end
@@ -715,7 +700,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       @repository.save!
       assert admin?(users(:mike), @repository)
       get :edit, :project_id => @repository.project.to_param,
-        :group_id => groups(:team_thunderbird).to_param, :id => @repository.to_param
+      :group_id => groups(:team_thunderbird).to_param, :id => @repository.to_param
       assert_response :success
     end
 
@@ -729,7 +714,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "PUT update successfully and creates an event when changing the description" do
       assert_incremented_by(@repository.events, :size, 1) do
         put :update, :project_id => @project.to_param, :id => @repository.to_param,
-          :repository => {:description => "blablabla"}
+        :repository => {:description => "blablabla"}
         @repository.events.reload
       end
       assert_redirected_to(project_repository_path(@project, @repository))
@@ -739,16 +724,16 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "be able to remove the repository description" do
       @repository.update_attribute(:description, "blabla bla")
       put :update, :project_id => @project.to_param, :id => @repository.to_param,
-        :repository => {:description => ""}
+      :repository => {:description => ""}
       assert @repository.reload.description.blank?,
-        "descr: #{@repository.description.inspect}"
+      "descr: #{@repository.description.inspect}"
     end
 
     should "update the repository name and create an event if a new name is provided" do
       description = @repository.description
       assert_incremented_by(@repository.events, :size, 1) do
         put :update, :project_id => @project.to_param, :id => @repository.to_param,
-          :repository => {:name => "new_name"}
+        :repository => {:name => "new_name"}
         @repository.events.reload
         @repository.reload
         assert_redirected_to project_repository_path(@project, @repository)
@@ -761,7 +746,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "not create an event on update if the description is not changed" do
       assert_no_difference("@repository.events.size") do
         put :update, :project_id => @project.to_param, :id => @repository.to_param,
-          :repository => {:description => @repository.description}
+        :repository => {:description => @repository.description}
         @repository.events.reload
       end
     end
@@ -776,7 +761,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "gets a list of the users' groups on update" do
       groups(:team_thunderbird).add_member(users(:johan), Role.admin)
       put :update, :project_id => @project.to_param, :id => @repository.to_param,
-            :repository => {:description => "foo"}
+      :repository => {:description => "foo"}
       assert_equal users(:johan).groups, assigns(:groups)
     end
 
@@ -799,9 +784,9 @@ class RepositoriesControllerTest < ActionController::TestCase
       new_group.add_member(users(:johan), Role.admin)
 
       put :update, :project_id => @repository.project.to_param,
-        :group_id => group.to_param, :id => @repository.to_param, :repository => {
-          :owner_id => new_group.id
-        }
+      :group_id => group.to_param, :id => @repository.to_param, :repository => {
+        :owner_id => new_group.id
+      }
       assert_response :redirect
       assert_redirected_to(project_repository_path(@project, @repository))
       assert_equal group, @repository.reload.owner
@@ -810,7 +795,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "be able to deny force pushing" do
       @repository.update_attribute(:deny_force_pushing, false)
       put :update, :project_id => @repository.project.to_param, :id => @repository.to_param,
-        :repository => { :deny_force_pushing => true }
+      :repository => { :deny_force_pushing => true }
       assert_response :redirect
       assert @repository.reload.deny_force_pushing?
     end
@@ -818,11 +803,11 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "be able to disable merge requests" do
       @repository.update_attribute(:merge_requests_enabled, true)
       put :update, :project_id => @repository.project.to_param, :id => @repository.to_param,
-        :repository => {}
+      :repository => {}
       assert_response :redirect
       assert !@repository.reload.merge_requests_enabled?
       put :update, :project_id => @repository.project.to_param, :id => @repository.to_param,
-        :repository => {:merge_requests_enabled => 1}
+      :repository => {:merge_requests_enabled => 1}
       assert_response :redirect
       assert @repository.reload.merge_requests_enabled?
     end
@@ -830,7 +815,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "be able to turn off notify_committers_on_new_merge_request" do
       @repository.update_attribute(:notify_committers_on_new_merge_request, true)
       put :update, :project_id => @repository.project.to_param, :id => @repository.to_param,
-        :repository => { :notify_committers_on_new_merge_request => false }
+      :repository => { :notify_committers_on_new_merge_request => false }
       assert_response :redirect
       assert !@repository.reload.notify_committers_on_new_merge_request?
     end
@@ -840,7 +825,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         the_head = @grit.get_head("test/master")
         @grit.expects(:update_head).with(the_head).returns(true)
         put :update, :project_id => @project.to_param, :id => @repository.to_param,
-              :repository => { :head => the_head.name }
+        :repository => { :head => the_head.name }
         assert_equal @grit.heads, assigns(:heads)
       end
     end
@@ -853,39 +838,39 @@ class RepositoriesControllerTest < ActionController::TestCase
       repository = project.repositories.clones.first
       committership = repository.committerships.new
       committership.committer = users(:mike)
-      committership.permissions = Committership::CAN_REVIEW | Committership::CAN_COMMIT
-      committership.save!
+       committership.permissions = Committership::CAN_REVIEW | Committership::CAN_COMMIT
+       committership.save!
 
-      Project.expects(:find_by_slug!).with(project.slug).returns(project)
-      repository.stubs(:has_commits?).returns(true)
+       Project.expects(:find_by_slug!).with(project.slug).returns(project)
+       repository.stubs(:has_commits?).returns(true)
 
-      get :show, :project_id => project.to_param, :id => repository.to_param
-      assert_equal nil, flash[:error]
-      assert_select("#sidebar ul.links li a[href=?]",
-        new_project_repository_merge_request_path(project, repository),
-        :content => "Request merge")
-    end
-  end
+       get :show, :project_id => project.to_param, :id => repository.to_param
+       assert_equal nil, flash[:error]
+       assert_select("#sidebar ul.links li a[href=?]",
+         new_project_repository_merge_request_path(project, repository),
+         :content => "Request merge")
+     end
+   end
 
-  context "search clones" do
-    setup do
-      @repo = repositories(:johans)
-      @clone_repo = repositories(:johans2)
-    end
+   context "search clones" do
+     setup do
+       @repo = repositories(:johans)
+       @clone_repo = repositories(:johans2)
+     end
 
-    should "return a list of clones matching the query" do
-      get :search_clones, :project_id => @repo.project.to_param, :id => @repo.to_param,
-        :filter => "projectrepos", :format => "json"
-      assert_response :success
-      assert assigns(:repositories).include?(@clone_repo)
-    end
-  end
+     should "return a list of clones matching the query" do
+       get :search_clones, :project_id => @repo.project.to_param, :id => @repo.to_param,
+         :filter => "projectrepos", :format => "json"
+       assert_response :success
+       assert assigns(:repositories).include?(@clone_repo)
+     end
+   end
 
-  should "not display git:// link when disabling the git daemon" do
-    Gitorious.stubs(:git_daemon).returns(nil)
-    project = projects(:johans)
-    repository = project.repositories.mainlines.first
-    repository.update_attribute(:ready, true)
+   should "not display git:// link when disabling the git daemon" do
+     Gitorious.stubs(:git_daemon).returns(nil)
+     project = projects(:johans)
+     repository = project.repositories.mainlines.first
+     repository.update_attribute(:ready, true)
 
     get :show, :project_id => project.to_param, :id => repository.to_param
 
@@ -897,69 +882,70 @@ class RepositoriesControllerTest < ActionController::TestCase
       enable_private_repositories
       @group = groups(:team_thunderbird)
       @repository = @project.repositories.first
+      Repository.any_instance.stubs(:has_commits?).returns(true)
     end
 
-    # should "disallow unauthorized users to get project repositories" do
-    #   get :index, :project_id => @project.to_param
-    #   assert_response 403
-    # end
+    should "disallow unauthorized users to get project repositories" do
+      get :index, :project_id => @project.to_param
+      assert_response 403
+    end
 
-    # should "disallow unauthorized users to get group repositories" do
-    #   get :index, :group_id => @group.to_param, :project_id => @project.to_param
-    #   assert_response 403
-    # end
+    should "disallow unauthorized users to get group repositories" do
+      get :index, :group_id => @group.to_param, :project_id => @project.to_param
+      assert_response 403
+    end
 
-    # should "disallow unauthorized users to get user repositories" do
-    #   get :index, :user_id => users(:johan).to_param, :project_id => @project.to_param
-    #   assert_response 403
-    # end
+    should "disallow unauthorized users to get user repositories" do
+      get :index, :user_id => users(:johan).to_param, :project_id => @project.to_param
+      assert_response 403
+    end
 
-    # should "allow authorize users to get project repositories" do
-    #   login_as :johan
-    #   get :index, :project_id => @project.to_param
-    #   assert_response 200
-    # end
+    should "allow authorize users to get project repositories" do
+      login_as :johan
+      get :index, :project_id => @project.to_param
+      assert_response 200
+    end
 
-    # should "allow authorize users to get group repositories" do
-    #   login_as :johan
-    #   get :index, :group_id => @group.to_param, :project_id => @project.to_param
-    #   assert_response 200
-    # end
+    should "allow authorize users to get group repositories" do
+      login_as :johan
+      get :index, :group_id => @group.to_param, :project_id => @project.to_param
+      assert_response 200
+    end
 
-    # should "allow authorize users to get user repositories" do
-    #   login_as :johan
-    #   get :index, :user_id => users(:johan).to_param, :project_id => @project.to_param
-    #   assert_response 200
-    # end
+    should "allow authorize users to get user repositories" do
+      login_as :johan
+      get :index, :user_id => users(:johan).to_param, :project_id => @project.to_param
+      assert_response 200
+    end
 
-    # should "disallow unauthorized users to show repository" do
-    #   get :show, :project_id => @project.to_param, :id => @repository.to_param
-    #   assert_response 403
-    # end
+    should "disallow unauthorized users to show repository" do
+      get :show, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 403
+    end
 
-    # should "allow authorized users to get show repository" do
-    #   login_as :johan
-    #   get :show, :project_id => @project.to_param, :id => @repository.to_param
-    #   assert_response 200
-    # end
+    should "allow authorized users to get show repository" do
+      login_as :johan
+      get :show, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 200
+    end
 
-    # should "disallow unauthorized users to get new" do
-    #   login_as :mike
-    #   get :new, :project_id => @project.to_param
-    #   assert_response 403
-    # end
+    should "disallow unauthorized users to get new" do
+      login_as :mike
+      get :new, :project_id => @project.to_param
+      assert_response 403
+    end
 
-    # should "allow authorized users to get new" do
-    #   login_as :johan
-    #   get :new, :project_id => @project.to_param
-    #   assert_response 200
-    # end
+    should "allow authorized users to get new" do
+      login_as :johan
+      get :new, :project_id => @project.to_param
+      assert_response 200
+    end
 
-    # should "disallow unauthorized users to create repository" do
-    #   login_as :mike
-    #   post :create, :project_id => @project.to_param, :repository => {}
-    #   assert_response 403
-    # end
+    should "disallow unauthorized users to create repository" do
+      login_as :mike
+      post :create, :project_id => @project.to_param, :repository => {}
+      assert_response 403
+    end
 
     should "allow authorized users to create repository" do
       login_as :johan
@@ -976,7 +962,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "allow authenticated users to clone repo" do
       login_as :johan
       do_clone_get
-      assert_response 302
+      assert_response 200
     end
 
     should "disallow unauthorized users to create clones" do
@@ -1085,6 +1071,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       enable_private_repositories(@repo)
       @group = groups(:team_thunderbird)
       @repository = @project.repositories.first
+      Repository.any_instance.stubs(:has_commits?).returns(true)
     end
 
     teardown do
@@ -1161,7 +1148,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "allow authenticated users to clone repo" do
       login_as :johan
       do_clone_get
-      assert_response 302
+      assert_response 200
     end
 
     should "disallow unauthorized users to create clones" do
@@ -1291,7 +1278,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         login_as :moe
         Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
         @repository.stubs(:has_commits?).returns(true)
-        @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
+        @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
       end
 
       should "clone private repository" do
@@ -1317,5 +1304,37 @@ class RepositoriesControllerTest < ActionController::TestCase
         assert_equal 3, @repository.content_memberships.length
       end
     end
+  end
+
+  def do_show_get(repos)
+    get :show, :project_id => @project.slug, :id => repos.name
+  end
+
+  def do_clone_get
+    get :clone, :project_id => @project.slug, :id => @repository.name
+  end
+
+  def do_create_clone_post(opts={})
+    post(:create_clone, {
+        :project_id => @project.slug,
+        :id => @repository.name,
+        :repository => { :owner_type => "User" }.merge(opts)
+      })
+  end
+
+  def do_writable_by_get(options={})
+    post(:writable_by, {
+        :project_id => @project.slug,
+        :id => @repository.name,
+        :username => "johan"
+      }.merge(options))
+  end
+
+  def do_config_get(options={})
+    get(:repository_config, {:project_id => @project.slug, :id => @repository.name}.merge(options))
+  end
+
+  def do_delete(repos)
+    delete :destroy, :project_id => @project.slug, :id => repos.name
   end
 end
