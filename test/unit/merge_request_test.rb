@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -748,7 +748,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_published("/queue/GitoriousMergeRequestBackend", {
                          "merge_request_id" => mr.id.to_s,
                          "action" => "delete",
-                         "target_path" => mr.target_repository.full_repository_path.to_s,
+                         "target_path" => mr.target_repository.full_repository_path,
                          "target_name" => mr.target_repository.url_path,
                          "merge_branch_name" => mr.merge_branch_name,
                          "target_repository_id" => mr.target_repository.id,
