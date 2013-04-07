@@ -35,7 +35,6 @@ class MergeRequestProcessor
     repo = merge_request.target_repository
     command = CreateTrackingRepositoryCommand.new(Gitorious::Hub, repo)
     tracking_repo = command.execute(command.build)
-    logger.info("Creating tracking repository at #{tracking_repo.real_gitdir} for merge request #{merge_request.to_param}")
-    RepositoryCloner.clone(tracking_repo.real_gitdir, merge_request.target_repository.real_gitdir)
+    logger.info("Created tracking repository at #{tracking_repo.real_gitdir} for merge request #{merge_request.to_param}")
   end
 end
