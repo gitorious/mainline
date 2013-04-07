@@ -15,16 +15,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "mutations"
+require "use_case"
 
-module ModelFinder
-  class Project < Mutations::Command
-    required { integer :id }
-    def execute; ::Project.find(id); end
-  end
+class CloneRepository
+  include UseCase
 
-  class User < Mutations::Command
-    required { integer :id }
-    def execute; ::User.find(id); end
+  def initialize(app, repository, user)
+    input_class(CloneRepositoryInput)
+    add_pre_condition(UserRequired.new(user))
+    add_pre_condition(CommitsRequired.new(repository))
+    add_pre_condition(RepositoryRateLimiting.new(user))
+    add_pre_condition(AuthorizationRequired.new(app, user, repository))
+    step(CloneRepositoryCommand.new(app, repository, user))
   end
 end

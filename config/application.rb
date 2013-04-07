@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +44,6 @@ module Gitorious
     # Add additional load paths for your own custom dirs
     config.autoload_paths << (Rails.root + "lib/gitorious").to_s
     config.autoload_paths << (Rails.root + "app").to_s
-    config.autoload_paths << (Rails.root + "mutations").to_s
     config.autoload_paths << (Rails.root + "finders").to_s
 
     # Avoid class cache errors like "A copy of Gitorious::XYZ has been removed

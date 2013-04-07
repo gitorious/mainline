@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
@@ -454,9 +454,9 @@ class ApplicationController < ActionController::Base
 
   def pre_condition_failed(outcome, &block)
     outcome.pre_condition_failed do |f|
-      f.when(:user_required) { redirect_to(login_path) }
-      f.when(:rate_limiting) { render_throttled_record }
-      f.when(:authorization_required) { render_unauthorized }
+      f.when(:user_required) { |c| redirect_to(login_path) }
+      f.when(:rate_limiting) { |c| render_throttled_record }
+      f.when(:authorization_required) { |c| render_unauthorized }
       block.call(f)
     end
   end

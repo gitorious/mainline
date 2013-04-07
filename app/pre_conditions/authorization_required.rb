@@ -16,16 +16,15 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class RateLimiting
-  def initialize(scope, actor, options)
-    @scope = scope
+class AuthorizationRequired
+  def initialize(auth, actor, subject)
+    @auth = auth
     @actor = actor
-    @options = options
+    @subject = subject
   end
 
   def satisfied?(params)
-    RecordThrottling.allowed?(@scope, @actor, @options)
+    return true if !Gitorious.private_repositories?
+    @auth.can_read?(@actor, @subject)
   end
-
-  def self.symbol; :rate_limiting; end
 end
