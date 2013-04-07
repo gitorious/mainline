@@ -154,11 +154,6 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
   end
 
-  should "return its target repository's tracking repository" do
-    tracking_repo = @merge_request.target_repository.create_tracking_repository
-    assert_equal tracking_repo, @merge_request.tracking_repository
-  end
-
   should "create a new version with the merge base between target branch and self" do
     @merge_request.expects(:calculate_merge_base).returns("ff0")
     version = @merge_request.create_new_version
@@ -592,8 +587,10 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
 
     should "send a push command from the source repository to the tracking repository" do
-      merge_request_repo = @merge_request.target_repository.create_tracking_repository
-      merge_request_repo_path = merge_request_repo.full_repository_path
+      cmd = CreateTrackingRepositoryCommand.new(MessageHub.new, @merge_request.target_repository)
+      cmd.execute(cmd.build)
+      mr_repo = @merge_request.target_repository.tracking_repository
+      merge_request_repo_path = mr_repo.full_repository_path
       branch_spec_base = "#{@merge_request.ending_commit}:refs/merge-requests"
       branch_spec = [branch_spec_base, @merge_request.to_param].join("/")
       tracking_branch_spec = [branch_spec_base, @merge_request.to_param, 1].join("/")
@@ -751,7 +748,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_published("/queue/GitoriousMergeRequestBackend", {
                          "merge_request_id" => mr.id.to_s,
                          "action" => "delete",
-                         "target_path" => mr.target_repository.full_repository_path,
+                         "target_path" => mr.target_repository.full_repository_path.to_s,
                          "target_name" => mr.target_repository.url_path,
                          "merge_branch_name" => mr.merge_branch_name,
                          "target_repository_id" => mr.target_repository.id,
