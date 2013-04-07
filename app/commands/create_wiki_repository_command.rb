@@ -34,10 +34,9 @@ class CreateWikiRepositoryCommand < CreateRepositoryCommand
   end
 
   def execute(repository)
-    repository.set_repository_path
-    repository.save!
-    create_owner_committership(repository)
-    @app.publish("/queue/GitoriousWikiRepositoryCreation", { :id => repository.id })
+    save(repository)
+    initialize_committership(repository)
+    schedule_creation(repository, :queue => "GitoriousWikiRepositoryCreation")
     repository
   end
 end
