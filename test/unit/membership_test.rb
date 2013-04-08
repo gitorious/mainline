@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -26,41 +26,37 @@ class MembershipTest < ActiveSupport::TestCase
     assert_equal users(:mike), memberships(:team_thunderbird_mike).user
   end
 
-  context 'Adding members to a group' do
+  context "Adding members to a group" do
     setup do
       @group = FactoryGirl.create(:group)
       @user = @group.creator
       @inviter = FactoryGirl.create(:user)
     end
 
-    should 'send a message to a newly added member after he is added to the group' do
-      @user.received_messages.destroy_all
-      membership = Membership.build_invitation(@inviter, :user => @user, :group => @group, :role => Role.member)
-      assert membership.save
-      assert_not_nil message = @user.received_messages.find(:first, :conditions => {:notifiable_id => membership.id, :notifiable_type => membership.class.name})
-      assert_equal(@inviter, message.sender)
-      assert_equal(membership, message.notifiable)
-    end
-
-    should 'nullify messages when deleted' do
+    should "nullify messages when deleted" do
       @invitee = FactoryGirl.create(:user)
       @user.received_messages.destroy_all
-      membership = Membership.build_invitation(@inviter, :user => @invitee, :group => @group, :role => Role.member)
-      membership.save
+      membership = Membership.create(:user => @invitee, :group => @group, :role => Role.member)
+      Message.create!({
+          :sender => @inviter,
+          :recipient => membership.user,
+          :subject => I18n.t("membership.notification_subject"),
+          :body => I18n.t("membership.notification_body", {
+              :inviter => @inviter.title,
+              :group => membership.group.title,
+              :role => membership.role.admin? ? "administrator" : "member"
+            }),
+          :notifiable => membership
+        })
       message = membership.messages.first
+
       assert membership.destroy
       assert_nil message.reload.notifiable_type
       assert_nil message.notifiable_id
     end
-
-    should 'not send a notification if no inviter is set' do
-      membership = Membership.new(:user => @user, :group => @group, :role => roles(:member))
-      membership.expects(:send_notification).never
-      membership.save
-    end
   end
 
-  context 'The group creator' do
+  context "The group creator" do
     setup do
       @group = FactoryGirl.create(:group)
       @creator = @group.creator
@@ -68,26 +64,26 @@ class MembershipTest < ActiveSupport::TestCase
       assert_equal @creator, @group.creator
     end
 
-    should 'not be demotable' do
-      @membership.role = Role.member
-      assert !@membership.save
-      assert !@membership.valid?
-    end
-
-    should 'not be deletable' do
+    should "not be deletable" do
       assert !@membership.destroy
     end
   end
 
-  context 'A membership' do
+  context "A membership" do
     setup {
       @group = FactoryGirl.create(:group)
       @membership = FactoryGirl.create(:membership, :user => @group.creator, :group => @group)
     }
 
-    should 'be unique for each user' do
-      duplicate_membership = Membership.new(:group => @membership.group, :user => @membership.user, :role => @membership.role)
-      assert !duplicate_membership.save
+    should "be unique for each user" do
+      duplicate_membership = Membership.new({
+          :group => @membership.group,
+          :user => @membership.user,
+          :role => @membership.role
+        })
+
+      assert @membership.uniq?
+      refute duplicate_membership.uniq?
     end
   end
 end

@@ -105,7 +105,7 @@ class RepositoriesController < ApplicationController
     outcome = cmd.execute({ :private => params[:private] }.merge(params[:repository]))
 
     outcome.pre_condition_failed do |f|
-      f.when(:project_admin_required) { |c| respond_denied_and_redirect_to(@project) }
+      f.when(:admin_required) { |c| respond_denied_and_redirect_to(@project) }
     end
 
     outcome.failure do |repository|

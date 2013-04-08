@@ -1,7 +1,6 @@
 # encoding: utf-8
 #--
 #   Copyright (C) 2013 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,35 +15,21 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "use_case"
 
-class Membership < ActiveRecord::Base
-  belongs_to :group
-  belongs_to :user
-  belongs_to :role
-  has_many :messages, :as => :notifiable
-  before_destroy :dont_delete_group_creator
-  before_destroy :nullify_messages
-  attr_accessor :inviter
+MembershipValidator = UseCase::Validator.define do
+  validates_presence_of :group, :user, :role
+  validate :unique_user
+  validate :group_creator_unchallenged
 
-  def breadcrumb_parent
-    Breadcrumb::Memberships.new(group)
+  def unique_user
+    errors.add(:user, "is already a member of this team") if !uniq?
   end
 
-  def title
-    "Member"
-  end
-
-  def uniq?
-    membership = Membership.where(:user_id => user_id, :group_id => group_id).first
-    membership.nil? || membership == self
-  end
-
-  protected
-  def dont_delete_group_creator
-    return user != group.creator
-  end
-
-  def nullify_messages
-    messages.update_all({:notifiable_id => nil, :notifiable_type => nil})
+  def group_creator_unchallenged
+    creator = group && group.creator
+    if user == creator && role != Role.admin
+      errors.add(:role, "The group creator cannot be demoted")
+    end
   end
 end

@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
   #   Copyright (C) 2009 Tor Arne Vestbø <torarnv@gmail.com>
   #
@@ -26,17 +26,17 @@
   });
 </script>
 
-<%= breadcrumbs_from(@root) -%>
+<%= breadcrumbs_from(Breadcrumb::NewMembership.new(group)) -%>
 
-<h2 class="content-header"><%= t("views.memberships.new_title", :group_memberships => link_to(h(@group.name), [@group, :memberships])).html_safe -%></h2>
+<h2 class="content-header"><%= t("views.memberships.new_title", :group_memberships => link_to(h(group.name), [group, :memberships])).html_safe -%></h2>
 
-<%= error_messages(@group) -%>
-<%= error_messages(@membership) -%>
-<%= form_for [@group, @membership] do |f| -%>
+<%= error_messages(group) -%>
+<%= error_messages(membership) -%>
+<%= form_for(:membership, :url => group_memberships_path(group)) do |f| -%>
 <fieldset>
   <li>
     <%= f.label :login, t("views.users.username") -%>
-    <div><%= text_field :user, :login, :id => "user_login_autocomplete" -%></div>
+    <div><%= text_field :user, :login, :id => "user_login_autocomplete", :value => login -%></div>
   </li>
   <li>
     <%= f.label :role, t("views.memberships.role") -%>
@@ -44,6 +44,6 @@
   </li>
 </fieldset>
 <fieldset class="submit">
-  <%= f.submit -%>
+  <%= f.submit :value => "Add member" -%>
 </fieldset>
 <% end -%>

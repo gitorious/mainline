@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -360,21 +360,6 @@ class MessageTest < ActiveSupport::TestCase
       message = Message.create(:sender => @sender, :recipient => @recipient, :subject => "Hey", :body => "Hello earth")
       assert_equal @sender.title, message.sender_name
       assert message.replies_enabled?
-    end
-
-    should "be Gitorious when a notifiable exists" do
-      group = FactoryGirl.create(:group, :creator => @sender)
-      membership = Membership.build_invitation(@sender, {
-        :group => group,
-        :user => @recipient,
-        :role => Role.admin
-      })
-
-      assert membership.save
-      assert_not_nil message = membership.messages.first
-      assert_equal @sender, message.sender
-      assert_equal "Gitorious", message.sender_name
-      assert !message.replies_enabled?
     end
   end
 end
