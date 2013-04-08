@@ -16,14 +16,14 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class ProjectAdminRequired
-  def initialize(auth, project, user)
+class AdminRequired
+  def initialize(auth, subject, actor)
     @auth = auth
-    @project = project
-    @user = user
+    @subject = subject
+    @actor = actor
   end
 
   def satisfied?(params)
-    @auth.admin?(@user, @project.owner)
+    @auth.admin?(@actor, @subject)
   end
 end
