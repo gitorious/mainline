@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -239,8 +239,8 @@ Gitorious::Application.routes.draw do
                 :only => [:show, :edit, :update, :destroy]
               }) do
       member do
-        post :create_clone
-        get :clone
+        post "/create_clone" => "repository_clones#create"
+        get "/clone" => "repository_clones#new"
         get :search_clones
         get :committers
         get :confirm_delete

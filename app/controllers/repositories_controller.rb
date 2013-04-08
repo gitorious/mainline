@@ -25,12 +25,11 @@ class RepositoriesController < ApplicationController
   include Gitorious::Messaging::Publisher
   before_filter :login_required,
     :except => [:index, :show, :writable_by, :repository_config, :search_clones]
-  before_filter :find_repository_owner, :except => [:writable_by, :repository_config, :clone, :create_clone]
+  before_filter :find_repository_owner, :except => [:writable_by, :repository_config]
   before_filter :unauthorized_repository_owner_and_project, :only => [:writable_by, :repository_config]
   before_filter :require_owner_adminship, :only => [:new, :create]
   before_filter :find_and_require_repository_adminship,
     :only => [:edit, :update, :confirm_delete, :destroy]
-  before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
   always_skip_session :only => [:repository_config, :writable_by]
   renders_in_site_specific_context :except => [:writable_by, :repository_config]
@@ -118,55 +117,6 @@ class RepositoriesController < ApplicationController
     outcome.success do |result|
       flash[:success] = I18n.t("repositories_controller.create_success")
       redirect_to([result.project, result])
-    end
-  end
-
-  undef_method :clone
-
-  def clone
-    project = Project.find_by_slug!(params[:project_id])
-    repository = project.repositories.find_by_name!(params[:id])
-    outcome = PrepareRepositoryClone.new(self, repository, current_user).execute({})
-
-    pre_condition_failed(outcome) do |f|
-      f.when(:commits_required) { |c| commits_required(repository) }
-    end
-
-    outcome.success do |result|
-      @root = Breadcrumb::CloneRepository.new(repository)
-      @repository_to_clone = repository
-      @repository = result
-      @owner = @repository.project
-    end
-  end
-
-  def create_clone
-    project = Project.find_by_slug!(params[:project_id])
-    repository = project.repositories.find_by_name!(params[:id])
-    outcome = CloneRepository.new(self, repository, current_user).execute(params[:repository])
-
-    pre_condition_failed(outcome) do |f|
-      f.when(:commits_required) { |c| commits_required(repository) }
-    end
-
-    outcome.failure do |clone|
-      # TODO: Eventually get rid of these
-      @repository = clone
-      @repository_to_clone = repository
-      @root = Breadcrumb::CloneRepository.new(repository)
-
-      respond_to do |format|
-        format.html { render :action => "clone" }
-        format.xml { render :xml => clone.errors, :status => :unprocessable_entity }
-      end
-    end
-
-    outcome.success do |clone|
-      location = project_repository_path(clone.project, clone)
-      respond_to do |format|
-        format.html { redirect_to(location) }
-        format.xml { render :xml => clone, :status => :created, :location => location }
-      end
     end
   end
 
@@ -350,18 +300,5 @@ class RepositoriesController < ApplicationController
   def repository_to_clone
     repo = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     authorize_access_to(repo)
-  end
-
-  def commits_required(repository)
-    respond_to do |format|
-      format.html do
-        flash[:error] = I18n.t("repositories_controller.create_clone_error")
-        redirect_to [repository.project, repository]
-      end
-      format.xml do
-        render :text => I18n.t("repositories_controller.create_clone_error"),
-        :location => [repository.project, repository], :status => :unprocessable_entity
-      end
-    end
   end
 end
