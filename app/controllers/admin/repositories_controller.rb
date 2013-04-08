@@ -28,7 +28,7 @@ class Admin::RepositoriesController < AdminController
 
   def recreate
     @repository = Repository.find(params[:id])
-    CreateProjectRepositoryCommand.new(Gitorious::Hub).schedule_creation(@repository)
+    CreateProjectRepositoryCommand.new(Gitorious::App).schedule_creation(@repository)
     flash[:notice] = "Recreation message posted"
     redirect_to :action => :index
   end

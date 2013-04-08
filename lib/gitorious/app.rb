@@ -16,9 +16,16 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "gitorious/messaging"
+require "gitorious/authorization"
+
+# This module is provided mainly for use with use cases that require
+# a message publisher and/or authorizor injected, e.g.:
+#
+#     cmd = PrepareRepositoryClone.new(Gitorious::App, repo, user)
 
 module Gitorious
-  module Hub
+  module App
     extend Gitorious::Messaging::Publisher
+    extend Gitorious::Authorization
   end
 end

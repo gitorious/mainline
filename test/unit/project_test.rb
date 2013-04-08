@@ -387,7 +387,7 @@ class ProjectTest < ActiveSupport::TestCase
         :name => "foo-hackers", :user_id => @owner.to_param)
       @group_repo = FactoryGirl.create(:repository, :project => @project,
         :owner => @group, :name => "group-repo", :user => @owner)
-      command = CreateTrackingRepositoryCommand.new(Gitorious::Hub, @repo)
+      command = CreateTrackingRepositoryCommand.new(Gitorious::App, @repo)
       @tracking_repo = command.execute(command.build)
     end
 
@@ -423,7 +423,7 @@ class ProjectTest < ActiveSupport::TestCase
         :name => "foo-hackers", :user_id => @owner.to_param)
       @group_repo = FactoryGirl.create(:repository, :project => @project,
         :owner => @group, :name => "group-repo", :user => @owner)
-      command = CreateTrackingRepositoryCommand.new(Gitorious::Hub, @repo)
+      command = CreateTrackingRepositoryCommand.new(Gitorious::App, @repo)
       @tracking_repo = command.execute(command.build)
     end
 
