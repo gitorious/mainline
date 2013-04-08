@@ -25,7 +25,7 @@ class CreateProjectRepository
     user = user.is_a?(Integer) ? User.find(user) : user
     input_class(NewRepositoryInput)
     add_pre_condition(UserRequired.new(user))
-    add_pre_condition(ProjectAdminRequired.new(app, project, user))
+    add_pre_condition(AdminRequired.new(app, project.owner, user))
     add_pre_condition(RepositoryRateLimiting.new(user))
     create_project = CreateProjectRepositoryCommand.new(app, project, user)
     step(create_project, :validator => RepositoryValidator)
