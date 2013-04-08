@@ -23,6 +23,8 @@ class RepositoryCloningProcessor
   def on_message(message)
     repository = Repository.find(message["id"].to_i)
     logger.info("Processing new repository clone: #<Repository id: #{repository.id}, :parent: #{repository.parent.repository_plain_path}, path: #{repository.repository_plain_path}>")
-    RepositoryCloner.clone(repository.parent.real_gitdir, repository.gitdir)
+    RepositoryCloner.clone_with_hooks(repository.parent.real_gitdir, repository.gitdir)
+    repository.ready = true
+    repository.save!
   end
 end
