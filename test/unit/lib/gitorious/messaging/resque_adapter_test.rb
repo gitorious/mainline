@@ -27,19 +27,22 @@ end
 class MessagingResqueAdapterTest < ActiveSupport::TestCase
   context "publisher" do
     should_map_resque_queues_to_processors(ResquePublisher) do
-      { "/queue/GitoriousRepositoryCreation" => RepositoryCreationProcessor,
-        "/queue/GitoriousTrackingRepositoryCreation" => TrackingRepositoryCreationProcessor,
-        "/queue/GitoriousWikiRepositoryCreation" => WikiRepositoryCreationProcessor,
-        "/queue/GitoriousRepositoryDeletion" => RepositoryDeletionProcessor,
-        "/queue/GitoriousPush" => PushProcessor,
+      {
         "/queue/GitoriousDestroySshKey" => DestroySshKeyProcessor,
-        "/queue/GitoriousNewSshKey" => NewSshKeyProcessor,
-        "/queue/GitoriousRepositoryArchiving" => RepositoryArchivingProcessor,
-        "/queue/GitoriousEmailNotifications" => MessageForwardingProcessor,
-        "/queue/GitoriousMergeRequestCreation" => MergeRequestProcessor,
         "/queue/GitoriousMergeRequestBackend" => MergeRequestGitBackendProcessor,
+        "/queue/GitoriousMergeRequestCreation" => MergeRequestProcessor,
         "/queue/GitoriousMergeRequestVersionDeletion" => MergeRequestVersionProcessor,
-        "/queue/GitoriousPostReceiveWebHook" => WebHookProcessor }
+        "/queue/GitoriousEmailNotifications" => MessageForwardingProcessor,
+        "/queue/GitoriousNewSshKey" => NewSshKeyProcessor,
+        "/queue/GitoriousPush" => PushProcessor,
+        "/queue/GitoriousRepositoryArchiving" => RepositoryArchivingProcessor,
+        "/queue/GitoriousRepositoryCloning" => RepositoryCloningProcessor,
+        "/queue/GitoriousRepositoryCreation" => RepositoryCreationProcessor,
+        "/queue/GitoriousTrackingRepositoryCreation" => TrackingRepositoryCreationProcessor,
+        "/queue/GitoriousRepositoryDeletion" => RepositoryDeletionProcessor,
+        "/queue/GitoriousPostReceiveWebHook" => WebHookProcessor,
+        "/queue/GitoriousWikiRepositoryCreation" => WikiRepositoryCreationProcessor
+      }
     end
   end
 
