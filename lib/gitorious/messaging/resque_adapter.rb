@@ -23,19 +23,20 @@ module Gitorious::Messaging::ResqueAdapter
   module Publisher
     QUEUES = {
       # Maps queue => processor class (see app/processors)
+      "GitoriousDestroySshKey" => "DestroySshKey",
+      "GitoriousMergeRequestBackend" => "MergeRequestGitBackend",
+      "GitoriousMergeRequestCreation" => "MergeRequest",
+      "GitoriousMergeRequestVersionDeletion" => "MergeRequestVersion",
+      "GitoriousEmailNotifications" => "MessageForwarding",
+      "GitoriousNewSshKey" => "NewSshKey",
+      "GitoriousPush" => "Push",
+      "GitoriousRepositoryArchiving" => "RepositoryArchiving",
+      "GitoriousRepositoryCloning" => "RepositoryCloning",
       "GitoriousRepositoryCreation" => "RepositoryCreation",
       "GitoriousTrackingRepositoryCreation" => "TrackingRepositoryCreation",
-      "GitoriousWikiRepositoryCreation" => "WikiRepositoryCreation",
       "GitoriousRepositoryDeletion" => "RepositoryDeletion",
-      "GitoriousPush" => "Push",
-      "GitoriousDestroySshKey" => "DestroySshKey",
-      "GitoriousNewSshKey" => "NewSshKey",
-      "GitoriousRepositoryArchiving" => "RepositoryArchiving",
-      "GitoriousEmailNotifications" => "MessageForwarding",
-      "GitoriousMergeRequestCreation" => "MergeRequest",
-      "GitoriousMergeRequestBackend" => "MergeRequestGitBackend",
-      "GitoriousMergeRequestVersionDeletion" => "MergeRequestVersion",
-      "GitoriousPostReceiveWebHook" => "WebHook"
+      "GitoriousPostReceiveWebHook" => "WebHook",
+      "GitoriousWikiRepositoryCreation" => "WikiRepositoryCreation"
     }
 
     # Locate the correct class to pick queue from
