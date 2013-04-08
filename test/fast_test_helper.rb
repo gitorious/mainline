@@ -178,6 +178,16 @@ if !defined?(Rails)
   end
 
   class Group < TestHelper::Model
+    attr_accessor :creator
+  end
+
+  class Membership < TestHelper::Model
+    attr_accessor :user, :group, :role
+  end
+
+  class Role
+    def self.member; :member; end
+    def self.admin; :admin; end
   end
 
   class WikiRepository

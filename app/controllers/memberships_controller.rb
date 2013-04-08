@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 class MembershipsController < ApplicationController
   before_filter :find_group
-  before_filter :ensure_group_adminship, :except => [:index, :show]
+  before_filter :ensure_group_adminship, :except => [:index, :show, :create]
   renders_in_global_context
 
   def index
@@ -35,26 +35,23 @@ class MembershipsController < ApplicationController
   end
 
   def new
-    @membership = @group.memberships.new
-    @root = Breadcrumb::NewMembership.new(@group)
+    render_form(@group.memberships.new)
   end
 
   def create
-    @membership = Membership.build_invitation(current_user,
-      :group  => @group,
-      :user   => User.find_by_login!(params[:user][:login]),
-      :role   => Role.find(params[:membership][:role_id]))
-    @root = Breadcrumb::NewMembership.new(@group)
-    if @membership.save
+    input = { :login => params[:user][:login], :role => params[:membership][:role_id] }
+    outcome = CreateMembership.new(self, @group, current_user).execute(input)
+
+    pre_condition_failed(outcome) do |f|
+      f.when(:admin_required) { |c| access_denied }
+    end
+
+    outcome.success do |result|
       flash[:success] = I18n.t("memberships_controller.membership_created")
       redirect_to group_memberships_path(@group)
-    else
-      render :action => "new"
     end
-  rescue ActiveRecord::RecordNotFound
-    flash[:error] = "No user was found with that username"
-    @membership = @group.memberships.new
-    render :action => "new"
+
+    outcome.failure { |membership| render_form(membership) }
   end
 
   def edit
@@ -93,5 +90,13 @@ class MembershipsController < ApplicationController
     unless admin?(current_user, @group)
       access_denied and return
     end
+  end
+
+  def render_form(membership)
+    render(:action => "new", :locals => {
+        :membership => membership,
+        :group => @group,
+        :login => params[:user] && params[:user][:login]
+      })
   end
 end
