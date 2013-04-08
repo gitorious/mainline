@@ -26,6 +26,7 @@ class CloneRepository
     add_pre_condition(CommitsRequired.new(repository))
     add_pre_condition(RepositoryRateLimiting.new(user))
     add_pre_condition(AuthorizationRequired.new(app, user, repository))
-    step(CloneRepositoryCommand.new(app, repository, user))
+    command = CloneRepositoryCommand.new(app, repository, user)
+    step(command, :validator => RepositoryValidator)
   end
 end
