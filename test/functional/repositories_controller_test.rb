@@ -204,157 +204,6 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
   end
 
-  context "#clone" do
-    setup do
-      login_as :johan
-      @project = projects(:johans)
-      @repository = @project.repositories.mainlines.first
-    end
-
-    should "require login" do
-      session[:user_id] = nil
-      do_clone_get
-      assert_redirected_to(new_sessions_path)
-    end
-
-    should "GET projects/1/repositories/3/clone is successful" do
-      Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
-      @repository.stubs(:has_commits?).returns(true)
-      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
-
-      do_clone_get
-
-      assert_equal nil, flash[:error]
-      assert_response :success
-      assert_equal @repository, assigns(:repository_to_clone)
-      assert_instance_of Repository, assigns(:repository)
-      assert_equal "johans-johansprojectrepos", assigns(:repository).name
-    end
-
-    should "redirects to new_account_key_path if no keys on user" do
-      users(:johan).ssh_keys.destroy_all
-      login_as :johan
-      do_clone_get
-      assert_redirected_to(new_user_key_path(users(:johan)))
-    end
-
-    should "redirects with a flash if repos cannot be cloned" do
-      login_as :johan
-      Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
-      @repository.stubs(:has_commits?).returns(false)
-      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
-
-      do_clone_get
-
-      assert_redirected_to(project_repository_path(@project, @repository))
-      assert_match(/cannot clone an empty/i, flash[:error])
-    end
-  end
-
-  context "#create_clone" do
-    setup do
-      login_as :johan
-      @project = projects(:johans)
-      @repository = @project.repositories.mainlines.first
-    end
-
-    should "require login" do
-      session[:user_id] = nil
-      do_create_clone_post
-      assert_redirected_to(new_sessions_path)
-    end
-
-    should "post projects/1/repositories/3/create_clone is successful" do
-      Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
-      @repository.stubs(:has_commits?).returns(true)
-
-      do_create_clone_post(:name => "foo-clone")
-
-      assert_response :redirect
-    end
-
-    should "post projects/1/repositories/3/create_clone is successful sets the owner to the user" do
-      Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
-      @repository.stubs(:has_commits?).returns(true)
-      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
-
-      do_create_clone_post(:name => "foo-clone", :owner_type => "User")
-
-      assert_response :redirect
-      assert_equal users(:johan), Repository.last.owner
-      assert_equal Repository::KIND_USER_REPO, Repository.last.kind
-    end
-
-    should "post projects/1/repositories/3/create_clone is successful sets the owner to the group" do
-      groups(:team_thunderbird).add_member(users(:johan), Role.admin)
-      Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
-      @repository.stubs(:has_commits?).returns(true)
-      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
-
-      do_create_clone_post(:name => "foo-clone", :owner_type => "Group", :owner_id => groups(:team_thunderbird).id)
-
-      assert_response :redirect
-      assert_equal groups(:team_thunderbird), Repository.last.owner
-      assert_equal Repository::KIND_TEAM_REPO, Repository.last.kind
-    end
-
-    should "redirects to new_user_key_path if no keys on user" do
-      users(:johan).ssh_keys.destroy_all
-      login_as :johan
-
-      do_create_clone_post
-
-      assert_redirected_to(new_user_key_path(users(:johan)))
-    end
-
-    should "redirects with a flash if repos cannot be cloned" do
-      login_as :johan
-      Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
-      @repository.stubs(:has_commits?).returns(false)
-      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
-
-      do_create_clone_post(:name => "foobar")
-
-      assert_redirected_to(project_repository_path(@project, @repository))
-      assert_match(/cannot clone an empty/i, flash[:error])
-    end
-  end
-
-  context "#create_clone as XML" do
-
-    setup do
-      authorize_as :johan
-      @project = projects(:johans)
-      @repository = @project.repositories.mainlines.first
-      @request.env["HTTP_ACCEPT"] = "application/xml"
-    end
-
-    should "require login" do
-      authorize_as(nil)
-      do_create_clone_post(:name => "foo")
-      assert_response 401
-    end
-
-    should "post projects/1/repositories/3/create_copy is successful" do
-      Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
-      @repository.stubs(:has_commits?).returns(true)
-      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
-
-      do_create_clone_post(:name => "foo-clone")
-
-      assert_response 201
-    end
-
-    should "renders text if repos cannot be cloned" do
-      Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
-      @repository.stubs(:has_commits?).returns(false)
-      @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
-      do_create_clone_post(:name => "foobar")
-      assert_response 422
-      assert_match(/cannot clone an empty/i, @response.body)
-    end
-  end
-
   context "#writable_by" do
     setup do
       login_as :johan
@@ -953,30 +802,6 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response 200
     end
 
-    should "disallow unauthenticated users to clone repo" do
-      login_as :mike
-      do_clone_get
-      assert_response 403
-    end
-
-    should "allow authenticated users to clone repo" do
-      login_as :johan
-      do_clone_get
-      assert_response 200
-    end
-
-    should "disallow unauthorized users to create clones" do
-      login_as :mike
-      do_create_clone_post(:name => "foo-clone")
-      assert_response 403
-    end
-
-    should "allow authorized users to create clones" do
-      login_as :johan
-      do_create_clone_post(:name => "foo-clone")
-      assert_response 302
-    end
-
     should "disallow unauthorized user to edit repository" do
       login_as :mike
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
@@ -1139,30 +964,6 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response 200
     end
 
-    should "disallow unauthenticated users to clone repo" do
-      login_as :mike
-      do_clone_get
-      assert_response 403
-    end
-
-    should "allow authenticated users to clone repo" do
-      login_as :johan
-      do_clone_get
-      assert_response 200
-    end
-
-    should "disallow unauthorized users to create clones" do
-      login_as :mike
-      do_create_clone_post(:name => "foo-clone")
-      assert_response 403
-    end
-
-    should "allow authorized users to create clones" do
-      login_as :johan
-      do_create_clone_post(:name => "foo-clone")
-      assert_response 302
-    end
-
     should "disallow unauthorized user to edit repository" do
       login_as :mike
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
@@ -1272,54 +1073,10 @@ class RepositoriesControllerTest < ActionController::TestCase
         assert Repository.last.private?
       end
     end
-
-    context "cloning" do
-      setup do
-        login_as :moe
-        Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
-        @repository.stubs(:has_commits?).returns(true)
-        @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
-      end
-
-      should "clone private repository" do
-        @repository.make_private
-        @repository.add_member(users(:moe))
-        do_create_clone_post(:name => "foo-clone")
-        assert Repository.last.private?
-      end
-
-      should "clone public repository" do
-        do_create_clone_post(:name => "foo-clone")
-        assert !Repository.last.private?
-      end
-
-      should "add parent members to new repository" do
-        @repository.make_private
-        @repository.add_member(users(:moe))
-        @repository.add_member(users(:old_timer))
-        do_create_clone_post(:name => "foo-clone")
-        assert can_read?(users(:old_timer), Repository.last)
-        assert can_read?(users(:moe), Repository.last)
-        assert can_read?(@repository.owner, Repository.last)
-        assert_equal 3, @repository.content_memberships.length
-      end
-    end
   end
 
   def do_show_get(repos)
     get :show, :project_id => @project.slug, :id => repos.name
-  end
-
-  def do_clone_get
-    get :clone, :project_id => @project.slug, :id => @repository.name
-  end
-
-  def do_create_clone_post(opts={})
-    post(:create_clone, {
-        :project_id => @project.slug,
-        :id => @repository.name,
-        :repository => { :owner_type => "User" }.merge(opts)
-      })
   end
 
   def do_writable_by_get(options={})
