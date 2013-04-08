@@ -43,19 +43,20 @@ module Gitorious::Messaging::SyncAdapter
 
   module Publisher
     QUEUES = {
-      "/queue/GitoriousRepositoryCreation" => "repository_creation",
-      "/queue/GitoriousTrackingRepositoryCreation" => "tracking_repository_creation",
-      "/queue/GitoriousWoloRepositoryCreation" => "wiki_repository_creation",
-      "/queue/GitoriousRepositoryDeletion" => "repository_deletion",
-      "/queue/GitoriousPush" => "push",
       "/queue/GitoriousDestroySshKey" => "destroy_ssh_key",
-      "/queue/GitoriousNewSshKey" => "new_ssh_key",
-      "/queue/GitoriousRepositoryArchiving" => "repository_archiving",
-      "/queue/GitoriousEmailNotifications" => "message_forwarding",
-      "/queue/GitoriousMergeRequestCreation" => "merge_request",
       "/queue/GitoriousMergeRequestBackend" => "merge_request_git_backend",
+      "/queue/GitoriousMergeRequestCreation" => "merge_request",
       "/queue/GitoriousMergeRequestVersionDeletion" => "merge_request_version",
-      "/queue/GitoriousPostReceiveWebHook" => "web_hook"
+      "/queue/GitoriousEmailNotifications" => "message_forwarding",
+      "/queue/GitoriousNewSshKey" => "new_ssh_key",
+      "/queue/GitoriousPush" => "push",
+      "/queue/GitoriousRepositoryArchiving" => "repository_archiving",
+      "/queue/GitoriousRepositoryCloning" => "repository_cloning",
+      "/queue/GitoriousRepositoryCreation" => "repository_creation",
+      "/queue/GitoriousRepositoryDeletion" => "repository_deletion",
+      "/queue/GitoriousTrackingRepositoryCreation" => "tracking_repository_creation",
+      "/queue/GitoriousPostReceiveWebHook" => "web_hook",
+      "/queue/GitoriousWikiRepositoryCreation" => "wiki_repository_creation"
     }
 
     # Locate the correct class to pick queue from
