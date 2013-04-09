@@ -21,6 +21,6 @@ class UserFinder
   end
 
   def by_id(id)
-    User.find(id.to_i)
+    User.find_by_id(id.to_i)
   end
 end
