@@ -23,6 +23,10 @@ class WikiRepositoryCreationProcessor
   def on_message(message)
     repository = Repository.find(message["id"].to_i)
     logger.info("Processing new wiki repository: #<Repository id: #{repository.id}, path: #{repository.repository_plain_path}>")
-    RepositoryCloner.clone_with_hooks(repository.parent.real_gitdir, repository.gitdir)
+    full_path = RepositoryRoot.expand(repository.gitdir)
+    GitBackend.create(full_path.to_s)
+    RepositoryHooks.create(full_path)
+    repository.ready = true
+    repository.save!
   end
 end
