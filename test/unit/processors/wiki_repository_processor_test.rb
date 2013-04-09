@@ -31,8 +31,21 @@ class WikiRepositoryCreationProcessorTest < ActiveSupport::TestCase
     @processor = WikiRepositoryCreationProcessor.new
   end
 
-  should "clone git repository with hooks" do
-    RepositoryCloner.expects(:clone_with_hooks).with("b13/de7/574a4a04fb250257dcb5a7d6ef01dcf290.git", "moes-project/tracking.git")
+  should "create git repository" do
+    GitBackend.expects(:create).with("/tmp/git/repositories/moes-project/tracking.git")
     @processor.on_message("id" => @repository.id)
+  end
+
+  should "create repository hooks" do
+    RepositoryHooks.expects(:create)
+    @processor.on_message("id" => @repository.id)
+  end
+
+  should "mark repository as ready" do
+    @repository.ready = false
+    @repository.save!
+    @processor.on_message("id" => @repository.id)
+
+    assert @repository.reload.ready?
   end
 end
