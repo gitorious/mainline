@@ -71,4 +71,13 @@ class CreateMembershipTest < ActiveSupport::TestCase
     refute outcome.success?
     refute_nil outcome.failure
   end
+
+  should "create membership from user id and symbolic role" do
+    outcome = execute(:role_name => "member", :user_id => users(:moe).id)
+
+    assert outcome.success?, outcome.to_s
+    assert_equal Role.member, outcome.result.role
+    assert_equal @group, outcome.result.group
+    assert_equal users(:moe), outcome.result.user
+  end
 end
