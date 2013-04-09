@@ -119,7 +119,7 @@ class ProjectsController < ApplicationController
       end
     end
 
-    outcome.failure do |validation, project|
+    outcome.failure do |project|
       render(:action => "new", :locals => {
         :project => project,
         :root => Breadcrumb::NewProject.new

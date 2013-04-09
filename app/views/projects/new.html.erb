@@ -24,7 +24,7 @@
 <%= breadcrumbs_from(root) -%>
 <h2 class="content-header"><%= t("views.projects.new_title") %></h2>
 <%= error_messages(project) -%>
-<%= form_for(project, :url => projects_path, :builder => GitoriousFormBuilder) do |f| -%>
+<%= form_for(:project, :url => projects_path, :builder => GitoriousFormBuilder) do |f| -%>
   <%= render :partial => "form", :locals => { :form => f, :project => project } -%>
 
   <% if Gitorious.projects_default_private? %>

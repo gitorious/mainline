@@ -262,7 +262,7 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
-    use_case (0.11.0)
+    use_case (0.12.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
     will_paginate (3.0.3)
@@ -319,6 +319,6 @@ DEPENDENCIES
   thinking-sphinx (~> 2.0.10)
   trinidad
   unicorn (~> 4.3.1)
-  use_case (~> 0.11)
+  use_case (~> 0.12)
   virtus!
   will_paginate (~> 3.0)
