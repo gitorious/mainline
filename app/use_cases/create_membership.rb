@@ -34,8 +34,8 @@ class CreateMembershipCommand
     Membership.new({
         :inviter => @user,
         :group => @group,
-        :user => User.find_by_login(params.login),
-        :role => Role.find(params.role)
+        :user => user(params),
+        :role => role(params)
       })
   end
 
@@ -53,19 +53,31 @@ class CreateMembershipCommand
         :notifiable => membership
       })
   end
+
+  def user(params)
+    return User.find_by_login(params.login) if params.login
+    User.find_by_id(params.user_id)
+  end
+
+  def role(params)
+    return Role.find(params.role) if params.role
+    Role.find_by_name(params.role_name)
+  end
 end
 
 class NewMembershipParams
   include Virtus
   attribute :login, String
+  attribute :user_id, Integer
   attribute :role, Integer
+  attribute :role_name, String
 end
 
 class CreateMembership
   include UseCase
 
   def initialize(auth, group, user = nil)
-    user = User.find(user) if user.is_a?(Integer)
+    group = Group.find(group) if group.is_a?(Integer)
     input_class(NewMembershipParams)
     add_pre_condition(AdminRequired.new(auth, group, user)) if user
     step(CreateMembershipCommand.new(group, user), :validator => MembershipValidator)
