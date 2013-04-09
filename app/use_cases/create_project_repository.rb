@@ -16,6 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "use_case"
+require "commands/create_project_repository_command"
 
 class CreateProjectRepository
   include UseCase
