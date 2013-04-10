@@ -11,6 +11,8 @@ config/database.yml
 config/gitorious.yml
 config/memcache.yml
 config/resque.yml
+config/unicorn.rb
+config/*.sphinx.conf
 data/hooks/custom-pre-receive
 data/hooks/custom-post-receive
 data/hooks/custom-update
