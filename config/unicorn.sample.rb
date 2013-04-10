@@ -49,8 +49,13 @@ after_fork do |server, worker|
     user = gitorious_config("user")
     if user
       group = user
-      target_uid = Etc.getpwnam(user).uid
-      target_gid = Etc.getgrnam(group).gid
+      etc_user = Etc.getpwnam(user)
+      target_uid = etc_user.uid
+      begin
+        target_gid = Etc.getgrnam(group).gid
+      rescue
+        target_gid = etc_user.gid
+      end
       worker.tmp.chown(target_uid, target_gid)
       if uid != target_uid || gid != target_gid
         Process.initgroups(user, target_gid)
