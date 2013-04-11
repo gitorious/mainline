@@ -30,6 +30,6 @@
 <% end -%>
 <%= yield :extra_head -%>
 <%= csrf_meta_tag %>
-<!--[if IE 8]><link rel="stylesheet" href="/stylesheets/ie8.css" type="text/css"><![endif]-->
-<!--[if IE 7]><link rel="stylesheet" href="/stylesheets/ie7.css" type="text/css"><![endif]-->
+<!--[if IE 8]><%= stylesheet_link_tag "ie8", :cache => true %><![endif]-->
+<!--[if IE 7]><%= stylesheet_link_tag "ie7", :cache => true %><![endif]-->
 <%= Gitorious::Configuration.get("extra_html_head_data", "").html_safe -%>
