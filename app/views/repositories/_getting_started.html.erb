@@ -33,6 +33,6 @@ git config --global user.email "<%=h current_user.email -%>"
 <pre class="no-indent">
 git checkout master
 git remote add origin <%=h @repository.push_url %>
-git push origin master
+git push -u origin master
 </pre>
 <% end -%>
