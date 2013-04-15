@@ -21,12 +21,12 @@
   #++
   %>
 
-<%= breadcrumbs_from(Breadcrumb::NewRepository.new(@project)) -%>
+<%= breadcrumbs_from(Breadcrumb::NewRepository.new(project)) -%>
 
-<h2 class="content-header">Add new repository to <%= link_to h(@owner.title), @owner -%></h2>
+<h2 class="content-header">Add new repository to <%= link_to h(owner.title), owner -%></h2>
 
-<%= error_messages(@repository) -%>
-<%= form_for(url_for(:project_id => @repository.project.to_param, :repository_id => @repository.to_param)) do |f| -%>
+<%= error_messages(repository) -%>
+<%= form_for(url_for(:project_id => repository.project.to_param, :repository_id => repository.to_param)) do |f| -%>
   <fieldset>
     <li>
       <%= f.label :name -%>
@@ -71,8 +71,8 @@
 <% end -%>
 <%= content_for :sidebar do -%>
   <h2>Information</h2>
-  <p>The repository will be in the <strong><%= link_to h(@project.title), @project -%></strong> project,
-    and owned by <strong><%= link_to h(@repository.owner.title), @repository.owner -%></strong>
-    (a <%= @repository.owner.class.human_name.downcase -%>).
+  <p>The repository will be in the <strong><%= link_to h(project.title), project -%></strong> project,
+    and owned by <strong><%= link_to h(repository.owner.title), repository.owner -%></strong>
+    (a <%= repository.owner.class.human_name.downcase -%>).
   </p>
 <% end -%>

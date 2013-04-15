@@ -447,24 +447,6 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_redirected_to(project_path(@project))
     end
 
-    should "only be allowed to add new repositories to Project" do
-      get :new, :project_id => @project.to_param, :group_id => @group.to_param
-      assert_match(/can only add new repositories directly to a project/, flash[:error])
-      assert_redirected_to(group_path(@group))
-
-      get :new, :project_id => @project.to_param, :user_id => @user.to_param
-      assert_match(/can only add new repositories directly to a project/, flash[:error])
-      assert_redirected_to(user_path(@user))
-
-      post :create, :project_id => @project.to_param, :group_id => @group.to_param, :repository => {}
-      assert_match(/can only add new repositories directly to a project/, flash[:error])
-      assert_redirected_to(group_path(@group))
-
-      post :create, :project_id => @project.to_param, :user_id => @user.to_param, :repository => {}
-      assert_match(/can only add new repositories directly to a project/, flash[:error])
-      assert_redirected_to(user_path(@user))
-    end
-
     should "GET new successfully, and set the owner to a project" do
       get :new, :project_id => @project.to_param
 

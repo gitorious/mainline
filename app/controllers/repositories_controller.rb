@@ -23,14 +23,11 @@
 
 class RepositoriesController < ApplicationController
   include Gitorious::Messaging::Publisher
-  before_filter :login_required,
-  :except => [:index, :show, :writable_by, :repository_config]
+  before_filter :login_required, :except => [:index, :show, :writable_by, :repository_config]
   before_filter :find_repository_owner, :except => [:writable_by, :repository_config]
   before_filter :unauthorized_repository_owner_and_project, :only => [:writable_by, :repository_config]
-  before_filter :require_owner_adminship, :only => [:new, :create]
   before_filter :find_and_require_repository_adminship,
   :only => [:edit, :update, :confirm_delete, :destroy]
-  before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
   always_skip_session :only => [:repository_config, :writable_by]
   renders_in_site_specific_context :except => [:writable_by, :repository_config]
 
@@ -72,26 +69,21 @@ class RepositoriesController < ApplicationController
   end
 
   def new
-    @repository = @project.repositories.new
-    @repository.kind = Repository::KIND_PROJECT_REPO
-    @repository.owner = @project.owner
-    if @project.repositories.mainlines.count == 0
-      @repository.name = @project.slug
-    end
+    outcome = PrepareProjectRepository.new(self, @project, current_user).execute({})
+    pre_condition_failed(outcome)
+    outcome.success { |result| render_form(result, @project, @owner) }
   end
 
   def create
     cmd = CreateProjectRepository.new(self, @project, current_user)
     outcome = cmd.execute({ :private => params[:private] }.merge(params[:repository]))
 
-    outcome.pre_condition_failed do |f|
+    pre_condition_failed(outcome) do |f|
       f.when(:admin_required) { |c| respond_denied_and_redirect_to(@project) }
     end
 
     outcome.failure do |repository|
-      @repository = repository
-      @root = Breadcrumb::NewRepository.new(@project)
-      render :action => "new"
+      render_form(repository, @project, @owner)
     end
 
     outcome.success do |result|
@@ -188,11 +180,12 @@ class RepositoriesController < ApplicationController
   end
 
   private
-  def require_owner_adminship
-    unless admin?(current_user, @owner)
-      respond_denied_and_redirect_to(@owner)
-      return
-    end
+  def render_form(repository, project, owner)
+    render(:action => :new, :locals => {
+        :repository => repository,
+        :project => project,
+        :owner => owner
+      })
   end
 
   def find_and_require_repository_adminship
@@ -214,22 +207,6 @@ class RepositoriesController < ApplicationController
         render :text => I18n.t( "repositories_controller.adminship_error"),
         :status => :forbidden
       }
-    end
-  end
-
-  def only_projects_can_add_new_repositories
-    if !@owner.is_a?(Project)
-      respond_to do |format|
-        format.html {
-          flash[:error] = I18n.t("repositories_controller.only_projects_create_new_error")
-          redirect_to(@owner)
-        }
-        format.xml  {
-          render :text => I18n.t( "repositories_controller.only_projects_create_new_error"),
-          :status => :forbidden
-        }
-      end
-      return
     end
   end
 
@@ -277,5 +254,11 @@ class RepositoriesController < ApplicationController
   def unfiltered_paginated_events
     @repository.events.top.paginate(:page => params[:page],
       :order => "created_at desc")
+  end
+
+  def pre_condition_failed(outcome)
+    super(outcome) do |f|
+      f.when(:admin_required) { |c| respond_denied_and_redirect_to(@project) }
+    end
   end
 end
