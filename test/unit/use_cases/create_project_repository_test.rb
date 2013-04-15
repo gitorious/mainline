@@ -55,7 +55,7 @@ class CreateProjectRepositoryTest < ActiveSupport::TestCase
     outcome = use_case.execute(params(:name => "repo6"))
 
     refute outcome.success?, outcome.to_s
-    assert_instance_of RepositoryRateLimiting, outcome.pre_condition_failed
+    assert_instance_of RepositoryRateLimiting, outcome.pre_condition_failed.pre_condition
     assert_equal count + 5, Repository.count
   end
 

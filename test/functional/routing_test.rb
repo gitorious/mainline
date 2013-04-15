@@ -356,16 +356,16 @@ class RoutingTest < ActionController::TestCase
       end
 
       should "recognize clone search routing" do
-        assert_recognizes({ :controller => "repositories",
-                            :action => "search_clones",
+        assert_recognizes({ :controller => "repository_clone_searches",
+                            :action => "show",
                             :format => "json",
                             :project_id => "gitorious",
                             :id => "mainline"
                           }, "/gitorious/mainline/search_clones.json")
 
         assert_generates("/gitorious/mainline/search_clones.json", {
-                           :controller => "repositories",
-                           :action => "search_clones",
+                           :controller => "repository_clone_searches",
+                           :action => "show",
                            :project_id => "gitorious",
                            :id => "mainline",
                            :format => "json"

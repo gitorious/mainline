@@ -24,12 +24,12 @@
 class RepositoriesController < ApplicationController
   include Gitorious::Messaging::Publisher
   before_filter :login_required,
-    :except => [:index, :show, :writable_by, :repository_config, :search_clones]
+  :except => [:index, :show, :writable_by, :repository_config]
   before_filter :find_repository_owner, :except => [:writable_by, :repository_config]
   before_filter :unauthorized_repository_owner_and_project, :only => [:writable_by, :repository_config]
   before_filter :require_owner_adminship, :only => [:new, :create]
   before_filter :find_and_require_repository_adminship,
-    :only => [:edit, :update, :confirm_delete, :destroy]
+  :only => [:edit, :update, :confirm_delete, :destroy]
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
   always_skip_session :only => [:repository_config, :writable_by]
   renders_in_site_specific_context :except => [:writable_by, :repository_config]
@@ -50,7 +50,7 @@ class RepositoriesController < ApplicationController
     respond_to do |wants|
       wants.html
       wants.xml {render :xml => @repositories.to_xml}
-      wants.json {render :json => to_json(@repositories)}
+      wants.json {render :json => RepositorySerializer.new(self).to_json(@repositories)}
     end
   end
 
@@ -60,8 +60,8 @@ class RepositoriesController < ApplicationController
 
     return if @events.count == 0 && params.key?(:page)
     @atom_auto_discovery_url = project_repository_path(@repository.project,
-                                                       @repository,
-                                                       :format => :atom)
+      @repository,
+      :format => :atom)
     response.headers["Refresh"] = "5" unless @repository.ready
 
     respond_to do |format|
@@ -71,28 +71,8 @@ class RepositoriesController < ApplicationController
     end
   end
 
-  def paginated_events
-    paginate(page_free_redirect_options) do
-      # if !Gitorious.private_repositories?
-      #   Rails.cache.fetch("new_paginated_events_in_repo_#{@repository.id}:#{params[:page] || 1}", :expires_in => 1.minute) do
-      #     marshalable_events(unfiltered_paginated_events)
-      #   end
-      # else
-        filter_paginated(params[:page], Event.per_page) do |page|
-          unfiltered_paginated_events
-        end
-      # end
-    end
-  end
-
-  def unfiltered_paginated_events
-    @repository.events.top.paginate(:page => params[:page],
-                                    :order => "created_at desc")
-  end
-
   def new
     @repository = @project.repositories.new
-    @root = Breadcrumb::NewRepository.new(@project)
     @repository.kind = Repository::KIND_PROJECT_REPO
     @repository.owner = @project.owner
     if @project.repositories.mainlines.count == 0
@@ -124,12 +104,6 @@ class RepositoriesController < ApplicationController
     @root = Breadcrumb::EditRepository.new(@repository)
     @groups = Team.for_user(current_user)
     @heads = @repository.git.heads
-  end
-
-  def search_clones
-    @repository = repository_to_clone
-    @repositories = filter(@repository.search_clones(params[:filter]))
-    render :json => to_json(@repositories)
   end
 
   def update
@@ -206,7 +180,7 @@ class RepositoriesController < ApplicationController
       flash[:notice] = I18n.t "repositories_controller.destroy_notice"
       @repository.destroy
       @repository.project.create_event(Action::DELETE_REPOSITORY, @owner,
-                                        current_user, repo_name)
+        current_user, repo_name)
     else
       flash[:error] = I18n.t "repositories_controller.destroy_error"
     end
@@ -223,7 +197,7 @@ class RepositoriesController < ApplicationController
 
   def find_and_require_repository_adminship
     @repository = @owner.repositories.find_by_name_in_project!(params[:id],
-                                                               @containing_project)
+      @containing_project)
     unless admin?(current_user, authorize_access_to(@repository))
       respond_denied_and_redirect_to(project_repository_path(@repository.project, @repository))
       return
@@ -241,22 +215,6 @@ class RepositoriesController < ApplicationController
         :status => :forbidden
       }
     end
-  end
-
-  def to_json(repositories)
-    repositories.map { |repo|
-      {
-        :name => repo.name,
-        :description => repo.description,
-        :uri => url_for(project_repository_path(@project, repo)),
-        :img => repo.owner.avatar? ?
-        repo.owner.avatar.url(:thumb) :
-        "/images/default_face.gif",
-        :owner => repo.owner.title,
-        :owner_type => repo.owner_type.downcase,
-        :owner_uri => url_for(repo.owner)
-      }
-    }.to_json
   end
 
   def only_projects_can_add_new_repositories
@@ -300,5 +258,24 @@ class RepositoriesController < ApplicationController
   def repository_to_clone
     repo = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     authorize_access_to(repo)
+  end
+
+  def paginated_events
+    paginate(page_free_redirect_options) do
+      if !Gitorious.private_repositories?
+        Rails.cache.fetch("new_paginated_events_in_repo_#{@repository.id}:#{params[:page] || 1}", :expires_in => 1.minute) do
+          marshalable_events(unfiltered_paginated_events)
+        end
+      else
+        filter_paginated(params[:page], Event.per_page) do |page|
+          unfiltered_paginated_events
+        end
+      end
+    end
+  end
+
+  def unfiltered_paginated_events
+    @repository.events.top.paginate(:page => params[:page],
+      :order => "created_at desc")
   end
 end

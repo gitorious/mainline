@@ -21,7 +21,7 @@
   #++
   %>
 
-<%= breadcrumbs_from(@root) -%>
+<%= breadcrumbs_from(Breadcrumb::NewRepository.new(@project)) -%>
 
 <h2 class="content-header">Add new repository to <%= link_to h(@owner.title), @owner -%></h2>
 

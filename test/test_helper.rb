@@ -105,6 +105,17 @@ class ActiveSupport::TestCase
       assert_redirected_to params.dup.merge({ :action => action })
     end
   end
+
+  def enable_private_repositories(subject = nil)
+    Gitorious::Configuration.prepend("enable_private_repositories" => true)
+    return subject.make_private if !subject.nil?
+
+    if defined?(@project)
+      @project.make_private
+    elsif defined?(@repository)
+      @repository.make_private
+    end
+  end
 end
 
 class ActionController::TestCase
@@ -168,17 +179,6 @@ class ActionController::TestCase
 
   def logout
     login_as nil
-  end
-
-  def enable_private_repositories(subject = nil)
-    Gitorious::Configuration.prepend("enable_private_repositories" => true)
-    return subject.make_private if !subject.nil?
-
-    if defined?(@project)
-      @project.make_private
-    else
-      @repository.make_private
-    end
   end
 
   # TODO: This is _horrible_. Refactor to an actual API and use that.

@@ -148,7 +148,7 @@ class CreateProjectTest < ActiveSupport::TestCase
     outcome = CreateProject.new(MessageHub.new, users(:moe)).execute(project_options(:slug => "proj6"))
 
     refute outcome.success?, outcome.to_s
-    assert_instance_of ProjectRateLimiting, outcome.pre_condition_failed
+    assert_instance_of ProjectRateLimiting, outcome.pre_condition_failed.pre_condition
     assert_equal count + 5, Project.count
   end
 

@@ -701,20 +701,6 @@ class RepositoriesControllerTest < ActionController::TestCase
      end
    end
 
-   context "search clones" do
-     setup do
-       @repo = repositories(:johans)
-       @clone_repo = repositories(:johans2)
-     end
-
-     should "return a list of clones matching the query" do
-       get :search_clones, :project_id => @repo.project.to_param, :id => @repo.to_param,
-         :filter => "projectrepos", :format => "json"
-       assert_response :success
-       assert assigns(:repositories).include?(@clone_repo)
-     end
-   end
-
    should "not display git:// link when disabling the git daemon" do
      Gitorious.stubs(:git_daemon).returns(nil)
      project = projects(:johans)
@@ -811,19 +797,6 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "allow authorized user to edit repository" do
       login_as :johan
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
-      assert_response 200
-    end
-
-    should "disallow unauthorized users to search clones" do
-      get :search_clones, :project_id => @project.to_param, :id => @repository.to_param,
-        :filter => "projectrepos", :format => "json"
-      assert_response 403
-    end
-
-    should "allow authorized users to search clones" do
-      login_as :johan
-      get :search_clones, :project_id => @project.to_param, :id => @repository.to_param,
-        :filter => "projectrepos", :format => "json"
       assert_response 200
     end
 
@@ -973,27 +946,6 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "allow authorized user to edit repository" do
       login_as :johan
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
-      assert_response 200
-    end
-
-    should "disallow unauthorized users to search clones" do
-      get :search_clones, :project_id => @project.to_param, :id => @repository.to_param,
-        :filter => "projectrepos", :format => "json"
-      assert_response 403
-    end
-
-    should "exclude private repositories when searching clones" do
-      @repository.make_public
-      @repository.clones.each(&:make_private)
-      get :search_clones, :project_id => @project.to_param, :id => @repository.to_param,
-        :filter => "projectrepos", :format => "json"
-      assert_equal 0, assigns(:repositories).length
-    end
-
-    should "allow authorized users to search clones" do
-      login_as :johan
-      get :search_clones, :project_id => @project.to_param, :id => @repository.to_param,
-        :filter => "projectrepos", :format => "json"
       assert_response 200
     end
 

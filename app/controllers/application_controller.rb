@@ -457,7 +457,7 @@ class ApplicationController < ActionController::Base
       f.when(:user_required) { |c| redirect_to(login_path) }
       f.when(:rate_limiting) { |c| render_throttled_record }
       f.when(:authorization_required) { |c| render_unauthorized }
-      block.call(f)
+      block.call(f) if !block.nil?
     end
   end
 end

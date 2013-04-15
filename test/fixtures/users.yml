@@ -5,7 +5,7 @@ johan:
   salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
   crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
   created_at: <%= 5.days.ago.to_s :db %>
-  activated_at: <%= 5.days.ago.to_s :db %> 
+  activated_at: <%= 5.days.ago.to_s :db %>
   ssh_key_id: 1
   is_admin: <%= true %>
   aasm_state: terms_accepted
@@ -16,7 +16,7 @@ moe:
   salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
   crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
   created_at: <%= 1.days.ago.to_s :db %>
-  activation_code: 8f24789ae988411ccf33ab0c30fe9106fab32e9a 
+  activation_code: 8f24789ae988411ccf33ab0c30fe9106fab32e9a
   ssh_key_id: 2
   is_admin: <%= false %>
   aasm_state: terms_accepted
@@ -28,7 +28,7 @@ mike:
   salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
   crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
   created_at: <%= 1.days.ago.to_s :db %>
-  activation_code: 8f24789ae988411ccf33ab0c30fe9106fab32e9a 
+  activation_code: 8f24789ae988411ccf33ab0c30fe9106fab32e9a
   ssh_key_id: 3
   is_admin: <%= false %>
   wants_email_notifications: <%= true %>
@@ -44,3 +44,13 @@ old_timer:
   ssh_key_id: 4
   is_admin: <%= false %>
   aasm_state: pending
+zmalltalker:
+  id: 5
+  login: zmalltalker
+  email: marius@gitorious.com
+  salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
+  created_at: <%= 5.days.ago.to_s :db %>
+  activated_at: <%= 5.days.ago.to_s :db %>
+  is_admin: <%= false %>
+  aasm_state: terms_accepted

@@ -241,7 +241,7 @@ Gitorious::Application.routes.draw do
       member do
         post "/create_clone" => "repository_clones#create"
         get "/clone" => "repository_clones#new"
-        get :search_clones
+        get "/search_clones" => "repository_clone_searches#show"
         get :committers
         get :confirm_delete
         get :writable_by
