@@ -23,6 +23,11 @@ require "gitorious"
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
+class UnexpectedSiteContext < Exception;
+  attr_reader :params
+  def initialize(params); @params = params; end
+end
+
 class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include RoutingHelper
@@ -43,6 +48,7 @@ class ApplicationController < ActionController::Base
   rescue_from Grit::Git::GitTimeout, :with => :render_git_timeout
   rescue_from RecordThrottling::LimitReachedError, :with => :render_throttled_record
   rescue_from Gitorious::Authorization::UnauthorizedError, :with => :render_unauthorized
+  rescue_from(UnexpectedSiteContext) { |site| redirect_to(site.params) }
 
   def rescue_action(exception)
     return super if !Rails.env.production?
@@ -238,10 +244,11 @@ class ApplicationController < ActionController::Base
     [branch_ref, path]
   end
 
-  def find_current_site
+  def find_current_site(project = nil)
+    project ||= @project
     @current_site ||= begin
-                        if @project
-                          @project.site
+                        if project
+                          project.site
                         else
                           if !subdomain_without_common.blank?
                             Site.find_by_subdomain(subdomain_without_common)
@@ -264,15 +271,7 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_to_current_site_subdomain
-    return unless request.get?
-    if !current_site.subdomain.blank?
-      if subdomain_without_common != current_site.subdomain
-        url_parameters = {:only_path => false, :host => "#{current_site.subdomain}.#{Gitorious.host}#{request.port_string}"}.merge(params)
-        redirect_to url_parameters
-      end
-    elsif !subdomain_without_common.blank?
-      redirect_to_top_domain
-    end
+    verify_site_context!
   end
 
   def require_global_site_context
@@ -458,6 +457,33 @@ class ApplicationController < ActionController::Base
       f.when(:rate_limiting) { |c| render_throttled_record }
       f.when(:authorization_required) { |c| render_unauthorized }
       block.call(f) if !block.nil?
+    end
+  end
+
+  # TODO: Project argument is optional now to support the old
+  # redirect_to_current_site method. Remove when all uses of the
+  # filter has been converted
+  def verify_site_context!(project = nil)
+    return true if !request.get?
+    find_current_site(project) unless project.nil?
+
+    if !current_site.subdomain.blank?
+      if subdomain_without_common != current_site.subdomain
+        host = "#{current_site.subdomain}.#{Gitorious.host}"
+        raise UnexpectedSiteContext.new({
+            :only_path => false,
+            :host => "#{host}#{request.port_string}"
+          }.merge(request.params))
+      end
+    elsif !subdomain_without_common.blank?
+      host_without_subdomain = {
+        :only_path => false,
+        :host => Gitorious.host
+      }
+      if ![80, 443].include?(request.port)
+        host_without_subdomain[:host] << ":#{request.port}"
+      end
+      raise UnexpectedSiteContext.new(host_without_subdomain)
     end
   end
 end
