@@ -15,16 +15,26 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "mutations"
+require "commands/create_repository_command"
 
-module ModelFinder
-  class Project < Mutations::Command
-    required { integer :id }
-    def execute; ::Project.find(id); end
+class CreateProjectRepositoryCommand < CreateRepositoryCommand
+  def initialize(app, project = nil, user = nil)
+    super(app, project, user, :kind => :project)
   end
 
-  class User < Mutations::Command
-    required { integer :id }
-    def execute; ::User.find(id); end
+  def execute(repository)
+    save(repository)
+    initialize_committership(repository)
+    initialize_membership(repository)
+    initialize_favorite(repository)
+    schedule_creation(repository, :queue => "GitoriousRepositoryCreation")
+    create_new_repository_event(repository)
+    repository
+  end
+
+  private
+  def create_new_repository_event(repo)
+    type = Action::ADD_PROJECT_REPOSITORY
+    repo.project.create_event(type, repo, repo.user, nil, nil, repo.created_at)
   end
 end

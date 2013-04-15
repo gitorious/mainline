@@ -15,25 +15,9 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "mutations"
 
-class SshKeyCreator < Mutations::Command
-  required do
-    string :key
-    integer :user_id
-  end
-
-  def execute
-    ssh_key = User.find(user_id.to_i).ssh_keys.new
-    ssh_key.key = key
-
-    if ssh_key.save!
-      ssh_key.publish_creation_message
-    end
-
-    ssh_key
-  rescue ActiveRecord::RecordInvalid
-    messages = ssh_key.errors.full_messages
-    ssh_key.errors.each { |k, m| add_error(k, :validation, messages.shift) }
-  end
+class WikiRepository
+  NAME_SUFFIX = "-gitorious-wiki"
+  WRITABLE_EVERYONE = 0
+  WRITABLE_PROJECT_MEMBERS = 1
 end

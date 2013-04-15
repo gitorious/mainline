@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
   #   Copyright (C) 2008 Jonas Fonseca <fonseca@diku.dk>
@@ -23,11 +23,11 @@
   %>
 <%= breadcrumbs_from(@root) -%>
 
-<h2 class="content-header"><%= t("views.projects.update_title", :link => link_to( h(@project.title), project_path(@project))).html_safe -%></h2>
+<h2 class="content-header"><%= t("views.projects.update_title", :link => link_to( h(project.title), project_path(project))).html_safe -%></h2>
 
-<%= error_messages(@project) -%>
-<%= form_for(@project, :method => "put") do |f| -%>
-  <%= render :partial => "form", :locals => {:form => f} -%>
+<%= error_messages(project) -%>
+<%= form_for(project, :method => "put") do |f| -%>
+  <%= render :partial => "form", :locals => { :form => f, :project => project } -%>
 
   <div class="merge_request_statuses content-container w-730">
     <label>Merge Request Statuses:</label><br />
@@ -56,7 +56,7 @@
     </div>
 
     <div class="box rounded light-gray w-730">
-      <% unless @project.owned_by_group? -%>
+      <% unless project.owned_by_group? -%>
         <p>
           <%= f.label :owner_id, "Transfer ownership to a group <small>(optional)</small>" -%>:<br />
           <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]},
@@ -73,7 +73,7 @@
   </div>
   <fieldset  class="submit">
     <input type="button" value="Preview" id="project_preview_button"
-           gts:url="<%= preview_project_path(@project) -%>" />
+           gts:url="<%= preview_project_path(project) -%>" />
 
     <%= f.submit t("views.common.update") -%>
   </fieldset>
@@ -81,15 +81,15 @@
 
 <%= content_for :sidebar do -%>
   <ul class="links navigation">
-    <% if @project.owned_by_group? -%>
-      <li><%= link_to t("views.projects.project_members"), group_memberships_path(@project.owner) -%></li>
+    <% if project.owned_by_group? -%>
+      <li><%= link_to t("views.projects.project_members"), group_memberships_path(project.owner) -%></li>
     <% end -%>
     <li class="update_project">
-      <%= link_to t('views.projects.edit_slug_title'), edit_slug_project_path(@project) %>
+      <%= link_to t('views.projects.edit_slug_title'), edit_slug_project_path(project) %>
     </li>
-    <% if can_delete?(current_user, @project) -%>
+    <% if can_delete?(current_user, project) -%>
       <li class="delete_project">
-        <%= link_to t("views.projects.delete"), confirm_delete_project_path(@project) -%>
+        <%= link_to t("views.projects.delete"), confirm_delete_project_path(project) -%>
       </li>
     <% end -%>
   </ul>

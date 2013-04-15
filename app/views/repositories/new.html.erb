@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
   #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -21,12 +21,12 @@
   #++
   %>
 
-<%= breadcrumbs_from(@root) -%>
+<%= breadcrumbs_from(Breadcrumb::NewRepository.new(@project)) -%>
 
 <h2 class="content-header">Add new repository to <%= link_to h(@owner.title), @owner -%></h2>
 
 <%= error_messages(@repository) -%>
-<%= form_for([@repository.project, @repository]) do |f| -%>
+<%= form_for(url_for(:project_id => @repository.project.to_param, :repository_id => @repository.to_param)) do |f| -%>
   <fieldset>
     <li>
       <%= f.label :name -%>
@@ -50,7 +50,7 @@
     <li>
       <label for="private">Make the repository private?</label>
       <div>
-	<input id="private_repository" name="private_repository" type="checkbox" value="1">
+        <input id="private" name="private" type="checkbox" value="1">
       </div>
     </li>
     <% end %>

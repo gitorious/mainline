@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -21,16 +22,9 @@ class Membership < ActiveRecord::Base
   belongs_to :user
   belongs_to :role
   has_many :messages, :as => :notifiable
-  before_validation(:dont_demote_group_creator, :on => :update)
   before_destroy :dont_delete_group_creator
   before_destroy :nullify_messages
-
-  after_create :send_notification_if_invited
   attr_accessor :inviter
-
-  validates_presence_of :group_id, :user_id, :role_id
-
-  validates_uniqueness_of :user_id, :scope => :group_id, :message => 'is already member of this team'
 
   def breadcrumb_parent
     Breadcrumb::Memberships.new(group)
@@ -40,38 +34,12 @@ class Membership < ActiveRecord::Base
     "Member"
   end
 
-  def self.build_invitation(inviter, options)
-    result = new(options.merge(:inviter => inviter))
-    return result
+  def uniq?
+    membership = Membership.where(:user_id => user_id, :group_id => group_id).first
+    membership.nil? || membership == self
   end
 
   protected
-  def send_notification_if_invited
-    send_notification if inviter
-  end
-
-  def send_notification
-    message = Message.new({
-      :sender => inviter,
-      :recipient => user,
-      :subject => I18n.t("membership.notification_subject"),
-      :body => I18n.t("membership.notification_body", {
-        :inviter => inviter.title,
-        :group => group.title,
-        :role => role.admin? ? 'administrator' : 'member'
-      }),
-      :notifiable => self
-    })
-    message.save
-  end
-
-  def dont_demote_group_creator
-    if user == group.creator and role == Role.member
-      errors.add(:role, "The group creator cannot be demoted")
-      return false
-    end
-  end
-
   def dont_delete_group_creator
     return user != group.creator
   end

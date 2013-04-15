@@ -53,6 +53,14 @@ class GroupFinder
     Group.find(id)
   end
 
+  def by_id(id)
+    Group.find_by_id(id)
+  end
+
+  def by_name(name)
+    Group.find_by_name(name)
+  end
+
   def find_fuzzy(q)
     Group.find_fuzzy(q)
   end

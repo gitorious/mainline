@@ -32,11 +32,9 @@ class MergeRequestProcessor
   end
 
   def create_tracking_repository(merge_request)
-    tracking_repo = merge_request.target_repository.create_tracking_repository
-    logger.info("Creating tracking repository at #{tracking_repo.real_gitdir} for merge request #{merge_request.to_param}")
-    Repository.clone_git_repository(
-      tracking_repo.real_gitdir,
-      merge_request.target_repository.real_gitdir,
-      {:skip_hooks => true})
+    repo = merge_request.target_repository
+    command = CreateTrackingRepositoryCommand.new(Gitorious::App, repo)
+    tracking_repo = command.execute(command.build)
+    logger.info("Created tracking repository at #{tracking_repo.real_gitdir} for merge request #{merge_request.to_param}")
   end
 end

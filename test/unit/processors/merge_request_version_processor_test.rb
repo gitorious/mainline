@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify

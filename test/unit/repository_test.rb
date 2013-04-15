@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -39,48 +39,7 @@ class RepositoryTest < ActiveSupport::TestCase
     clear_message_queue
   end
 
-  should validate_presence_of(:user_id)
-  should validate_presence_of(:name)
-  should validate_presence_of(:owner_id)
-  should validate_uniqueness_of(:hashed_path)
-  should validate_uniqueness_of(:name).scoped_to(:project_id)
   should have_many(:hooks).dependent(:destroy)
-
-  should "only accept names with alphanum characters in it" do
-    @repository.name = "foo bar"
-    assert !@repository.valid?, "valid? should be false"
-
-    @repository.name = "foo!bar"
-    assert !@repository.valid?, "valid? should be false"
-
-    @repository.name = "foobar"
-    assert @repository.valid?
-
-    @repository.name = "foo42"
-    assert @repository.valid?
-  end
-
-  should "has a unique name within a project" do
-    @repository.save
-    repos = new_repos(:name => "FOO")
-    assert !repos.valid?, "valid? should be false"
-    assert_not_nil repos.errors[:name]
-
-    assert new_repos(:project => projects(:moes)).valid?
-  end
-
-  should "not be able to use a reserved name" do
-    repo = new_repos(:name => "clones")
-
-    refute repo.valid?
-    assert_not_nil repo.errors[:name]
-
-    RepositoriesController.action_methods.each do |action|
-      repo.name = action.dup
-      repo.valid?
-      assert_not_nil repo.errors[:name], "fail on #{action}"
-    end
-  end
 
   context "git urls" do
     setup do
@@ -171,75 +130,12 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  should "inits the git repository" do
-    path = @repository.full_repository_path
-    Repository.git_backend.expects(:create).with(path).returns(true)
-    Repository.create_git_repository(@repository.real_gitdir)
-
-    assert File.exist?(path), "File.exist?(path) should be true"
-
-    Dir.chdir(path) do
-      hooks = File.join(path, "hooks")
-      assert File.exist?(hooks), "File.exist?(hooks) should be true"
-      assert File.symlink?(hooks), "File.symlink?(hooks) should be true"
-      assert File.symlink?(File.expand_path(File.readlink(hooks))), "File.symlink?(File.expand_path(File.readlink(hooks))) should be true"
-    end
-  end
-
-  should "clones a git repository" do
-    source = repositories(:johans)
-    target = @repository
-    target_path = @repository.full_repository_path
-
-    git_backend = mock("Git backend")
-    Repository.expects(:git_backend).returns(git_backend)
-    git_backend.expects(:clone).with(target.full_repository_path,
-      source.full_repository_path).returns(true)
-    Repository.expects(:create_hooks).returns(true)
-
-    assert Repository.clone_git_repository(target.real_gitdir, source.real_gitdir)
-  end
-
-  should "not create hooks if the :skip_hooks option is set to true" do
-    source = repositories(:johans)
-    target = @repository
-    target_path = @repository.full_repository_path
-
-    git_backend = mock("Git backend")
-    Repository.expects(:git_backend).returns(git_backend)
-    git_backend.expects(:clone).with(target.full_repository_path,
-      source.full_repository_path).returns(true)
-    Repository.expects(:create_hooks).never
-
-    Repository.clone_git_repository(target.real_gitdir, source.real_gitdir, :skip_hooks => true)
-  end
-
-  should "create the hooks" do
-    hooks = "/path/to/hooks"
-    path = "/path/to/repository"
-    base_path = "#{Rails.root}/data/hooks"
-
-    File.expects(:join).in_sequence.with(RepositoryRoot.default_base_path, ".hooks").returns(hooks)
-
-    Dir.expects(:chdir).in_sequence.with(path).yields(nil)
-
-    File.expects(:symlink?).in_sequence.with(hooks).returns(false)
-    File.expects(:exist?).in_sequence.with(hooks).returns(false)
-    FileUtils.expects(:ln_s).in_sequence.with(base_path, hooks)
-
-    local_hooks = "/path/to/local/hooks"
-    File.expects(:join).in_sequence.with(path, "hooks").returns(local_hooks)
-    File.expects(:exist?).in_sequence.with(local_hooks).returns(true)
-
-    Repository.create_hooks(path)
-  end
-
-  should "deletes a repository" do
+  should "delete a repository" do
     Repository.git_backend.expects(:delete!).with(@repository.full_repository_path).returns(true)
     Repository.delete_git_repository(@repository.real_gitdir)
   end
 
-  should "knows if has commits" do
+  should "know if it has commits" do
     @repository.stubs(:new_record?).returns(false)
     @repository.stubs(:ready?).returns(true)
     git_mock = mock("Grit::Git")
@@ -250,67 +146,37 @@ class RepositoryTest < ActiveSupport::TestCase
     assert @repository.has_commits?, "@repository.has_commits? should be true"
   end
 
-  should "knows if has commits, unless its a new record" do
+  should "not know if it has commits when it is a new record" do
     @repository.stubs(:new_record?).returns(false)
     assert !@repository.has_commits?, "@repository.has_commits? should be false"
   end
 
-  should "knows if has commits, unless its not ready" do
+  should "not know if it has commits when not ready" do
     @repository.stubs(:ready?).returns(false)
     assert !@repository.has_commits?, "@repository.has_commits? should be false"
   end
 
-  should " build a new repository by cloning another one" do
-    repos = Repository.new_by_cloning(@repository)
-    assert_equal @repository, repos.parent
-    assert_equal @repository.project, repos.project
-    assert repos.new_record?, "new_record? should be true"
-  end
-
-  should "inherit merge request inclusion from its parent" do
-    @repository.update_attribute(:merge_requests_enabled, true)
-    clone = Repository.new_by_cloning(@repository)
-    assert clone.merge_requests_enabled?
-    @repository.update_attribute(:merge_requests_enabled, false)
-    clone = Repository.new_by_cloning(@repository)
-    assert !clone.merge_requests_enabled?
-  end
-
-  should "suggests a decent name for a cloned repository bsed on username" do
-    repos = Repository.new_by_cloning(@repository, username="johan")
-    assert_equal "johans-foo", repos.name
-    repos = Repository.new_by_cloning(@repository, username=nil)
-    assert_equal nil, repos.name
-  end
-
-  should "has it is name as its to_param value" do
+  should "use name as to_param value" do
     @repository.save
     assert_equal @repository.name, @repository.to_param
   end
 
-  should "finds a repository by name or raises" do
-    assert_equal repositories(:johans), Repository.find_by_name!(repositories(:johans).name)
-    assert_raises(ActiveRecord::RecordNotFound) do
-      Repository.find_by_name!("asdasdasd")
-    end
-  end
-
   context "find_by_path" do
-    should "finds a repository by its path" do
+    should "find a repository by its path" do
       repo = repositories(:johans)
       path = File.join(RepositoryRoot.default_base_path,
                         projects(:johans).slug, "#{repo.name}.git")
       assert_equal repo, Repository.find_by_path(path)
     end
 
-    should "finds a repository by its path, regardless of repository kind" do
+    should "find a repository by its path, regardless of repository kind" do
       repo = projects(:johans).wiki_repository
       path = File.join(RepositoryRoot.default_base_path.chomp("/"),
                         projects(:johans).slug, "#{repo.name}.git")
       assert_equal repo, Repository.find_by_path(path)
     end
 
-    should "finds a group repository by its path" do
+    should "find a group repository by its path" do
       repo = repositories(:johans)
       repo.owner = groups(:team_thunderbird)
       repo.kind = Repository::KIND_TEAM_REPO
@@ -319,7 +185,7 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal repo, Repository.find_by_path(path)
     end
 
-    should "finds a user repository by its path" do
+    should "find a user repository by its path" do
       repo = repositories(:johans)
       repo.owner = users(:johan)
       repo.kind = Repository::KIND_USER_REPO
@@ -366,9 +232,10 @@ class RepositoryTest < ActiveSupport::TestCase
   end
 
   context "can_push?" do
-    should "knows if a user can write to self" do
+    should "know if a user can write to self" do
       @repository.owner = users(:johan)
       @repository.save!
+      @repository.committerships.create_for_owner!(@repository.owner)
       @repository.reload
       assert can_push?(users(:johan), @repository)
       assert !can_push?(users(:mike), @repository)
@@ -388,14 +255,14 @@ class RepositoryTest < ActiveSupport::TestCase
       end
 
       should "be writable by everyone" do
-        @repository.wiki_permissions = Repository::WIKI_WRITABLE_EVERYONE
+        @repository.wiki_permissions = WikiRepository::WRITABLE_EVERYONE
         [:johan, :mike, :moe].each do |login|
           assert can_push?(users(login), @repository), "not writable_by #{login}"
         end
       end
 
       should "only be writable by project members" do
-        @repository.wiki_permissions = Repository::WIKI_WRITABLE_PROJECT_MEMBERS
+        @repository.wiki_permissions = WikiRepository::WRITABLE_PROJECT_MEMBERS
         assert @repository.project.member?(users(:johan))
         assert can_push?(users(:johan), @repository)
 
@@ -403,28 +270,6 @@ class RepositoryTest < ActiveSupport::TestCase
         assert !can_push?(users(:moe), @repository)
       end
     end
-  end
-
-  should "publishe a message on create and update" do
-    @repository.save!
-
-    assert_published("/queue/GitoriousRepositoryCreation", {
-                       "command" => "create_git_repository",
-                       "target_id" => @repository.id,
-                       "arguments" => [@repository.real_gitdir]
-                     })
-  end
-
-  should "publishe a message on clone" do
-    @repository.parent = repositories(:johans)
-    @repository.save!
-
-    assert_published("/queue/GitoriousRepositoryCreation", {
-                       "command" => "clone_git_repository",
-                       "target_id" => @repository.id,
-                       "arguments" => [@repository.real_gitdir,
-                                       @repository.parent.real_gitdir]
-                     })
   end
 
   should "create a notification on destroy" do
@@ -437,7 +282,7 @@ class RepositoryTest < ActiveSupport::TestCase
                      })
   end
 
-  should "has one recent commit" do
+  should "have one recent commit" do
     @repository.save!
     repos_mock = mock("Git mock")
     commit_mock = stub_everything("Git::Commit mock")
@@ -450,7 +295,7 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal commit_mock, @repository.last_commit
   end
 
-  should "has one recent commit within a given ref" do
+  should "have one recent commit within a given ref" do
     @repository.save!
     repos_mock = mock("Git mock")
     commit_mock = stub_everything("Git::Commit mock")
@@ -520,7 +365,7 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal nil, @repository.head_candidate
   end
 
-  should "has paginated_commits" do
+  should "have paginated_commits" do
     git = mock("git")
     commits = [mock("commit"), mock("commit")]
     @repository.expects(:git).times(2).returns(git)
@@ -530,12 +375,12 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_instance_of WillPaginate::Collection, commits
   end
 
-  should "has a count_commits_from_last_week_by_user of 0 if no commits" do
+  should "have a count_commits_from_last_week_by_user of 0 if no commits" do
     @repository.expects(:has_commits?).returns(false)
     assert_equal 0, @repository.count_commits_from_last_week_by_user(users(:johan))
   end
 
-  should "returns a set of users from a list of commits" do
+  should "return a set of users from a list of commits" do
     commits = []
     users(:johan, :moe).map do |u|
       committer = OpenStruct.new(:email => u.email)
@@ -555,7 +400,7 @@ class RepositoryTest < ActiveSupport::TestCase
     assert @repository.wiki?, "@repository.wiki? should be true"
   end
 
-  should "has a parent, which is the owner" do
+  should "have a parent, which is the owner" do
     @repository.kind = Repository::KIND_TEAM_REPO
     @repository.owner = groups(:team_thunderbird)
     assert_equal groups(:team_thunderbird), @repository.breadcrumb_parent
@@ -565,7 +410,7 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal users(:johan), @repository.breadcrumb_parent
   end
 
-  should "has a parent, which is the project for mainlines" do
+  should "have a parent, which is the project for mainlines" do
     @repository.kind = Repository::KIND_PROJECT_REPO
     @repository.owner = groups(:team_thunderbird)
     assert_equal projects(:johans), @repository.breadcrumb_parent
@@ -574,7 +419,7 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal projects(:johans), @repository.breadcrumb_parent
   end
 
-  should " return its name as title" do
+  should "return its name as title" do
     assert_equal @repository.title, @repository.name
   end
 
@@ -588,7 +433,7 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal @repository.owner.title, @repository.owner_title
   end
 
-  should "returns a list of committers depending on owner type" do
+  should "return a list of committers depending on owner type" do
     repo = repositories(:johans2)
     repo.committerships.each(&:delete)
     repo.reload
@@ -622,41 +467,11 @@ class RepositoryTest < ActiveSupport::TestCase
     assert !can_request_merge?(users(:mike), repo), "mainlines should not request merges"
   end
 
-  should "use a sharded hashed path if RepositoryRoot is configured to" do
-    RepositoryRoot.stubs(:shard_dirs?).returns(true)
-    repository = new_repos
-    assert repository.new_record?, "repository.new_record? should be true"
-    repository.save!
-    assert_not_nil repository.hashed_path
-    assert_equal 3, repository.hashed_path.split("/").length
-    assert_match(/[a-z0-9\/]{42}/, repository.hashed_path)
-  end
-
   should "use repo name for path by default, not sharded hashed paths" do
     repository = new_repos
     FileUtils.mkdir_p(repository.full_repository_path, :mode => 0755)
     repository.save!
     assert_equal "#{repository.project.slug}/#{repository.name}", repository.hashed_path
-  end
-
-  should "create the initial committership on create for owner" do
-    group_repo = new_repos(:owner => groups(:team_thunderbird))
-    assert_difference("Committership.count") do
-      group_repo.save!
-      assert_equal 1, group_repo.committerships.count
-      assert_equal groups(:team_thunderbird), group_repo.committerships.first.committer
-    end
-
-    user_repo = new_repos(:owner => users(:johan), :name => "foo2")
-    assert_difference("Committership.count") do
-      user_repo.save!
-      assert_equal 1, user_repo.committerships.count
-      cs = user_repo.committerships.first
-      assert_equal users(:johan), cs.committer
-      [:reviewer?, :committer?, :admin?].each do |m|
-        assert cs.send(m), "should have #{m} permissions"
-      end
-    end
   end
 
   should "know the full hashed path" do
@@ -687,7 +502,7 @@ class RepositoryTest < ActiveSupport::TestCase
     assert repo.team_repo?
   end
 
-  should "changing ownership adds the new owner to the committerships" do
+  should "add new owner to committerships when changing ownership" do
     repo = repositories(:johans)
     old_committer = repo.owner
     repo.change_owner_to!(groups(:team_thunderbird))
@@ -707,10 +522,9 @@ class RepositoryTest < ActiveSupport::TestCase
     assert committership.reload.admin?
   end
 
-  should "downcases the name before validation" do
+  should "downcases the name" do
     repo = new_repos(:name => "FOOBAR")
-    repo.save!
-    assert_equal "foobar", repo.reload.name
+    assert_equal "foobar", repo.name
   end
 
   should "have a project_or_owner" do
@@ -732,7 +546,7 @@ class RepositoryTest < ActiveSupport::TestCase
       @repo = repositories(:moes)
     end
 
-    should "includes the groups' members in #committers" do
+    should "include the groups' members in #committers" do
       assert committers(@repo).include?(groups(:team_thunderbird).members.first)
     end
 
@@ -811,16 +625,6 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  should "create an event on create if it is a project repo" do
-    repo = new_repos
-    repo.kind = Repository::KIND_PROJECT_REPO
-    assert_difference("repo.project.events.count") do
-      repo.save!
-    end
-    assert_equal repo, Event.last.target
-    assert_equal Action::ADD_PROJECT_REPOSITORY, Event.last.action
-  end
-
   context "find_by_name_in_project" do
     should "find with a project" do
       Repository.expects(:find_by_name_and_project_id!).with(repositories(:johans).name, projects(:johans).id).once
@@ -857,22 +661,6 @@ class RepositoryTest < ActiveSupport::TestCase
     should "have a list of used status tags" do
       @repo.merge_requests.last.update_attribute(:status_tag, "worksforme")
       assert_equal %w[open worksforme], @repo.merge_request_status_tags
-    end
-  end
-
-  context "Thottling" do
-    setup { Repository.all.collect(&:destroy) }
-
-    should "throttle on create" do
-      assert_nothing_raised do
-        5.times{|i| new_repos(:name => "wifebeater#{i}").save! }
-      end
-
-      assert_no_difference("Repository.count") do
-        assert_raises(RecordThrottling::LimitReachedError) do
-          new_repos(:name => "wtf-are-you-doing-bro").save!
-        end
-      end
     end
   end
 
@@ -959,23 +747,6 @@ class RepositoryTest < ActiveSupport::TestCase
     should "initially not have a merge request repository" do
       assert !@main_repo.has_tracking_repository?
     end
-
-    should "generate a tracking repository" do
-      @merge_repo = @main_repo.create_tracking_repository
-      assert @main_repo.project_repo?
-      assert @merge_repo.tracking_repo?
-      assert_equal @main_repo, @merge_repo.parent
-      assert_equal @main_repo.owner, @merge_repo.owner
-      assert_equal @main_repo.user, @merge_repo.user
-      assert @main_repo.has_tracking_repository?
-      assert_equal @merge_repo, @main_repo.tracking_repository
-    end
-
-    should "not post a repository creation message for merge request repositories" do
-      @merge_repo = @main_repo.build_tracking_repository
-      @merge_repo.expects(:publish).never
-      assert @merge_repo.save
-    end
   end
 
   context "Merge requests enabling" do
@@ -1024,14 +795,10 @@ class RepositoryTest < ActiveSupport::TestCase
         FactoryGirl.create(:user, :login => login)
       }
       @user_repos = @users.map do |u|
-        new_repo = Repository.new_by_cloning(@repo)
-        new_repo.name = "#{u.login}s-clone"
-        new_repo.user = u
-        new_repo.owner = u
-        new_repo.kind = Repository::KIND_USER_REPO
+        cmd = CloneRepositoryCommand.new(MessageHub.new, @repo, u)
+        new_repo = cmd.build(CloneRepositoryInput.new(:name => "#{u.login}s-clone"))
         new_repo.last_pushed_at = 1.hour.ago
-        assert new_repo.save
-        new_repo
+        cmd.execute(new_repo)
       end
     end
 
@@ -1134,26 +901,6 @@ class RepositoryTest < ActiveSupport::TestCase
       @repository.expects(:calculate_highest_merge_request_sequence_number).returns(99)
       assert_equal(100,
         @repository.next_merge_request_sequence_number)
-    end
-  end
-
-  context "default favoriting" do
-    should "add the owner as a watcher when creating a clone" do
-      user = users(:mike)
-      repo = Repository.new_by_cloning(repositories(:johans), "mike")
-      repo.user = repo.owner = user
-      assert_difference("user.favorites.reload.count") do
-        repo.save!
-      end
-      assert repo.reload.watched_by?(user)
-    end
-
-    should "not add as watcher if it is an internal repository" do
-      repo = new_repos(:user => users(:moe))
-      repo.kind = Repository::KIND_TRACKING_REPO
-      assert_no_difference("users(:moe).favorites.count") do
-        repo.save!
-      end
     end
   end
 
@@ -1298,19 +1045,6 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  context "Reserved repository names" do
-
-    should "not allow users as repository name" do
-      repo = otherwise_valid_repository(:name => "users")
-      assert repo.errors[:name]
-    end
-
-    should "not allow 'groups' as repository name" do
-      repo = otherwise_valid_repository(:name => "groups")
-      assert repo.errors[:name]
-    end
-  end
-
   context "Deletion" do
     setup do
       @repository = repositories(:johans)
@@ -1326,9 +1060,24 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  def otherwise_valid_repository(options)
-    result = new_repos(options)
-    result.valid?
-    result
+  should "recognize unique name within project" do
+    repository = repositories(:moes)
+    assert repository.uniq_name?
+
+    project = repository.project
+    repo2 = project.repositories.new(:name => repository.name)
+    refute repo2.uniq_name?
+
+    other_project = Project.where("slug != ?", project.slug).first
+    repo3 = other_project.repositories.new(:name => repository.name)
+    assert repo3.uniq_name?
+  end
+
+  should "recognize unique hashed path" do
+    repository = repositories(:moes)
+    assert repository.uniq_hashed_path?
+
+    repository2 = Repository.new(:hashed_path => repository.hashed_path)
+    refute repository2.uniq_hashed_path?
   end
 end

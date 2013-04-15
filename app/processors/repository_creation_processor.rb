@@ -1,7 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -22,19 +21,12 @@ class RepositoryCreationProcessor
   consumes "/queue/GitoriousRepositoryCreation"
 
   def on_message(message)
-    target_class = message["target_class"]
-    target_id = message["target_id"]
-    command = message["command"]
-    arguments = message["arguments"]
-
-    logger.info("Processor: #{target_class}(#{target_id.inspect})::#{command}(#{arguments.inspect}..)")
-    target_class.constantize.send(command, *arguments)
-    unless target_id.blank?
-      obj = target_class.constantize.find_by_id(target_id)
-      if obj && obj.respond_to?(:ready)
-        obj.ready = true
-        obj.save!
-      end
-    end
+    repository = Repository.find(message["id"].to_i)
+    logger.info("Processing new project repository: #<Repository id: #{repository.id}, path: #{repository.repository_plain_path}>")
+    full_path = RepositoryRoot.expand(repository.gitdir)
+    GitBackend.create(full_path.to_s)
+    RepositoryHooks.create(full_path)
+    repository.ready = true
+    repository.save!
   end
 end

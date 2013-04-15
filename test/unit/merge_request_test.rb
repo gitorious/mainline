@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -152,11 +152,6 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert_incremented_by(@merge_request.target_repository.project.events, :size, 0) do
       @merge_request.update_from_push!
     end
-  end
-
-  should "return its target repository's tracking repository" do
-    tracking_repo = @merge_request.target_repository.create_tracking_repository
-    assert_equal tracking_repo, @merge_request.tracking_repository
   end
 
   should "create a new version with the merge base between target branch and self" do
@@ -592,8 +587,10 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
 
     should "send a push command from the source repository to the tracking repository" do
-      merge_request_repo = @merge_request.target_repository.create_tracking_repository
-      merge_request_repo_path = merge_request_repo.full_repository_path
+      cmd = CreateTrackingRepositoryCommand.new(MessageHub.new, @merge_request.target_repository)
+      cmd.execute(cmd.build)
+      mr_repo = @merge_request.target_repository.tracking_repository
+      merge_request_repo_path = mr_repo.full_repository_path
       branch_spec_base = "#{@merge_request.ending_commit}:refs/merge-requests"
       branch_spec = [branch_spec_base, @merge_request.to_param].join("/")
       tracking_branch_spec = [branch_spec_base, @merge_request.to_param, 1].join("/")

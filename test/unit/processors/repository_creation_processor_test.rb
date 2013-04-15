@@ -1,7 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,42 +15,34 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
 require "test_helper"
+require "pathname"
 
 class RepositoryCreationProcessorTest < ActiveSupport::TestCase
-
-  def setup
+   def setup
+    GitBackend.stubs(:create)
+    RepositoryHooks.stubs(:create)
+    @repository = repositories(:moes)
     @processor = RepositoryCreationProcessor.new
-    @repository = repositories(:johans)
-
-    @clone = mock
-    @clone.stubs(:id).returns(99)
-    @clone.stubs(:ready).returns(true)
-    @clone.expects(:ready=).once.returns(true)
-    @clone.expects(:save!).once
-    Repository.stubs(:find_by_id).returns(@clone)
+    @gitdir = Pathname("/tmp/git/repos/moes-project/moesprojectrepos.git")
+    RepositoryRoot.stubs(:expand).with("moes-project/moesprojectrepos.git").returns(@gitdir)
   end
 
-  should "supplies two repos when cloning an existing repository" do
-    Repository.expects(:clone_git_repository).with('foo', 'bar')
-    options = {
-      :target_class => 'Repository',
-      :target_id => @clone.id,
-      :command => 'clone_git_repository',
-      :arguments => ['foo', 'bar']}
-    message = options.to_json
-    @processor.consume(message)
+  should "create git repository" do
+    GitBackend.expects(:create).with(@gitdir.to_s)
+    @processor.on_message("id" => @repository.id)
   end
 
-  should "supplies one repo when creating a new repo" do
-    Repository.expects(:create_git_repository).with('foo')
-    options = {
-      :target_class => 'Repository',
-      :target_id => @clone.id,
-      :command => 'create_git_repository',
-      :arguments => ['foo']}
-    message = options.to_json
-    @processor.consume(message)
+  should "create repository hooks" do
+    RepositoryHooks.expects(:create).with(@gitdir)
+    @processor.on_message("id" => @repository.id)
+  end
+
+  should "mark repository as ready" do
+    @repository.ready = false
+    @repository.save!
+    @processor.on_message("id" => @repository.id)
+
+    assert @repository.reload.ready?
   end
 end

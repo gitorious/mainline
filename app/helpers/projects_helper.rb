@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -28,8 +28,8 @@ module ProjectsHelper
   end
 
   def wiki_permission_choices
-    [["Writable by everyone", Repository::WIKI_WRITABLE_EVERYONE],
-     ["Writable by project members", Repository::WIKI_WRITABLE_PROJECT_MEMBERS]]
+    [["Writable by everyone", WikiRepository::WRITABLE_EVERYONE],
+     ["Writable by project members", WikiRepository::WRITABLE_PROJECT_MEMBERS]]
   end
 
   def add_status_link(form_builder)

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -27,16 +27,22 @@ end
 class MessagingResqueAdapterTest < ActiveSupport::TestCase
   context "publisher" do
     should_map_resque_queues_to_processors(ResquePublisher) do
-      { "/queue/GitoriousRepositoryCreation" => RepositoryCreationProcessor,
-        "/queue/GitoriousRepositoryDeletion" => RepositoryDeletionProcessor,
-        "/queue/GitoriousPush" => PushProcessor,
-        "/queue/GitoriousSshKeys" => SshKeyProcessor,
-        "/queue/GitoriousRepositoryArchiving" => RepositoryArchivingProcessor,
-        "/queue/GitoriousEmailNotifications" => MessageForwardingProcessor,
-        "/queue/GitoriousMergeRequestCreation" => MergeRequestProcessor,
+      {
+        "/queue/GitoriousDestroySshKey" => DestroySshKeyProcessor,
         "/queue/GitoriousMergeRequestBackend" => MergeRequestGitBackendProcessor,
+        "/queue/GitoriousMergeRequestCreation" => MergeRequestProcessor,
         "/queue/GitoriousMergeRequestVersionDeletion" => MergeRequestVersionProcessor,
-        "/queue/GitoriousPostReceiveWebHook" => WebHookProcessor }
+        "/queue/GitoriousEmailNotifications" => MessageForwardingProcessor,
+        "/queue/GitoriousNewSshKey" => NewSshKeyProcessor,
+        "/queue/GitoriousPush" => PushProcessor,
+        "/queue/GitoriousRepositoryArchiving" => RepositoryArchivingProcessor,
+        "/queue/GitoriousRepositoryCloning" => RepositoryCloningProcessor,
+        "/queue/GitoriousRepositoryCreation" => RepositoryCreationProcessor,
+        "/queue/GitoriousTrackingRepositoryCreation" => TrackingRepositoryCreationProcessor,
+        "/queue/GitoriousRepositoryDeletion" => RepositoryDeletionProcessor,
+        "/queue/GitoriousPostReceiveWebHook" => WebHookProcessor,
+        "/queue/GitoriousWikiRepositoryCreation" => WikiRepositoryCreationProcessor
+      }
     end
   end
 

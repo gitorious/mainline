@@ -105,6 +105,17 @@ class ActiveSupport::TestCase
       assert_redirected_to params.dup.merge({ :action => action })
     end
   end
+
+  def enable_private_repositories(subject = nil)
+    Gitorious::Configuration.prepend("enable_private_repositories" => true)
+    return subject.make_private if !subject.nil?
+
+    if defined?(@project)
+      @project.make_private
+    elsif defined?(@repository)
+      @repository.make_private
+    end
+  end
 end
 
 class ActionController::TestCase
@@ -170,17 +181,6 @@ class ActionController::TestCase
     login_as nil
   end
 
-  def enable_private_repositories(subject = nil)
-    Gitorious::Configuration.prepend("enable_private_repositories" => true)
-    return subject.make_private if !subject.nil?
-
-    if defined?(@project)
-      @project.make_private
-    else
-      @repository.make_private
-    end
-  end
-
   # TODO: This is _horrible_. Refactor to an actual API and use that.
   def extract_class_macro(controller, macro)
     klass = controller.class.to_s.underscore
@@ -202,19 +202,4 @@ end
 class FakeMail
   attr_reader :delivered
   def deliver; @delivered = true; end
-end
-
-module KeyStubs
-  def valid_key
-    <<-EOS
-ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFz
-c2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRi
-Z2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4
-Zm9mcWU= foo@example.com
-EOS
-  end
-
-  def invalid_key
-    "ooger booger wooger@burger"
-  end
 end

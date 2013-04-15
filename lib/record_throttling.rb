@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ module RecordThrottling
       #   :conditions => proc{|record| {:user_id => record.user.id} },
       #   :timeframe => 5.minutes
       def self.throttle_records(create_or_update, options)
-        options.assert_valid_keys(:limit, :counter, :conditions, :timeframe)
+        options.assert_valid_keys(:limit, :counter, :conditions, :timeframe, :actor)
         class_attribute :creation_throttle_options
         self.creation_throttle_options = options
         send("before_#{create_or_update}", :check_throttle_limits)
@@ -76,16 +76,19 @@ module RecordThrottling
 
   module RecordThrottlingInstanceMethods
     def check_throttle_limits
-      return if RecordThrottling.disabled?
       options = self.class.creation_throttle_options
-      if options[:counter].call(self) < options[:limit]
-        return true
-      end
-      last_create = self.class.maximum(:created_at,
-                                       :conditions => options[:conditions].call(self))
-      if last_create && last_create >= options[:timeframe].ago
-        raise LimitReachedError
-      end
+      scope = options[:scope] || self.class
+      actor = options[:actor].call(self)
+      raise LimitReachedError if !RecordThrottling.allowed?(scope, actor, options)
     end
+  end
+
+  def self.allowed?(scope, actor, options = {})
+    return true if RecordThrottling.disabled?
+    return true if options[:counter].call(actor) < options[:limit]
+    cond = options[:conditions].call(actor)
+    last_create = scope.maximum(:created_at, :conditions => cond)
+    return true if !last_create || last_create < options[:timeframe].ago
+    false
   end
 end

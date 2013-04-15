@@ -547,7 +547,8 @@ class MergeRequest < ActiveRecord::Base
 
   def tracking_repository
     unless target_repository.has_tracking_repository?
-      target_repository.create_tracking_repository
+      command = CreateTrackingRepositoryCommand.new(Gitorious::App, target_repository)
+      command.execute(command.build)
     end
     target_repository.tracking_repository
   end

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,11 +16,11 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
-require "test_helper"
+require "ssh_key_test_helper"
 require "fileutils"
 
 class SshKeyFileTest < ActiveSupport::TestCase
+  include SshKeyTestHelper
 
   def fixture_key_path
     File.join(fixture_path, "authorized_keys_fixture")
@@ -29,7 +29,7 @@ class SshKeyFileTest < ActiveSupport::TestCase
   def setup
     FileUtils.cp(File.join(fixture_path, "authorized_keys"), fixture_key_path)
     @keyfile = SshKeyFile.new(fixture_key_path)
-    @keydata = ssh_keys(:johan).to_key
+    @keydata = SshKeyFile.format(ssh_keys(:johan))
   end
 
   def teardown
@@ -71,12 +71,35 @@ class SshKeyFileTest < ActiveSupport::TestCase
     setup { @path = File.dirname(__FILE__) + "/../../tmp/keyfile" }
     teardown { FileUtils.rm(@path) }
 
-    should "add a key to unexistent authorized_keys file and initialize file permission's       correctly" do
+    should "add a key and initialize file permissions correctly" do
       keyfile = SshKeyFile.new(@path)
       keyfile.add_key(@keydata)
 
       binary_rw_permissions = 33152
       assert_equal 33152, File::Stat.new(@path).mode
+    end
+  end
+
+  context "format" do
+    setup do
+      @key = new_key
+      @key.save! # Formatting uses the id from the saved record
+    end
+
+    should "include algorithm, encoded key and custom comment" do
+      expected = /#{@key.algorithm} #{@key.encoded_key} SshKey:#{@key.id}-User:#{@key.user_id}/
+
+      assert_match expected, SshKeyFile.format(@key)
+    end
+
+    should "produce a proper ssh key" do
+      keyfile_format = "#{@key.algorithm} #{@key.encoded_key} SshKey:#{@key.id}-User:#{@key.user_id}"
+      exp_key = "### START KEY #{@key.id} ###\n" +
+        "command=\"gitorious #{users(:johan).login}\",no-port-forwarding," +
+        "no-X11-forwarding,no-agent-forwarding,no-pty #{keyfile_format}" +
+        "\n### END KEY #{@key.id} ###\n"
+
+      assert_equal exp_key, SshKeyFile.format(@key)
     end
   end
 end

@@ -1,7 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,28 +15,19 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "use_case"
+require "commands/clone_repository_command"
 
-class SshKeyProcessor
-  include Gitorious::Messaging::Consumer
-  consumes "/queue/GitoriousSshKeys"
+class PrepareRepositoryClone
+  include UseCase
 
-  def on_message(message)
-    command = message["command"]
-    target_id = message["target_id"]
-    args = message["arguments"]
-
-    unless %w(add_to_authorized_keys delete_from_authorized_keys).include?(command)
-      raise "Unknown command"
-    end
-
-    logger.debug("Processor sending message: #{command} #{args}")
-    SshKey.send(command, *args)
-
-    if target_id
-      if obj = SshKey.find_by_id(target_id.to_i)
-        obj.ready = true
-        obj.save!
-      end
-    end
+  def initialize(app, repository, user)
+    input_class(CloneRepositoryInput)
+    add_pre_condition(UserRequired.new(user))
+    add_pre_condition(CommitsRequired.new(repository))
+    add_pre_condition(RepositoryRateLimiting.new(user))
+    add_pre_condition(AuthorizationRequired.new(app, user, repository))
+    clone_command = CloneRepositoryCommand.new(app, repository, user)
+    step(lambda { |params| clone_command.build(params) })
   end
 end

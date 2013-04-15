@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -213,9 +213,9 @@ module Gitorious
       private
       def can_write_to_wiki?(user, repository)
         case repository.wiki_permissions
-        when Repository::WIKI_WRITABLE_EVERYONE
+        when WikiRepository::WRITABLE_EVERYONE
           return true
-        when Repository::WIKI_WRITABLE_PROJECT_MEMBERS
+        when WikiRepository::WRITABLE_PROJECT_MEMBERS
           return repository.project.member?(user)
         end
       end

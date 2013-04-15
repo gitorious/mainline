@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -230,14 +230,10 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
 
     should "not suggest merging with a non-MR repo" do
-      clone = Repository.new_by_cloning(@source_repository)
-      clone.name = "a-clone"
-      clone.user = users(:johan)
-      clone.owner = users(:johan)
-      clone.kind = Repository::KIND_USER_REPO
-      clone.merge_requests_enabled = false
-      assert clone.save
+      cmd = CloneRepositoryCommand.new(MessageHub.new, @source_repository, users(:johan))
+      clone = cmd.execute(cmd.build(CloneRepositoryInput.new(:merge_requests_enabled => false)))
       login_as :johan
+
       get :new, params(:repository_id => @source_repository.to_param)
       assert !assigns(:repositories).include?(clone)
     end

@@ -28,7 +28,6 @@ class ProjectsController < ApplicationController
 
   before_filter :login_required,
     :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
-  before_filter :check_if_project_proposal_is_required, :only => [:create]
   before_filter :find_project,
     :only => [:show, :clones, :edit, :update, :confirm_delete, :destroy, :edit_slug]
   before_filter :require_admin, :only => [:edit, :update, :edit_slug]
@@ -97,29 +96,41 @@ class ProjectsController < ApplicationController
 
   def new
     if ProjectProposal.required?(current_user)
-      redirect_to(:controller => "admin/project_proposals", :action => :new)
+      redirect_to(:controller => "admin/project_proposals", :action => :new) and return
     end
-    @project = Project.new
-    @project.owner = current_user
-    @root = Breadcrumb::NewProject.new
+    project = Project.new
+    project.owner = current_user
+    render(:action => "new", :locals => { :project => project, :root => Breadcrumb::NewProject.new })
   end
 
   def create
-    add_params = { :user => current_user, :private_project => params[:private_project] }
-    outcome = ProjectCreator.run(params[:project], add_params)
-    if outcome.success?
-      redirect_to new_project_repository_path(outcome.result)
-    else
-      @root = Breadcrumb::NewProject.new
-      @errors = outcome.errors.message_list
-      @project = ProjectCreator.build(params[:project].merge(add_params))
-      render :action => "new"
+    input = { :private => params[:private] }.merge(params[:project])
+    outcome = CreateProject.new(Gitorious::App, current_user).execute(input)
+
+    outcome.success do |result|
+      redirect_to(new_project_repository_path(result))
+    end
+
+    pre_condition_failed(outcome) do |f|
+      f.otherwise do |pc|
+        key = "projects_controller.create_only_for_site_admins"
+        flash[:error] = I18n.t(key) if pc.is_a?(ProjectProposalRequired)
+        redirect_to(projects_path)
+      end
+    end
+
+    outcome.failure do |project|
+      render(:action => "new", :locals => {
+        :project => project,
+        :root => Breadcrumb::NewProject.new
+      })
     end
   end
 
   def edit
     @groups = Team.by_admin(current_user)
     @root = Breadcrumb::EditProject.new(@project)
+    render :action => "edit", :locals => { :project => @project }
   end
 
   def edit_slug
@@ -148,12 +159,13 @@ class ProjectsController < ApplicationController
 
     @project.attributes = params[:project]
     changed = @project.changed? # Dirty attr tracking is cleared after #save
-    if @project.save && @project.wiki_repository.save
+    validation = ProjectValidator.call(@project)
+    if validation.valid? && @project.save && @project.wiki_repository.save
       @project.create_event(Action::UPDATE_PROJECT, @project, current_user) if changed
       flash[:success] = "Project details updated"
       redirect_to project_path(@project)
     else
-      render :action => 'edit'
+      render :action => "edit", :locals => { :project => @project }
     end
   end
 
@@ -184,14 +196,6 @@ class ProjectsController < ApplicationController
     repositories.sort_by { |ml| ml.last_pushed_at || Time.utc(1970) }.reverse
   end
 
-  def check_if_project_proposal_is_required
-    if ProjectProposal.required?(current_user)
-      flash[:error] = I18n.t("projects_controller.create_only_for_site_admins")
-      redirect_to(projects_path)
-      return false
-    end
-  end
-
   def paginate_projects(page, per_page)
     filter_paginated(page, per_page) do |page|
       Project.paginate(:order => "projects.created_at desc",
@@ -204,9 +208,9 @@ class ProjectsController < ApplicationController
     paginate(:action => "show", :id => @project.to_param) do
       if !Gitorious.private_repositories?
         id = "paginated-project-events:#{@project.id}:#{params[:page] || 1}"
-        Rails.cache.fetch(id, :expires_in => 10.minutes) do
+        #Rails.cache.fetch(id, :expires_in => 10.minutes) do
           unfiltered_paginated_events
-        end
+        #end
       else
         filter_paginated(params[:page], Event.per_page) do |page|
           unfiltered_paginated_events
@@ -216,12 +220,13 @@ class ProjectsController < ApplicationController
   end
 
   def unfiltered_paginated_events
-    marshalable_events(@project.events.paginate({
+    #marshalable_events(@project.events.paginate({
+    @project.events.paginate({
       :conditions => ["target_type != ?", "Event"],
       :order => "created_at desc",
       :include => [:user, :project],
       :per_page => Event.per_page,
       :page => params[:page]
-    }))
+    })
   end
 end

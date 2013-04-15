@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -23,16 +23,20 @@ module Gitorious::Messaging::ResqueAdapter
   module Publisher
     QUEUES = {
       # Maps queue => processor class (see app/processors)
-      "GitoriousRepositoryCreation" => "RepositoryCreation",
-      "GitoriousRepositoryDeletion" => "RepositoryDeletion",
-      "GitoriousPush" => "Push",
-      "GitoriousSshKeys" => "SshKey",
-      "GitoriousRepositoryArchiving" => "RepositoryArchiving",
-      "GitoriousEmailNotifications" => "MessageForwarding",
-      "GitoriousMergeRequestCreation" => "MergeRequest",
+      "GitoriousDestroySshKey" => "DestroySshKey",
       "GitoriousMergeRequestBackend" => "MergeRequestGitBackend",
+      "GitoriousMergeRequestCreation" => "MergeRequest",
       "GitoriousMergeRequestVersionDeletion" => "MergeRequestVersion",
-      "GitoriousPostReceiveWebHook" => "WebHook"
+      "GitoriousEmailNotifications" => "MessageForwarding",
+      "GitoriousNewSshKey" => "NewSshKey",
+      "GitoriousPush" => "Push",
+      "GitoriousRepositoryArchiving" => "RepositoryArchiving",
+      "GitoriousRepositoryCloning" => "RepositoryCloning",
+      "GitoriousRepositoryCreation" => "RepositoryCreation",
+      "GitoriousTrackingRepositoryCreation" => "TrackingRepositoryCreation",
+      "GitoriousRepositoryDeletion" => "RepositoryDeletion",
+      "GitoriousPostReceiveWebHook" => "WebHook",
+      "GitoriousWikiRepositoryCreation" => "WikiRepositoryCreation"
     }
 
     # Locate the correct class to pick queue from

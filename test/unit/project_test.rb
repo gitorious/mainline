@@ -22,120 +22,89 @@ require "test_helper"
 class ProjectTest < ActiveSupport::TestCase
   def create_project(options={})
     Project.new({
-      :title => "foo project",
-      :slug => "foo",
-      :description => "my little project",
-      :user => users(:johan),
-      :owner => users(:johan)
-    }.merge(options))
+        :title => "foo project",
+        :slug => "foo",
+        :description => "my little project",
+        :user => users(:johan),
+        :owner => users(:johan)
+      }.merge(options))
   end
 
   should belong_to(:containing_site)
   should have_many(:merge_request_statuses)
 
-  should "have a title to be valid" do
-    project = create_project(:title => nil)
-    assert !project.valid?, 'valid? should be false'
-    project.title = "foo"
-    assert project.valid?
-  end
-
-  should "have a slug to be valid" do
-    project = create_project(:slug => nil)
-    assert !project.valid?, 'valid? should be false'
-  end
-
-  should "have a unique slug to be valid" do
-    p1 = create_project
-    p1.save!
-    p2 = create_project(:slug => "FOO")
-    assert !p2.valid?, 'valid? should be false'
-    assert_not_nil p2.errors[:slug]
-  end
-
-  should "have an alphanumeric slug" do
-    project = create_project(:slug => "asd asd")
-    project.valid?
-    assert !project.valid?, 'valid? should be false'
-  end
-
-  should "downcase the slug before validation" do
+  should "downcase slug" do
     project = create_project(:slug => "FOO")
-    project.valid?
     assert_equal "foo", project.slug
   end
 
-  should "cannot have a reserved name as slug" do
-    project = create_project(:slug => Gitorious::Reservations.project_names.first)
-    project.valid?
-    assert_not_nil project.errors[:slug]
+  should "recognize unique project" do
+    project = Project.first
+    assert project.uniq?
 
-    project = create_project(:slug => "dashboard")
-    project.valid?
-    assert_not_nil project.errors[:slug]
-  end
-
-  should "creates the wiki repository on create" do
-    project = create_project(:slug => "my-new-project")
     project.save!
-    assert_instance_of Repository, project.wiki_repository
-    assert_equal "my-new-project#{Repository::WIKI_NAME_SUFFIX}", project.wiki_repository.name
-    assert_equal Repository::KIND_WIKI, project.wiki_repository.kind
-    assert !project.repositories.include?(project.wiki_repository)
-    assert_equal project.owner, project.wiki_repository.owner
+    assert project.uniq?
+
+    project2 = create_project(:slug => project.slug.upcase)
+    refute project2.uniq?
   end
 
-  should "finds a project by slug or raises" do
-    assert_equal projects(:johans), Project.find_by_slug!(projects(:johans).slug)
-    assert_raises(ActiveRecord::RecordNotFound) do
-      Project.find_by_slug!("asdasdasd")
-    end
-  end
-
-  should "has the slug as its params" do
+  should "use slug as param representation" do
     assert_equal projects(:johans).slug, projects(:johans).to_param
   end
 
-  should "knows if a user is admin on a project" do
-    project = projects(:johans)
-    assert admin?(users(:johan), project)
-    project.owner = groups(:team_thunderbird)
-    assert !admin?(users(:johan), project)
-    project.owner.add_member(users(:johan), Role.admin)
-    assert admin?(users(:johan), project)
-
-    assert !admin?(users(:moe), project)
-    project.owner.add_member(users(:moe), Role.member)
-    assert !admin?(users(:moe), project)
-    # be able to deal with AuthenticatedSystem's quirky design:
-    assert !admin?(:false, project)
-    assert !admin?(false, project)
-    assert !admin?(nil, project)
+  should "have to_param_with_prefix" do
+    assert_equal projects(:johans).to_param, projects(:johans).to_param_with_prefix
   end
 
-  should "knows if a user is a member on a project" do
+  should "know if a user is admin on a project" do
+    project = projects(:johans)
+    assert admin?(users(:johan), project)
+
+    project.owner = groups(:team_thunderbird)
+    refute admin?(users(:johan), project)
+
+    project.owner.add_member(users(:johan), Role.admin)
+    assert admin?(users(:johan), project)
+    refute admin?(users(:moe), project)
+
+    project.owner.add_member(users(:moe), Role.member)
+    refute admin?(users(:moe), project)
+
+    # be able to deal with AuthenticatedSystem's quirky design:
+    refute admin?(:false, project)
+    refute admin?(false, project)
+    refute admin?(nil, project)
+  end
+
+  should "know if a user is a member on a project" do
     project = projects(:johans)
     assert project.member?(users(:johan))
+
     project.owner = groups(:team_thunderbird)
-    assert !project.member?(users(:johan))
+    refute project.member?(users(:johan))
+
     project.owner.add_member(users(:johan), Role.member)
     assert project.member?(users(:johan))
 
-    assert !project.member?(users(:moe))
+    refute project.member?(users(:moe))
+
     project.owner.add_member(users(:moe), Role.member)
-    assert !admin?(users(:moe), project)
+    refute admin?(users(:moe), project)
+
     # be able to deal with AuthenticatedSystem's quirky design:
-    assert !project.member?(:false)
-    assert !project.member?(false)
-    assert !project.member?(nil)
+    refute project.member?(:false)
+    refute project.member?(false)
+    refute project.member?(nil)
   end
 
-  should "knows if a user can delete the project" do
+  should "know if a user can delete the project" do
     project = projects(:johans)
-    assert !can_delete?(users(:moe), project)
-    assert !can_delete?(users(:johan), project) # it has clones..
+    refute can_delete?(users(:moe), project)
+    refute can_delete?(users(:johan), project) # it has clones..
+
     project.repositories.clones.each(&:destroy)
-    assert can_delete?(users(:johan), project.reload) # the clones are clone
+    assert can_delete?(users(:johan), project.reload) # the clones are gone
   end
 
   should "strip html tags" do
@@ -145,62 +114,33 @@ class ProjectTest < ActiveSupport::TestCase
 
   should "have a breadcrumb_parent method which returns nil" do
     project = create_project
-    assert project.breadcrumb_parent.nil?
-  end
-
-  should "have valid urls ( prepending http:// if needed )" do
-    project = projects(:johans)
-    [ :home_url, :mailinglist_url, :bugtracker_url ].each do |attr|
-      assert project.valid?
-      project.send("#{attr}=", 'http://blah.com')
-      assert project.valid?
-      project.send("#{attr}=", 'ftp://blah.com')
-      assert !project.valid?, 'valid? should be false'
-      project.send("#{attr}=", 'blah.com')
-      assert project.valid?
-      assert_equal 'http://blah.com', project.send(attr)
-    end
+    assert_nil project.breadcrumb_parent
   end
 
   should "remove leading and trailing whitespace from the URL" do
     p = projects(:johans)
-    assert_equal("http://foo.com/", p.clean_url(" http://foo.com/ "))
+    p.home_url = " http://foo.com/ "
+
+    assert_equal "http://foo.com/", p.home_url
   end
 
-  should "not prepend http:// to empty urls" do
+  should "prepend http:// to URLs" do
+    project = projects(:johans)
+
+    [:home_url, :mailinglist_url, :bugtracker_url].each do |attr|
+      project.send("#{attr}=", "url.com")
+      assert_equal "http://url.com", project.send(attr)
+    end
+  end
+
+  should "not prepend http:// to empty URLs" do
     project = projects(:johans)
     [ :home_url, :mailinglist_url, :bugtracker_url ].each do |attr|
-      project.send("#{attr}=", '')
+      project.send("#{attr}=", "")
       assert project.send(attr).blank?
       project.send("#{attr}=", nil)
       assert project.send(attr).blank?
     end
-  end
-
-  should "not allow invalid urls" do
-    project = projects(:johans)
-
-    project.home_url = "invalid@stuff"
-    project.mailinglist_url = "invalid@mailinglist"
-    project.bugtracker_url = "invalid@bugtracker"
-
-    assert !project.valid?
-    assert project.errors[:home_url]
-    assert project.errors[:mailinglist_url]
-    assert project.errors[:bugtracker_url]
-  end
-
-  should "allow valid urls" do
-    project = projects(:johans)
-
-    project.home_url = "http://home.com"
-    project.mailinglist_url = "http://mailinglist.com"
-    project.bugtracker_url = "http://bugtracker.com"
-
-    assert project.valid?
-    assert project.errors[:home_url].blank?
-    assert project.errors[:mailinglist_url].blank?
-    assert project.errors[:bugtracker_url].blank?
   end
 
   should "find or create an associated wiki repo" do
@@ -215,16 +155,13 @@ class ProjectTest < ActiveSupport::TestCase
   should "have a wiki repository" do
     project = projects(:johans)
     assert_equal repositories(:johans_wiki), project.wiki_repository
-    assert !project.repositories.include?(repositories(:johans_wiki))
-  end
-
-  should "has to_param_with_prefix" do
-    assert_equal projects(:johans).to_param, projects(:johans).to_param_with_prefix
+    refute project.repositories.include?(repositories(:johans_wiki))
   end
 
   should "change the owner of the wiki repo as well" do
     project = projects(:johans)
     project.change_owner_to(groups(:team_thunderbird))
+
     assert_equal groups(:team_thunderbird), project.owner
     assert_equal groups(:team_thunderbird), project.wiki_repository.owner
   end
@@ -233,6 +170,7 @@ class ProjectTest < ActiveSupport::TestCase
     p = projects(:johans)
     p.change_owner_to(groups(:team_thunderbird))
     assert_equal groups(:team_thunderbird), p.owner
+
     p.change_owner_to(users(:johan))
     assert_equal groups(:team_thunderbird), p.owner
   end
@@ -304,10 +242,10 @@ class ProjectTest < ActiveSupport::TestCase
       assert_not_equal nil, @project.create_event(Action::CREATE_PROJECT, @repository, @user, "", "")
     end
 
-    should 'allow optional creation of events' do
+    should "allow optional creation of events" do
       assert @project.new_event_required?(Action::UPDATE_WIKI_PAGE, @repository, @user, 'HomePage')
       event = @project.create_event(Action::UPDATE_WIKI_PAGE, @repository, @user, 'HomePage', Time.now)
-      assert !@project.new_event_required?(Action::UPDATE_WIKI_PAGE, @repository, @user, 'HomePage')
+      refute @project.new_event_required?(Action::UPDATE_WIKI_PAGE, @repository, @user, 'HomePage')
       event.update_attributes(:created_at => 2.hours.ago)
       assert @project.new_event_required?(Action::UPDATE_WIKI_PAGE, @repository, @user, 'HomePage')
     end
@@ -316,10 +254,10 @@ class ProjectTest < ActiveSupport::TestCase
       assert_not_equal nil, @project.create_event(52342, @repository, @user)
     end
 
-    should "creates valid attributes on the event" do
+    should "create valid attributes on the event" do
       e = @project.create_event(Action::COMMIT, @repository, @user, "somedata", "a body")
       assert e.valid?
-      assert !e.new_record?, 'e.new_record? should be false'
+      refute e.new_record?, 'e.new_record? should be false'
       e.reload
       assert_equal Action::COMMIT, e.action
       assert_equal @repository, e.target
@@ -340,80 +278,54 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
-  context "Thottling" do
-    setup{ Project.destroy_all }
-
-    should "throttle on create by default" do
-      assert_nothing_raised do
-        5.times{|i| create_project(:slug => "wifebeater#{i}").save! }
-      end
-
-      assert_no_difference("Project.count") do
-        assert_raises(RecordThrottling::LimitReachedError) do
-          create_project(:slug => "wtf-are-you-doing-bro").save!
-        end
-      end
-    end
-
-    should "not throttle if throttling disabled" do
-      RecordThrottling.disable
-      assert_nothing_raised(RecordThrottling::LimitReachedError) do
-        6.times{|i| create_project(:slug => "spammerProject#{i}").save! }
-      end
-    end
-
-    # Ensure throttling is reset
-    teardown{ RecordThrottling.reset_to_default }
-  end
-
-  context 'Oauth' do
+  context "Oauth" do
     setup do
       @project = projects(:johans)
-      @project.oauth_signoff_site = 'http://oauth.example'
+      @project.oauth_signoff_site = "http://oauth.example"
     end
 
-    should 'return oauth_consumer_options with default paths' do
+    should "return oauth_consumer_options with default paths" do
       assert_equal({:site => @project.oauth_signoff_site}, @project.oauth_consumer_options)
     end
 
-    should 'append correct paths when a prefix is supplied' do
+    should "append correct paths when a prefix is supplied" do
       @project.oauth_path_prefix = "/path/to/oauth"
       consumer_options = @project.oauth_consumer_options
-      assert_equal('/path/to/oauth/request_token', consumer_options[:request_token_path])
+      assert_equal("/path/to/oauth/request_token", consumer_options[:request_token_path])
     end
 
-    should 'append a correct path even with strange options' do
+    should "append a correct path even with strange options" do
       @project.oauth_path_prefix = "path/to/oauth/"
       consumer_options = @project.oauth_consumer_options
-      assert_equal('/path/to/oauth/request_token', consumer_options[:request_token_path])
+      assert_equal("/path/to/oauth/request_token", consumer_options[:request_token_path])
     end
 
-    should 'be able to set the oauth options from a hash' do
+    should "be able to set the oauth options from a hash" do
       new_settings = {
-        :path_prefix    => '/foo',
-        :signoff_key    => 'kee',
-        :site           => 'http://oauth.example.com',
-        :signoff_secret => 'secret'
+        :path_prefix    => "/foo",
+        :signoff_key    => "kee",
+        :site           => "http://oauth.example.com",
+        :signoff_secret => "secret"
       }
       @project.oauth_settings = new_settings
       expected = {
-          :site                 => 'http://oauth.example.com',
-          :request_token_path   => '/foo/request_token',
-          :authorize_path       => '/foo/authorize',
-          :access_token_path    => '/foo/access_token'
-        }
+        :site                 => "http://oauth.example.com",
+        :request_token_path   => "/foo/request_token",
+        :authorize_path       => "/foo/authorize",
+        :access_token_path    => "/foo/access_token"
+      }
       assert @project.merge_requests_need_signoff?
       assert_equal expected, @project.oauth_consumer_options
-      assert_equal 'kee', @project.oauth_signoff_key
-      assert_equal 'secret', @project.oauth_signoff_secret
+      assert_equal "kee", @project.oauth_signoff_key
+      assert_equal "secret", @project.oauth_signoff_secret
       assert_equal new_settings, @project.oauth_settings
     end
 
-    should 'deactivate signoff on merge requests when passing an empty :site option in oauth_settings' do
-      @project.oauth_settings = {:site => ''}
-      assert !@project.merge_requests_need_signoff?
+    should "deactivate signoff on merge requests when passing an empty :site option in oauth_settings" do
+      @project.oauth_settings = {:site => ""}
+      refute @project.merge_requests_need_signoff?
       @project.oauth_settings = {}
-      assert !@project.merge_requests_need_signoff?
+      refute @project.merge_requests_need_signoff?
     end
   end
 
@@ -447,7 +359,7 @@ class ProjectTest < ActiveSupport::TestCase
     should "be serializible through a text-only version" do
       assert_equal "Open\nClosed\nVerifying", @project.merge_request_states
       @project.merge_request_states = "Foo\nBar"
-      assert_equal ['Foo','Bar'], @project.merge_request_custom_states
+      assert_equal ["Foo","Bar"], @project.merge_request_custom_states
     end
 
     should "allow mass assignment" do
@@ -464,20 +376,6 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
-  should "create default merge_request_statuses on creation" do
-    project = FactoryGirl.build(:user_project)
-    assert project.new_record?
-    project.save!
-
-    assert_equal 2, project.reload.merge_request_statuses.count
-    open_status, closed_status = project.merge_request_statuses
-    assert_equal MergeRequest::STATUS_OPEN, open_status.state
-    assert_equal "Open", open_status.name
-    assert_equal MergeRequest::STATUS_CLOSED, closed_status.state
-    assert_equal "Closed", closed_status.name
-  end
-
-
   context "Searching" do
     setup do
       @owner = FactoryGirl.create(:user, :login => "thejoker")
@@ -489,7 +387,8 @@ class ProjectTest < ActiveSupport::TestCase
         :name => "foo-hackers", :user_id => @owner.to_param)
       @group_repo = FactoryGirl.create(:repository, :project => @project,
         :owner => @group, :name => "group-repo", :user => @owner)
-      @tracking_repo = @repo.create_tracking_repository
+      command = CreateTrackingRepositoryCommand.new(Gitorious::App, @repo)
+      @tracking_repo = command.execute(command.build)
     end
 
     should "find repositories matching the repo name" do
@@ -509,7 +408,7 @@ class ProjectTest < ActiveSupport::TestCase
     end
 
     should "only include regular repositories" do
-      assert !@project.search_repositories("track").include?(@tracking_repo)
+      refute @project.search_repositories("track").include?(@tracking_repo)
     end
   end
 
@@ -524,7 +423,8 @@ class ProjectTest < ActiveSupport::TestCase
         :name => "foo-hackers", :user_id => @owner.to_param)
       @group_repo = FactoryGirl.create(:repository, :project => @project,
         :owner => @group, :name => "group-repo", :user => @owner)
-      @tracking_repo = @repo.create_tracking_repository
+      command = CreateTrackingRepositoryCommand.new(Gitorious::App, @repo)
+      @tracking_repo = command.execute(command.build)
     end
 
     should "include regular repositories" do
@@ -533,20 +433,17 @@ class ProjectTest < ActiveSupport::TestCase
     end
 
     should "not include tracking repositories" do
-      assert !@project.cloneable_repositories.include?(@tracking_repo)
+      refute @project.cloneable_repositories.include?(@tracking_repo)
     end
 
     should "include wiki repositories" do
+      cmd = CreateWikiRepositoryCommand.new(MessageHub.new)
+      cmd.execute(cmd.build(@project))
+
       wiki = @project.wiki_repository
       assert_not_nil wiki
       assert @project.cloneable_repositories.include?(wiki)
     end
-  end
-
-  should "be added to the creators favorites" do
-    p = create_project
-    p.save!
-    assert p.watched_by?(p.user)
   end
 
   context "Suspended projects" do
@@ -555,7 +452,7 @@ class ProjectTest < ActiveSupport::TestCase
     end
 
     should "by default not be suspended" do
-      assert !@project.suspended?
+      refute @project.suspended?
     end
 
     should "be suspendable" do
@@ -566,7 +463,7 @@ class ProjectTest < ActiveSupport::TestCase
     should "by default scope to non-suspended projects" do
       @project.suspend!
       @project.save!
-      assert !Project.all.include?(@project)
+      refute Project.all.include?(@project)
     end
   end
 
@@ -579,12 +476,6 @@ class ProjectTest < ActiveSupport::TestCase
       @project.tag_list = "fun pretty scary"
       assert_equal(%w(fun pretty scary), @project.tag_list)
     end
-  end
-
-  should "not allow api as slug" do
-    p = Project.new(:slug => "api")
-    assert !p.valid?
-    assert_not_nil p.errors[:slug]
   end
 
   context "Database authorization" do
@@ -610,7 +501,7 @@ class ProjectTest < ActiveSupport::TestCase
 
       should "disallow anonymous user to view private project" do
         projects(:johans).add_member(users(:johan))
-        assert !can_read?(nil, projects(:johans))
+        refute can_read?(nil, projects(:johans))
       end
 
       should "allow member to view private project" do
@@ -641,7 +532,7 @@ class ProjectTest < ActiveSupport::TestCase
         @project = projects(:johans)
         Gitorious::Configuration.override("enable_private_repositories" => true) do
           @project.make_private
-          assert !can_read?(users(:mike), @project)
+          refute can_read?(users(:mike), @project)
         end
       end
     end
@@ -660,10 +551,10 @@ class ProjectTest < ActiveSupport::TestCase
   end
 
   private
-    def create_event(project, target, user)
+  def create_event(project, target, user)
     e = Event.new({ :target => target,
-                    :data => "master",
-                    :action => Action::CREATE_BRANCH })
+        :data => "master",
+        :action => Action::CREATE_BRANCH })
     e.user = user
     e.project = project
     e.save!

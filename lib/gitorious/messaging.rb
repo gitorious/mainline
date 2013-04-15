@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -114,7 +114,7 @@ module Gitorious
       root = Pathname(__FILE__) + "../../../app/processors"
       %w[merge_request_git_backend merge_request merge_request_version
          message_forwarding push repository_archiving repository_creation
-         repository_deletion ssh_key web_hook].each do |p|
+         repository_deletion new_ssh_key destroy_ssh_key web_hook].each do |p|
         require "#{root}/#{p}_processor"
       end
     end

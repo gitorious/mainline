@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -50,18 +50,32 @@ OTHER_SHA = "a" * 40
 
 module TestHelper
   class Model
+    attr_accessor :id, :created_at, :updated_at
+
     def initialize(attributes = {})
       @is_new = true
       attributes.each { |k, v| send(:"#{k}=", v) }
     end
 
+    def save
+      @is_new = false
+      self.class.register
+    end
+
     def write_attribute(key, val); end
     def update_attribute(key, val); end
     def valid?; end
-    def save; @is_new = false; end
     def save!; save; end
     def new_record?; @is_new; end
+    def uniq?; true; end
     def self.first; new; end
+    def self.count; @count || 0; end
+
+    private
+    def self.register
+      @count ||= 0
+      @count += 1
+    end
   end
 end
 
@@ -88,15 +102,50 @@ if !defined?(Rails)
 
   class Repository < TestHelper::Model
     attr_accessor :project, :user, :name, :hooks, :description, :browse_url,
-      :clones, :owner
+      :clones, :owner, :user_id, :owner_id, :project_id, :parent_id,
+      :merge_requests_enabled, :kind, :parent, :content_memberships
 
-    def last_pushed_at
-      Time.now
+    def committerships
+      return @cs if @cs
+      @cs = []
+      def @cs.create_for_owner!(owner); end
+      @cs
+    end
+
+    def add_member(member)
+      self.content_memberships ||= []
+      self.content_memberships << member
+    end
+
+    def make_private; @private = true; end
+    def private?; @private; end
+    def public?; !private?; end
+    def last_pushed_at; Time.now; end
+    def uniq_name?; true; end
+    def uniq_hashed_path?; true; end
+    def internal?; false; end
+    def watched_by!(watcher); end
+    def project_repo?; true; end
+    def tracking_repo?; false; end
+    def real_gitdir; ""; end
+    def set_repository_path; end
+    def self.reserved_names; []; end
+    def self.private_on_create?(repo); false; end
+  end
+
+  class RepositoryCollection < Array
+    def initialize(project); @project = project; end
+
+    def new(params)
+      repository = Repository.new(params.merge(:project => @project))
+      self << repository
+      repository
     end
   end
 
   class Project < TestHelper::Model
-    attr_accessor :title, :slug, :description, :events
+    attr_accessor :title, :slug, :description, :events, :user, :owner, :user_id,
+      :home_url, :mailinglist_url, :bugtracker_url, :owner_id
 
     def create_event(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
       self.events ||= []
@@ -109,10 +158,45 @@ if !defined?(Rails)
         :date => date
       })
     end
+
+    def repositories
+      @repositories ||= RepositoryCollection.new(self)
+    end
+
+    def public?; true end
+    def private?; false end
+    def create_new_repository_event(repository); end
+    def self.reserved_slugs; []; end
   end
 
   class Event < TestHelper::Model
     attr_accessor :action, :user, :data, :project, :target, :body
+  end
+
+  class SshKey < TestHelper::Model
+    attr_accessor :key, :user_id
+  end
+
+  class Group < TestHelper::Model
+    attr_accessor :creator
+  end
+
+  class Membership < TestHelper::Model
+    attr_accessor :user, :group, :role
+  end
+
+  class Role
+    def self.member; :member; end
+    def self.admin; :admin; end
+  end
+
+  class WikiRepository
+    NAME_SUFFIX = "-gitorious-wiki"
+  end
+
+  class Action
+    ADD_PROJECT_REPOSITORY = 19
+    CLONE_REPOSITORY = 3
   end
 end
 
@@ -179,5 +263,13 @@ if !defined?(Rails)
     def days; self * 24 * 60 * 60; end
     def day; days; end
     def ago; Time.now - self; end
+  end
+end
+
+class MessageHub
+  attr_reader :messages
+  def publish(queue, message)
+    @messages ||= []
+    @messages << { :queue => queue, :message => message }
   end
 end

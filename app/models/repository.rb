@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
@@ -28,7 +28,6 @@ require "gitorious/messaging"
 
 class Repository < ActiveRecord::Base
   include Gitorious::Messaging::Publisher
-  include RecordThrottling
   include Watchable
   include Gitorious::Authorization
   include Gitorious::Protectable
@@ -39,10 +38,6 @@ class Repository < ActiveRecord::Base
   KIND_USER_REPO = 3
   KIND_TRACKING_REPO = 4
   KINDS_INTERNAL_REPO = [KIND_WIKI, KIND_TRACKING_REPO]
-
-  WIKI_NAME_SUFFIX = "-gitorious-wiki"
-  WIKI_WRITABLE_EVERYONE = 0
-  WIKI_WRITABLE_PROJECT_MEMBERS = 1
 
   belongs_to  :user
   belongs_to  :project
@@ -62,25 +57,7 @@ class Repository < ActiveRecord::Base
   has_many    :events, :as => :target, :dependent => :destroy
   has_many :hooks, :dependent => :destroy
 
-  NAME_FORMAT = /[a-z0-9_\-]+/i.freeze
-  validates_presence_of :user_id, :name, :owner_id, :project_id
-  validates_format_of :name, :with => /^#{NAME_FORMAT}$/i,
-    :message => "is invalid, must match something like /[a-z0-9_\\-]+/"
-  validates_exclusion_of :name, :in => lambda { |r| Repository.reserved_names }
-  validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
-  validates_uniqueness_of :hashed_path, :case_sensitive => false
-
-  before_validation :downcase_name
-  before_create :set_repository_path
-  after_create :build_repository
   after_destroy :post_repo_deletion_message
-
-  throttle_records :create, :limit => 5,
-    :counter => proc{|record|
-      record.user.repositories.where("created_at > ?", 5.minutes.ago).count
-    },
-    :conditions => proc { |record| { :user_id => record.user.id } },
-    :timeframe => 5.minutes
 
   scope :by_users,  :conditions => { :kind => KIND_USER_REPO } do
     def fresh(limit = 10)
@@ -117,12 +94,6 @@ class Repository < ActiveRecord::Base
 
   def self.human_name
     I18n.t("activerecord.models.repository")
-  end
-
-  def self.new_by_cloning(other, username=nil)
-    suggested_name = username ? "#{username}s-#{other.name}" : nil
-    new(:parent => other, :project => other.project, :name => suggested_name,
-      :merge_requests_enabled => other.merge_requests_enabled)
   end
 
   def self.find_by_name_in_project!(name, containing_project = nil)
@@ -162,23 +133,8 @@ class Repository < ActiveRecord::Base
     Repository.where({ :name => repo_name }.merge(owner_conditions)).first
   end
 
-  def self.create_git_repository(path)
-    full_path = full_path_from_partial_path(path)
-    git_backend.create(full_path)
-    self.create_hooks(full_path)
-  end
-
-  def self.clone_git_repository(target_path, source_path, options = {})
-    full_path = full_path_from_partial_path(target_path)
-    Grit::Git.with_timeout(nil) do
-      git_backend.clone(full_path,
-        full_path_from_partial_path(source_path))
-    end
-    self.create_hooks(full_path) unless options[:skip_hooks]
-  end
-
   def self.delete_git_repository(path)
-    git_backend.delete!(full_path_from_partial_path(path))
+    git_backend.delete!(RepositoryRoot.expand(path).to_s)
   end
 
   def self.most_active_clones_in_projects(projects, limit = 5)
@@ -278,7 +234,7 @@ class Repository < ActiveRecord::Base
   end
 
   def full_repository_path
-    self.class.full_path_from_partial_path(real_gitdir)
+    RepositoryRoot.expand(real_gitdir).to_s
   end
 
   def git
@@ -608,9 +564,9 @@ class Repository < ActiveRecord::Base
     old_value = read_attribute(field)
     return if !allow_blank && value.blank? || old_value == value
     self.send("#{field}=", value)
-    valid?
+    validation = RepositoryValidator.call(self)
 
-    if errors[field].length == 0
+    if validation.errors[field].length == 0
       @updated_fields << field
     end
   end
@@ -624,17 +580,6 @@ class Repository < ActiveRecord::Base
 
   def requires_signoff_on_merge_requests?
     mainline? && project.merge_requests_need_signoff?
-  end
-
-  def build_tracking_repository
-    result = Repository.new(:parent => self, :user => user, :owner => owner, :kind => KIND_TRACKING_REPO, :name => "tracking_repository_for_#{id}", :project => project)
-    return result
-  end
-
-  def create_tracking_repository
-    result = build_tracking_repository
-    result.save!
-    return result
   end
 
   def tracking_repository
@@ -756,7 +701,37 @@ class Repository < ActiveRecord::Base
 
   def self.private_on_create?(params = {})
     return false if !Gitorious.private_repositories?
-    params[:private_repository] || Gitorious.repositories_default_private?
+    params[:private] || Gitorious.repositories_default_private?
+  end
+
+  def uniq_name?
+    repository = Repository.where("lower(name) = ? and project_id = ?", name, project_id).first
+    repository.nil? || repository == self
+  end
+
+  def uniq_hashed_path?
+    repository = Repository.where("lower(hashed_path) = ?", hashed_path).first
+    repository.nil? || repository == self
+  end
+
+  def name=(name)
+    self[:name] = name.respond_to?(:downcase) ? name.downcase : name
+  end
+
+  def kind=(kind)
+    if kind == :project
+      self[:kind] = Repository::KIND_PROJECT_REPO
+    elsif kind == :tracking
+      self[:kind] = Repository::KIND_TRACKING_REPO
+    elsif kind == :wiki
+      self[:kind] = Repository::KIND_WIKI
+    elsif kind == :user
+      self[:kind] = Repository::KIND_USER_REPO
+    elsif kind == :team
+      self[:kind] = Repository::KIND_TEAM_REPO
+    else
+      self[:kind] = kind
+    end
   end
 
   protected
@@ -767,18 +742,6 @@ class Repository < ActiveRecord::Base
     "#{first}/#{second}/#{last}"
   end
 
-  def self.full_path_from_partial_path(path)
-    File.expand_path(File.join(RepositoryRoot.default_base_path, path))
-  end
-
-  def downcase_name
-    name.downcase! if name
-  end
-
-  def build_repository
-    RepositoryBuilder.new(self).build
-  end
-
   def self.reserved_names
     @reserved_names ||= []
   end
@@ -786,29 +749,5 @@ class Repository < ActiveRecord::Base
   def self.reserve_names(names)
     @reserved_names ||= []
     @reserved_names.concat(names)
-  end
-
-  private
-  def self.create_hooks(path)
-    hooks = File.join(RepositoryRoot.default_base_path, ".hooks")
-    Dir.chdir(path) do
-      hooks_base_path = File.expand_path("#{Rails.root}/data/hooks")
-
-      if not File.symlink?(hooks)
-        if not File.exist?(hooks)
-          FileUtils.ln_s(hooks_base_path, hooks) # Create symlink
-        end
-      elsif File.expand_path(File.readlink(hooks)) != hooks_base_path
-        FileUtils.ln_sf(hooks_base_path, hooks) # Fixup symlink
-      end
-    end
-
-    local_hooks = File.join(path, "hooks")
-    unless File.exist?(local_hooks)
-      target_path = Pathname.new(hooks).relative_path_from(Pathname.new(path))
-      Dir.chdir(path) do
-        FileUtils.ln_s(target_path, "hooks")
-      end
-    end
   end
 end

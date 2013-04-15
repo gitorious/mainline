@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -43,16 +43,20 @@ module Gitorious::Messaging::SyncAdapter
 
   module Publisher
     QUEUES = {
+      "/queue/GitoriousDestroySshKey" => "destroy_ssh_key",
+      "/queue/GitoriousMergeRequestBackend" => "merge_request_git_backend",
+      "/queue/GitoriousMergeRequestCreation" => "merge_request",
+      "/queue/GitoriousMergeRequestVersionDeletion" => "merge_request_version",
+      "/queue/GitoriousEmailNotifications" => "message_forwarding",
+      "/queue/GitoriousNewSshKey" => "new_ssh_key",
+      "/queue/GitoriousPush" => "push",
+      "/queue/GitoriousRepositoryArchiving" => "repository_archiving",
+      "/queue/GitoriousRepositoryCloning" => "repository_cloning",
       "/queue/GitoriousRepositoryCreation" => "repository_creation",
       "/queue/GitoriousRepositoryDeletion" => "repository_deletion",
-      "/queue/GitoriousPush" => "push",
-      "/queue/GitoriousSshKeys" => "ssh_key",
-      "/queue/GitoriousRepositoryArchiving" => "repository_archiving",
-      "/queue/GitoriousEmailNotifications" => "message_forwarding",
-      "/queue/GitoriousMergeRequestCreation" => "merge_request",
-      "/queue/GitoriousMergeRequestBackend" => "merge_request_git_backend",
-      "/queue/GitoriousMergeRequestVersionDeletion" => "merge_request_version",
-      "/queue/GitoriousPostReceiveWebHook" => "web_hook"
+      "/queue/GitoriousTrackingRepositoryCreation" => "tracking_repository_creation",
+      "/queue/GitoriousPostReceiveWebHook" => "web_hook",
+      "/queue/GitoriousWikiRepositoryCreation" => "wiki_repository_creation"
     }
 
     # Locate the correct class to pick queue from

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
 require "test_helper"
+require "ostruct"
 
 class MergeRequestProcessorTest < ActiveSupport::TestCase
   def setup
@@ -26,25 +26,20 @@ class MergeRequestProcessorTest < ActiveSupport::TestCase
     @target_repo = @merge_request.target_repository
     @merge_request.stubs(:target_repository).returns(@target_repo)
     MergeRequest.expects(:find).with(@merge_request.id).returns(@merge_request)
-    @tracking_repo = mock("Tracking repository")
-    @tracking_repo.stubs(:real_gitdir).returns("ff0/bbc/234")
-    @target_repo.stubs(:create_tracking_repository).returns(@tracking_repo)
   end
 
-  should 'send a repo creation message when the target repo does not have a MR repo' do
-    message = {'merge_request_id' => @merge_request.id}.to_json
+  should "send a repo creation message when the target repo does not have a MR repo" do
+    message = { "merge_request_id" => @merge_request.id }.to_json
     @target_repo.expects(:has_tracking_repository?).once.returns(false)
-    Repository.expects(:clone_git_repository).with(
-      @tracking_repo.real_gitdir,
-      @merge_request.target_repository.real_gitdir, :skip_hooks => true).once
-    @merge_request.expects(:'push_to_tracking_repository!').with(true).once
-    @processor.consume(message)
+    tracking_repo = OpenStruct.new(:real_gitdir => "ff0/bbc/234")
+    CreateTrackingRepositoryCommand.any_instance.expects(:execute).returns(tracking_repo)
+    @merge_request.expects(:"push_to_tracking_repository!").with(true).once
+    MergeRequestProcessor.new.consume(message)
   end
 
-  should 'create a new branch from the merge request' do
-    message = {'merge_request_id' => @merge_request.id}.to_json
+  should "create a new branch from the merge request" do
+    message = { "merge_request_id" => @merge_request.id }.to_json
     @target_repo.expects(:has_tracking_repository?).once.returns(true)
-    @processor.expects(:create_tracking_repository).never
     @merge_request.expects(:push_to_tracking_repository!).once
     @processor.consume(message)
   end
