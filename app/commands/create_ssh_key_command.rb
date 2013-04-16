@@ -15,16 +15,33 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "use_case"
-require "commands/create_ssh_key_command"
+require "virtus"
 
-class CreateSshKey
-  include UseCase
+class NewSshKeyParams
+  include Virtus
+  attribute :key, String
+end
 
+class CreateSshKeyCommand
   def initialize(hub, user)
-    user = User.find(user) if user.is_a?(Integer)
-    input_class(NewSshKeyParams)
-    add_pre_condition(UserRequired.new(user))
-    step(CreateSshKeyCommand.new(hub, user), :validator => SshKeyValidator)
+    @hub = hub
+    @user = user
+  end
+
+  def execute(ssh_key)
+    ssh_key.save!
+    publish_creation_message(ssh_key)
+    ssh_key
+  end
+
+  def build(params)
+    ssh_key = @user.ssh_keys.new
+    ssh_key.key = params[:key]
+    ssh_key
+  end
+
+  private
+  def publish_creation_message(key)
+    @hub.publish("/queue/GitoriousNewSshKey", :id => key.id)
   end
 end

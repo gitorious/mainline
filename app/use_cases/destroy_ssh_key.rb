@@ -16,28 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "use_case"
-require "virtus"
-
-class DestroySshKeyCommand
-  def initialize(hub, user)
-    @hub = hub
-    @user = user
-  end
-
-  def execute(ssh_key)
-    @hub.publish("/queue/GitoriousDestroySshKey", :id => ssh_key.id)
-    ssh_key.destroy
-  end
-
-  def build(params)
-    @user.ssh_keys.find(params.id)
-  end
-end
-
-class DestroySshKeyParams
-  include Virtus
-  attribute :id, Integer
-end
+require "commands/destroy_ssh_key_command"
 
 class DestroySshKey
   include UseCase
