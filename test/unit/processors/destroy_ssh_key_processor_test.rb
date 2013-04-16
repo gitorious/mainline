@@ -22,9 +22,10 @@ class DestroySshKeyProcessorTest < ActiveSupport::TestCase
 
   should "remove key from the authorized keys file" do
     ssh_key = new_key
+    ssh_key.save!
     key = SshKeyFile.format(ssh_key)
     SshKeyFile.any_instance.expects(:delete_key).with(key)
 
-    DestroySshKeyProcessor.new.on_message("key" => key)
+    DestroySshKeyProcessor.new.on_message("id" => ssh_key.id)
   end
 end

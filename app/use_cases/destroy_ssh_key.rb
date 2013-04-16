@@ -25,7 +25,7 @@ class DestroySshKeyCommand
   end
 
   def execute(ssh_key)
-    @hub.publish("/queue/GitoriousDestroySshKey", :key => SshKeyFile.format(ssh_key))
+    @hub.publish("/queue/GitoriousDestroySshKey", :id => ssh_key.id)
     ssh_key.destroy
   end
 

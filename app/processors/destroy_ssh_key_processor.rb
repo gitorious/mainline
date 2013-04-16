@@ -23,7 +23,8 @@ class DestroySshKeyProcessor
 
   def on_message(message)
     logger.debug("Processor removing SSH key: #{message['key']}")
+    ssh_key = SshKeyFile.format(SshKey.find(message["id"]))
     key_file = SshKeyFile.new
-    key_file.delete_key(message["key"])
+    key_file.delete_key(ssh_key)
   end
 end

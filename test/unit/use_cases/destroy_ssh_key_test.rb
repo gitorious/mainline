@@ -39,8 +39,7 @@ class DestroySshKeyTest < ActiveSupport::TestCase
 
     assert outcome.success?, outcome.to_s
     assert_equal 1, @hub.messages.length
-    key = SshKeyFile.format(outcome.result)
-    expected = { :queue => "/queue/GitoriousDestroySshKey", :message => { :key => key } }
+    expected = { :queue => "/queue/GitoriousDestroySshKey", :message => { :id => @ssh_key.id } }
     assert_equal(expected, @hub.messages.first)
   end
 
