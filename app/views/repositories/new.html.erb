@@ -24,9 +24,8 @@
 <%= breadcrumbs_from(Breadcrumb::NewRepository.new(project)) -%>
 
 <h2 class="content-header">Add new repository to <%= link_to h(owner.title), owner -%></h2>
-
 <%= error_messages(repository) -%>
-<%= form_for(url_for(:project_id => repository.project.to_param, :repository_id => repository.to_param)) do |f| -%>
+<%= form_for(:repository, :url => project_repositories_url(repository.project)) do |f| -%>
   <fieldset>
     <li>
       <%= f.label :name -%>
