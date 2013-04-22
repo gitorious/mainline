@@ -465,11 +465,12 @@ class ApplicationController < ActionController::Base
   # filter has been converted
   def verify_site_context!(project = nil)
     return true if !request.get?
-    find_current_site(project) unless project.nil?
+    site = find_current_site(project)
+    return true if site.nil?
 
-    if !current_site.subdomain.blank?
-      if subdomain_without_common != current_site.subdomain
-        host = "#{current_site.subdomain}.#{Gitorious.host}"
+    if !site.subdomain.blank?
+      if subdomain_without_common != site.subdomain
+        host = "#{site.subdomain}.#{Gitorious.host}"
         raise UnexpectedSiteContext.new({
             :only_path => false,
             :host => "#{host}#{request.port_string}"
