@@ -285,9 +285,7 @@ class ApplicationController < ActionController::Base
       :only_path => false,
       :host => Gitorious.host
     }
-    if ![80, 443].include?(request.port)
-      host_without_subdomain[:host] << ":#{request.port}"
-    end
+    host_without_subdomain[:port] = request.port
     redirect_to host_without_subdomain
   end
 
