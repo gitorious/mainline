@@ -54,6 +54,7 @@ module Gitorious
       end
     end
 
+    require "yaml"
     def gitorious_config(key)
       YAML::load_file(rails_root + "/config/gitorious.yml")[rails_env][key]
     end
