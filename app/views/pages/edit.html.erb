@@ -22,7 +22,7 @@
 <%= breadcrumbs_from(@root) -%>
 
 <h1>
-  <%= @page.new? ? t("views.common.creating") : t("views.common.editing") -%> 
+  <%= @page.new? ? t("views.common.creating") : t("views.common.editing") -%>
   <%= t("views.pages.page") -%> <%= link_to h(@page.title), project_page_path(@project, @page.title) -%>
 </h1>
 
@@ -48,11 +48,24 @@
   </div>
 
   <%= f.text_area :content, :class => "text fill taller" -%><br />
-  <%= f.submit -%> 
+  <%= f.submit -%>
   <%= button_to_function("Show preview", "toggle_wiki_preview('#{preview_project_page_path(@project,@page)}')", :id => "wiki_preview_toggler", :class => "preview") %>
 
-  
-  <%= t("views.pages.or_back_to_page", 
+
+  <%= t("views.pages.or_back_to_page",
         :page_link => link_to(@page.title, project_page_path(@project, @page.title))) -%>
 <% end -%>
 
+<% content_for :sidebar do -%>
+  <ul class="links navigation">
+    <li class="wiki_page_history">
+      <%= link_to(t("views.pages.history"), history_project_page_path(@project, @page.title)) -%>
+    </li>
+    <li class="wiki_page">
+      <%= link_to(t("views.pages.index"), project_pages_path(@project)) -%>
+    </li>
+    <li class="wiki_via_git">
+      <%= link_to(t("views.pages.git"), git_access_project_pages_path(@project)) -%>
+    </li>
+  </ul>
+<% end -%>
