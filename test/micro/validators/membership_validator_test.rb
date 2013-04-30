@@ -19,7 +19,7 @@
 require "fast_test_helper"
 require "validators/membership_validator"
 
-class MembershipTest < MiniTest::Shoulda
+class MembershipValidatorTest < MiniTest::Shoulda
   should "validate presence of group, user and role" do
     result = MembershipValidator.call(Membership.new)
 
