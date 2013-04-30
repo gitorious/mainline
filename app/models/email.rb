@@ -16,13 +16,13 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "validators/email_validator"
 
 class Email < ActiveRecord::Base
   belongs_to :user
 
-  FORMAT = /^[^@\s]+@([\-a-z0-9]+\.)+[a-z]{2,}$/i
   validates_presence_of :user, :address
-  validates_format_of :address, :with => FORMAT
+  validates_format_of :address, :with => EmailValidator::EMAIL_FORMAT
   validates_length_of :address, :within => 5..255
   validates_uniqueness_of :address, :scope => "user_id", :case_sensitive => false
 
