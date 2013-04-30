@@ -58,7 +58,7 @@ Gitorious::Application.routes.draw do
     delete "/avatar" => "users#avatar"
     get "/watchlist" => "users#watchlist", :as => :watchlist
     get "/password" => "users#password", :as => :password
-    get "/feed" => "users#feed", :as => :feed
+    get "/feed" => "user_feeds#show", :as => :feed
     put "/update_password" => "users#update_password", :as => :update_password
   end
 
