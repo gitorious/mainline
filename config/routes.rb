@@ -28,11 +28,12 @@ Gitorious::Application.routes.draw do
   ### R2. User routes
   resources :users, :only => [:new, :create] do
     collection do
-      get  "/activate/:activation_code" => "users#activate"
       get "/forgot_password" => "password_resets#new", :as => :forgot_password
       post "/forgot_password" => "password_resets#generate_token", :as => :forgot_password_create
       get "/reset_password/:token" => "password_resets#prepare_reset", :as => :reset_password
       put "/reset_password/:token" => "password_resets#reset", :as => :do_reset_password
+      get "/activate/:activation_code" => "user_activations#create"
+      get "/pending_activation" => "user_activations#show", :as => :pending_activation
       get :openid_build
       post :openid_create
       get "/new" => "users#new"
