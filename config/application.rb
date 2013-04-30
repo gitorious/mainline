@@ -83,11 +83,6 @@ module Gitorious
     # Please note that observers generated using script/generate observer need to have an _observer suffix
     # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
 
-    # Activate observers that should always be running
-    config.active_record.observers = [
-        :user_observer
-    ]
-
     config.after_initialize do
       OAuth::Consumer.class_eval {
         remove_const(:CA_FILE) if const_defined?(:CA_FILE)

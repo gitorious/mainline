@@ -36,6 +36,13 @@ class ResetPasswordTest < ActiveSupport::TestCase
     refute outcome.pre_condition_failed?, outcome.to_s
   end
 
+  should "fail if there's no password" do
+    outcome = ResetPassword.new(users(:zmalltalker)).execute
+
+    refute outcome.success?, outcome.to_s
+    refute outcome.pre_condition_failed?, outcome.to_s
+  end
+
   should "update password" do
     zt = users(:zmalltalker)
 

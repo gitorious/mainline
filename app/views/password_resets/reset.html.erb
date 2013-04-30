@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -18,8 +18,8 @@
   #++
   %>
 <div id="content">
-  <%= error_messages(@user) %>
-  <%= form_for @user, :url => reset_password_users_path(params[:token]), :method => :put do |f| -%>
+  <%= error_messages(user) %>
+  <%= form_for user, :url => reset_password_users_path(params[:token]), :method => :put do |f| -%>
     <div class="form-wrapper" id="resetpw">
       <div id="reset-pw">
         <h1><%= t("views.users.chg_passwd_title") %></h1>

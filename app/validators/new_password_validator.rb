@@ -1,8 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,14 +15,9 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "use_case"
+require "validators/user_validator"
 
-class UserObserver < ActiveRecord::Observer
-  def after_create(user)
-    return if user.activated?
-    Mailer.signup_notification(user).deliver if user.identity_url.blank?
-  end
-
-  def after_save(user)
-    Mailer.activation(user).deliver if user.recently_activated?
-  end
+class NewPasswordValidator < UserValidator
+  validates_presence_of :password
 end

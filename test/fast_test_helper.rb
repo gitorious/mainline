@@ -68,6 +68,7 @@ module TestHelper
     def save!; save; end
     def new_record?; @is_new; end
     def uniq?; true; end
+    def normalize_url(url); url; end
     def self.first; new; end
     def self.count; @count || 0; end
 
@@ -82,7 +83,7 @@ end
 if !defined?(Rails)
   class User < TestHelper::Model
     attr_accessor :login, :fullname, :email, :password, :password_confirmation,
-    :terms_of_use, :aasm_state, :activated_at
+    :terms_of_use, :aasm_state, :activated_at, :avatar_file_name, :identity_url, :crypted_password
 
     def initialize(attributes = {})
       super
@@ -92,6 +93,7 @@ if !defined?(Rails)
 
     def title; login; end
     def reset_password!; end
+    def uniq_login?; true; end
     def self.find_by_login(login); end
 
     def self.find_by_email_with_aliases(email)

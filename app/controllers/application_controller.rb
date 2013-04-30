@@ -485,4 +485,9 @@ class ApplicationController < ActionController::Base
       raise UnexpectedSiteContext.new(host_without_subdomain)
     end
   end
+
+  # A less locals-hostile render function
+  def render_template(template, locals)
+    render(:action => template, :locals => locals)
+  end
 end
