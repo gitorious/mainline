@@ -56,7 +56,7 @@ Gitorious::Application.routes.draw do
   scope "/~:id", :id => /[^\/]+/, :as => :user do
     get "/delete_current" => "users#delete_current", :as => :delete_current
     delete "/avatar" => "users#avatar"
-    get "/watchlist" => "users#watchlist", :as => :watchlist
+    get "/watchlist" => "user_watchlists#show", :as => :watchlist
     get "/password" => "users#password", :as => :password
     get "/feed" => "user_feeds#show", :as => :feed
     put "/update_password" => "users#update_password", :as => :update_password
