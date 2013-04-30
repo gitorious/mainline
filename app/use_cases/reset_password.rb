@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "use_case"
-require "validators/user_validator"
+require "validators/new_password_validator"
 require "virtus"
 
 class ResetPasswordParams
@@ -42,6 +42,6 @@ class ResetPassword
   def initialize(user)
     input_class(ResetPasswordParams)
     add_pre_condition(UserRequired.new(user))
-    step(ResetPasswordCommand.new(user), :validator => UserValidator)
+    step(ResetPasswordCommand.new(user), :validator => NewPasswordValidator)
   end
 end

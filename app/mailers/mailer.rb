@@ -33,8 +33,8 @@ class Mailer < ActionMailer::Base
   def signup_notification(user)
     @user = user
     @url = url_for({
-      :controller => "users",
-      :action => "activate",
+      :controller => "user_activations",
+      :action => "create",
       :activation_code => user.activation_code
     })
     mail(:to => format_address(user),
