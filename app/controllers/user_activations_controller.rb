@@ -27,9 +27,8 @@ class UserActivationsController < ApplicationController
 
   def create
     user = logged_in? && current_user
-    outcome = ActivateUser.new(user).execute(:code => params[:activation_code])
-
-    failed_pre_conditions(outcome) { return }
+    outcome = ActivateUser.new.execute(:code => params[:activation_code])
+    pre_condition_failed(outcome) { return }
     outcome.failure { |user| flash[:error] = I18n.t("users_controller.activate_error") }
     outcome.success { |user| flash[:notice] = I18n.t("users_controller.activate_notice") }
     redirect_back_or_default("/")

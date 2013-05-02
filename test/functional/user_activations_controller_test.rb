@@ -30,4 +30,49 @@ class UserActivationsControllerTest < ActionController::TestCase
     get :show
     assert_response :redirect
   end
+
+  should "activate user" do
+    get :create, :activation_code => users(:moe).activation_code
+
+    assert_redirected_to("/")
+    assert_not_nil flash[:notice]
+    assert_equal users(:moe), User.authenticate("moe@example.com", "test")
+  end
+
+  should "flash a message when the activation code is invalid" do
+    get :create, :activation_code => "fubar"
+
+    assert_redirected_to("/")
+    assert_nil flash[:notice]
+    assert_equal "Invalid activation code", flash[:error]
+    assert_nil User.authenticate("moe@example.com", "test")
+  end
+
+
+  context "in Private Mode" do
+    setup do
+      @test_settings = Gitorious::Configuration.prepend("public_mode" => false)
+    end
+
+    teardown do
+      Gitorious::Configuration.prune(@test_settings)
+    end
+
+    should "activate user" do
+      get :create, :activation_code => users(:moe).activation_code
+
+      assert_redirected_to("/")
+      assert !flash[:notice].nil?
+      assert_equal users(:moe), User.authenticate("moe@example.com", "test")
+    end
+
+    should "flashes a message when the activation code is invalid" do
+      get :create, :activation_code => "fubar"
+
+      assert_redirected_to("/")
+      assert_nil flash[:notice]
+      assert_equal "Invalid activation code", flash[:error]
+      assert_nil User.authenticate("moe@example.com", "test")
+    end
+  end
 end
