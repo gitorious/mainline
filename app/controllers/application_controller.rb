@@ -91,7 +91,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_current_user
-    current_user_only_redirect unless user == current_user
+    current_user_only_redirect unless @user == current_user
   end
 
   def require_not_logged_in
