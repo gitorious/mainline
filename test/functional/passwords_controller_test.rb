@@ -27,7 +27,6 @@ class PasswordsControllerTest < ActionController::TestCase
     should "require current user" do
       login_as :moe
       get :edit, :id => users(:johan).to_param
-      assert_response :redirect
       assert_redirected_to user_path(users(:moe))
     end
 
