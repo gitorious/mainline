@@ -91,11 +91,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_current_user
-    unless @user == current_user
-      flash[:error] = I18n.t "application.require_current_user", :title => current_user.title
-      redirect_to user_path(current_user)
-      return
-    end
+    current_user_only_redirect unless user == current_user
   end
 
   def require_not_logged_in
@@ -449,11 +445,17 @@ class ApplicationController < ActionController::Base
 
   helper_method :unshifted_polymorphic_path
 
+  def current_user_only_redirect
+    flash[:error] = I18n.t("application.require_current_user", :title => current_user.title)
+    redirect_to(user_path(current_user))
+  end
+
   def pre_condition_failed(outcome, &block)
     outcome.pre_condition_failed do |f|
       f.when(:user_required) { |c| redirect_to(login_path) }
       f.when(:rate_limiting) { |c| render_throttled_record }
       f.when(:authorization_required) { |c| render_unauthorized }
+      f.when(:current_user_required) { |c| current_user_only_redirect }
       block.call(f) if !block.nil?
     end
   end

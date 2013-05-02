@@ -57,9 +57,9 @@ Gitorious::Application.routes.draw do
     get "/delete_current" => "users#delete_current", :as => :delete_current
     delete "/avatar" => "users#avatar"
     get "/watchlist" => "user_watchlists#show", :as => :watchlist
-    get "/password" => "users#password", :as => :password
     get "/feed" => "user_feeds#show", :as => :feed
-    put "/update_password" => "users#update_password", :as => :update_password
+    get "/password" => "passwords#edit", :as => :password
+    put "/update_password" => "passwords#update", :as => :update_password
   end
 
   # Nested user resources. This is in a separate scope because the
