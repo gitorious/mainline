@@ -49,7 +49,7 @@ UserValidator = UseCase::Validator.define do
   def normalized_openid_identifier
     return if !openid?
     begin
-      normalize_url(identity_url)
+      normalize_identity_url(identity_url)
     rescue
       errors.add(:identity_url, I18n.t("user.invalid_url"))
     end
