@@ -489,7 +489,9 @@ class ApplicationController < ActionController::Base
   end
 
   # A less locals-hostile render function
-  def render_template(template, locals)
-    render(:action => template, :locals => locals)
+  def render_template(template, locals, options = {})
+    options[:action] = template
+    options[:locals] = locals
+    render(options)
   end
 end
