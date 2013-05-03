@@ -15,21 +15,21 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "use_case"
-require "virtus"
-require "validators/nil_validator"
-require "commands/activate_user_command"
 
-class UserActivationParams
-  include Virtus
-  attribute :code, String
-end
+class ActivateUserCommand
+  def initialize(scope = nil)
+    @scope = scope
+  end
 
-class ActivateUser
-  include UseCase
+  def execute(user)
+    user.activated_at = Time.now.utc
+    user.activation_code = nil
+    user.save!
+    Mailer.activation(user).deliver
+    user
+  end
 
-  def initialize
-    input_class(UserActivationParams)
-    step(ActivateUserCommand.new(User), :validator => NilValidator.new("Invalid activation code"))
+  def build(params)
+    @scope.where(:activation_code => params.code).first
   end
 end
