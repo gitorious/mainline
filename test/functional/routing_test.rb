@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -53,15 +53,15 @@ class RoutingTest < ActionController::TestCase
     end
 
     should "not recognize controller actions as repositories" do
-      assert_recognizes({ :controller => "users",
-                          :action => "forgot_password"
+      assert_recognizes({ :controller => "password_resets",
+                          :action => "new"
                         }, {
                           :path => "/users/forgot_password",
                           :method => :get
                         })
 
-      assert_recognizes({ :controller => "users",
-                          :action => "activate",
+      assert_recognizes({ :controller => "user_activations",
+                          :action => "create",
                           :activation_code => "1234"
                         }, {
                           :path => "/users/activate/1234",

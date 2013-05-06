@@ -15,18 +15,37 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "use_case"
+require "virtus"
 
-class UserWatchlistsController < ApplicationController
-  def show
-    user = User.find_by_login!(params[:id])
-    events = filter(user.paginated_events_in_watchlist({ :page => 1 }))
-    respond_to do |format|
-      format.atom do
-        render(:template => "user_feeds/show", :locals => {
-            :user => user,
-            :events => events
-          })
-      end
-    end
+class CreateUserCommand
+  def execute(user)
+    user.activation_code = Digest::SHA1.hexdigest(Time.now.to_s.split(//).sort_by { rand }.join)
+    user.save!
+    Mailer.signup_notification(user).deliver if user.identity_url.blank?
+    user.accept_terms!
+    user
+  end
+
+  def build(params)
+    User.new(params.to_hash)
+  end
+end
+
+class NewUserParams
+  include Virtus
+  attribute :login, String
+  attribute :email, String
+  attribute :password, String
+  attribute :password_confirmation, String
+  attribute :terms_of_use, Boolean
+end
+
+class CreateUser
+  include UseCase
+
+  def initialize
+    input_class(NewUserParams)
+    step(CreateUserCommand.new, :validator => NewUserValidator)
   end
 end

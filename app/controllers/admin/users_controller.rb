@@ -34,30 +34,23 @@ class Admin::UsersController < AdminController
   end
 
   def new
-    @user = User.new
-    respond_to { |wants| wants.html }
+    render :action => "new", :locals => { :user => User.new }
   end
 
   def create
-    login = params[:user].delete(:login)
-    password = params[:user].delete(:password)
-    password_confirmation = params[:user].delete(:password_confirmation)
-    is_admin = params[:user].delete(:is_admin) == "1"
-    @user = User.new(params[:user])
-    @user.login = login
-    @user.is_admin = is_admin
-    @user.password = password
-    @user.password_confirmation = password_confirmation
+    outcome = CreateAdminUser.new.execute(params[:user])
+    pre_condition_failed(outcome)
 
     respond_to do |wants|
-      if @user.save
-        @user.activate
-        flash[:notice] = I18n.t "admin.users_controller.create_notice"
+      outcome.success do |result|
+        flash[:notice] = I18n.t("admin.users_controller.create_notice")
         wants.html { redirect_to(admin_users_path) }
-        wants.xml { render :xml => @user, :status => :created, :location => @user }
-      else
-        wants.html { render :action => "new" }
-        wants.xml { render :xml => @user.errors, :status => :unprocessable_entity }
+        wants.xml { render :xml => user, :status => :created, :location => user }
+      end
+
+      outcome.failure do |user|
+        wants.html { render :action => "new", :locals => { :user => user } }
+        wants.xml { render :xml => user.errors, :status => :unprocessable_entity }
       end
     end
   end

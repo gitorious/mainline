@@ -84,7 +84,7 @@ class SessionsController < ApplicationController
           session[:openid_fullname] = registration['fullname']
           session[:openid_url]      = identity_url
           flash[:notice] = "You now need to finalize your account"
-          redirect_to :controller => 'users', :action => 'openid_build' and return
+          redirect_to :controller => "open_id_users", :action => "new" and return
         end
         self.current_user = @user
         successful_login

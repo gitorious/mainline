@@ -34,8 +34,8 @@ Gitorious::Application.routes.draw do
       put "/reset_password/:token" => "password_resets#reset", :as => :do_reset_password
       get "/activate/:activation_code" => "user_activations#create"
       get "/pending_activation" => "user_activations#show", :as => :pending_activation
-      get :openid_build
-      post :openid_create
+      get "/openid_build" => "open_id_users#new"
+      post "/openid_create" => "open_id_users#create"
       get "/new" => "users#new"
 
       # Used to be we supported things like /users/~zmalltalker/mainline
@@ -54,8 +54,8 @@ Gitorious::Application.routes.draw do
 
   # Additional user actions
   scope "/~:id", :id => /[^\/]+/, :as => :user do
-    get "/delete_current" => "users#delete_current", :as => :delete_current
-    delete "/avatar" => "users#avatar"
+    get "/delete_current" => "users#destroy", :as => :delete_current
+    delete "/avatar" => "avatars#destroy"
     get "/watchlist" => "user_watchlists#show", :as => :watchlist
     get "/feed" => "user_feeds#show", :as => :feed
     get "/password" => "passwords#edit", :as => :password

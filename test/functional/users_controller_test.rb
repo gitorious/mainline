@@ -27,123 +27,75 @@ class UsersControllerTest < ActionController::TestCase
     setup_ssl_from_config
   end
 
-  should "show pending activation" do
-    get :pending_activation
+  should "render signup form" do
+    get :new
     assert_response :success
   end
 
-  should "redirect from pending activation if logged in" do
-    login_as :johan
-    get :pending_activation
-    assert_response :redirect
-  end
-
-  should "activate user" do
-    assert_nil User.authenticate("moe", "test")
-    get :activate, :activation_code => users(:moe).activation_code
-    assert_redirected_to("/")
-    assert_not_nil flash[:notice]
-    assert_equal users(:moe), User.authenticate("moe@example.com", "test")
-  end
-
-  should "flashes a message when the activation code is invalid" do
-    get :activate, :activation_code => "fubar"
-    assert_redirected_to("/")
-    assert_nil flash[:notice]
-    assert_equal "Invalid activation code", flash[:error]
-    assert_nil User.authenticate("moe@example.com", "test")
-  end
-
-  def create_user(options = {})
-    post :create, :user => { :login => "quire", :email => "quire@example.com",
-      :password => "quire", :password_confirmation => "quire",
-      :terms_of_use => "1" }.merge(options)
-  end
-
-  should "allow signups" do
-    assert_difference("User.count") do
-      create_user
-      assert_redirected_to :action => "pending_activation"
+  should "disallow registration form if registrations are disabled" do
+    Gitorious::Configuration.override("enable_registrations" => false) do
+      get :new
+      assert_response 403
     end
   end
 
-  should "require login on signup" do
+  should "disallow registration if registrations are disabled" do
+    Gitorious::Configuration.override("enable_registrations" => false) do
+      post(:create, :user => {
+          :login => "quire",
+          :email => "quire@example.com",
+          :password => "quire",
+          :password_confirmation => "quire",
+          :terms_of_use => "1"
+        })
+
+      assert_response 403
+    end
+  end
+
+  should "register user" do
+    assert_difference("User.count") do
+      create_user
+      assert_redirected_to :controller => "user_activations", :action => "show"
+    end
+  end
+
+  should "reject registration when form is incomplete" do
     assert_no_difference("User.count") do
       create_user(:login => nil)
-      assert_not_nil assigns(:user).errors[:login]
       assert_template("users/new")
     end
   end
 
-  should "require password on signup" do
-    assert_no_difference("User.count") do
-      create_user(:password => nil)
-      assert !assigns(:user).errors[:password].empty?
-      assert_template(("users/new"))
-    end
-  end
-
-  should "require password confirmation on signup" do
-    assert_no_difference("User.count") do
-      create_user(:password_confirmation => nil)
-      assert !assigns(:user).errors[:password_confirmation].empty?
-      assert_template(("users/new"))
-    end
-  end
-
-  should "require email on signup" do
-    assert_no_difference("User.count") do
-      create_user(:email => nil)
-      assert !assigns(:user).errors[:email].empty?, "empty? should be false"
-      assert_template(("users/new"))
-    end
-  end
-
-  should "require acceptance of end user license agreement" do
-    assert_no_difference("User.count") do
-      create_user(:terms_of_use => nil)
-    end
-  end
-
-  should "be successful with valid data" do
-    assert_difference("User.count") do
-      create_user
-    end
-  end
-
-  should "requires the user to activate himself after posting valid data" do
-    create_user
-    assert_equal nil, User.authenticate("quire@example.com", "quire")
-    assert !@controller.send(:logged_in?)
-  end
-
-  should "shows the user" do
-    get :show, :id => users(:johan).login
-    assert_response :success
-    assert_equal users(:johan), assigns(:user)
-  end
-
-  should "not display the users email if he decides so" do
-    user = users(:johan)
-    user.update_attribute(:public_email, false)
-    get :show, :id => user.to_param
-    assert_response :success
-    assert_select "#sidebar ul li.email", 0
-  end
-
   context "GET show" do
-    should "#show sets atom feed autodiscovery" do
+    should "show the user" do
+      get :show, :id => users(:johan).login
+      assert_response 200
+      assert_match users(:johan).login, response.body
+    end
+
+    should "not disclose user's email when not desired" do
+      user = users(:johan)
+      user.update_attribute(:public_email, false)
+
+      get :show, :id => user.to_param
+
+      assert_response :success
+      assert_select "#sidebar ul li.email", 0
+    end
+
+    should "set atom feed autodiscovery" do
       user = users(:johan)
       get :show, :id => user.login
-      assert_equal user_feed_path(user, :format => :atom), assigns(:atom_auto_discovery_url)
+      assert_match user_feed_path(user, :format => :atom), response.body
     end
 
     should "not display inactive users" do
       user = users(:johan)
       user.update_attribute(:activation_code, "123")
-      assert !user.activated?
 
       get :show, :id => user.to_param
+
       assert_response :redirect
       assert_match(/is not public/, flash[:notice])
     end
@@ -152,89 +104,21 @@ class UsersControllerTest < ActionController::TestCase
       setup { @params = { :id => users(:johan).login } }
       should_scope_pagination_to(:show, Event)
     end
-  end
 
-  should "has an atom feed" do
-    user = users(:johan)
-    get :feed, :id => user.login, :format => "atom"
-    assert_response :success
-    assert_equal user, assigns(:user)
-    assert_equal user.events.limit(30).order("created_at desc").all, assigns(:events)
-  end
+    context "Viewing ones own favorites" do
+      setup do
+        login_as(:johan)
+        @user = users(:johan)
+        merge_request = merge_requests(:moes_to_johans)
+        @user.favorites.create(:watchable => merge_request)
+        project = projects(:johans)
+        @user.favorites.create(:watchable => project)
+      end
 
-  context "#forgot_password" do
-    should "GETs the page fine for everyone" do
-      get :forgot_password
-      assert_response :success
-      assert_template(("forgot_password"))
-    end
-  end
-
-  context "#reset" do
-    setup do
-      @user = users(:johan)
-      @user.update_attribute(:password_key, "s3kr1t")
-    end
-
-    should "redirect if the token is invalid" do
-      get :reset_password, :token => "invalid"
-      assert_response :redirect
-      assert_redirected_to forgot_password_users_path
-      assert_not_nil flash[:error]
-    end
-
-    should "render the form if the token is valid" do
-      get :reset_password, :token => "s3kr1t"
-      assert_response :success
-      assert_equal @user, assigns(:user)
-      assert_nil flash[:error]
-    end
-
-    should "re-render if password confirmation does not match" do
-      put :reset_password, :token => "s3kr1t", :user => {
-        :password => "qwertyasdf",
-        :password_confirmation => "asdf"
-      }
-      assert_response :success
-      assert !assigns(:user).valid?
-      assert_nil User.authenticate(@user.email, "qwertyasdf")
-    end
-
-    should "update the password" do
-      put :reset_password, :token => "s3kr1t", :user => {
-        :password => "qwertyasdf",
-        :password_confirmation => "qwertyasdf"
-      }
-      assert_response :redirect
-      assert_redirected_to new_sessions_path
-      assert User.authenticate(@user.email, "qwertyasdf")
-      assert_match(/Password updated/i, flash[:success])
-    end
-  end
-
-  context "#forgot_password_create" do
-    should "redirects to forgot_password if nothing was found" do
-      post :forgot_password_create, :user => {:email => "xxx"}
-      assert_redirected_to(forgot_password_users_path)
-      assert_match(/invalid email/i, flash[:error])
-    end
-
-    should "sends a new password if email was found" do
-      u = users(:johan)
-      User.expects(:generate_reset_password_key).returns("secret")
-      Mailer.expects(:forgotten_password).with(u, "secret").returns(FakeMail.new)
-      post :forgot_password_create, :user => {:email => u.email}
-      assert_redirected_to(root_path)
-      assert_match(/A password confirmation link has been sent/, flash[:success])
-    end
-
-    should "notify non-activated users that they need to activate their accounts before resetting the password" do
-      user = users(:johan)
-      user.expects(:activated?).returns(false)
-      User.expects(:find_by_email).returns(user)
-      post :forgot_password_create, :user => {:email => user.email}
-      assert_redirected_to forgot_password_users_path
-      assert_match(/activated yet/, flash[:error])
+      should "render all" do
+        get :show, :id => @user.to_param
+        assert_response :success
+      end
     end
   end
 
@@ -245,23 +129,6 @@ class UsersControllerTest < ActionController::TestCase
 
     teardown do
       Gitorious::Configuration.prune(@test_settings)
-    end
-
-    should "activate user" do
-      assert_nil User.authenticate("moe", "test")
-      get :activate, :activation_code => users(:moe).activation_code
-
-      assert_redirected_to("/")
-      assert !flash[:notice].nil?
-      assert_equal users(:moe), User.authenticate("moe@example.com", "test")
-    end
-
-    should "flashes a message when the activation code is invalid" do
-      get :activate, :activation_code => "fubar"
-      assert_redirected_to("/")
-      assert_nil flash[:notice]
-      assert_equal "Invalid activation code", flash[:error]
-      assert_nil User.authenticate("moe@example.com", "test")
     end
 
     should "GET /users/johan" do
@@ -275,42 +142,9 @@ class UsersControllerTest < ActionController::TestCase
       assert_redirected_to(root_path)
       assert_match(/Action requires login/, flash[:error])
     end
-
-    should "GET /users/forgot_password" do
-      get :forgot_password
-      assert_response :success
-    end
   end
 
-  context "user registrations" do
-    should "not allow new if configured off" do
-      Gitorious::Configuration.override("enable_registrations" => false) do
-        get :new
-
-        assert_response 403
-      end
-    end
-
-    should "not accept creation of users if configured off" do
-      Gitorious::Configuration.override("enable_registrations" => false) do
-        post(:create, :user => {
-          :login => "quire",
-          :email => "quire@example.com",
-          :password => "quire",
-          :password_confirmation => "quire",
-          :terms_of_use => "1"
-        })
-
-        assert_response 403
-      end
-    end
-  end
-
-  context "account-related tests" do
-    setup do
-      login_as :johan
-    end
-
+  context "editing and updating user" do
     should "require current_user" do
       login_as :moe
       get :edit, :id => users(:johan).to_param
@@ -318,281 +152,66 @@ class UsersControllerTest < ActionController::TestCase
       assert_redirected_to user_path(users(:moe))
     end
 
-    should "GET /users/johan/edit is successful" do
+    should "successfully edit when logged in" do
+      login_as :johan
       get :edit, :id => users(:johan).to_param
       assert_response :success
     end
 
     should "render the field for favorite notifications" do
+      login_as :johan
       get :edit, :id => users(:johan).to_param
-
       assert_select "input#user_default_favorite_notifications"
     end
 
-    should "PUT /users/create with valid data is successful" do
-      put :update, :id => users(:johan).to_param, :user => {
+    should "successfully edit user" do
+      login_as :johan
+
+      put :update, :id => users(:johan).to_param, :user => { :fullname => "Zlorg" }
+
+      refute flash[:success].nil?
+      assert_redirected_to(user_path(users(:johan)))
+    end
+
+    should "not update password through edit" do
+      user = users(:johan)
+
+      put :update, :id => user.to_param, :user => {
         :password => "fubar",
         :password_confirmation => "fubar"
       }
-      assert !flash[:success].nil?
-      assert_redirected_to(user_path(assigns(:user)))
-    end
-
-    should "GET require current_user" do
-      login_as :moe
-      get :password, :id => users(:johan).to_param
-      assert_response :redirect
-      assert_redirected_to user_path(users(:moe))
-    end
-
-    should "GET /users/johan/password is a-ok" do
-      get :password, :id => users(:johan).to_param
-      assert_response :success
-      assert_equal users(:johan), assigns(:user)
-    end
-
-    should "PUT requires current_user" do
-      login_as :moe
-      put :update_password, :id => users(:johan).to_param, :user => {
-        :current_password => "test",
-        :password => "fubar",
-        :password_confirmation => "fubar" }
-      assert_response :redirect
-      assert_redirected_to user_path(users(:moe))
-    end
-
-    should "PUT /users/joan/update_password updates password if old one matches" do
-      user = users(:johan)
-      put :update_password, :id => user.to_param, :user => {
-        :current_password => "test",
-        :password => "fubar",
-        :password_confirmation => "fubar" }
-      assert_redirected_to(user_path(user))
-      assert_match(/Your password has been changed/i, flash[:success])
-      assert_equal user, User.authenticate(user.email, "fubar")
-    end
-
-    should "PUT /users/johan/update_password does not update password if old one is wrong" do
-      put :update_password, :id => users(:johan).to_param, :user => {
-        :current_password => "notthecurrentpassword",
-        :password => "fubar",
-        :password_confirmation => "fubar" }
-      assert_nil flash[:notice]
-      assert_match(/does not seem to match/, flash[:error])
-      assert_template("users/password")
-      assert_equal users(:johan), User.authenticate(users(:johan).email, "test")
-      assert_nil User.authenticate(users(:johan).email, "fubar")
-    end
-
-    should "PUT /users/johan/update should not update password" do
-      user = users(:johan)
-      put :update, :id => user.to_param, :user => {
-        :password => "fubar",
-        :password_confirmation => "fubar" }
 
       assert_nil User.authenticate(user.email, "fubar")
       assert_equal user, User.authenticate(user.email, "test")
     end
-
-    should "actually update user data on #update" do
-      user = users(:johan)
-      name = "The mystery man"
-      put :update, :id => users(:johan).to_param, :user => {
-        :fullname => name
-      }
-      assert_response :redirect
-      assert_equal name, user.reload.fullname
-    end
-
-    should "be able to update password, even if user is openid enabled" do
-      user = users(:johan)
-      user.update_attribute(:identity_url, "http://johan.someprovider.com/")
-      put :update_password, :id => user.to_param, :user => {
-        :current_password => "test",
-        :password => "fubar",
-        :password_confirmation => "fubar" }
-      assert_match(/Your password has been changed/i, flash[:success])
-      assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
-    end
-
-    should "be able to update password, even if user created his account with openid" do
-      user = create_open_id_user("mropenid", "open@id.com", "http://myauth")
-      login_as user
-      put :update_password, :id => user.to_param, :user => {
-        :password => "fubar",
-        :password_confirmation => "fubar" }
-      assert_redirected_to user_path(user)
-      assert_match(/Your password has been changed/i, flash[:success])
-      assert_equal user, User.authenticate("open@id.com", "fubar")
-    end
-
-    should "be able to delete his avatar" do
-      user = users(:johan)
-      user.update_attribute(:avatar_file_name, "foo.png")
-      assert user.avatar?
-      delete :avatar, :id => user.to_param
-      assert_redirected_to user_path(user)
-      assert !user.reload.avatar?
-    end
   end
 
-  context "deleting your own account" do
+  context "destroy" do
     should "be allowed if you don't own any projects or repos" do
-      user = create_open_id_user("thomas", "thomas@openid.com", "http://myauth")
+      user = User.create!({
+          :login => "thomas",
+          :email => "thomas@openid.com",
+          :identity_url => "http://myauth"
+        })
+      user.accept_terms
       login_as user
-      assert_response :success
-      assert user.deletable?
-      get :delete_current, :id => user.id
-      assert_match(/Account deleted/i, flash[:success])
+
+      get :destroy, :id => user.to_param
+
       assert_redirected_to root_path
-      assert_nil User.find_by_login "thomas"
+      assert_match(/Account deleted/i, flash[:success])
+      assert_nil User.find_by_login("thomas")
     end
 
     should "be prevented, with feedback message, if repos or projects present" do
       user = users(:moe) # has projects and repos
-      login_as user
-      assert_response :success
-      assert !user.deletable?
-      get :delete_current, :id => user.id
+      login_as :moe
+
+      get :destroy, :id => user.to_param
+
       assert_redirected_to user_path(user)
       assert_match(/Please delete or change ownership of your projects/i, flash[:error])
       assert_not_nil User.find_by_login(user.login)
-    end
-  end
-
-  context "Viewing ones own favorites" do
-    setup {
-      login_as(:johan)
-      @user = users(:johan)
-      @merge_request = merge_requests(:moes_to_johans)
-      @user.favorites.create(:watchable => @merge_request)
-      @project = projects(:johans)
-      @user.favorites.create(:watchable => @project)
-    }
-
-    should "render all" do
-      get :show, :id => @user.login
-      assert_response :success
-    end
-  end
-
-  context "Watchlist" do
-    setup { @user = users(:johan) }
-    teardown { Rails.cache.clear }
-
-    should "render activities watched by the user" do
-      get :watchlist, :id => @user.to_param, :format => "atom"
-      assert_response :success
-    end
-
-    should "not fail rendering feed when an event's user is nil" do
-      repository = repositories(:johans)
-      repository.project.events.create!({
-        :action => Action::DELETE_TAG,
-        :target => repository,
-        :user => nil,
-        :user_email => "marius@gitorious.com",
-        :body => "Bla bla",
-        :data => "A string of some kind"
-      })
-
-      get :watchlist, :id => @user.to_param, :format => "atom"
-
-      assert_response :success
-    end
-  end
-
-  context "Message privacy" do
-    setup {@username = :johan}
-
-    should "not expose messages unless current user" do
-      login_as :moe
-      get :show, :id => @username.to_s
-      assert_nil assigns(:messages)
-    end
-
-    should "expose messages if current user" do
-      login_as @username
-      get :show, :id => @username.to_s
-      assert_not_nil assigns(:messages)
-    end
-  end
-
-  context "Creation from OpenID" do
-    setup do
-      @valid_session_options = {:openid_url => "http://moe.example/", :openid_nickname => "schmoe"}
-    end
-
-    should "deny access unless OpenID information is present in the session" do
-      get :openid_build
-      assert_response :redirect
-    end
-
-    should "build a user from the OpenID information and render the form" do
-      get :openid_build, {}, @valid_session_options
-      user = assigns(:user)
-      assert_not_nil user
-      assert_equal "http://moe.example/", user.identity_url
-      assert_response :success
-    end
-
-    should "render the form unless all required fields have been filled" do
-      post :openid_create, {:user => {}}, @valid_session_options
-      user = assigns(:user)
-      assert_response :success
-      assert_template "users/openid_build"
-    end
-
-    should "create a user with the provided credentials and openid url on success" do
-      assert_incremented_by(ActionMailer::Base.deliveries, :size, 1) do
-        post :openid_create, {:user => {
-          :fullname => "Moe Schmoe",
-          :email => "moe@schmoe.example",
-          :login => "schmoe",
-          :terms_of_use => "1"
-          }
-        }, @valid_session_options
-      end
-
-      user = assigns(:user)
-      assert user.activated?
-      assert user.terms_accepted?
-      assert_nil session[:openid_url]
-      assert_equal user, @controller.send(:current_user)
-      assert_response :redirect
-    end
-
-    should "redirect to the dashboard on successful creation" do
-      post :openid_create, { :user => {
-          :fullname => "Moe Schmoe",
-          :email => "moe@schmoe.example",
-          :login => "schmoe",
-          :terms_of_use => "1"
-        }
-      }, @valid_session_options
-
-      assert_redirected_to "/"
-    end
-
-    should "disallow build when open id is disabled" do
-      Gitorious::OpenID.stubs(:enabled?).returns(false)
-      get :openid_build, {}, @valid_session_options
-
-      assert_response 403
-    end
-
-    should "disallow create when openid is disabled" do
-      Gitorious::OpenID.stubs(:enabled?).returns(false)
-
-      post :openid_create, {:user => {
-          :fullname => "Moe Schmoe",
-          :email => "moe@schmoe.example",
-          :login => "schmoe",
-          :terms_of_use => "1"
-        }
-      }, @valid_session_options
-
-      assert_response 403
     end
   end
 
@@ -605,24 +224,24 @@ class UsersControllerTest < ActionController::TestCase
 
     should "filter projects" do
       get :show, :id => @user.to_param
-      assert assigns(:projects).none? { |p| p == @project }
+      refute_match @project.title, response.body
     end
 
     should "show authorized projects" do
       login_as :johan
       get :show, :id => @user.to_param
-      assert assigns(:projects).any? { |p| p == @project }
+      assert_match @project.title, response.body
     end
 
     should "filter commit repositories" do
       get :show, :id => @user.to_param
-      assert assigns(:repositories).none? { |r| r.project == @project }
+      refute_match @project.title, response.body
     end
 
     should "show authorized commit repositories" do
       login_as :johan
       get :show, :id => @user.to_param
-      assert assigns(:repositories).any? { |r| r.project == @project }
+      assert_match @project.title, response.body
     end
 
     should "filter events" do
@@ -631,72 +250,27 @@ class UsersControllerTest < ActionController::TestCase
       create_event(projects(:moes), projects(:moes).repositories.first)
 
       get :show, :id => @user.to_param
-      assert_equal 1, assigns(:events).length
-      assert assigns(:events).none? { |e| e.project == @project }
-    end
-
-    should "show authorized events" do
-      create_event(projects(:moes), @project.repositories.first)
-      create_event(@project, @project.repositories.first)
-      create_event(projects(:moes), projects(:moes).repositories.first)
-
-      login_as :johan
-      get :show, :id => @user.to_param
-      assert_equal 3, assigns(:events).length
-    end
-
-    should "filter favorites" do
-      get :show, :id => @user.to_param
-      assert assigns(:favorites).none? { |f| f.project == @project }
-    end
-
-    should "show authorized favorites" do
-      login_as :johan
-      get :show, :id => @user.to_param
-      assert assigns(:favorites).any? { |f| f.project == @project }
-    end
-
-    should "exclude unauthorized events from atom feed" do
-      create_event(projects(:moes), @project.repositories.first)
-      create_event(@project, @project.repositories.first)
-      create_event(projects(:moes), projects(:moes).repositories.first)
-
-      get :feed, :id => @user.to_param, :format => "atom"
-
-      assert_equal 1, assigns(:events).length
-    end
-
-    should "include authorized events in atom feed" do
-      create_event(projects(:moes), @project.repositories.first)
-      create_event(@project, @project.repositories.first)
-      create_event(projects(:moes), projects(:moes).repositories.first)
-
-      login_as :johan
-      get :feed, :id => @user.to_param, :format => "atom"
-
-      assert_equal 3, assigns(:events).length
+      assert_select ".events li", 1
     end
   end
 
   private
   def create_event(project, target)
     e = Event.new({ :target => target,
-                    :data => "master",
-                    :action => Action::CREATE_BRANCH })
+        :data => "master",
+        :action => Action::CREATE_BRANCH })
     e.user = @user
     e.project = project
     e.save!
   end
 
-  def create_open_id_user(login, email, identity_url)
-    user = User.new
-    user.login = login
-    user.email = email
-    user.identity_url = identity_url
-    user.terms_of_use = "1"
-    user.accept_terms
-    user.activate
-    user.save!
-    user
+  def create_user(options = {})
+    post(:create, :user => {
+        :login => "quire",
+        :email => "quire@example.com",
+        :password => "quire",
+        :password_confirmation => "quire",
+        :terms_of_use => "1"
+      }.merge(options))
   end
 end

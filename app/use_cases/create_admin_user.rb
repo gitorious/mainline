@@ -15,18 +15,27 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "use_cases/create_user"
+require "commands/activate_user_command"
 
-class UserWatchlistsController < ApplicationController
-  def show
-    user = User.find_by_login!(params[:id])
-    events = filter(user.paginated_events_in_watchlist({ :page => 1 }))
-    respond_to do |format|
-      format.atom do
-        render(:template => "user_feeds/show", :locals => {
-            :user => user,
-            :events => events
-          })
-      end
-    end
+class NewAdminUserParams < NewUserParams
+  attribute :is_admin, Boolean
+end
+
+class CreateAdminUserCommand < CreateUserCommand
+  def execute(user)
+    user.save!
+    user.accept_terms!
+    user
+  end
+end
+
+class CreateAdminUser
+  include UseCase
+
+  def initialize
+    input_class(NewAdminUserParams)
+    step(CreateAdminUserCommand.new, :validator => NewUserValidator)
+    step(ActivateUserCommand.new, :builder => lambda { |user| user })
   end
 end

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -72,11 +72,6 @@ module FavoritesHelper
     else
       link_to(h(watchable.title), watchable)
     end
-  end
-
-  # is this +watchable+ included in the users @favorites?
-  def favorited?(watchable)
-    @favorites.include?(watchable)
   end
 
   def css_class_for_watchable(watchable)

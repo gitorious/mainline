@@ -32,16 +32,6 @@ class UserTest < ActiveSupport::TestCase
   should have_many(:favorites).dependent(:destroy)
   should have_many(:commit_repositories)
   should have_many(:feed_items)
-  should validate_presence_of(:login)
-  should validate_presence_of(:password)
-  should validate_presence_of(:password_confirmation)
-  should validate_presence_of(:email)
-  should validate_acceptance_of(:terms_of_use)
-  should_not allow_value("john.doe").for(:login)
-  should_not allow_value("john_doe").for(:login)
-  should allow_value("JohnDoe").for(:login)
-  should allow_value("john-doe").for(:login)
-  should allow_value("john999").for(:login)
 
   should "create a valid user" do
     assert_difference("User.count") do
@@ -53,29 +43,7 @@ class UserTest < ActiveSupport::TestCase
   should "downcase the login before validation" do
     u = User.new
     u.login = "FooBar"
-    assert !u.valid?
     assert_equal("foobar", u.login)
-  end
-
-  should "require a username without spaces" do
-    assert_no_difference("User.count") do
-      u = create_user(:login => "joe schmoe")
-      assert_equal ["is invalid"], u.errors[:login]
-    end
-  end
-
-  should "require an email that looks emailish" do
-    assert_no_difference("User.count") do
-      u = create_user(:email => "kernel.wtf")
-      assert_not_nil u.errors[:email]
-    end
-  end
-
-  should "accept co.uk and the like" do
-    assert_difference("User.count") do
-      u = create_user(:email => "ker+nel.w-t-f@foo-bar.co.uk")
-      assert u.valid?
-    end
   end
 
   should "not send activation mail when user is already activated" do
@@ -197,13 +165,6 @@ class UserTest < ActiveSupport::TestCase
     u.identity_url = "http://johan.someprovider.com/me"
     assert u.valid?
     assert_equal "http://johan.someprovider.com/me", u.identity_url
-  end
-
-  should "catch invalid identity_url" do
-    u = users(:johan)
-    u.identity_url = "€&/()"
-    assert !u.valid?
-    assert_not_nil u.errors[:identity_url], u.errors[:identity_url]
   end
 
   should "return that the user already has a password" do

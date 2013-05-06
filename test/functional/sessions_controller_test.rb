@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #
@@ -54,7 +54,7 @@ class SessionsControllerTest < ActionController::TestCase
     assert_equal "patcito@gmail.com", session[:openid_email]
     assert_equal "Patrick Aljord", session[:openid_fullname]
     assert_response :redirect
-    assert_redirected_to :controller => "users", :action => "openid_build"
+    assert_redirected_to :controller => "open_id_users", :action => "new"
   end
 
   should "not allow openid login if disabled" do

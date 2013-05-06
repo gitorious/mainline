@@ -21,7 +21,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
 require "digest/sha1"
 require_dependency "event"
 require "open_id_authentication"
@@ -50,31 +49,8 @@ class User < ActiveRecord::Base
   has_many :content_memberships, :as => :member
 
   # Virtual attribute for the unencrypted password
-  attr_accessor :password, :current_password
-  attr_accessible :email, :fullname, :url, :terms_of_use, :identity_url, :public_email, :avatar
+  attr_accessor :password, :password_confirmation, :current_password, :terms_of_use
 
-  # For new users we are a little more strict than for existing ones.
-  USERNAME_FORMAT = /[a-z0-9\-_\.]+/i.freeze
-  USERNAME_FORMAT_ON_CREATE = /[a-z0-9\-]+/.freeze
-  validates_presence_of     :login, :email,               :if => :password_required?
-  validates_format_of       :login, :with => /^#{USERNAME_FORMAT_ON_CREATE}$/i, :on => :create
-  validates_format_of       :login, :with => /^#{USERNAME_FORMAT}$/i, :on => :update
-  validates_format_of       :email, :with => Email::FORMAT
-  validates_presence_of     :password,                   :if => :password_required?
-  validates_presence_of     :password_confirmation,      :if => :password_required?
-  validates_length_of       :password, :within => 4..40, :if => :password_required?
-  validates_confirmation_of :password,                   :if => :password_required?
-  validates_length_of       :login,    :within => 3..40
-  validates_length_of       :email,    :within => 3..100
-  validates_uniqueness_of   :login, :email, :case_sensitive => false
-  validates_acceptance_of :terms_of_use, :on => :create, :allow_nil => false
-  validates_format_of     :avatar_file_name, :with => /\.(jpe?g|gif|png|bmp|svg|ico)$/i, :allow_blank => true
-  validate :normalized_openid_identifier
-
-  before_save :encrypt_password
-  before_create :make_activation_code
-  before_validation :lint_identity_url, :downcase_login
-  after_save :expire_avatar_email_caches_if_avatar_was_changed
   after_destroy :expire_avatar_email_caches
 
   state_machine :aasm_state, :initial => :pending do
@@ -83,7 +59,6 @@ class User < ActiveRecord::Base
     event :accept_terms do
       transition :pending => :terms_accepted
     end
-
   end
 
   has_many :received_messages, {
@@ -156,16 +131,7 @@ class User < ActiveRecord::Base
     u && u.authenticated?(password) ? u : nil
   end
 
-  # Encrypts some data with the salt.
-  def self.encrypt(password, salt)
-    Digest::SHA1.hexdigest("--#{salt}--#{password}--")
-  end
-
   def self.generate_random_password(n = 12)
-    SecureRandom.hex(n)
-  end
-
-  def self.generate_reset_password_key(n = 16)
     SecureRandom.hex(n)
   end
 
@@ -227,32 +193,14 @@ class User < ActiveRecord::Base
       limit(5)
   end
 
-  # Activates the user in the database.
-  def activate
-    @activated = true
-    self.activated_at = Time.now.utc
-    self.activation_code = nil
-    save(:validate => false)
-  end
-
   def activated?
     # the existence of an activation code means they have not activated yet
     activation_code.nil?
   end
 
-  # Returns true if the user has just been activated.
-  def recently_activated?
-    @activated
-  end
-
   # Can this user be shown in public
   def public?
     activated?# && !pending?
-  end
-
-  # Encrypts the password with the user salt
-  def encrypt(password)
-    self.class.encrypt(password, salt)
   end
 
   def authenticated?(password)
@@ -294,13 +242,6 @@ class User < ActiveRecord::Base
     self.password_confirmation = generated
     self.save!
     generated
-  end
-
-  def forgot_password!
-    generated_key = User.generate_reset_password_key
-    self.password_key = generated_key
-    self.save!
-    generated_key
   end
 
   def to_param
@@ -353,11 +294,6 @@ class User < ActiveRecord::Base
     self[:url] = clean_url(an_url)
   end
 
-  def expire_avatar_email_caches_if_avatar_was_changed
-    return unless avatar_updated_at_changed?
-    expire_avatar_email_caches
-  end
-
   def expire_avatar_email_caches
     avatar.styles.keys.each do |style|
       (email_aliases.map(&:address) << email).each do |email|
@@ -392,45 +328,42 @@ class User < ActiveRecord::Base
     User.where(:is_admin => true)
   end
 
-  protected
-  # before filter
-  def encrypt_password
-    return if password.blank?
-    self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
-    self.crypted_password = encrypt(password)
+  def uniq_login?
+    existing = User.find_by_login(login)
+    existing.nil? || existing == self
   end
 
-  def password_required?
-    !openid? && (crypted_password.blank? || !password.blank?)
-  end
-
-  def openid?
-    !identity_url.blank?
-  end
-
-  def make_activation_code
-    return if !self.activated_at.blank?
-    self.activation_code = Digest::SHA1.hexdigest(Time.now.to_s.split(//).sort_by {rand}.join)
-  end
-
-  def lint_identity_url
-    return if !openid?
-    self.identity_url = OpenID.normalize_url(self.identity_url)
+  def identity_url=(url)
+    self[:identity_url] = normalize_identity_url(url)
   rescue OpenID::DiscoveryFailure
     # validate will catch it instead
+    self[:identity_url] = url
   end
 
-  def downcase_login
-    login.downcase! if login
+  def login=(login)
+    self[:login] = (login || "").downcase
+  end
+
+  def normalize_identity_url(url)
+    OpenID.normalize_url(url)
+  end
+
+  def password=(password)
+    @password = password
+    return @password if password.blank?
+    self.salt = self.class.encrypt(login, Time.now.to_s) if !salt?
+    self.crypted_password = encrypt(password)
+    @password
   end
 
   protected
-  def normalized_openid_identifier
-    return if !openid?
-    begin
-      OpenID.normalize_url(self.identity_url)
-    rescue OpenID::DiscoveryFailure => e
-      errors.add(:identity_url, I18n.t( "user.invalid_url" ))
-    end
+  # Encrypts the password with the user salt
+  def encrypt(password)
+    self.class.encrypt(password, salt)
+  end
+
+  # Encrypts some data with the salt.
+  def self.encrypt(data, salt)
+    Digest::SHA1.hexdigest("--#{salt}--#{data}--")
   end
 end
