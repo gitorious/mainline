@@ -150,12 +150,6 @@ class UserTest < ActiveSupport::TestCase
     assert_equal u, User.authenticate(u.email, password)
   end
 
-  should "set the password key with forgot_password!" do
-    u  = users(:johan)
-    key = u.forgot_password!
-    assert_equal key, u.reload.password_key
-  end
-
   should "normalize identity urls" do
     u = users(:johan)
     u.identity_url = "http://johan.someprovider.com"
@@ -374,51 +368,7 @@ class UserTest < ActiveSupport::TestCase
         assert_equal :nil, User.find_avatar_for_email("noone@nowhere.com", :thumb)
       end
     end
-
-    context "cache expirery of avatars" do
-      should "expire the cache when the avatar is changed" do
-        @user.update_attribute(:avatar_file_name, "foo.png")
-        @user.update_attribute(:avatar_updated_at, 2.days.ago)
-
-        assert_avatars_expired(@user) do
-          @user.avatar = Paperclip::Attachment.new(:avatar, @user)
-          @user.save
-        end
-      end
-
-      should "expire the cache when the avatar is deleted" do
-        @user.update_attribute(:avatar_file_name, "foo.png")
-        @user.update_attribute(:avatar_updated_at, 2.days.ago)
-
-        assert_avatars_expired(@user) do
-          @user.avatar = nil
-          @user.save
-        end
-      end
-
-      should "expire the cache for all the styles" do
-        @user.update_attribute(:avatar_file_name, "foo.png")
-        @user.update_attribute(:avatar_updated_at, 2.days.ago)
-
-        assert_avatars_expired(@user) do
-          @user.avatar = nil
-          @user.save
-        end
-      end
-
-      should "expire the cache for all the alias emails as well" do
-        @user.update_attribute(:avatar_file_name, "foo.png")
-        @user.update_attribute(:avatar_updated_at, 2.days.ago)
-        assert_equal 1, @user.email_aliases.count
-
-        assert_avatars_expired(@user) do
-          @user.avatar = nil
-          @user.save
-        end
-      end
-    end
   end
-
 
   context "Favorites" do
     setup do
@@ -469,16 +419,6 @@ class UserTest < ActiveSupport::TestCase
         @user, 99, "Repository")
       assert !@user.paginated_events_in_watchlist(:page => 1).include?(comment_event)
     end
-  end
-
-  def assert_avatars_expired(user, &block)
-    user.avatar.styles.keys.each do |style|
-      (user.email_aliases.map(&:address) << user.email).each do |email|
-        cache_key = User.email_avatar_cache_key(email, style)
-        Rails.cache.expects(:delete).with(cache_key)
-      end
-    end
-    yield
   end
 
   context "most active users" do

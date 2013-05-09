@@ -23,8 +23,10 @@ class AvatarsController < ApplicationController
   def destroy
     user = User.find_by_login!(params[:id])
     return current_user_only_redirect if user != current_user
+    # Use Case waiting to happen
     user.avatar.destroy
     user.save
+    user.expire_avatar_email_caches
     flash[:success] = "You profile image was deleted"
     redirect_to(user_path(user))
   end

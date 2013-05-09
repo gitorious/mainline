@@ -25,8 +25,8 @@ class UpdateUserCommand
   end
 
   def execute(user)
-    user.save!
     expire_avatar_email_caches(user)
+    user.save!
     user
   end
 
