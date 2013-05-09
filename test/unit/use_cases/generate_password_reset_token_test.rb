@@ -38,10 +38,11 @@ class GeneratePasswordResetTokenTest < ActiveSupport::TestCase
   end
 
   should "generate password key and email it to the user" do
+    count = ActionMailer::Base.deliveries.length
     outcome = GeneratePasswordResetToken.new(users(:zmalltalker)).execute
 
     refute_nil users(:zmalltalker).reload.password_key
-    assert_equal 1, ActionMailer::Base.deliveries.length
+    assert_equal count + 1, ActionMailer::Base.deliveries.length
     pattern = /reset your password\: http\:\/\/gitorious.test\/users\/reset_password\/[0-9a-f]+/
     assert_match pattern, ActionMailer::Base.deliveries.last.body.to_s
   end

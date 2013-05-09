@@ -94,6 +94,7 @@ if !defined?(Rails)
     def title; login; end
     def reset_password!; end
     def uniq_login?; true; end
+    def normalize_identity_url(url); url; end
     def self.find_by_login(login); end
 
     def self.find_by_email_with_aliases(email)

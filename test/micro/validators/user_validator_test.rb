@@ -88,13 +88,14 @@ class UserValidatorTest < MiniTest::Shoulda
   end
 
   should "allow normalized identity urls" do
-    user = new_user(:identity_url => "http://johan.someprovider.com")
-    assert UserValidator.call(user).valid?
+    user = new_user(:identity_url => "http://johan.somewhere.com")
+    result = UserValidator.call(user)
+    assert result.valid?, result.errors.inspect
   end
 
   should "disallow invalid identity_url" do
     user = new_user(:identity_url => "€&/()")
-    def user.normalize_url(url); raise "Invalid"; end
+    def user.normalize_identity_url(url); raise "Invalid"; end
     refute UserValidator.call(user).valid?
   end
 
