@@ -759,6 +759,12 @@ body#sessions #wrapper {
     color: #333;
 }
 
+#signup .errorExplanation {
+    float: none;
+    font-size: inherit;
+    margin: 0 0 12px;
+}
+
 .errorExplanation li {
     list-style-type: circle;
     margin-left: 15px;

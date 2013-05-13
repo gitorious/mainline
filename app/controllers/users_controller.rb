@@ -98,9 +98,8 @@ class UsersController < ApplicationController
 
   protected
   def render_form(user)
-    locals = { :user => User.new }
     options = { :layout => "second_generation/application" }
-    render_template("new", locals, options)
+    render_template("new", { :user => user }, options)
   end
 
   def find_user
