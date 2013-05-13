@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -18,6 +18,7 @@
 require "net/ldap"
 require "gitorious"
 require "gitorious/authentication/ldap_configurator"
+require "use_cases/create_system_user"
 
 module Gitorious
   module Authentication
@@ -126,25 +127,15 @@ module Gitorious
           data = result.detect do |element|
             attribute_mapping.keys.all? {|ldap_name| element[ldap_name] }
           end
-          user = User.new
-          user.login = transform_username(username)
-          attribute_mapping.each do |ldap_name, our_name|
-            user.send(:write_attribute, our_name, data[ldap_name].first)
+
+          attributes = attribute_mapping.inject({ :login => transform_username(username) }) do |attrs, mapping|
+            attrs[mapping[1].to_sym] = data[mapping[0]].first
+            attrs
           end
 
-          if user.email.blank?
-            user.email = "#{username}.example@#{Gitorious.host}"
-          end
+          attributes[:email] = "#{username}.example@#{Gitorious.host}" if attributes[:email].blank?
 
-          user.password = "left_blank"
-          user.password_confirmation = "left_blank"
-          user.terms_of_use = '1'
-          user.aasm_state = "terms_accepted"
-          user.activated_at = Time.now.utc
-          user.save!
-          # Reset the password to something random
-          user.reset_password!
-          user
+          CreateSystemUser.new.execute(attributes).result
         end
       end
 

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -38,8 +38,7 @@ class Gitorious::Authentication::SSLAuthenticationTest < ActiveSupport::TestCase
       assert_equal "jdoe", user.login
       assert_equal @email, user.email
       assert_equal @cn, user.fullname
-
-      assert user.valid?
+      assert_equal User.last, user
     end
   end
 end

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "gitorious/authentication/configuration"
+require "use_cases/create_system_user"
 
 module Gitorious
   module Authentication
@@ -79,22 +80,11 @@ module Gitorious
       end
 
       def auto_register(username)
-        user = User.new
-        user.login = transform_username(username)
-        user.email = username + '@' + @email_domain
-        log("Kerberos: username after transform_username: '#{user.login}'.")
-        log("Kerberos: email '#{user.email}'.")
-
-        # Again, similar to LDAPAuthentication's implementation
-        user.password = "left_blank"
-        user.password_confirmation = "left_blank"
-        user.terms_of_use = '1'
-        user.aasm_state = "terms_accepted"
-        user.activated_at = Time.now.utc
-        user.save!
-        # Reset the password to something random
-        user.reset_password!
-        user
+        login = transform_username(username)
+        email = username + '@' + @email_domain
+        log("Kerberos: username after transform_username: '#{login}'.")
+        log("Kerberos: email '#{email}'.")
+        CreateSystemUser.new.execute({ :login => login, :email => email }).result
       end
 
       def log(message)

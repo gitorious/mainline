@@ -15,38 +15,33 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "use_case"
-require "virtus"
+require "use_cases/create_user"
+require "commands/activate_user_command"
+require "validators/new_user_validator"
 
-class CreateUserCommand
+class CreateSystemUserCommand
   def execute(user)
-    user.activation_code = Digest::SHA1.hexdigest(Time.now.to_s.split(//).sort_by { rand }.join)
     user.save!
-    Mailer.signup_notification(user).deliver if user.identity_url.blank?
     user.accept_terms!
     user
   end
 
   def build(params)
-    User.new(params.to_hash)
+    password = User.generate_random_password
+    User.new(params.to_hash.merge({
+          :terms_of_use => true,
+          :password => password,
+          :password_confirmation => password
+        }))
   end
 end
 
-class NewUserParams
-  include Virtus
-  attribute :login, String
-  attribute :fullname, String
-  attribute :email, String
-  attribute :password, String
-  attribute :password_confirmation, String
-  attribute :terms_of_use, Boolean
-end
-
-class CreateUser
+class CreateSystemUser
   include UseCase
 
   def initialize
     input_class(NewUserParams)
-    step(CreateUserCommand.new, :validator => NewUserValidator)
+    step(CreateSystemUserCommand.new, :validator => NewUserValidator)
+    step(ActivateUserCommand.new, :builder => lambda { |user| user })
   end
 end

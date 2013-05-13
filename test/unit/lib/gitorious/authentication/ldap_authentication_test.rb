@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -40,8 +40,7 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
       assert_equal "moe@gitorious.org", user.email
       assert_equal "Moe Szyslak", user.fullname
       assert_equal "moe-szyslak", user.login
-
-      assert user.valid?
+      assert_equal User.last, user
     end
   end
 end

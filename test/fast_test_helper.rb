@@ -81,8 +81,18 @@ module TestHelper
 end
 
 if !defined?(Rails)
+  class Mailer
+    class Email
+      def deliver; end
+    end
+
+    def self.activation(*args)
+      Mailer::Email.new
+    end
+  end
+
   class User < TestHelper::Model
-    attr_accessor :login, :fullname, :email, :password, :password_confirmation,
+    attr_accessor :login, :fullname, :email, :password, :password_confirmation, :activation_code,
     :terms_of_use, :aasm_state, :activated_at, :avatar_file_name, :identity_url, :crypted_password
 
     def initialize(attributes = {})
@@ -96,6 +106,8 @@ if !defined?(Rails)
     def uniq_login?; true; end
     def normalize_identity_url(url); url; end
     def self.find_by_login(login); end
+    def self.generate_random_password; "rAnD0mZ!"; end
+    def accept_terms!; end
 
     def self.find_by_email_with_aliases(email)
       @@users ||= {}

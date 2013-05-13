@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011, 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -40,19 +40,11 @@ module Gitorious
       end
 
       def to_user
-        user = User.new
-        user.login = username
-        user.fullname = display_name
-        user.email = email
-        user.password = "left_blank"
-        user.password_confirmation = "left_blank"
-        user.terms_of_use = "1"
-        user.aasm_state = "terms_accepted"
-        user.activated_at = Time.now.utc
-        user.save!
-        # Reset the password to something random
-        user.reset_password!
-        user
+        CreateSystemUser.new.execute({
+            :login => username,
+            :fullname => display_name,
+            :email => email
+          }).result
       end
     end
   end
