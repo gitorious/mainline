@@ -27,7 +27,7 @@ class CreateProjectRepositoryCommand < CreateRepositoryCommand
     initialize_committership(repository)
     initialize_membership(repository)
     initialize_favorite(repository)
-    schedule_creation(repository, :queue => "GitoriousRepositoryCreation")
+    schedule_creation(repository, :queue => "GitoriousProjectRepositoryCreation")
     create_new_repository_event(repository)
     repository
   end

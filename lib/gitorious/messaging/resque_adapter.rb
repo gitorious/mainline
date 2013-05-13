@@ -32,7 +32,7 @@ module Gitorious::Messaging::ResqueAdapter
       "GitoriousPush" => "Push",
       "GitoriousRepositoryArchiving" => "RepositoryArchiving",
       "GitoriousRepositoryCloning" => "RepositoryCloning",
-      "GitoriousRepositoryCreation" => "RepositoryCreation",
+      "GitoriousProjectRepositoryCreation" => "ProjectRepositoryCreation",
       "GitoriousTrackingRepositoryCreation" => "TrackingRepositoryCreation",
       "GitoriousRepositoryDeletion" => "RepositoryDeletion",
       "GitoriousPostReceiveWebHook" => "WebHook",

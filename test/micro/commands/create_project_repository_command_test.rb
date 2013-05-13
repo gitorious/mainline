@@ -122,7 +122,7 @@ class CreateProjectRepositoryCommandTest < MiniTest::Shoulda
 
       assert_equal 1, @app.messages.length
       expected = {
-        :queue => "/queue/GitoriousRepositoryCreation",
+        :queue => "/queue/GitoriousProjectRepositoryCreation",
         :message => { :id => 13 }
       }
       assert_equal(expected, @app.messages.first)

@@ -16,9 +16,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class RepositoryCreationProcessor
+class ProjectRepositoryCreationProcessor
   include Gitorious::Messaging::Consumer
-  consumes "/queue/GitoriousRepositoryCreation"
+  consumes "/queue/GitoriousProjectRepositoryCreation"
 
   def on_message(message)
     repository = Repository.find(message["id"].to_i)

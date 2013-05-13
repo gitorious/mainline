@@ -52,7 +52,7 @@ module Gitorious::Messaging::SyncAdapter
       "/queue/GitoriousPush" => "push",
       "/queue/GitoriousRepositoryArchiving" => "repository_archiving",
       "/queue/GitoriousRepositoryCloning" => "repository_cloning",
-      "/queue/GitoriousRepositoryCreation" => "repository_creation",
+      "/queue/GitoriousProjectRepositoryCreation" => "project_repository_creation",
       "/queue/GitoriousRepositoryDeletion" => "repository_deletion",
       "/queue/GitoriousTrackingRepositoryCreation" => "tracking_repository_creation",
       "/queue/GitoriousPostReceiveWebHook" => "web_hook",
