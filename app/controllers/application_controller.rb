@@ -28,6 +28,7 @@ class ApplicationController < ActionController::Base
   include Gitorious::Authorization
   protect_from_forgery
 
+  before_filter :autologin
   before_filter :public_and_logged_in
   before_filter :require_current_eula
 
@@ -190,6 +191,14 @@ class ApplicationController < ActionController::Base
     render :partial => "/shared/unauthorized",
     :layout => "application", :status => 403 # forbidden
     return false
+  end
+
+  def autologin
+    unless logged_in? || !GitoriousConfig['autologin']
+      credentials = Gitorious::Authentication::Credentials.new
+      credentials.env = request.env
+      self.current_user = Gitorious::Authentication.authenticate(credentials)
+    end
   end
 
   def public_and_logged_in
