@@ -107,7 +107,7 @@ class ProjectTest < ActiveSupport::TestCase
     assert can_delete?(users(:johan), project.reload) # the clones are gone
   end
 
-  should "strip html tags" do
+  should "strip html tag" do
     project = create_project(:description => "<h1>Project A</h1>\n<b>Project A</b> is a....")
     assert_equal "Project A\nProject A is a....", project.stripped_description
   end
@@ -547,6 +547,22 @@ class ProjectTest < ActiveSupport::TestCase
       assert project.member?(users(:mike))
       assert is_member?(users(:mike), project)
       assert_equal 1, project.content_memberships.count
+    end
+  end
+
+  context "Housekeeping" do
+    setup do
+      @project = create_project(:slug => "cleanly")
+      @project.save!
+    end
+
+    should "delete custom merge request states" do
+      state = @project.merge_request_statuses.create!(
+        :name => "gone",
+        :state => MergeRequest::STATUS_CLOSED)
+      assert_incremented_by(MergeRequestStatus, :count, -1) do
+        @project.destroy
+      end
     end
   end
 

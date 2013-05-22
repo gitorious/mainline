@@ -45,7 +45,7 @@ class Project < ActiveRecord::Base
   has_many    :events, :order => "created_at asc", :dependent => :destroy
   has_many    :groups
   belongs_to  :containing_site, :class_name => "Site", :foreign_key => "site_id"
-  has_many    :merge_request_statuses, :order => "id asc"
+  has_many    :merge_request_statuses, :order => "id asc", :dependent => :destroy
   accepts_nested_attributes_for :merge_request_statuses, :allow_destroy => true
 
   default_scope :conditions => ["projects.suspended_at is null"]
