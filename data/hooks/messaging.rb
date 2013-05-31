@@ -42,7 +42,9 @@ $: << (Rails.root + "lib").realpath.to_s
 require "rubygems"
 require "bundler"
 ENV["BUNDLE_GEMFILE"] = (Rails.root + "Gemfile").realpath.to_s
+git_dir = ENV.delete("GIT_DIR")
 Bundler.require(:messaging, Rails.env.to_s)
+ENV["GIT_DIR"] = git_dir
 
 require "yaml"
 require "gitorious/messaging"
