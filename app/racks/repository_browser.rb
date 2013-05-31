@@ -34,66 +34,59 @@ module Gitorious
     #   -> 302 /gitorious/mainline/source/2d4e282d02f438043fc425cc99a781774d22561a:
     def redirect_refs?; true; end
 
-    aget "/*/source/*:*" do
+    get "/*/source/*:*" do
       repo, ref, path = params[:splat]
       tree_entry(repo, ref, path)
-      ActiveRecord::Base.clear_reloadable_connections!
     end
 
-    aget "/*/source/*" do
+    get "/*/source/*" do
       force_ref(params[:splat], "source")
     end
 
-    aget "/*/raw/*:*" do
+    get "/*/raw/*:*" do
       repo, ref, path = params[:splat]
       raw(repo, ref, path)
     end
 
-    aget "/*/raw/*" do
+    get "/*/raw/*" do
       force_ref(params[:splat], "raw")
     end
 
-    aget "/*/blame/*:*" do
+    get "/*/blame/*:*" do
       repo, ref, path = params[:splat]
       blame(repo, ref, path)
     end
 
-    aget "/*/blame/*" do
+    get "/*/blame/*" do
       force_ref(params[:splat], "blame")
     end
 
-    aget "/*/history/*:*" do
+    get "/*/history/*:*" do
       repo, ref, path = params[:splat]
       history(repo, ref, path, (params[:commit_count] || 20).to_i)
     end
 
-    aget "/*/history/*" do
+    get "/*/history/*" do
       force_ref(params[:splat], "history")
     end
 
-    aget "/*/refs" do
+    get "/*/refs" do
       refs(params[:splat].first)
     end
 
-    aget "/*/tree_history/*:*" do
+    get "/*/tree_history/*:*" do
       repo, ref, path = params[:splat]
       tree_history(repo, ref, path)
     end
 
-    aget %r{/(.*)/archive/(.*)?\.(tar\.gz|tgz|zip)} do
-      repo, ref, format = params[:captures]
-
-      actions.archive(repo, ref, format) do |err, filename|
-        begin
-          if !err.nil?
-            error(err, repo, ref)
-          else
-            add_sendfile_headers(filename, format)
-            body("")
-          end
-        rescue Exception => err
-          error(err, repo, ref)
-        end
+    get %r{/(.*)/archive/(.*)?\.(tar\.gz|tgz|zip)} do
+      begin
+        repo, ref, format = params[:captures]
+        filename = actions.archive(repo, ref, format)
+        add_sendfile_headers(filename, format)
+        body("")
+      rescue Exception => err
+        error(err, repo, ref)
       end
     end
 
