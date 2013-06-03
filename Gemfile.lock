@@ -135,7 +135,7 @@ GEM
       addressable (~> 2.2.6)
       ffi (~> 1.0.9)
       spoon (~> 0.0.1)
-    libdolt (0.17.0)
+    libdolt (0.17.1)
       htmlentities (~> 4.3)
       json (~> 1.7)
       makeup (~> 0.2)
@@ -153,7 +153,7 @@ GEM
       htmlentities (~> 4.3)
       pygments.rb (~> 0.2)
     memcache-client (1.8.5)
-    mime-types (1.21)
+    mime-types (1.23)
     minitest (4.2.0)
     mocha (0.9.10)
       rake
@@ -283,7 +283,7 @@ GEM
       eventmachine (>= 0.12.8)
       http_parser.rb (~> 0.5.1)
       simple_oauth (~> 0.1.4)
-    tzinfo (0.3.35)
+    tzinfo (0.3.37)
     unicorn (4.3.1)
       kgio (~> 2.6)
       rack
