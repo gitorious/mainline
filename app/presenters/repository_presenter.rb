@@ -29,6 +29,9 @@ class RepositoryPresenter
   def path_segment; repository.path_segment; end
   def full_repository_path; repository.full_repository_path; end
   def head_candidate_name; repository.head_candidate_name; end
+  def ready?; repository.ready?; end
+  def committerships; repository.committerships; end
+  def has_commits?; repository.has_commits?; end
 
   def open_merge_request_count
     repository.open_merge_requests.count

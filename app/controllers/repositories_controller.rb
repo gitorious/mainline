@@ -52,18 +52,22 @@ class RepositoriesController < ApplicationController
   end
 
   def show
-    @root = @repository = repository_to_clone
-    @events = paginated_events
-
+    repository = repository_to_clone
+    @events = paginated_events(repository)
     return if @events.count == 0 && params.key?(:page)
-    @atom_auto_discovery_url = project_repository_path(@repository.project,
-      @repository,
-      :format => :atom)
-    response.headers["Refresh"] = "5" unless @repository.ready
+    response.headers["Refresh"] = "5" unless repository.ready
 
     respond_to do |format|
-      format.html
-      format.xml  { render :xml => @repository }
+      format.html do
+        render(:action => :show, :layout => "ui3/layouts/layout", :locals => {
+            :repository => RepositoryPresenter.new(repository),
+            :ref => repository.head_candidate_name,
+            :events => @events,
+            :atom_auto_discovery_url => project_repository_path(repository.project, repository, :format => :atom),
+            :atom_auto_discovery_title => "#{repository.title} ATOM feed"
+          })
+      end
+      format.xml  { render :xml => repository }
       format.atom {  }
     end
   end
@@ -237,22 +241,22 @@ class RepositoriesController < ApplicationController
     authorize_access_to(repo)
   end
 
-  def paginated_events
+  def paginated_events(repository)
     paginate(page_free_redirect_options) do
       if !Gitorious.private_repositories?
-        Rails.cache.fetch("new_paginated_events_in_repo_#{@repository.id}:#{params[:page] || 1}", :expires_in => 1.minute) do
-          marshalable_events(unfiltered_paginated_events)
+        Rails.cache.fetch("new_paginated_events_in_repo_#{repository.id}:#{params[:page] || 1}", :expires_in => 1.minute) do
+          marshalable_events(unfiltered_paginated_events(repository))
         end
       else
         filter_paginated(params[:page], Event.per_page) do |page|
-          unfiltered_paginated_events
+          unfiltered_paginated_events(repository)
         end
       end
     end
   end
 
-  def unfiltered_paginated_events
-    @repository.events.top.paginate(:page => params[:page],
+  def unfiltered_paginated_events(repository)
+    repository.events.top.paginate(:page => params[:page],
       :order => "created_at desc")
   end
 

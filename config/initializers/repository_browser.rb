@@ -32,24 +32,33 @@ view = Tiltout.new([Dolt.template_dir, views.realpath.to_s], {
   :layout => { :file => (views + "layouts/layout.html.erb").realpath.to_s }
 })
 
+module DoltViewHelpers
+  include Gitorious::View::DoltUrlHelper
+  include ::Dolt::View::MultiRepository
+  include ::Dolt::View::Object
+  include ::Dolt::View::Blob
+  include ::Dolt::View::Blame
+  include ::Dolt::View::Breadcrumb
+  include ::Dolt::View::Tree
+  include ::Dolt::View::Commit
+  include ::Dolt::View::Gravatar
+  include ::Dolt::View::TabWidth
+  include ::Dolt::View::BinaryBlobEmbedder
+  include Gitorious::View::UIHelper
+  include Gitorious::View::ProjectHelper
+  include Gitorious::View::RepositoryHelper
+  include ::Dolt::View::SmartBlobRenderer
+end
+
+module DoltRailsShims
+  def content_for(*args); end
+end
+
 view.helper(ERB::Util)
 view.helper(Tiltout::Partials)
-view.helper(Gitorious::View::DoltUrlHelper)
 view.helper(Rails.application.routes.url_helpers)
-view.helper(::Dolt::View::MultiRepository)
-view.helper(::Dolt::View::Object)
-view.helper(::Dolt::View::Blob)
-view.helper(::Dolt::View::Blame)
-view.helper(::Dolt::View::Breadcrumb)
-view.helper(::Dolt::View::Tree)
-view.helper(::Dolt::View::Commit)
-view.helper(::Dolt::View::Gravatar)
-view.helper(::Dolt::View::TabWidth)
-view.helper(::Dolt::View::BinaryBlobEmbedder)
-view.helper(Gitorious::View::UIHelper)
-view.helper(Gitorious::View::ProjectHelper)
-view.helper(Gitorious::View::RepositoryHelper)
-view.helper(::Dolt::View::SmartBlobRenderer)
+view.helper(DoltViewHelpers)
+view.helper(DoltRailsShims)
 view.helper(:maxdepth => 3, :tab_width => 4)
 
 archiver = ::Dolt::Git::Archiver.new(Gitorious.archive_work_dir, Gitorious.archive_cache_dir)

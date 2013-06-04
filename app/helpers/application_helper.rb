@@ -39,8 +39,7 @@ module ApplicationHelper
   include Gitorious::Authorization
   include GroupRoutingHelper
   include Gitorious::CacheInPrivateHelper
-  include Gitorious::View::DoltUrlHelper
-  include Gitorious::View::RepositoryHelper
+  include DoltViewHelpers
 
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 
@@ -227,9 +226,9 @@ module ApplicationHelper
     end
   end
 
-  def gravatar(email, options = {})
+  def gravatar(email, options = {}, image_options = {})
     size = options[:size]
-    image_options = { :alt => "avatar" }
+    image_options = image_options.merge({ :alt => "avatar" })
     if size
       image_options.merge!(:width => size, :height => size)
     end
@@ -592,5 +591,10 @@ module ApplicationHelper
 
   def long_ordinal(date)
     date.strftime("%B #{date.day.ordinalize}, %Y")
+  end
+
+  # Used for compatibility with Dolt views
+  def partial(template, locals = {})
+    render(:template => File.join("ui3", template), :locals => locals).html_safe
   end
 end

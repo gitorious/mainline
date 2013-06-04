@@ -26,6 +26,10 @@ class ProjectPresenter
   def description; project.description; end
   def to_param; project.to_param; end
 
+  def self.model_name
+    Project.model_name
+  end
+
   private
   def project; @project; end
 end

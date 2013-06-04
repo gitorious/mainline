@@ -19,7 +19,7 @@
   <div class="container">
     <div class="row">
       <h1 class="span">
-        <!--img src="<%= img_url('/project-logo.png') %>" width="32" height="32" alt="gitorious logo"-->
+        <!--img src=" img_url('/project-logo.png') " width="32" height="32" alt="gitorious logo"-->
         <a href="<%= project_path(project) %>"><%= project.slug %></a> /
         <span><%= repository.name %></span>
       </h1>
@@ -69,29 +69,13 @@ git push</pre>
       </div>
     </div>
     <ul class="nav nav-tabs">
-      <!--li><a href="#">Readme</a></li-->
-      <li><a href="<%= project_repository_path(repository.project, repository) %>">Activities</a></li>
-      <li><a href="<%= project_repository_commits_in_ref_path(repository.project, repository, ref) %>">Commits</a></li>
-      <li class="active"><a>Source code</a></li>
-      <li>
-        <a href="<%= project_repository_merge_requests_path(repository.project, repository) %>">
-          Merge requests
-          <span class="count">(<%= repository.open_merge_request_count %>)</span>
-        </a>
-      </li>
-      <!--li><a href="#">Community</a></li-->
-      <!--li class="pull-right"><a href="<%= edit_project_repository_path(repository.project, repository) %>"><i class="icon-cog"></i> Admin</a-->
-      <!--li class="pull-right dropdown">
-        <a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-cog"></i> Admin</a>
-        <ul class="dropdown-menu">
-          <li><a href="#"><i class="icon-pencil"></i> Edit repository</a></li>
-          <li><a href="#"><i class="icon-trash"></i> Delete repository</a></li>
-          <li class="divider"></li>
-          <li><a href="#"><i class="i"></i> Change name</a></li>
-          <li><a href="#"><i class="i"></i> Manage collaborators</a></li>
-          <li><a href="#"><i class="i"></i> Transfer ownership</a></li>
-        </ul>
-      </li-->
+      <%= repository_navigation([
+              [:readme, "#", "Readme"],
+              [:activities, project_repository_path(repository.project, repository), "Activities"],
+              [:commits, project_repository_commits_in_ref_path(repository.project, repository, ref), "Commits"],
+              [:source, url_for(File.join("/", repository.project.to_param, repository.to_param, "source", "#{repository.head_candidate_name}:")), "Source code"],
+              [:merge_requests, project_repository_merge_requests_path(repository.project, repository), "Merge requests <span class=\"count\">(#{repository.open_merge_request_count})</span>"]
+            ], :active => defined?(active) ? active : nil) %>
     </ul>
   </div>
 </div>

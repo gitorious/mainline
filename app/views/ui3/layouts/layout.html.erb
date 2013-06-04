@@ -24,6 +24,7 @@
     <link href="/ui3/css/gitorious.css" rel="stylesheet">
     <link href="/ui3/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/ui3/lib/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <%= content_for(:head) %>
   </head>
   <body>
     <div class="gts-masthead navbar">
@@ -41,29 +42,28 @@
         </div>
       </div>
     </div>
+    <%= alerts(defined?(flash) ? flash : {}) %>
     <% if defined?(repository_meta) %>
       <%= partial("repositories/repo_header", {
-            :repository => repository_meta,
-            :project => repository_meta.project,
-            :ref => ref,
-            :app => Gitorious
-          }) %>
+              :repository => repository_meta,
+              :project => repository_meta.project,
+              :ref => ref,
+              :app => Gitorious,
+              :active => :source
+            }) %>
     <% end %>
-    <div class="container gts-body">
-      <%= yield %>
-    </div>
+    <%= yield %>
     <div class="footer">
       <%= partial("layouts/footer") %>
     </div>
-    <% if defined?(repository_meta) %>
+    <% repo = defined?(repository_meta) ? repository_meta : (defined?(repository) ? repository : nil) %>
+    <% if repo %>
       <script>
         var gts = {
-            repository: "<%= repository_meta.slug %>",
-            commitUrlTemplate: "<%= project_repository_commit_path(repository_meta.project,
-                                                                   repository_meta,
-                                                                   "%oid%").sub("%oid%", "\#{oid}") %>"
+            repository: "<%= repo.slug %>",
+            commitUrlTemplate: "<%= project_repository_commit_path(repo.project, repo, "%oid%").sub("%oid%", "\#{oid}") %>"
         };
-    </script>
+      </script>
     <% end %>
     <script src="/ui3/dist/gts-ui-deps.js"></script>
     <script src="/ui3/js/components/abbrev.js"></script>

@@ -21,7 +21,7 @@ module Gitorious
     module ProjectHelper
       def project_description(project)
         # Eventually: Support markdown here
-        "<p>#{project.description}</p>"
+        "<p>#{project.description}</p>".html_safe
       end
     end
   end

@@ -38,41 +38,17 @@
     <%= project_description(repository.project) %>
     <div class="row">
       <div class="alert alert-info span6">
-        <h2>Congratulations on your new repository!</h2>
+        <h2>Your new repository is being created</h2>
         <p>
-          Please follow these few steps to start using your new repository.
+          This page will be reloaded when your repository is created.
+          If the page doesn't reload after a few seconds,
+          try <a href="">reloading it</a>.
         </p>
-        <h3>Install and configure Git</h3>
         <p>
-          If you haven't already,
-          <a href="http://git-scm.com">download and install Git</a>. Then provide some basic configuration to Git:
+          If this message persists for more than a few minutes,
+          contact
+          <a href="mailto:<%= Gitorious.support_email %>"><%= Gitorious.support_email %></a>.
         </p>
-        <pre class="prettyprint">git config --global user.name "<%=h current_user.fullname || "Your full name" -%>"
-git config --global user.email "<%=h current_user.email -%>"</pre>
-        <h3>Create a new Git repository</h3>
-        <p>
-          If your project is not already using Git, initialize a
-          repository now:
-        </p>
-        <pre class="prettyprint">git init .</pre>
-        <p>
-          Add the existing files to Git's index and commit:
-        </p>
-        <pre class="prettyprint">git add .
-git commit -m "Initial commit"</pre>
-        <h3>Push your changes</h3>
-        <p>
-          Configure your newly created Gitorious repository as a
-          "remote", then push your changes:
-        </p>
-        <pre class="prettyprint">git remote add origin <%= Gitorious.default_remote_url(repository) %>
-git push -u origin master</pre>
-        <p>
-          The <code>-u</code> (<code>--set-upstream</code>) tells Git that your
-          <code>master</code> branch always goes to the <code>origin</code> remote.
-          Next time you can push by simply issuing:
-        </p>
-        <pre class="prettyprint">git push</pre>
       </div>
     </div>
   </div>

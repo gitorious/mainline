@@ -24,12 +24,22 @@ module Gitorious
         url = backend.url(repository.gitdir)
         class_name = "btn gts-repo-url"
         class_name += " active" if url == default_remote_url
-        "<a class=\"#{class_name}\" href=\"#{url}\">#{label}</a>"
+        "<a class=\"#{class_name}\" href=\"#{url}\">#{label}</a>".html_safe
       end
 
       def refname(ref)
         return ref unless ref.length == 40
         ref[0...7]
+      end
+
+      def repository_navigation(items, options = {})
+        items.inject("") do |html, item|
+          if item[0] == options[:active]
+            "#{html}<li class=\"active\"><a>#{item[2]}</a></li>"
+          else
+            "#{html}<li><a href=\"#{item[1]}\">#{item[2]}</a></li>"
+          end
+        end.html_safe
       end
     end
   end

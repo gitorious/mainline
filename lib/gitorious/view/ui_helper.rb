@@ -26,6 +26,23 @@ module Gitorious
       def img_url(url)
         asset_url("/images#{url}")
       end
+
+      def alerts(flash)
+        types = {
+          :notice => "alert-info",
+          :error => "alert-error",
+          :success => "alert-success"
+        }
+
+        content = flash.inject("") do |html, type|
+          "#{html}<div class=\"alert #{types[type]}\"><strong>#{flash[type]}" +
+            "</strong></div>"
+        end
+
+        return if content == ""
+        "<div class=\"gts-notification\"><div class=\"container\">#{content}" +
+          "</div></div>".html_safe
+      end
     end
   end
 end
