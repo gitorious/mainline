@@ -60,7 +60,7 @@ class UpdateUser
   include UseCase
 
   def initialize(user)
-    add_pre_condition(UserRequired.new(user))
+    add_pre_condition(RequiredDependency.new(:user, user))
     input_class(UpdateUserParams)
     step(UpdateUserCommand.new(user), :validator => UserValidator)
   end

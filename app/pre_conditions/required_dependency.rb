@@ -16,7 +16,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class UserRequired
-  def initialize(user); @user = user; end
-  def satisfied?(params); !@user.nil?; end
+class RequiredDependency
+  def initialize(type, object)
+    @type = type
+    @object = object
+  end
+
+  def satisfied?(params); !@object.nil?; end
+  def symbol; :"#{@type}_required"; end
 end

@@ -23,7 +23,7 @@ class PrepareProjectRepository
 
   def initialize(app, project, user)
     input_class(NewRepositoryInput)
-    add_pre_condition(UserRequired.new(user))
+    add_pre_condition(RequiredDependency.new(:user, user))
     add_pre_condition(AdminRequired.new(app, project.owner, user))
     create_project_repo = CreateProjectRepositoryCommand.new(app, project, user)
     name = project.repositories.mainlines.count == 0 ? project.slug : ""

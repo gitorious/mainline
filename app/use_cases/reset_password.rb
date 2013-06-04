@@ -41,7 +41,7 @@ class ResetPassword
 
   def initialize(user)
     input_class(ResetPasswordParams)
-    add_pre_condition(UserRequired.new(user))
+    add_pre_condition(RequiredDependency.new(:user, user))
     step(ResetPasswordCommand.new(user), :validator => NewPasswordValidator)
   end
 end

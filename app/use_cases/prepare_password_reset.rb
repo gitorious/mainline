@@ -21,7 +21,7 @@ class PreparePasswordReset
   include UseCase
 
   def initialize(user)
-    add_pre_condition(UserRequired.new(user))
+    add_pre_condition(RequiredDependency.new(:user, user))
     step(lambda { |params| user })
   end
 end

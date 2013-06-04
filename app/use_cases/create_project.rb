@@ -84,7 +84,7 @@ class CreateProject
 
   def initialize(app, user)
     input_class(NewProjectParams)
-    add_pre_condition(UserRequired.new(user))
+    add_pre_condition(RequiredDependency.new(:user, user))
     add_pre_condition(ProjectProposalRequired.new(user))
     add_pre_condition(ProjectRateLimiting.new(user))
     step(CreateProjectCommand.new(user), :validator => ProjectValidator)

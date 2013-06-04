@@ -23,7 +23,7 @@ class CloneRepository
 
   def initialize(app, repository, user)
     input_class(CloneRepositoryInput)
-    add_pre_condition(UserRequired.new(user))
+    add_pre_condition(RequiredDependency.new(:user, user))
     add_pre_condition(CommitsRequired.new(repository))
     add_pre_condition(RepositoryRateLimiting.new(user))
     add_pre_condition(AuthorizationRequired.new(app, user, repository))
