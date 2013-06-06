@@ -113,7 +113,7 @@ module EventRenderingHelper
       body = h(event.body)
     else
       action = action_for_event(:event_branch_created) do
-        link_to(h(event.data),
+        link_to(ref(event.data),
           project_repository_commits_in_ref_path(project, event.target, ensplat_path(event.data))) +
         " on " + link_to(h(project.slug), project_path(project)) + "/" +
         link_to(h(event.target.name),
@@ -127,7 +127,7 @@ module EventRenderingHelper
   def render_event_delete_branch(event)
     project = event.target.project
     action = action_for_event(:event_branch_deleted) do
-      h(event.data)  + " on " + link_to(h(project.slug), project_path(project)) +
+      ref(event.data)  + " on " + link_to(h(project.slug), project_path(project)) +
       "/" + link_to(h(event.target.name),
               project_repository_url(project, event.target))
     end
@@ -142,7 +142,7 @@ module EventRenderingHelper
       link_to(h(event.target.name), project_repository_url(project, event.target))
     end
 
-    body = link_to(h(event.data) + ": " + h(event.body),
+    body = link_to(ref(event.data),
                    project_repository_tree_path(project, event.target, ensplat_path(h(event.data))))
 
     category = "commit"
@@ -432,5 +432,9 @@ module EventRenderingHelper
     else
       h(File.join(repo.owner.to_param_with_prefix, project.slug, repo.name))
     end
+  end
+
+  def ref(name)
+    "<code>#{h(name)}</code>".html_safe
   end
 end
