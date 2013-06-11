@@ -258,6 +258,8 @@ Gitorious::Application.routes.draw do
       get "/comments/commit/:sha" => "comments#commit", :as => :commit_comment
       match "/comments/preview" => "comments#preview", :as => :comments_preview, :via => [:get, :post]
 
+      match "/community", :controller => :repository_community, :action => :index
+
       resources :merge_requests do
         collection do
           post :create

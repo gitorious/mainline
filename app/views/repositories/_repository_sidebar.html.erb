@@ -18,18 +18,17 @@
   #++
   %>
 <li class="clone">
-  <div class="name">
+  <span class="name">
     <%= link_to h(repository.name), [repository.project, repository] -%>
-  </div>
   <% if repository.owned_by_group? -%>
-    <div class="group">
+    (<span class="group">
       <%= image_tag(repository.owner.avatar.url(:thumb), :width => "16", :height => "16") %>
       <%= link_to h(repository.owner.name), repository.owner -%>
-    </div>
+    </span>)
   <% else -%>
-    <div class="user">
+    (<span class="user">
       <%= avatar(repository.user, :size => 16, :version => "tiny") %>
       <%= link_to h(repository.user.title), repository.user -%>
-    </div>
+    </span>)
   <% end -%>
 </li>

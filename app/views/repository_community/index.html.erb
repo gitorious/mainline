@@ -1,0 +1,138 @@
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<% @title = t("views.repos.show_page_title", :repo => repository.name, :title => @owner.title) -%>
+<% content_for(:head) do %>
+  <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url,
+        :title => atom_auto_discovery_title) -%>
+<% end %>
+<% if !repository.ready? %>
+  <%= render(:partial => "pending", :locals => { :repository => repository }) %>
+<% elsif !repository.has_commits? && committers(repository).include?(current_user) %>
+  <%= render(:partial => "getting_started", :locals => { :repository => repository }) %>
+<% else %>
+  <%= partial("repositories/repo_header", {
+          :repository => repository,
+          :project => repository.project,
+          :ref => ref,
+          :app => Gitorious,
+          :active => :community
+        }) %>
+
+
+<div class="container">
+  <div class="row-fluid">
+    <div class="span8">
+      <span class="fluid-row">
+
+
+      <% if show_clone_list_search?(repository.repository.clones.by_groups, repository.repository.clones.by_users) -%>
+  <%= render(:partial => "clone_list_search", :locals => {
+               :path => search_clones_project_repository_path(repository.repository.project, repository.repository)
+             }) -%>
+<% end -%>
+
+<% unless repository.repository.clones.by_groups.blank? -%>
+  <span class="span6">
+    <h3><%= t("views.repos.by_teams") -%> (<%= repository.repository.clones.by_groups.count -%>)</h3>
+    <ul class="repository_list">
+      <% repository.repository.clones.by_groups.fresh.each do |repo| -%>
+        <%= render :partial => "repositories/repository_sidebar",
+            :locals => {:repository => repo} -%>
+      <% end -%>
+    </ul>
+  </span>
+<% end -%>
+<% unless repository.repository.clones.by_users.blank? -%>
+  <span class="span6">
+    <h3><%= t("views.repos.by_users") -%> (<%= repository.repository.clones.by_users.count -%>)</h3>
+    <ul class="repository_list">
+      <% repository.repository.clones.by_users.fresh.each do |repo|-%>
+        <%= render :partial => "repositories/repository_sidebar",
+            :locals => {:repository => repo} -%>
+      <% end -%>
+      <ul>
+  </span>
+<% end -%>
+
+
+
+
+
+
+<% if repository.repository.clones.by_groups.blank? && repository.repository.clones.by_users.blank? -%>
+  <ul>
+    <li class="hint"><%= t("views.projects.no_clones_yet") -%></li>
+  </ul>
+<% end -%>
+
+      </span>
+    </div>
+    <div class="span4">
+      <table class="table table-striped">
+        <tbody>
+          <tr>
+
+          <th><%= t("views.repos.owner") %></th>
+          <td>
+          <%= link_to h(repository.repository.owner.to_param_with_prefix), repository.repository.owner -%>
+            <% if repository.repository.owned_by_group? -%>
+            <small class="hint">
+        (through <%= link_to h(repository.repository.user.to_param_with_prefix), repository.repository.user -%>)
+            </small>
+            <% end -%>
+          </td>
+
+
+        </tr>
+        <tr>
+          <th><%= t("views.repos.created") %></th>
+          <td><%= repository.repository.created_at.to_s(:short) -%></td>
+        </tr>
+
+        <tr>
+          <th><%= t("views.repos.current_committers") %></th>
+          <td>
+            <ul>
+            <% repository.repository.committerships.users.each do |cs| -%>
+            <li>
+                <%= avatar_from_email(cs.committer.email, :size => 16, :style => "tiny") %>
+                <%= link_to h(cs.committer.title), cs.committer -%>
+                <% if repository.repository.user == cs.committer -%>
+                <small class="hint">(<%= t("views.repos.creator") %>)</small>
+                <% end -%>
+            </li>
+            <% end -%>
+            <% repository.repository.committerships.groups.each do |cs| -%>
+            <li>
+                <%= image_tag("silk/group.png") %>
+                <%= link_to h(cs.committer.to_param_with_prefix), cs.committer -%>
+            </li>
+            <% end -%>
+          </ul>
+          </td>
+        </tr>
+
+        </tbody></table>
+
+
+    </div>
+  </div>
+</div>
+
+<% end %>

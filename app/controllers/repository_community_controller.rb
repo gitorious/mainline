@@ -1,0 +1,43 @@
+# encoding: utf-8
+#--
+#   Copyright (C) 2013 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+
+class RepositoryCommunityController < ApplicationController
+  before_filter :login_required
+  before_filter :find_repository_owner, :except => [:writable_by, :repository_config]
+
+  renders_in_site_specific_context
+
+  def index
+    #@repository = Repository.find_by_id(params[:repository_id])
+    repository = Repository.find_by_id(3)
+
+    respond_to do |format|
+      format.html do
+        render(:action => :index, :layout => "ui3/layouts/layout", :locals => {
+            :repository => RepositoryPresenter.new(repository),
+            :ref => repository.head_candidate_name,
+            :events => @events,
+            :atom_auto_discovery_url => project_repository_path(repository.project, repository, :format => :atom),
+            :atom_auto_discovery_title => "#{repository.title} ATOM feed"
+          })
+      end
+    end
+
+  end
+
+end

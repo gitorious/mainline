@@ -45,6 +45,6 @@ class RepositoryPresenter
     @project ||= ProjectPresenter.new(@repository.project)
   end
 
-  private
+  #private # Does it make sense to go via presenter for everything?
   def repository; @repository; end
 end
