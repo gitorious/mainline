@@ -37,7 +37,6 @@
 #
 # When this initializer is not run and you need access to Gitorious
 # configuration data, please look into lib/gitorious/configuration_loader.rb
-
 if !defined?(Gitorious::Configuration) || !Gitorious.configured?
   require "gitorious/configuration_loader"
   require "gitorious/messaging"
@@ -80,5 +79,10 @@ env MIRROR_BASEDIR=/var/www/gitorious/repo-mirror bundle exec rake mirror:symlin
   if !Gitorious.site.valid_fqdn? && defined?(Rails)
     Rails.logger.warn "Invalid subdomain name #{Gitorious.host}. Session cookies will not work!\n" +
       "See http://gitorious.org/gitorious/pages/ErrorMessages for further explanation"
+  end
+
+  if !Gitorious.public? || Gitorious.private_repositories?
+    require Rails.root + "app/middlewares/dolt_auth_middleware"
+    Gitorious::Application.middleware.use DoltAuthMiddleware
   end
 end

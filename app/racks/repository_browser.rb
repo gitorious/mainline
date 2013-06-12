@@ -36,6 +36,7 @@ module Gitorious
 
     get "/*/source/*:*" do
       repo, ref, path = params[:splat]
+      env["dolt"] = { :repository => repo }
       tree_entry(repo, ref, path)
     end
 
@@ -45,6 +46,7 @@ module Gitorious
 
     get "/*/raw/*:*" do
       repo, ref, path = params[:splat]
+      env["dolt"] = { :repository => repo }
       raw(repo, ref, path)
     end
 
@@ -54,6 +56,7 @@ module Gitorious
 
     get "/*/blame/*:*" do
       repo, ref, path = params[:splat]
+      env["dolt"] = { :repository => repo }
       blame(repo, ref, path)
     end
 
@@ -63,6 +66,7 @@ module Gitorious
 
     get "/*/history/*:*" do
       repo, ref, path = params[:splat]
+      env["dolt"] = { :repository => repo }
       history(repo, ref, path, (params[:commit_count] || 20).to_i)
     end
 
@@ -71,17 +75,21 @@ module Gitorious
     end
 
     get "/*/refs" do
-      refs(params[:splat].first)
+      repo = params[:splat].first
+      env["dolt"] = { :repository => repo }
+      refs(repo)
     end
 
     get "/*/tree_history/*:*" do
       repo, ref, path = params[:splat]
+      env["dolt"] = { :repository =>  repo }
       tree_history(repo, ref, path)
     end
 
     get %r{/(.*)/archive/(.*)?\.(tar\.gz|tgz|zip)} do
       begin
         repo, ref, format = params[:captures]
+        env["dolt"] = { :repository =>  repo }
         filename = actions.archive(repo, ref, format)
         add_sendfile_headers(filename, format)
         body("")
