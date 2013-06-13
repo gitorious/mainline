@@ -53,7 +53,7 @@ and general statistics about your queue. To use it, set messaging_adapter to
   messaging_adapter: resque
 
 To use Resque, you need to install and run Redis. This is described in detail on
-the official Resque page: https://github.com/defunkt/resque
+the official Resque page: https://github.com/resque/resque
 
 To process messages from the queue with Resque, you need to run rake:
 
