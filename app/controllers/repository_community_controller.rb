@@ -23,8 +23,8 @@ class RepositoryCommunityController < ApplicationController
   renders_in_site_specific_context
 
   def index
-    #@repository = Repository.find_by_id(params[:repository_id])
-    repository = Repository.find_by_id(3)
+    project = Project.find_by_slug(params[:project_id])
+    repository = Repository.find_by_name_in_project!(params[:repository_id], project)
 
     respond_to do |format|
       format.html do
