@@ -41,6 +41,13 @@ module MiniTest
   end
 end
 
+
+class MiniTest::Spec
+  def assert_cache_header(cache_control, rack_response)
+    actual = rack_response[1]["Cache-Control"]
+    assert_equal cache_control.gsub(" ", ""), actual.gsub(" ","")
+  end
+end
 # Constants used throughout
 NULL_SHA = "0" * 40
 SHA = "a" * 40
@@ -290,5 +297,18 @@ class MessageHub
   def publish(queue, message)
     @messages ||= []
     @messages << { :queue => queue, :message => message }
+  end
+end
+
+class DoltApp
+  def call(env)
+    env["dolt"] = { :repository => "gitorious/gitorious" }
+    [200, {}, []]
+  end
+end
+
+class NonDoltApp
+  def call(env)
+    [200, {"Cache-Control" => "max-age=315360000, public"}, []]
   end
 end

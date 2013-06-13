@@ -20,18 +20,6 @@ require "config/initializers/gitorious_config"
 require "app/middlewares/dolt_auth_middleware"
 require "fast_test_helper"
 require "rack"
-class DoltApp
-  def call(env)
-    env["dolt"] = { :repository => "gitorious/gitorious" }
-    [200, {}, []]
-  end
-end
-
-class NonDoltApp
-  def call(env)
-    [200, {}, []]
-  end
-end
 
 if !defined?(Rails)
   class Rails

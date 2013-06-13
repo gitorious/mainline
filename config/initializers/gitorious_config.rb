@@ -84,5 +84,7 @@ env MIRROR_BASEDIR=/var/www/gitorious/repo-mirror bundle exec rake mirror:symlin
   if !Gitorious.public? || Gitorious.private_repositories?
     require Rails.root + "app/middlewares/dolt_auth_middleware"
     Gitorious::Application.middleware.use DoltAuthMiddleware
+    require Rails.root + "app/middlewares/dolt_cache_middleware"
+    Gitorious::Application.middleware.use DoltCacheMiddleware
   end
 end
