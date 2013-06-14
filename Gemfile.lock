@@ -131,7 +131,7 @@ GEM
     jruby-rack (1.1.10)
     json (1.7.7)
     json (1.7.7-java)
-    just_paginate (0.0.6)
+    just_paginate (0.0.15)
     kgio (2.7.4)
     launchy (2.0.5)
       addressable (~> 2.2.6)
@@ -328,7 +328,7 @@ DEPENDENCIES
   httparty (~> 0.9)
   jruby-openssl
   json (>= 1.7.7, < 1.8)
-  just_paginate (= 0.0.6)
+  just_paginate (= 0.0.15)
   launchy (= 2.0.5)
   libdolt (~> 0.18)
   memcache-client (~> 1.8)

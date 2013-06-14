@@ -24,6 +24,6 @@
     <% end %>
     <%= render :partial => "event", :locals => { :event => event } %>
   <% end %>
-</div>
 
-<%= raw JustPaginate.page_navigation(page, total_pages) { |page_no| "?page=#{page_no}" } -%>
+  <%= raw JustPaginate.page_navigation(page, total_pages) { |page_no| "?page=#{page_no}" } -%>
+</div>
