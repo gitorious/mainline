@@ -55,9 +55,7 @@ class RepositoriesController < ApplicationController
     repository = repository_to_clone
 
     page = JustPaginate.page_value(params[:page])
-    all_events = repository.events.all
-    event_count = all_events.count
-    events, total_pages = JustPaginate.paginate(page, Event.per_page, event_count) do |index_range|
+    events, total_pages = JustPaginate.paginate(page, Event.per_page, repository.events.all.count) do |index_range|
       repository.events.all( :offset => index_range.first, :limit => index_range.count)
     end
 
