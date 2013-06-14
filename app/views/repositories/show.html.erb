@@ -35,6 +35,8 @@
         }) %>
   <%= render(:partial => "activities", :locals => {
           :repository => repository,
-          :events => events
+          :events => events,
+          :page => page,
+          :total_pages => total_pages
         }) %>
 <% end %>

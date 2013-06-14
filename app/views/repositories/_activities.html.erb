@@ -25,4 +25,5 @@
     <%= render :partial => "event", :locals => { :event => event } %>
   <% end %>
 </div>
-<%= bootstrap_pagination(events) %>
+
+<%= raw JustPaginate.page_navigation(page, total_pages) { |page_no| "?page=#{page_no}" } -%>
