@@ -56,16 +56,9 @@ class RepositoriesController < ApplicationController
 
     page = JustPaginate.page_value(params[:page])
     all_events = repository.events.all
-    if Gitorious.private_repositories?
-      event_count = filter(all_events).count
-      events, total_pages = JustPaginate.paginate(page, Event.per_page, event_count) do |index_range|
-        filter(repository.events.all).slice(index_range)
-      end
-    else
-      event_count = all_events.count
-      events, total_pages = JustPaginate.paginate(page, Event.per_page, event_count) do |index_range|
-        repository.events.all( :offset => index_range.first, :limit => index_range.count)
-      end
+    event_count = all_events.count
+    events, total_pages = JustPaginate.paginate(page, Event.per_page, event_count) do |index_range|
+      repository.events.all( :offset => index_range.first, :limit => index_range.count)
     end
 
     response.headers["Refresh"] = "5" unless repository.ready
