@@ -30,35 +30,27 @@
           :active => :community
         }) %>
 
-
 <div class="container">
   <div class="row-fluid">
     <div class="span8">
       <span class="fluid-row">
 
-
-      <% if show_clone_list_search?(repository.repository.clones.by_groups, repository.repository.clones.by_users) -%>
-  <%= render(:partial => "clone_list_search", :locals => {
-               :path => search_clones_project_repository_path(repository.repository.project, repository.repository)
-             }) -%>
-<% end -%>
-
-<% unless repository.repository.clones.by_groups.blank? -%>
+<% if repository.has_group_clones? -%>
   <span class="span6">
-    <h3><%= t("views.repos.by_teams") -%> (<%= repository.repository.clones.by_groups.count -%>)</h3>
+    <h3><%= t("views.repos.by_teams") -%> (<%= repository.group_clone_count -%>)</h3>
     <ul class="repository_list">
-      <% repository.repository.clones.by_groups.fresh.each do |repo| -%>
+      <% repository.group_clones.each do |repo| -%>
         <%= render :partial => "repositories/repository_sidebar",
             :locals => {:repository => repo} -%>
       <% end -%>
     </ul>
   </span>
 <% end -%>
-<% unless repository.repository.clones.by_users.blank? -%>
+<% if repository.has_user_clones? -%>
   <span class="span6">
-    <h3><%= t("views.repos.by_users") -%> (<%= repository.repository.clones.by_users.count -%>)</h3>
+    <h3><%= t("views.repos.by_users") -%> (<%= repository.user_clone_count -%>)</h3>
     <ul class="repository_list">
-      <% repository.repository.clones.by_users.fresh.each do |repo|-%>
+      <% repository.user_clones.each do |repo|-%>
         <%= render :partial => "repositories/repository_sidebar",
             :locals => {:repository => repo} -%>
       <% end -%>
@@ -71,7 +63,7 @@
 
 
 
-<% if repository.repository.clones.by_groups.blank? && repository.repository.clones.by_users.blank? -%>
+<% if !repository.has_user_clones? && !repository.has_group_clones? -%>
   <ul>
     <li class="hint"><%= t("views.projects.no_clones_yet") -%></li>
   </ul>
@@ -86,10 +78,10 @@
 
           <th><%= t("views.repos.owner") %></th>
           <td>
-          <%= link_to h(repository.repository.owner.to_param_with_prefix), repository.repository.owner -%>
-            <% if repository.repository.owned_by_group? -%>
+          <%= link_to h(repository.owner_to_param_with_prefix), repository.owner -%>
+            <% if repository.owned_by_group? -%>
             <small class="hint">
-        (through <%= link_to h(repository.repository.user.to_param_with_prefix), repository.repository.user -%>)
+        (through <%= link_to h(repository.user_to_param_with_prefix), repository.user -%>)
             </small>
             <% end -%>
           </td>
@@ -98,23 +90,23 @@
         </tr>
         <tr>
           <th><%= t("views.repos.created") %></th>
-          <td><%= repository.repository.created_at.to_s(:short) -%></td>
+          <td><%= repository.short_created_at -%></td>
         </tr>
 
         <tr>
           <th><%= t("views.repos.current_committers") %></th>
           <td>
             <ul>
-            <% repository.repository.committerships.users.each do |cs| -%>
+            <% repository.user_committers.each do |cs| -%>
             <li>
                 <%= avatar_from_email(cs.committer.email, :size => 16, :style => "tiny") %>
                 <%= link_to h(cs.committer.title), cs.committer -%>
-                <% if repository.repository.user == cs.committer -%>
+                <% if repository.user == cs.committer -%>
                 <small class="hint">(<%= t("views.repos.creator") %>)</small>
                 <% end -%>
             </li>
             <% end -%>
-            <% repository.repository.committerships.groups.each do |cs| -%>
+            <% repository.group_committers.each do |cs| -%>
             <li>
                 <%= image_tag("silk/group.png") %>
                 <%= link_to h(cs.committer.to_param_with_prefix), cs.committer -%>

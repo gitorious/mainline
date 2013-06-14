@@ -32,6 +32,62 @@ class RepositoryPresenter
   def ready?; repository.ready?; end
   def committerships; repository.committerships; end
   def has_commits?; repository.has_commits?; end
+  def owner; repository.owner; end
+  def user; repository.user; end
+
+
+  def show_clone_list_search?
+    group_clone_count >= 5 || user_clone_count >= 5
+  end
+
+  def has_group_clones?
+    !repository.clones.by_groups.blank?
+  end
+
+  def has_user_clones?
+    !repository.clones.by_users.blank?
+  end
+
+  def group_clone_count
+    repository.clones.by_groups.size
+  end
+
+  def user_clone_count
+    repository.clones.by_users.size
+  end
+
+  def user_clones
+    repository.clones.by_users.fresh
+  end
+
+  def owner_to_param_with_prefix
+    repository.owner.to_param_with_prefix
+  end
+
+  def user_to_param_with_prefix
+    repository.user.to_param_with_prefix
+  end
+
+  def owned_by_group?
+    repository.owned_by_group?
+  end
+
+  def short_created_at
+    repository.created_at.to_s(:short)
+  end
+
+  def user_committers
+    repository.committerships.users
+  end
+
+  def group_committers
+    repository.committerships.groups
+  end
+
+
+  def group_clones
+    repository.clones.by_groups.fresh
+  end
 
   def open_merge_request_count
     repository.open_merge_requests.count
@@ -45,6 +101,6 @@ class RepositoryPresenter
     @project ||= ProjectPresenter.new(@repository.project)
   end
 
-  #private # Does it make sense to go via presenter for everything?
+  private
   def repository; @repository; end
 end
