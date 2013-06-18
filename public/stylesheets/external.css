@@ -63,9 +63,9 @@ body#sessions #wrapper {
 }
 
 #top #logo h1 {
-    width: 136px;
-    height: 45px;
-    background: url(../img/external/logo.png) no-repeat;
+    width: 174px;
+    height: 50px;
+    background: url(../ui3/images/gitorious2013.png) no-repeat;
     float: left;
 }
 

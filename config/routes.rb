@@ -26,7 +26,7 @@ Gitorious::Application.routes.draw do
   match "/:project_id/:repository_id.git/*slug" => Gitorious::GitHttpCloner
   # The repository browser instance is configured in an initializer
   match "/:project_id/:repository_id/:action/*slug" => Gitorious::RepositoryBrowser.instance, :action => /(source|tree_history|raw|blame|history|archive)/, :as => :repository_browser
-  match "/:project_id/:repository_id/refs" => Gitorious::RepositoryBrowser.instance
+  match "/:project_id/:repository_id/refs" => Gitorious::RepositoryBrowser.instance, :as => :repository_refs
 
   ### R2. User routes
   resources :users, :only => [:new, :create] do

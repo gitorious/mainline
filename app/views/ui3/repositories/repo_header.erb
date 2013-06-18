@@ -15,7 +15,7 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-%><div class="gts-repo-header" data-gts-user-repository-path="/users/view_state/repository/<%= repository.id %>.json">
+%><div class="gts-repo-header" data-gts-env-user-repository-path="/users/view_state/repository/<%= repository.id %>.json">
   <div class="container">
     <div class="row">
       <h1 class="span">
@@ -75,7 +75,7 @@ git push</pre>
               [:commits, project_repository_commits_in_ref_path(repository.project, repository, ref), "Commits"],
               [:source, url_for(File.join("/", repository.project.to_param, repository.to_param, "source", "#{repository.head_candidate_name}:")), "Source code"],
               [:merge_requests, project_repository_merge_requests_path(repository.project, repository), "Merge requests <span class=\"count\">(#{repository.open_merge_request_count})</span>"],
-	      [:community, url_for(File.join("/", repository.project.to_param, repository.to_param, "community")), "Community"]
+              [:community, url_for(File.join("/", repository.project.to_param, repository.to_param, "community")), "Community"]
             ], :active => defined?(active) ? active : nil) %>
     </ul>
   </div>

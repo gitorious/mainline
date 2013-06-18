@@ -30,12 +30,12 @@
     <div class="gts-masthead navbar">
       <div class="navbar-inner">
         <div class="container">
-          <a class="gts-logo" href="<%= root_path %>"><img src="/ui3/images/gitorious.png" alt="Gitorious" title="Gitorious"></a>
+          <a class="gts-logo" href="<%= root_path %>"><img src="/ui3/images/gitorious2013.png" alt="Gitorious" title="Gitorious"></a>
           <div class="pull-right">
             <form action="<%= search_path %>" class="navbar-search pull-left" method="get">
               <input type="search" placeholder="Search" class="search-query span2" name="q">
             </form>
-            <div class="pull-right btn-group" id="login_button">
+            <div class="pull-right btn-group login_button">
               <a href="<%= login_path %>" class="btn btn-inverse"><i class="icon-user icon-white"></i> Log in</a>
             </div>
           </div>
@@ -56,22 +56,41 @@
     <div class="footer">
       <%= partial("layouts/footer") %>
     </div>
+    <script data-gts-env-analytics-account="UA-52238-3" data-gts-env-analytics-domain-name=".gitorious.org"></script>
     <% repo = defined?(repository_meta) ? repository_meta : (defined?(repository) ? repository : nil) %>
     <% if repo %>
-      <script>
-        var gts = {
-            repository: "<%= repo.slug %>",
-            commitUrlTemplate: "<%= project_repository_commit_path(repo.project, repo, "%oid%").sub("%oid%", "\#{oid}") %>"
-        };
+      <script
+        data-gts-env-repository-refs-url="<%= repository_refs_path(:project_id => repo.project, :repository_id => repo) %>"
+        data-gts-env-commit-url-template="<%= project_repository_commit_path(repo.project, repo, "%oid%").sub("%oid%", "\#{oid}") %>">
       </script>
     <% end %>
-    <script src="/ui3/dist/gts-ui-deps.js"></script>
-    <script src="/ui3/js/components/abbrev.js"></script>
-    <script src="/ui3/js/components/url.js"></script>
-    <script src="/ui3/js/components/ref-selector.js"></script>
-    <script src="/ui3/js/components/tree-history.js"></script>
-    <script src="/ui3/js/components/commit-linker.js"></script>
-    <script src="/ui3/js/components/profile-menu.js"></script>
-    <script src="/ui3/js/gitorious.js"></script>
+
+    <script src="/ui3/js/lib/culljs/dist/cull.js"></script>
+    <script src="/ui3/js/lib/dome/dist/dome.js"></script>
+    <script src="/ui3/js/lib/spin.js/spin.js"></script>
+    <script src="/ui3/js/lib/when/when.js"></script>
+    <script src="/ui3/js/lib/bane/lib/bane.js"></script>
+    <script src="/ui3/js/lib/reqwest/reqwest.js"></script>
+    <script src="/ui3/js/lib/uinit/lib/uinit.js"></script>
+    <script src="/ui3/js/lib/showdown/src/showdown.js"></script>
+
+    <script src="/ui3/js/src/app.js"></script>
+    <script src="/ui3/js/src/components/dropdown.js"></script>
+    <script src="/ui3/js/src/components/ganalytics.js"></script>
+    <script src="/ui3/js/src/components/abbrev.js"></script>
+    <script src="/ui3/js/src/components/url.js"></script>
+    <script src="/ui3/js/src/components/ref-selector.js"></script>
+    <script src="/ui3/js/src/components/tree-history.js"></script>
+    <script src="/ui3/js/src/components/commit-linker.js"></script>
+    <script src="/ui3/js/src/components/user-repo-view-state.js"></script>
+    <script src="/ui3/js/src/components/profile-menu.js"></script>
+    <script src="/ui3/js/src/components/clone-url-selection.js"></script>
+    <script src="/ui3/js/src/components/blob.js"></script>
+    <script src="/ui3/js/src/components/live-markdown-preview.js"></script>
+    <script src="/ui3/js/src/gitorious.js"></script>
+
+
+    <!-- script src="/ui3/dist/gitorious3.min.js"></script-->
+    <script src="/ui3/js/src/logger.js"></script>
   </body>
 </html>
