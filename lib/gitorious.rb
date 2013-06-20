@@ -217,6 +217,14 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
     Gitorious::Configuration.get("only_site_admins_can_create_teams")
   end
 
+  def self.javascripts
+    @javascripts ||= []
+  end
+
+  def self.stylesheets
+    @stylesheets ||= []
+  end
+
   private
   def self.cache?
     return Rails.env.production? if defined?(Rails)

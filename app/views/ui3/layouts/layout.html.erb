@@ -21,9 +21,9 @@
     <meta charset="utf-8">
     <title><%= @title %> - Gitorious</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/ui3/css/gitorious.css" rel="stylesheet">
-    <link href="/ui3/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/ui3/lib/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <% Gitorious.stylesheets.each do |stylesheet| %>
+      <link href="<%= stylesheet %>" rel="stylesheet" type="text/css">
+    <% end %>
     <%= content_for(:head) %>
   </head>
   <body>
@@ -64,33 +64,8 @@
         data-gts-env-commit-url-template="<%= project_repository_commit_path(repo.project, repo, "%oid%").sub("%oid%", "\#{oid}") %>">
       </script>
     <% end %>
-
-    <script src="/ui3/js/lib/culljs/dist/cull.js"></script>
-    <script src="/ui3/js/lib/dome/dist/dome.js"></script>
-    <script src="/ui3/js/lib/spin.js/spin.js"></script>
-    <script src="/ui3/js/lib/when/when.js"></script>
-    <script src="/ui3/js/lib/bane/lib/bane.js"></script>
-    <script src="/ui3/js/lib/reqwest/reqwest.js"></script>
-    <script src="/ui3/js/lib/uinit/lib/uinit.js"></script>
-    <script src="/ui3/js/lib/showdown/src/showdown.js"></script>
-
-    <script src="/ui3/js/src/app.js"></script>
-    <script src="/ui3/js/src/components/dropdown.js"></script>
-    <script src="/ui3/js/src/components/ganalytics.js"></script>
-    <script src="/ui3/js/src/components/abbrev.js"></script>
-    <script src="/ui3/js/src/components/url.js"></script>
-    <script src="/ui3/js/src/components/ref-selector.js"></script>
-    <script src="/ui3/js/src/components/tree-history.js"></script>
-    <script src="/ui3/js/src/components/commit-linker.js"></script>
-    <script src="/ui3/js/src/components/user-repo-view-state.js"></script>
-    <script src="/ui3/js/src/components/profile-menu.js"></script>
-    <script src="/ui3/js/src/components/clone-url-selection.js"></script>
-    <script src="/ui3/js/src/components/blob.js"></script>
-    <script src="/ui3/js/src/components/live-markdown-preview.js"></script>
-    <script src="/ui3/js/src/gitorious.js"></script>
-
-
-    <!-- script src="/ui3/dist/gitorious3.min.js"></script-->
-    <script src="/ui3/js/src/logger.js"></script>
+    <% Gitorious.javascripts.each do |javascript| %>
+      <script src="<%= javascript %>"></script>
+    <% end %>
   </body>
 </html>
