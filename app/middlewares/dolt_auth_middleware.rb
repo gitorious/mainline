@@ -15,14 +15,13 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious/app"
+
 class DoltAuthMiddleware
   def initialize(app)
     @app = app
   end
 
-  # TODO:
-  # - We may have private repositories but still public mode
-  # - Decorate Cache-Control headers if public
   def call(env)
     result = @app.call(env)
     if !env["dolt"]
@@ -36,20 +35,9 @@ class DoltAuthMiddleware
     repository = Repository.find_by_path(repo)
     private_mode = !Gitorious.public?
 
-    if private_mode
-      return access_denied("Login required") unless user
-      if Gitorious::App.can_read?(repository, user)
-        return result
-      else
-        return access_denied "You don't have access to this repository"
-      end
-    else
-      if Gitorious::App.can_read?(repository, user)
-        return result
-      else
-        return access_denied "You don't have access to this repository"
-      end
-    end
+    return access_denied("Login required") if private_mode && !user
+    return result if Gitorious::App.can_read?(repository, user)
+    access_denied("You don't have access to this resource")
   end
 
   def log(message)
@@ -58,6 +46,11 @@ class DoltAuthMiddleware
 
   private
   def access_denied(reason)
-    [403, {"Content-Type" => "text/html"}, [reason]]
+    content = self.class.tpl.sub("<!-- <%= reasons %> -->", "<p>#{reason}</p>")
+    [403, {"Content-Type" => "text/html"}, [content]]
+  end
+
+  def self.tpl
+    @template ||= File.read(Rails.root + "public/403.html")
   end
 end

@@ -19,10 +19,12 @@ class DoltCacheMiddleware
   def initialize(app)
     @app = app
   end
+
   def call(env)
     result = @app.call(env)
     if env["dolt"]
       result[1]["Cache-Control"] = "max-age=0,private"
+      result[1]["Expires"] = Time.now.httpdate
     end
     result
   end
