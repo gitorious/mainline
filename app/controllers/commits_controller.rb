@@ -41,17 +41,24 @@ class CommitsController < ApplicationController
     return handle_unknown_ref(@ref, @git, REF_TYPE) if head.nil?
 
     if stale_conditional?(head.commit.id, head.commit.committed_date.utc)
-      @root = Breadcrumb::Branch.new(head, @repository)
-
-      @commits = paginate(page_free_redirect_options) do
-        @repository.cached_paginated_commits(@ref, params[:page])
-      end
+      @page = JustPaginate.page_value(params[:page])
+      @total_pages = @repository.git_derived_total_commit_count(@ref) / 30
+      @commits = @repository.paginated_commits(@ref, @page, 30)
 
       return if @commits.count == 0 && params.key?(:page)
 
       @atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, params[:branch], :atom)
       respond_to do |format|
-        format.html
+        format.html do
+          render(:action => :index, :layout => "ui3/layouts/application", :locals => {
+            :repository => RepositoryPresenter.new(@repository),
+            :ref => @repository.head_candidate_name,
+            :commits => @commits,
+            :page => @page,
+            :total_pages => @total_pages,
+            :atom_auto_discovery_url => project_repository_path(@repository.project, @repository, :format => :atom),
+            :atom_auto_discovery_title => "#{@repository.title} ATOM feed"})
+        end
       end
     end
   end

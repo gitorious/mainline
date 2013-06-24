@@ -17,15 +17,33 @@
   #++
   %>
 
-<% @page_title = t("views.graphs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
-<%= breadcrumbs_from(@root) -%>
+<% @title = t("views.graphs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
+<% content_for(:head) do %>
+  <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url,
+        :title => atom_auto_discovery_title) -%>
+<% end %>
 
-<ul class="horizontal meta" style="float:right">
-  <li>
-    <%= link_to "Commit log", project_repository_commits_in_ref_path(@project,
-                                                                     @repository, params[:branch]) %>
-  </li>
-</ul>
+  <%= partial("repositories/repo_header", {
+          :repository => repository,
+          :project => repository.project,
+          :ref => ref,
+          :app => Gitorious,
+          :active => :commits
+        }) %>
+
+
+<div class="container">
+
+  <ul class="nav nav-tabs">
+    <li>
+      <%= link_to "Log", project_repository_commits_in_ref_path(@project,
+                                             @repository, params[:branch]) %>
+    </li>
+    <li  class="active">
+      <%= link_to "Graph #{@ref}", "" %>
+    </li>
+  </ul>
+
 <h1>
   <%= t("views.graphs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
 </h1>
@@ -41,53 +59,6 @@
   <%= javascript_include_tag capillary_js_paths + ["gitorious/log-graph"], :cache => "capillary" %>
 <% end -%>
 
-<%= content_for :sidebar do -%>
-  <ul class="sidebar-meta">
-    <li>
-      <strong><%= t("views.logs.project") %>:</strong>
-      <%= link_to h(@repository.project.title), @repository.project -%>
-    </li>
-    <li>
-      <strong><%= t("views.repos.owner") %>:</strong>
-      <%= link_to h(@repository.owner.to_param_with_prefix), @repository.owner -%>
-    </li>
-    <% unless @commits.blank? -%>
-      <li>
-        <strong><%= t("views.logs.head_tree") %>:</strong>
-        <%= link_to h(@commits.first.tree.id[0,7]),
-            project_repository_graph_in_ref_path(:branch => @commits.first.id) -%>
-      </li>
-    <% end -%>
-  </ul>
 
-  <ul class="links navigation">
-    <% if params[:type] != "all" %>
-      <li><%= link_to t("views.graphs.type_all"),
-              project_repository_graph_in_ref_path(:branch => params[:branch], :type => "all") -%></li>
-    <% else %>
-      <li><%= link_to t("views.graphs.type_normal"),
-              project_repository_graph_in_ref_path(:branch => params[:branch], :type => "") -%></li>
-    <% end %>
-    <li class="tree"><%= link_to("Source tree", tree_url(@repository.path_segment, params[:branch])) %></li>
-    <%= render_download_links(@project, @repository, params[:branch], :only_list_items => true) %>
-  </ul>
 
-  <%= cache([project_repository_graph_path, :tags_and_branches],
-            { :expires_in => 10.minutes }) do -%>
-    <ul class="icon_list links navigation">
-      <h5 id="branches"><%= t("views.logs.branches") %>:</h5>
-      <% sorted_git_heads(@git.branches).each do |branch| -%>
-        <li><%= link_to h(branch.name), project_repository_graph_in_ref_path(:branch => ensplat_path(branch.name)), :title => h(branch.name) -%></li>
-      <% end -%>
-    </ul>
-
-    <% unless @git.tags.blank? -%>
-      <ul class="icon_list links navigation">
-        <h5 id="tags"><%= t("views.logs.tags") %>:</h5>
-        <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
-          <li><%= link_to h(tag.name), project_repository_graph_in_ref_path(:branch => ensplat_path(tag.commit.id)), :title => h(tag.name) -%></li>
-        <% end -%>
-      </ul>
-    <% end -%>
-  <% end -%>
-<% end -%>
+</div>

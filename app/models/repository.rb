@@ -360,13 +360,17 @@ class Repository < ActiveRecord::Base
     events.count(:conditions => {:action => Action::COMMIT})
   end
 
-  def paginated_commits(ref, page, per_page = 30)
-    page    = (page || 1).to_i
+  def git_derived_total_commit_count(ref)
     begin
       total = git.commit_count(ref)
     rescue Grit::Git::GitTimeout
       total = 2046
     end
+  end
+
+  def paginated_commits(ref, page, per_page = 30)
+    page    = (page || 1).to_i
+    total = git_derived_total_commit_count(ref)
     offset  = (page - 1) * per_page
     commits = WillPaginate::Collection.new(page, per_page, total)
     commits.replace git.commits(ref, per_page, offset)
