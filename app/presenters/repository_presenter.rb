@@ -17,6 +17,10 @@
 #++
 require "presenters/project_presenter"
 
+# The presenter is intended to decouple the view and the model. This will enable
+# us to refactor the underlying model without changing any views, remove view
+# specific logic from the model, and provide a clear, explicit contract between
+# the view and the model.
 class RepositoryPresenter
   def initialize(repository)
     @repository = repository
@@ -34,7 +38,7 @@ class RepositoryPresenter
   def has_commits?; repository.has_commits?; end
   def owner; repository.owner; end
   def user; repository.user; end
-
+  def private?; repository.private?; end
 
   def show_clone_list_search?
     group_clone_count >= 5 || user_clone_count >= 5

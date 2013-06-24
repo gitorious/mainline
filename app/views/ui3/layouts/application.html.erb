@@ -26,8 +26,7 @@
     <% end %>
     <%= content_for(:head) %>
   </head>
-<% raise @body_class.inspect %>
-  <body<%= " class=\"#{@body_class}\"" if @body_class %>>
+  <body<%= " class=\"#{@body_class}\"".html_safe if @body_class %>>
     <div class="gts-masthead navbar">
       <div class="navbar-inner">
         <div class="container">
