@@ -29,7 +29,7 @@ require "gitorious/dolt/repository_resolver"
 views = Rails.root + "app/views/ui3"
 view = Tiltout.new([Dolt.template_dir, views.realpath.to_s], {
   :cache => Rails.env.production?,
-  :layout => { :file => (views + "layouts/layout.html.erb").realpath.to_s }
+  :layout => { :file => (views + "layouts/application.html.erb").realpath.to_s }
 })
 
 module DoltViewHelpers

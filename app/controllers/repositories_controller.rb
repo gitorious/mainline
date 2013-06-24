@@ -63,7 +63,7 @@ class RepositoriesController < ApplicationController
 
     respond_to do |format|
       format.html do
-        render(:action => :show, :layout => "ui3/layouts/layout", :locals => {
+        render(:action => :show, :layout => "ui3/layouts/application", :locals => {
             :repository => RepositoryPresenter.new(repository),
             :ref => repository.head_candidate_name,
             :events => events,
