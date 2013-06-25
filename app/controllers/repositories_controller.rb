@@ -55,8 +55,8 @@ class RepositoriesController < ApplicationController
     repository = repository_to_clone
 
     page = JustPaginate.page_value(params[:page])
-    events, total_pages = JustPaginate.paginate(page, Event.per_page, repository.events.all.count) do |index_range|
-      repository.events.all( :offset => index_range.first, :limit => index_range.count)
+    events, total_pages = JustPaginate.paginate(page, Event.per_page, repository.events.count) do |index_range|
+      repository.events.all(:offset => [index_range.first, 0].max, :limit => index_range.count)
     end
 
     response.headers["Refresh"] = "5" unless repository.ready
@@ -221,18 +221,8 @@ class RepositoriesController < ApplicationController
   end
 
   def unauthorized_repository_owner_and_project
-    if params[:user_id]
-      @owner = User.find_by_login!(params[:user_id])
-      @containing_project = Project.find_by_slug!(params[:project_id]) if params[:project_id]
-    elsif params[:group_id]
-      @owner = Group.find_by_name!(params[:group_id])
-      @containing_project = Project.find_by_slug!(params[:project_id]) if params[:project_id]
-    elsif params[:project_id]
-      @owner = Project.find_by_slug!(params[:project_id])
-      @project = @owner
-    else
-      raise ActiveRecord::RecordNotFound
-    end
+    @owner = Project.find_by_slug!(params[:project_id])
+    @project = @owner
   end
 
   def authorize_configuration_access(repository)

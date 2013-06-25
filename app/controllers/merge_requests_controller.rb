@@ -46,7 +46,6 @@ class MergeRequestsController < ApplicationController
         render(:action => "index", :layout => "/ui3/layouts/application", :locals => {
             :repository => RepositoryPresenter.new(@repository),
             :merge_request_statuses => @repository.project.merge_request_statuses,
-            :comment_count => filter(@repository.comments).count,
             :atom_auto_discovery_url => url_for(:overwrite_params => { :format => "atom" }),
             :open_merge_requests => @open_merge_requests,
             :status => params[:status]

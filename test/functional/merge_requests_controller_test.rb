@@ -74,21 +74,11 @@ class MergeRequestsControllerTest < ActionController::TestCase
       end
     end
 
-    should "gets a comment count for" do
-      get :index, params
-      assert_equal @target_repository.comments.count, assigns(:comment_count)
-    end
-
     should "filter on status" do
       @merge_request.update_attribute(:status_tag, "merged")
       get :index, params(:status => "merged")
       assert_response :success
       assert_equal [@merge_request], assigns(:open_merge_requests)
-    end
-
-    should "have the MergeRequestList breadcrumb as root" do
-      get :index, params
-      assert_instance_of Breadcrumb::MergeRequests, assigns(:root)
     end
 
     context "paginating merge requests" do

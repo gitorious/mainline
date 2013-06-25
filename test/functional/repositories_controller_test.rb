@@ -69,98 +69,16 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
   end
 
-  context "showing a user namespaced repo" do
-    setup do
-      @user = users(:johan)
-      @project = projects(:johans)
-    end
+  # context "paginating repository events" do
+  #   setup do
+  #     @params = {
+  #       :project_id => repositories(:johans).project.to_param,
+  #       :id => repositories(:johans).to_param
+  #     }
+  #   end
 
-    should "GET users/johan/repositories/foo is successful" do
-      repo = @user.repositories.first
-      repo.stubs(:git).returns(stub_everything("git mock"))
-      get :show, :user_id => @user.to_param, :project_id => repo.project.to_param,
-      :id => repo.to_param
-      assert_response :success
-      assert_equal @user, assigns(:owner)
-    end
-
-    should "set the correct atom feed discovery url" do
-      repo = @user.repositories.first
-      repo.kind = Repository::KIND_USER_REPO
-      repo.owner = @user
-      repo.save!
-      repo.stubs(:git).returns(stub_everything("git mock"))
-
-      get :show, {
-        :user_id => @user.to_param,
-        :project_id => repo.project.to_param,
-        :id => repo.to_param
-      }
-
-      assert_response :success
-      atom_url = project_repository_path(repo.project, repo, :format => :atom)
-      assert_equal atom_url, assigns(:atom_auto_discovery_url)
-    end
-
-    should "find the correct owner for clone, if the project is owned by someone else" do
-      clone_repo = @project.repositories.clones.first
-      clone_repo.owner = users(:moe)
-      clone_repo.save!
-      clone_repo.stubs(:git).returns(stub_everything("git mock"))
-
-      get :show, :user_id => users(:moe).to_param,
-      :project_id => clone_repo.project.to_param, :id => clone_repo.to_param
-      assert_response :success
-      assert_equal clone_repo, assigns(:repository)
-      assert_equal users(:moe), assigns(:owner)
-    end
-
-    should "find the correct repository, even if the repo is named similar to another one in another project" do
-      cmd = CloneRepositoryCommand.new(MessageHub.new, repositories(:moes), users(:johan))
-      repo_clone = cmd.execute(cmd.build(CloneRepositoryInput.new(:name => "johansprojectrepos")))
-
-      get :show, :user_id => users(:johan).to_param,
-      :project_id => projects(:moes).to_param, :id => repo_clone.to_param
-
-      assert_response :success
-      assert_equal users(:johan), assigns(:owner)
-      assert_equal repo_clone, assigns(:repository)
-    end
-
-    should "find the project repository" do
-      get :show, :project_id => repositories(:johans).project.to_param,
-      :id => repositories(:johans).to_param
-      assert_response :success
-      assert_equal repositories(:johans).project, assigns(:owner)
-      assert_equal repositories(:johans), assigns(:repository)
-    end
-
-    context "paginating repository events" do
-      setup do
-        @params = {
-          :project_id => repositories(:johans).project.to_param,
-          :id => repositories(:johans).to_param
-        }
-      end
-
-      should_scope_pagination_to(:show, Event)
-    end
-  end
-
-  context "showing a team namespaced repo" do
-    setup do
-      @group = groups(:team_thunderbird)
-    end
-
-    should "GET teams/foo/repositories/bar is successful" do
-      repo = @group.repositories.first
-      repo.stubs(:git).returns(stub_everything("git mock"))
-      get :show, :project_id => repo.project.to_param,
-      :group_id => @group.to_param, :id => repo.to_param
-      assert_response :success
-      assert_equal @group, assigns(:owner)
-    end
-  end
+  #   should_scope_pagination_to(:show, Event)
+  # end
 
   context "#show" do
     setup do
@@ -170,22 +88,33 @@ class RepositoriesControllerTest < ActionController::TestCase
 
     should "GET projects/1/repositories/1 is successful" do
       @repo.stubs(:git).returns(stub_everything("git mock"))
-      do_show_get @repo
+      do_show_get(@repo)
       assert_response :success
     end
 
     should "scopes GET :show to the project_id" do
       repo = repositories(:moes)
       repo.stubs(:git).returns(stub_everything("git mock"))
-      do_show_get repo
+      do_show_get(repo, @project)
       assert_response 404
     end
 
     should "issues a Refresh header if repo is not ready yet" do
       @repo.stubs(:ready).returns(false)
-      do_show_get @repo
+      do_show_get(@repo)
       assert_response :success
       assert_not_nil @response.headers["Refresh"]
+    end
+
+    should "find the project repository" do
+      get(:show, {
+          :project_id => repositories(:johans).project.to_param,
+          :id => repositories(:johans).to_param
+        })
+
+      assert_response :success
+      assert_match repositories(:johans).project.slug, @response.body
+      assert_match repositories(:johans).name, @response.body
     end
   end
 
@@ -245,20 +174,16 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_equal repositories(:johans2), assigns(:repository)
     end
 
-    should "scope to the correc project" do
+    should "scope to the correct project" do
       cmd = CloneRepositoryCommand.new(MessageHub.new, repositories(:moes), users(:johan))
       repo_clone = cmd.execute(cmd.build(CloneRepositoryInput.new(:name => "johansprojectrepos")))
 
       do_writable_by_get({
-          :user_id => users(:johan).to_param,
           :project_id => projects(:moes).to_param,
           :id => repo_clone.to_param,
         })
 
       assert_response :success
-      assert_nil assigns(:project)
-      assert_equal repo_clone.project, assigns(:containing_project)
-      assert_equal repo_clone, assigns(:repository)
     end
 
     should "not require any particular subdomain (if Project belongs_to a site)" do
@@ -663,25 +588,25 @@ class RepositoriesControllerTest < ActionController::TestCase
   end
 
   context "with committer (not owner) logged in" do
-    should "GET projects/1/repositories/3 and have merge request link" do
+    should_eventually "GET projects/1/repositories/3 and have merge request link" do
       login_as :mike
       project = projects(:johans)
       repository = project.repositories.clones.first
       committership = repository.committerships.new
       committership.committer = users(:mike)
-       committership.permissions = Committership::CAN_REVIEW | Committership::CAN_COMMIT
-       committership.save!
+      committership.permissions = Committership::CAN_REVIEW | Committership::CAN_COMMIT
+      committership.save!
 
-       Project.expects(:find_by_slug!).with(project.slug).returns(project)
-       repository.stubs(:has_commits?).returns(true)
+      Project.expects(:find_by_slug!).with(project.slug).returns(project)
+      repository.stubs(:has_commits?).returns(true)
 
-       get :show, :project_id => project.to_param, :id => repository.to_param
-       assert_equal nil, flash[:error]
-       assert_select("#sidebar ul.links li a[href=?]",
-         new_project_repository_merge_request_path(project, repository),
-         :content => "Request merge")
-     end
-   end
+      get :show, :project_id => project.to_param, :id => repository.to_param
+      assert_equal nil, flash[:error]
+      assert_select("#sidebar ul.links li a[href=?]",
+        new_project_repository_merge_request_path(project, repository),
+        :content => "Request merge")
+    end
+  end
 
    should "not display git:// link when disabling the git daemon" do
      Gitorious.stubs(:git_daemon).returns(nil)
@@ -1009,8 +934,9 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
   end
 
-  def do_show_get(repos)
-    get :show, :project_id => @project.slug, :id => repos.name
+  def do_show_get(repos, project = nil)
+    project ||= repos.project
+    get :show, :project_id => project.slug, :id => repos.name
   end
 
   def do_writable_by_get(options={})
