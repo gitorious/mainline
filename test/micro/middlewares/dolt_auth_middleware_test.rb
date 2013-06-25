@@ -32,17 +32,6 @@ if !defined?(Rails)
   end
 end
 
-VALID_USER_ID=99
-unless defined?(Gitorious::App)
- module Gitorious
-   module App
-     def self.can_read?(repo, user)
-       user && user.id == VALID_USER_ID
-     end
-   end
- end
-end
-
 class DoltAuthMiddlewareTest < MiniTest::Spec
   describe "Private mode" do
     describe "without private repositories" do
@@ -59,7 +48,7 @@ class DoltAuthMiddlewareTest < MiniTest::Spec
       end
 
       it "allows access logged-in users with private repositories off" do
-        @env["rack.session"]["user_id"] = VALID_USER_ID
+        @env["rack.session"]["user_id"] = 1
         Gitorious::App.expects(:can_read?).returns(true)
         assert_equal 200, @middleware.call(@env).first
       end
@@ -75,15 +64,17 @@ class DoltAuthMiddlewareTest < MiniTest::Spec
       end
 
       it "allows access to some" do
+        Gitorious::App.stubs(:can_read?).returns(true)
         @env["rack.session"]["user_id"] = 1
         result = @middleware.call(@env)
-        assert_equal 403, result.first
+        assert_equal 200, result.first
       end
 
       it "denies access" do
+        Gitorious::App.stubs(:can_read?).returns(false)
         @env["rack.session"]["user_id"] = 99
         result = @middleware.call(@env)
-        assert_equal 200, result.first
+        assert_equal 403, result.first
       end
     end
   end
@@ -105,11 +96,13 @@ class DoltAuthMiddlewareTest < MiniTest::Spec
 
     it "requires access to private repositories" do
       Gitorious.stubs(:private_repositories?).returns(true)
-      @env["rack.session"]["user_id"] = VALID_USER_ID
+      @env["rack.session"]["user_id"] = 1
+
+      Gitorious::App.stubs(:can_read?).returns(true)
       result = @middleware.call(@env)
       assert_equal 200, result.first
 
-      @env["rack.session"]["user_id"] = 101
+      Gitorious::App.stubs(:can_read?).returns(false)
       result = @middleware.call(@env)
       assert_equal 403, result.first
     end

@@ -34,7 +34,6 @@ class DoltAuthMiddleware
     user = user_id ? User.find(user_id) : nil
     repository = Repository.find_by_path(repo)
     private_mode = !Gitorious.public?
-
     return access_denied("Login required") if private_mode && !user
     return result if Gitorious::App.can_read?(repository, user)
     access_denied("You don't have access to this resource")
