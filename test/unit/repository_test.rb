@@ -655,15 +655,6 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  context "Merge request status tags" do
-    setup {@repo = repositories(:johans)}
-
-    should "have a list of used status tags" do
-      @repo.merge_requests.last.update_attribute(:status_tag, "worksforme")
-      assert_equal %w[open worksforme], @repo.merge_request_status_tags
-    end
-  end
-
   context "Logging updates" do
     setup { @repository = repositories(:johans) }
 

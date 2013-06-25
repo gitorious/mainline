@@ -598,16 +598,6 @@ class Repository < ActiveRecord::Base
     !tracking_repository.nil?
   end
 
-  def merge_request_status_tags
-    # Note: we use 'as raw_status_tag' since the
-    # MergeRequest#status_tag is overridden
-    result = MergeRequest.find_by_sql(["SELECT status_tag as raw_status_tag
-      FROM merge_requests
-      WHERE target_repository_id = ?
-      GROUP BY status_tag", self.id]).collect{|mr| mr.raw_status_tag }
-    result.compact
-  end
-
   # Fallback when the real sequence number is taken
   def calculate_highest_merge_request_sequence_number
     merge_requests.maximum(:sequence_number)
