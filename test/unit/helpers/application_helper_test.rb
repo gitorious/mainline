@@ -114,7 +114,7 @@ class ApplicationHelperTest < ActionView::TestCase
   context "logo link tag" do
     should "return linked default logo no url is configured" do
       assert_match /img[^>]*src=/, logo_link
-      assert_match "/img/logo.png", logo_link
+      assert_match "/ui3/images/gitorious2013.png", logo_link
     end
 
     should "return linked text when empty url is configured" do
