@@ -17,6 +17,7 @@
   #++
 %><%
 @body_class = "gts-private" if repository.private?
+ref = defined?(ref) && !ref.nil? ? ref : "HEAD"
 %><div class="gts-repo-header" data-gts-env-user-repository-path="/users/view_state/repository/<%= repository.id %>.json">
   <div class="container">
     <div class="row">

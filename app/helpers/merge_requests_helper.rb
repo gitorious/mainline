@@ -23,32 +23,22 @@ module MergeRequestsHelper
   include MergeRequestVersionsHelper
   include CommentsHelper
 
-  def render_status_tag_list(status_tags, repository)
-    project_statuses = repository.project.merge_request_statuses
+  def render_status_tag_list(statuses, repository, active = nil)
+    out = "<ul class=\"nav nav-tabs\">"
 
-    out = '<ul class="horizontal">'
-    open_tags = project_statuses.select{|s| s.open? }
-    out << "<li><strong>Open:</strong></li>" unless open_tags.blank?
-    open_tags.each do |status|
-      out << "<li>#{link_to_status(repository, status.name)}</li>"
+    if active.nil?
+      out << "<li class=\"active\"><a>All</a></li>"
+    else
+      url = project_repository_merge_requests_path(repository.project, repository)
+      out << "<li><a href=\"#{url}\">All</li>"
     end
-    out << '</ul>'
 
-    out << '<ul class="horizontal">'
-    closed_tags = project_statuses.select{|s| s.closed? }
-    out << "<li><strong>Closed:</strong></li>" unless closed_tags.blank?
-    closed_tags.each do |status|
-      out << "<li>#{link_to_status(repository, status.name)}</li>"
-    end
-    out << '</ul>'
-
-    out << '<ul class="horizontal">'
-    orphaned_tags = status_tags.select do |status|
-      !project_statuses.map{|s| s.name.downcase }.include?(status.to_s.downcase)
-    end
-    out << "<li><strong>Other:</strong></li>" unless orphaned_tags.blank?
-    orphaned_tags.each do |status|
-      out << "<li class=foo>#{link_to_status(repository, status)}</li>"
+    statuses.each do |status|
+      if active == status.name
+        out << "<li class=\"active\"><a>#{status.name}</a></li>"
+      else
+        out << "<li>#{link_to_status(repository, status.name)}</li>"
+      end
     end
     out << "</ul>"
     out.html_safe

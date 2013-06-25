@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -38,16 +38,20 @@ class MergeRequestsController < ApplicationController
   renders_in_site_specific_context
 
   def index
-    @root = Breadcrumb::MergeRequests.new(@repository)
     @open_merge_requests = paginated_mrs(params[:page], params[:per_page] || 50)
     return if @open_merge_requests.count == 0 && params.key?(:page)
 
-    @status_tags = @repository.merge_request_status_tags
-    @comment_count = filter(@repository.comments).count
-    @atom_auto_discovery_url = url_for(:overwrite_params => { :format => "atom" })
-
     respond_to do |wants|
-      wants.html
+      wants.html do
+        render(:action => "index", :layout => "/ui3/layouts/application", :locals => {
+            :repository => RepositoryPresenter.new(@repository),
+            :merge_request_statuses => @repository.project.merge_request_statuses,
+            :comment_count => filter(@repository.comments).count,
+            :atom_auto_discovery_url => url_for(:overwrite_params => { :format => "atom" }),
+            :open_merge_requests => @open_merge_requests,
+            :status => params[:status]
+          })
+      end
       wants.xml  { render :xml => @open_merge_requests.to_xml }
       wants.atom {  }
     end
