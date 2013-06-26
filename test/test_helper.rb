@@ -59,6 +59,12 @@ class ActiveSupport::TestCase
     assert(!args.shift, *args)
   end
 
+  def refute_match exp, act, msg = nil
+    assert_respond_to act, :"=~"
+    exp = (/#{Regexp.escape exp}/) if String === exp and String === act
+    refute exp =~ act, msg
+  end
+
   def refute_nil(*args)
     refute(args.shift.nil?, *args)
   end
