@@ -59,6 +59,10 @@ class ActiveSupport::TestCase
     assert(!args.shift, *args)
   end
 
+  def refute_nil(*args)
+    refute(args.shift.nil?, *args)
+  end
+
   def inclusion_failure(collection, object, should_be_included)
     not_message = should_be_included ? "" : " not"
     "Expected collection (#{collection.count} items) #{not_message} to include #{object.class.name}"
