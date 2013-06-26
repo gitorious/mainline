@@ -1071,4 +1071,34 @@ class RepositoryTest < ActiveSupport::TestCase
     repository2 = Repository.new(:hashed_path => repository.hashed_path)
     refute repository2.uniq_hashed_path?
   end
+
+  context "default private" do
+    should "not be private by default with no private repos" do
+      Gitorious.stubs(:private_repositories?).returns(false)
+      assert !Repository.private_on_create?
+    end
+
+    should "not be private at all with no private repos" do
+      Gitorious.stubs(:private_repositories?).returns(false)
+      assert !Repository.private_on_create?(:private => true)
+    end
+
+    should "not be private by default if not configured to" do
+      Gitorious.stubs(:private_repositories?).returns(true)
+      Gitorious.stubs(:repositories_default_private?).returns(false)
+      assert !Repository.private_on_create?
+    end
+
+    should "be private by default if configured to" do
+      Gitorious.stubs(:private_repositories?).returns(true)
+      Gitorious.stubs(:repositories_default_private?).returns(true)
+      assert Repository.private_on_create?
+    end
+
+    should "not be private if overridden to not be" do
+      Gitorious.stubs(:private_repositories?).returns(true)
+      Gitorious.stubs(:repositories_default_private?).returns(true)
+      assert !Repository.private_on_create?(:private => false)
+    end
+  end
 end

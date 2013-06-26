@@ -699,7 +699,7 @@ class Repository < ActiveRecord::Base
 
   def self.private_on_create?(params = {})
     return false if !Gitorious.private_repositories?
-    params[:private] || Gitorious.repositories_default_private?
+    params.fetch(:private, Gitorious.repositories_default_private?)
   end
 
   def uniq_name?
