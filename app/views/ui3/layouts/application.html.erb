@@ -42,7 +42,7 @@
         </div>
       </div>
     </div>
-    <%= alerts(defined?(flash) ? flash : {}) %>
+    <%= alerts(defined?(flash) ? flash : {}).html_safe %>
     <% if defined?(repository_meta) %>
       <%= partial("repositories/repo_header", {
               :repository => repository_meta,

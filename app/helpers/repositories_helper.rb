@@ -133,4 +133,56 @@ module RepositoriesHelper
     return type == :git ? checked : "" if repo.git_cloning?
     type == :http && repo.http_cloning? ? checked : ""
   end
+
+  def markdown_help
+    <<-HTML
+          <div class="collapse gts-help" id="markdown-help">
+            <table class="table">
+              <tr>
+                <td><pre><code>[link](http://gitorious.org)</code></pre></td>
+                <td><a href="http://gitorious.org">link</a></td>
+              </tr>
+              <tr>
+                <td><pre><code>    if (true) {
+        return;
+    }</code></pre></td>
+                <td><pre><code>if (true) {
+    return;
+}</code></pre></td>
+              </tr>
+              <tr>
+                <td><pre><code>inline `code` here</code></pre></td>
+                <td>      inline <code>code</code> here</td>
+              </tr>
+              <tr>
+                <td><pre><code>**bold**</code></pre></td>
+                <td><strong>bold</strong></td>
+              </tr>
+              <tr>
+                <td><pre><code>_emphasized_</code></pre></td>
+                <td><em>emphasized</em></td>
+              </tr>
+              <tr>
+                <td><pre><code>* item 1
+* item 2</code></pre></td>
+                <td><ul><li>item 1</li><li>item 2</li></ul></td>
+              </tr>
+              <tr>
+                <td><pre><code>1. item 1
+2. item 2</code></pre></td>
+                <td><ol><li>item 1</li><li>item 2</li></ol></td>
+              </tr>
+              <tr>
+                <td><pre><code># Header 1#</code></pre></td>
+                <td><h1>Header 1</h1></td>
+              </tr>
+              <tr>
+                <td><pre><code>## Header 2</code></pre></td>
+                <td><h2>Header 2</h2></td>
+              </tr>
+            </table>
+            <p><a href="http://daringfireball.net/projects/markdown/">Full Markdown reference</a></p>
+          </div>
+    HTML
+  end
 end

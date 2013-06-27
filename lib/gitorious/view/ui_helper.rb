@@ -34,12 +34,12 @@ module Gitorious
           :success => "alert-success"
         }
 
-        content = flash.inject("") do |html, type|
-          "#{html}<div class=\"alert #{types[type]}\"><strong>#{flash[type]}" +
-            "</strong></div>"
+        content = flash.inject("") do |html, f|
+          "#{html}<div class=\"alert #{types[f[0]]}\"><strong>#{f[1]}" +
+            "</strong></div>".html_safe
         end
 
-        return if content == ""
+        return "" if content == ""
         "<div class=\"gts-notification\"><div class=\"container\">#{content}" +
           "</div></div>".html_safe
       end

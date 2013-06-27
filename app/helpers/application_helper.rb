@@ -593,6 +593,25 @@ module ApplicationHelper
     date.strftime("%B #{date.day.ordinalize}, %Y")
   end
 
+  def live_md_preview_textarea(form, method, label)
+    <<-HTML.html_safe
+      <div id="markdown-preview" class="gts-markdown-preview help-block">
+        <h2>#{label} preview</h2>
+        <div></div>
+      </div>
+      <div class="control-group">
+        #{form.label(method, label, :class => "control-label")}
+        <div class="controls">
+          #{form.text_area(method, :class => "input-xxlarge gts-live-markdown-preview", :"data-gts-preview-target" => "markdown-preview", :rows => 5)}
+          <p class="help-block">
+            Use <a data-toggle="collapse" data-target="#markdown-help" class="dropdown-toggle" href="#markdown-help">Markdown</a> for formatting
+          </p>
+          #{markdown_help}
+        </div>
+      </div>
+    HTML
+  end
+
   # Used for compatibility with Dolt views
   def partial(template, locals = {})
     render(:template => File.join("ui3", template), :locals => locals).html_safe

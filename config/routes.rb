@@ -251,6 +251,8 @@ Gitorious::Application.routes.draw do
         get :confirm_delete
         get :writable_by
         get "/config" => "repositories#repository_config"
+        get "/transfer_ownership" => "repository_ownerships#edit", :as => :transfer_ownership
+        put "/transfer_ownership" => "repository_ownerships#update"
       end
 
       resources :comments

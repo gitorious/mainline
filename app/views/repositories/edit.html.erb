@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -17,65 +17,68 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+<%= partial("repositories/repo_header", {
+        :repository => repository,
+        :project => repository.project,
+        :app => Gitorious,
+        :active => :admin
+      }) %>
 
-<%= breadcrumbs_from(@root) -%>
-
-<h1>Editing repository <%= link_to h(@repository.name), [@repository.project, @repository] -%></h1>
-
-<%= error_messages(@repository) -%>
-<%= form_for([@repository.project, @repository.reload]) do |f| -%>
-  <p>
-    <%= f.label :description -%>
-    <span class="hint">(<%= markdown_hint -%>)</span>:<br />
-    <%= f.text_area :description, :class => "text wide medium" -%>
-  </p>
-  <p>
-    <%= f.label :name %>
-    <span class="hint">Please note that if you change the name, all URLs will be updated immediately</span> <br />
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :head %>
-    <span class="hint">Change the symbolic ref the HEAD in the git repository points to</span>:<br />
-    <%= f.select(:head, @heads.map{|h| [h.name, h.name] },
-                 :selected => @repository.head ? @repository.head.name : nil) -%>
-  </p>
-  <p>
-    <%= f.label :deny_force_pushing %>:
-    <%= f.check_box :deny_force_pushing %><br />
-    <span class="hint">
-      Denying force pushing means that pushing non-fastforwards
-      (eg <code>git push -f</code>) is not allowed, it will also
-      prevent tag deletion and remote branch removals (you can toggle
-      this whenever you like)
-    </span>
-  </p>
-  <p>
-    <%= f.label :merge_requests_enabled, "Enable merge requests?" -%>
-    <%= f.check_box :merge_requests_enabled -%> <br />
-    <span class="hint">
-      <%= t("views.repos.merge_requests_enabled") -%>
-    </span>
-  </p>
-  <% unless @repository.owned_by_group? -%>
-    <p>
-      <%= f.label :owner_id, "Transfer ownership to a group <small>(optional)</small>" -%>:<br />
-      <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]},
-          :include_blank => true, :selected => nil -%>
-      <br /><small class="hint">
-        <strong>Note:</strong> Only change ownership of this repository, if you are
-        absolutely sure you want to give admin and commit access to <em>everyone</em>
-        in the selected group.
-      </small>
-    </p>
-  <% end -%>
-  <%= f.submit t("views.repos.btn_edit_repo") -%>
-<% end -%>
-
-<%= content_for :sidebar do -%>
-  <ul class="links navigation">
-    <% if can_delete?(current_user, @repository) -%>
-      <li class="delete_repository"><%= link_to t("views.repos.btn_delete_repo"), [:confirm_delete, @repository.project, @repository] -%></li>
-    <% end -%>
-  </ul>
-<% end -%>
+<div class="container">
+  <%= error_messages(repo_edit) -%>
+  <%= form_for(repo_edit, :as => :repository, :url => project_repository_url(repository.project, repository), :method => "put", :html => { :class => "form-horizontal" }) do |f| -%>
+    <fieldset>
+      <legend>Editing repository <%= repository.slug %></legend>
+      <%= live_md_preview_textarea(f, :description, "Description") %>
+      <div class="control-group">
+        <%= f.label :name, :class => "control-label" -%>
+        <div class="controls">
+          <%= f.text_field :name, :class => "input-xlarge" -%>
+          <p class="help-block">
+            NB! Changing the name will also immediately change all URLs (including Git clone URLs).
+          </p>
+        </div>
+      </div>
+      <div class="control-group">
+        <%= f.label :head, :class => "control-label" -%>
+        <div class="controls">
+          <%= f.select(:head, heads.map{|h| [h.name, h.name] },
+                :selected => repository.head ? repository.head.name : nil) -%>
+          <p class="help-block">
+            Changes the symbolic ref the HEAD in the git repository points to, i.e.
+            the default branch to show.
+          </p>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="force-pushing" class="control-label">Force-pushing</label>
+        <div class="controls">
+          <label class="checkbox">
+            <input type="checkbox" value="1" name="force_pushing" id="force-pushing"<%= " checked" if !repository.deny_force_pushing %>>
+            Enable
+          </label>
+          <p class="help-block">
+            Allows pushing "non-fastforwards" (e.g. git push -f). Enabling
+            force-pushing also allows tag<br>creation and remote branch removals.
+          </p>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="merge-requests" class="control-label">Merge requests</label>
+        <div class="controls">
+          <label class="checkbox">
+            <%= f.check_box :merge_requests_enabled, :id => "merge-requests" %>
+            Enable
+          </label>
+          <p class="help-block">
+            Allow Gitorious users to request merging of contributions from
+            repository clones.
+          </p>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Save changes</button>
+      </div>
+    </fieldset>
+  <% end %>
+</div>

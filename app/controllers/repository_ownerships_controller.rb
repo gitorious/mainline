@@ -1,0 +1,57 @@
+# encoding: utf-8
+#--
+#   Copyright (C) 2013 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+
+class RepositoryOwnershipsController < ApplicationController
+  before_filter :login_required
+  renders_in_site_specific_context
+  layout "ui3/layouts/application"
+
+  def update
+    repository = load_repository(params[:project_id], params[:id])
+    groups = Team.for_user(current_user)
+    new_owner = groups.detect { |group| group.id == params[:owner_id].to_i }
+    repository.change_owner_to!(new_owner)
+    flash[:success] = "Repository ownership transferred"
+    redirect_to [repository.project, repository]
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound
+    render_form(repository, groups)
+  end
+
+  def edit
+    repository = load_repository(params[:project_id], params[:id])
+    render_form(repository, Team.for_user(current_user))
+  end
+
+  private
+  def render_form(repository, groups)
+    render(:action => :edit, :locals => {
+        :repository => RepositoryPresenter.new(repository),
+        :groups => groups
+      })
+  end
+
+  def load_repository(pid, rid)
+    project = authorize_access_to(Project.find_by_slug!(pid))
+    repository = authorize_access_to(project.repositories.find_by_name!(rid))
+    unless admin?(current_user, repository)
+      flash[:error] = I18n.t("repositories_controller.adminship_error")
+      redirect_to(target) and return
+    end
+    repository
+  end
+end

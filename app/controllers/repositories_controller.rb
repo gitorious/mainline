@@ -22,7 +22,6 @@
 #++
 
 class RepositoriesController < ApplicationController
-  include Gitorious::Messaging::Publisher
   before_filter :login_required, :except => [:index, :show, :writable_by, :repository_config]
   before_filter :find_repository_owner, :except => [:writable_by, :repository_config]
   before_filter :unauthorized_repository_owner_and_project, :only => [:writable_by, :repository_config]
@@ -80,8 +79,9 @@ class RepositoriesController < ApplicationController
 
   def new
     outcome = PrepareProjectRepository.new(self, @project, current_user).execute({})
+    params[:private] = Gitorious.repositories_default_private?
     pre_condition_failed(outcome)
-    outcome.success { |result| render_form(result, @project, @owner) }
+    outcome.success { |result| render_form(result, @project) }
   end
 
   def create
@@ -93,7 +93,7 @@ class RepositoriesController < ApplicationController
     end
 
     outcome.failure do |repository|
-      render_form(repository, @project, @owner)
+      render_form(repository, @project)
     end
 
     outcome.success do |result|
@@ -103,37 +103,27 @@ class RepositoriesController < ApplicationController
   end
 
   def edit
-    @root = Breadcrumb::EditRepository.new(@repository)
-    @groups = Team.for_user(current_user)
-    @heads = @repository.git.heads
+    render_edit_form(@repository)
   end
 
   def update
-    @root = Breadcrumb::EditRepository.new(@repository)
-    @groups = Team.for_user(current_user)
-    @heads = @repository.git.heads
-
     Repository.transaction do
-      unless params[:repository][:owner_id].blank?
-        new_owner = @groups.detect {|group| group.id == params[:repository][:owner_id].to_i}
-        @repository.change_owner_to!(new_owner)
-      end
-
       @repository.head = params[:repository][:head]
-
       @repository.log_changes_with_user(current_user) do
         @repository.replace_value(:name, params[:repository][:name])
         @repository.replace_value(:description, params[:repository][:description], true)
       end
-      @repository.deny_force_pushing = params[:repository][:deny_force_pushing]
       @repository.notify_committers_on_new_merge_request = params[:repository][:notify_committers_on_new_merge_request]
+      @repository.deny_force_pushing = !params[:force_pushing]
       @repository.merge_requests_enabled = params[:repository][:merge_requests_enabled]
+      validation = RepositoryValidator.call(@repository)
+      return render_edit_form(Repository.find(@repository.id), validation) if !validation.valid?
       @repository.save!
       flash[:success] = "Repository updated"
       redirect_to [@repository.project, @repository]
     end
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound
-    render :action => "edit"
+    edit
   end
 
   # Used internally to check write permissions by gitorious
@@ -190,11 +180,18 @@ class RepositoriesController < ApplicationController
   end
 
   private
-  def render_form(repository, project, owner)
-    render(:action => :new, :locals => {
+  def render_form(repository, project)
+    render(:action => :new, :layout => "ui3/layouts/application", :locals => {
         :repository => repository,
-        :project => project,
-        :owner => owner
+        :project => project
+      })
+  end
+
+  def render_edit_form(repository, repo_edit = nil)
+    render(:action => :edit, :layout => "ui3/layouts/application", :locals => {
+        :repository => RepositoryPresenter.new(repository),
+        :heads => repository.git.heads,
+        :repo_edit => repo_edit || repository
       })
   end
 

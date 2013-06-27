@@ -39,6 +39,12 @@ class RepositoryPresenter
   def owner; repository.owner; end
   def user; repository.user; end
   def private?; repository.private?; end
+  def errors; repository.errors; end
+  def description; repository.description; end
+  def head; repository.head; end
+  def deny_force_pushing; repository.deny_force_pushing; end
+  def merge_requests_enabled; repository.merge_requests_enabled; end
+  def owner_id; repository.owner_id; end
 
   def show_clone_list_search?
     group_clone_count >= 5 || user_clone_count >= 5

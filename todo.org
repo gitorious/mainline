@@ -1,0 +1,16 @@
+* Gitorious 3 [2/12]
+** TODO Extract new markdown_hint function (repositories/new)
+** DONE enable_merge_requests / merge_requests_enabled - make sure it defaults to true
+** TODO In repositories/show, make sure the question mark toggles the repo help
+** DONE Fix up the repositories/edit page with new UI
+** TODO Fix up the commits controller UI
+** TODO Fix up the diffs controller UI
+** TODO Fix up Merge request UI
+** TODO Add repository admin menu
+*** Transfer ownership
+*** Delete repo
+*** Edit repo
+** TODO Activities needs to be rendered prettier
+** TODO Make the repository source code tab the default
+** TODO Fix ref selector visual glitch in Chrome
+** TODO Add Capillary in new design

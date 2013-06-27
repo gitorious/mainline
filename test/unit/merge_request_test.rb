@@ -101,6 +101,13 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
   end
 
+  should "send messages the subscribers when confirmed by the user, if the target_repo has it turned on" do
+    @merge_request.target_repository.update_attribute(:notify_committers_on_new_merge_request, true)
+    assert_difference("Message.count") do
+      @merge_request.confirmed_by_user
+    end
+  end
+
   context "default status" do
     setup do
       @project = @merge_request.target_repository.project

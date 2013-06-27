@@ -1,10 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012-2013 Gitorious AS
-  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-  #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+  #   Copyright (C) 2013 Gitorious AS
   #
   #   This program is free software: you can redistribute it and/or modify
   #   it under the terms of the GNU Affero General Public License as published by
@@ -20,58 +16,50 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+<% @page_title = "Add new repository to #{h(project.title)}" %>
+<div class="gts-repo-header">
+  <div class="container">
+    <div class="row">
+      <h3 class="span">
+        <%= link_to(h(project.title), project) -%>
+      </h3>
+    </div>
+  </div>
+</div>
 
-<%= breadcrumbs_from(Breadcrumb::NewRepository.new(project)) -%>
-
-<h2 class="content-header">Add new repository to <%= link_to h(owner.title), owner -%></h2>
-<%= error_messages(repository) -%>
-<%= form_for(repository, :as => :repository, :url => project_repositories_url(repository.project)) do |f| -%>
-  <fieldset>
-    <li>
-      <%= f.label :name -%>
-      <div><%= f.text_field :name -%></div>
-    </li>
-    <li>
-      <%= f.label :description -%>
-      <div>
-        <%= f.text_area :description, :class => "text wide" -%><br />
-        <span class="hint">(<%= markdown_hint -%>)</span>
+<div class="container">
+  <%= error_messages(repository) -%>
+  <%= form_for(repository, :as => :repository, :url => project_repositories_url(repository.project), :html => { :class => "form-horizontal" }) do |f| -%>
+    <fieldset>
+      <p>
+        The new <%= link_to(h(project.title), project) %> repository will be
+        owned by <%= link_to h(repository.owner.title), repository.owner -%>
+        (a <%= repository.owner.class.human_name.downcase -%>).
+      </p>
+      <div class="control-group">
+        <%= f.label :name, "Name", :class => "control-label" -%>
+        <div class="controls">
+          <%= f.text_field :name, :class => "input-xlarge" -%>
+        </div>
       </div>
-    </li>
-    <li>
-      <%= f.label :enable_merge_requests -%>
-      <div>
-        <%= f.check_box :merge_requests_enabled -%>
-        <span class="hint" style="float: left;"><%= t("views.repos.merge_requests_enabled") -%></span>
+      <%= live_md_preview_textarea(f, :description, "Description") %>
+      <% if Gitorious.private_repositories? %>
+        <div class="control-group">
+          <label for="private" class="control-label">Private repository?</label>
+          <div class="controls">
+            <label class="checkbox">
+              <input type="checkbox" value="1" name="private" id="private"<%= " checked" if params[:private] %>>
+            </label>
+            <p class="help-block">
+              Private repositories can only be accessed by you and
+              individuals/groups you grant access to.
+            </p>
+          </div>
+        </div>
+      <% end %>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Create repository</button>
       </div>
-    </li>
-    <% if Gitorious.private_repositories? %>
-    <li>
-      <label for="private">Make the repository private?</label>
-      <div>
-        <input id="private" name="private" type="checkbox" value="1">
-      </div>
-    </li>
-    <% end %>
-  </fieldset>
-
-  <% if Gitorious.repositories_default_private? %>
-    <fieldset><li><div>
-          <%= image_tag("silk/lock.png", :class => "private_access") %>
-          This repository will be private by
-          default, but can be made public after you have finished
-          creating it.
-        </div></li></fieldset>
+    </fieldset>
   <% end %>
-
-  <fieldset class="submit">
-    <%= f.submit "Create repository" -%>
-  </fieldset>
-<% end -%>
-<%= content_for :sidebar do -%>
-  <h2>Information</h2>
-  <p>The repository will be in the <strong><%= link_to h(project.title), project -%></strong> project,
-    and owned by <strong><%= link_to h(repository.owner.title), repository.owner -%></strong>
-    (a <%= repository.owner.class.human_name.downcase -%>).
-  </p>
-<% end -%>
+</div>
