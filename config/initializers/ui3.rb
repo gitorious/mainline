@@ -64,6 +64,7 @@ else
       "/ui3/js/src/components/blob.js",
       "/ui3/js/src/components/live-markdown-preview.js",
       "/ui3/js/src/components/timeago.js",
+      "/ui3/js/src/components/collapse.js",
       "/ui3/js/src/gitorious.js",
     ])
     Gitorious.stylesheets.concat([
