@@ -55,8 +55,9 @@ class ActiveSupport::TestCase
       (message || inclusion_failure(collection, object, false)))
   end
 
-  def refute(*args)
-    assert(!args.shift, *args)
+  def refute(test, msg=nil)
+    msg ||= "Failed refutation, no message given"
+    not assert(! test, msg)
   end
 
   def refute_equal exp, act, msg = nil
