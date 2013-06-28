@@ -34,6 +34,11 @@ UserValidator = UseCase::Validator.define do
   validate :normalized_openid_identifier
   validate :unique_login
 
+  # Helps validations not raise errors on Ruby 1.8.7
+  def self.model_name
+    ActiveModel::Name.new(self, nil, "User")
+  end
+
   # For unknown reasons,
   # validates_confirmation_of :password, :if => :password_required?
   # did not work. If you are able to express this validation with the
