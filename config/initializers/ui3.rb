@@ -51,6 +51,7 @@ else
       "/ui3/js/lib/showdown/src/showdown.js",
       "/ui3/js/lib/timeago/timeago.js",
       "/ui3/js/src/app.js",
+      "/ui3/js/src/cache.js",
       "/ui3/js/src/components/dropdown.js",
       "/ui3/js/src/components/ganalytics.js",
       "/ui3/js/src/components/abbrev.js",
@@ -65,6 +66,7 @@ else
       "/ui3/js/src/components/live-markdown-preview.js",
       "/ui3/js/src/components/timeago.js",
       "/ui3/js/src/components/collapse.js",
+      "/ui3/js/src/components/repository-admin.js",
       "/ui3/js/src/gitorious.js",
     ])
     Gitorious.stylesheets.concat([

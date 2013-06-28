@@ -71,7 +71,7 @@ git push</pre>
         <%= project_description(project) %>
       </div>
     </div>
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs gts-repository-nav">
       <%= repository_navigation([
               [:source, url_for(File.join("/", repository.project.to_param, repository.to_param, "source", "#{repository.head_candidate_name}:")), "Source code"],
               [:activities, project_repository_path(repository.project, repository), "Activities"],
