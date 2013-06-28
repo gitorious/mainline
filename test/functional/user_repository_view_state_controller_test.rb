@@ -81,6 +81,27 @@ class UserRepositoryViewStateControllerTest < ActionController::TestCase
       assert JSON.parse(response.body)["repository"]["administrator"]
     end
 
+    should "include repository admin URLs" do
+      login_as(:johan)
+      get :show, :id => @repository.id, :format => "json"
+
+      paths = JSON.parse(response.body)["repository"]["admin"]
+      prefix = "johans-project/johansprojectrepos"
+      assert_equal "/#{prefix}/edit", paths["editPath"]
+      assert_equal "/#{prefix}/confirm_delete", paths["destroyPath"]
+      assert_equal "/#{prefix}/ownership/edit", paths["ownershipPath"]
+      assert_equal "/#{prefix}/committerships", paths["committershipsPath"]
+    end
+
+    should "include repository access admin URL" do
+      Gitorious.stubs(:private_repositories?).returns(true)
+      login_as(:johan)
+      get :show, :id => @repository.id, :format => "json"
+
+      paths = JSON.parse(response.body)["repository"]["admin"]
+      assert_equal "/johans-project/johansprojectrepos/repository_memberships", paths["membershipsPath"]
+    end
+
     should "indicate that user watches repository" do
       login_as(:johan)
       get :show, :id => @repository.id, :format => "json"

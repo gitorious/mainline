@@ -48,11 +48,12 @@ module Gitorious
 
       def repository_hash
         return nil if repository.nil?
+        is_admin = !!app.admin?(user, repository)
         {
-          "administrator" => !!app.admin?(user, repository),
+          "administrator" => is_admin,
           "watching" => user.watching?(repository),
           "cloneProtocols" => clone_protocols
-        }
+        }.merge(is_admin ? repo_admin_hash : {})
       end
 
       def clone_protocols
@@ -69,9 +70,22 @@ module Gitorious
         end
       end
 
+      def repo_admin_hash
+        { "admin" => {
+            "editPath" => app.edit_project_repository_path(project, repository),
+            "destroyPath" => app.confirm_delete_project_repository_path(project, repository),
+            "ownershipPath" => app.transfer_ownership_project_repository_path(project, repository),
+            "committershipsPath" => app.project_repository_committerships_path(project, repository)
+          }.tap do |admin|
+            admin["membershipsPath"] = app.project_repository_repository_memberships_path(project, repository) if Gitorious.private_repositories?
+          end
+        }
+      end
+
       private
       def app; @app; end
       def repository; @repository; end
+      def project; @repository.project; end
       def user; @user; end
     end
   end
