@@ -55,8 +55,23 @@ class ActiveSupport::TestCase
       (message || inclusion_failure(collection, object, false)))
   end
 
-  def refute(*args)
-    assert(!args.shift, *args)
+  def refute(test, msg=nil)
+    msg ||= "Failed refutation, no message given"
+    not assert(! test, msg)
+  end
+
+  def refute_equal exp, act, msg = nil
+    refute exp == act, msg
+  end
+
+  def refute_match exp, act, msg = nil
+    assert_respond_to act, :"=~"
+    exp = (/#{Regexp.escape exp}/) if String === exp and String === act
+    refute exp =~ act, msg
+  end
+
+  def refute_nil(*args)
+    refute(args.shift.nil?, *args)
   end
 
   def inclusion_failure(collection, object, should_be_included)

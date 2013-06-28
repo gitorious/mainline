@@ -56,7 +56,7 @@ class RepositoriesController < ApplicationController
 
     page = JustPaginate.page_value(params[:page])
     events, total_pages = JustPaginate.paginate(page, Event.per_page, repository.events.count) do |index_range|
-      repository.events.all(:offset => [index_range.first, 0].max, :limit => index_range.count)
+      repository.events.all(:offset => [index_range.first, 0].max, :limit => index_range.count, :order => "created_at desc")
     end
 
     response.headers["Refresh"] = "5" unless repository.ready
