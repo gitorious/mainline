@@ -464,7 +464,10 @@ class RepositoriesControllerTest < ActionController::TestCase
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
       assert_response :success
       assert_equal @repository, assigns(:repository)
-      assert_equal @grit.heads, assigns(:heads)
+      assert_match "nonpack", @response.body
+      assert_match "test/master", @response.body
+      assert_match "test/chacon", @response.body
+      assert_match "testing", @response.body
     end
 
     should "PUT update successfully and creates an event when changing the description" do
@@ -498,54 +501,12 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_equal description, @repository.description
     end
 
-
     should "not create an event on update if the description is not changed" do
       assert_no_difference("@repository.events.size") do
         put :update, :project_id => @project.to_param, :id => @repository.to_param,
         :repository => {:description => @repository.description}
         @repository.events.reload
       end
-    end
-
-    should "gets a list of the users' groups on edit" do
-      groups(:team_thunderbird).add_member(users(:johan), Role.admin)
-      get :edit, :project_id => @project.to_param, :id => @repository.to_param
-      assert_response :success
-      assert_equal users(:johan).groups, assigns(:groups)
-    end
-
-    should "gets a list of the users' groups on update" do
-      groups(:team_thunderbird).add_member(users(:johan), Role.admin)
-      put :update, :project_id => @project.to_param, :id => @repository.to_param,
-      :repository => {:description => "foo"}
-      assert_equal users(:johan).groups, assigns(:groups)
-    end
-
-    should "changes the owner" do
-      group = groups(:team_thunderbird)
-      group.add_member(users(:johan), Role.admin)
-      put :update, :project_id => @project.to_param, :id => @repository.to_param,
-      :repository => { :owner_id => group.id}
-      assert_redirected_to(project_repository_path(@repository.project, @repository))
-      assert_equal group, @repository.reload.owner
-    end
-
-    should "changes the owner, only if the original owner was a user" do
-      group = groups(:team_thunderbird)
-      group.add_member(users(:johan), Role.admin)
-      @repository.owner = group
-      @repository.kind = Repository::KIND_TEAM_REPO
-      @repository.save!
-      new_group = Group.create!(:name => "temp")
-      new_group.add_member(users(:johan), Role.admin)
-
-      put :update, :project_id => @repository.project.to_param,
-      :group_id => group.to_param, :id => @repository.to_param, :repository => {
-        :owner_id => new_group.id
-      }
-      assert_response :redirect
-      assert_redirected_to(project_repository_path(@project, @repository))
-      assert_equal group, @repository.reload.owner
     end
 
     should "be able to deny force pushing" do
@@ -580,9 +541,11 @@ class RepositoriesControllerTest < ActionController::TestCase
       should "update the HEAD if it is changed" do
         the_head = @grit.get_head("test/master")
         @grit.expects(:update_head).with(the_head).returns(true)
-        put :update, :project_id => @project.to_param, :id => @repository.to_param,
-        :repository => { :head => the_head.name }
-        assert_equal @grit.heads, assigns(:heads)
+        put(:update, {
+          :project_id => @project.to_param,
+          :id => @repository.to_param,
+          :repository => { :head => the_head.name }
+        })
       end
     end
   end

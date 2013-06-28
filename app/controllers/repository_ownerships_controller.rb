@@ -18,23 +18,22 @@
 
 class RepositoryOwnershipsController < ApplicationController
   before_filter :login_required
+  before_filter :load_authorized_repository
   renders_in_site_specific_context
   layout "ui3/layouts/application"
 
   def update
-    repository = load_repository(params[:project_id], params[:id])
     groups = Team.for_user(current_user)
     new_owner = groups.detect { |group| group.id == params[:owner_id].to_i }
-    repository.change_owner_to!(new_owner)
+    @repository.change_owner_to!(new_owner)
     flash[:success] = "Repository ownership transferred"
-    redirect_to [repository.project, repository]
+    redirect_to [@repository.project, @repository]
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound
-    render_form(repository, groups)
+    render_form(@repository, groups)
   end
 
   def edit
-    repository = load_repository(params[:project_id], params[:id])
-    render_form(repository, Team.for_user(current_user))
+    render_form(@repository, Team.for_user(current_user))
   end
 
   private
@@ -45,13 +44,16 @@ class RepositoryOwnershipsController < ApplicationController
       })
   end
 
-  def load_repository(pid, rid)
+  def load_authorized_repository
+    pid = params[:project_id]
+    rid = params[:id]
     project = authorize_access_to(Project.find_by_slug!(pid))
     repository = authorize_access_to(project.repositories.find_by_name!(rid))
     unless admin?(current_user, repository)
       flash[:error] = I18n.t("repositories_controller.adminship_error")
+      target = project_repository_path(project, repository)
       redirect_to(target) and return
     end
-    repository
+    @repository = repository
   end
 end

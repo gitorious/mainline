@@ -20,6 +20,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious/app"
 
 class RepositoriesController < ApplicationController
   before_filter :login_required, :except => [:index, :show, :writable_by, :repository_config]
@@ -85,7 +86,7 @@ class RepositoriesController < ApplicationController
   end
 
   def create
-    cmd = CreateProjectRepository.new(self, @project, current_user)
+    cmd = CreateProjectRepository.new(Gitorious::App, @project, current_user)
     outcome = cmd.execute({ :private => params[:private] }.merge(params[:repository]))
 
     pre_condition_failed(outcome) do |f|

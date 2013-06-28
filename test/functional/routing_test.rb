@@ -371,6 +371,21 @@ class RoutingTest < ActionController::TestCase
                            :format => "json"
                          })
       end
+
+      should "recognize repository ownership routing" do
+        assert_recognizes({ :controller => "repository_ownerships",
+            :action => "edit",
+            :project_id => "gitorious",
+            :id => "mainline"
+          }, "/gitorious/mainline/ownership/edit")
+
+        assert_generates("/gitorious/mainline/ownership/edit", {
+            :controller => "repository_ownerships",
+            :action => "edit",
+            :project_id => "gitorious",
+            :id => "mainline"
+          })
+      end
     end
 
     context "by users" do
