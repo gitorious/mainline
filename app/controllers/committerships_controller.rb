@@ -1,6 +1,6 @@
 # encoding: utf-8
 #-
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -24,11 +24,14 @@ class CommittershipsController < ApplicationController
   renders_in_site_specific_context
 
   def index
-    @committerships = paginate(page_free_redirect_options) do
+    committerships = paginate(page_free_redirect_options) do
       @repository.committerships.paginate(:page => params[:page])
     end
-
-    @root = Breadcrumb::Committerships.new(@repository)
+    return if committerships.length == 0 && params.key?(:page)
+    render(:index, :layout => "ui3/layouts/application", :locals => {
+        :repository => RepositoryPresenter.new(@repository),
+        :committerships => committerships
+      })
   end
 
   def new

@@ -1,5 +1,6 @@
 <%
   #--
+  #   Copyright (C) 2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -17,22 +18,30 @@
   #++
   %>
 
-<div class="permission-explanations">
-  <h4>What does the different permissions mean?</h4>
-
-  <dl class="explanation">
-    <dt>Reviewers:</dt>
-    <dd>Can update merge request statuses</dd>
-    <dd>Will receive notifications on new merge requests</dd>
-
-    <dt>Committers:</dt>
-    <dd>Can push commits to the repository</dd>
-
-    <dt>Administrators:</dt>
-    <dd>Can edit the repository name, description and settings</dd>
-    <dd>Can manage collaborators</dd>
-    <dd>Can delete the repository</dd>
-  </dl>
-  <p class="hint">Note that the permissions do not cascade down, meaning
-    that for instance a committer is not automatically a reviewer</p>
+<div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #d5d5d5;">
+  <h4>What does the permissions mean?</h4>
+  <p>Permissions do not cascade down — a committer is not automatically a reviewer</p>
+  <div class="row-fluid">
+    <div class="span4">
+      <h5>Reviewers:</h5>
+      <ul>
+        <li>Can update merge request statuses</li>
+        <li>Will receive notifications on new merge requests</li>
+      </ul>
+    </div>
+    <div class="span4">
+      <h5>Committers:</h5>
+      <ul>
+        <li>Can push commits to the repository</li>
+      </ul>
+    </div>
+    <div class="span4">
+      <h5>Administrators:</h5>
+      <ul>
+        <li>Can edit the repository name, description and settings</li>
+        <li>Can manage collaborators</li>
+        <li>Can delete the repository</li>
+      </ul>
+    </div>
+  </div>
 </div>

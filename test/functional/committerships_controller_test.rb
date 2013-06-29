@@ -68,14 +68,16 @@ class CommittershipsControllerTest < ActionController::TestCase
 
       get :index, :project_id => repo.project.to_param, :repository_id => repo.to_param
       assert_response :success
-      exp = repo.committerships.where({
+
+      repo.committerships.where({
         :committer_type => "Group",
         :committer_id => @group.id
-      }).all
-      assert_equal exp, assigns(:committerships)
+      }).each do |cs|
+        assert_match cs.committer.title, @response.body
+      end
     end
 
-    context "commitership pagination" do
+    context "committership pagination" do
       setup do
         login_as :johan
         @params = { :project_id => @project.to_param, :repository_id => @repository.to_param }

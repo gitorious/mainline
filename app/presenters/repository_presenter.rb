@@ -39,6 +39,7 @@ class RepositoryPresenter
   def owner; repository.owner; end
   def user; repository.user; end
   def private?; repository.private?; end
+  def public?; repository.public?; end
   def errors; repository.errors; end
   def description; repository.description; end
   def head; repository.head; end

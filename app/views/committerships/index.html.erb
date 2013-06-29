@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -17,73 +17,67 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+<%= partial("repositories/repo_header", {
+        :repository => repository,
+        :project => repository.project,
+        :app => Gitorious,
+        :active => :admin,
+        :header_level => 2
+      }) %>
 
-<%= breadcrumbs_from(@root) -%>
-
-<h1>
-  <%= t("views.collaborators.title",
-        :repo_name => link_to(h(@repository.name), [@repository.project, @repository])).html_safe  -%>
-</h1>
-
-<table class="listing">
-  <thead>
-    <th><%= t(:created_at, :scope => "activerecord.attributes.committerships").humanize %></th>
-    <th><%= t(:committer_type, :scope => "activerecord.attributes.committerships").humanize %></th>
-    <th><%= t(:committer, :scope => "activerecord.attributes.committerships").humanize %></th>
-    <th><%= t(:permissions, :scope => "activerecord.attributes.committerships").humanize %></th>
-    <th><%= t(:creator, :scope => "activerecord.attributes.committerships").humanize %></th>
-    <th></th>
-  </thead>
-  <% @committerships.each do |committership| -%>
-    <tr class="<%= cycle('even', 'odd') -%>">
-      <td><%= l(committership.created_at, :format => :short) -%></td>
-      <td><%= committership.committer.class.human_name -%></td>
-      <td><%= link_to h(committership.committer.title), committership.committer -%></td>
-      <td><%=h committership.permission_list.join(', ') -%></td>
-      <td><%= link_to(h(committership.creator.login), committership.creator) if committership.creator -%>
-      <td class="committer-buttons">
-        <%= button_to(t("views.common.edit"),
-                      [:edit, @repository.project, @repository, committership], :method => :get) -%>
-        <%= button_to(t("views.common.remove"),
-                      [@repository.project, @repository, committership], :method => :delete, :confirm => confirmation_if_sole_admin(@repository, committership)) -%>
-      </td>
-    </tr>
-  <% end -%>
-</table>
-
-<% if @repository.public? %>
-  <h2>Repository is open</h2>
+<div class="container">
+  <h1><%= @title = "Users & teams collaborating on #{repository.slug}" %></h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Collaborator</th>
+        <th>Permissions</th>
+        <th>Added by</th>
+        <th>Since</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% committerships.each do |committership| %>
+      <tr>
+        <td>
+          <%= link_to(h(committership.committer.title), committership.committer) -%>
+          (<%= committership.committer.class.human_name -%>)
+        </td>
+        <td><%=h committership.permission_list.join(', ') -%></td>
+        <td><%= link_to(h(committership.creator.login), committership.creator) if committership.creator -%></td>
+        <td><%= l(committership.created_at, :format => :short) -%></td>
+        <td class="committer-buttons">
+          <%= link_to(t("views.common.edit"),
+          [:edit, repository.project, repository, committership], :method => :get, :class => "btn") -%>
+          <%= link_to(t("views.common.remove"),
+          [repository.project, repository, committership], :method => :delete, :class => "btn btn-danger", :confirm => confirmation_if_sole_admin(repository, committership)) -%>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
   <p>
-    Anyone with access to <%= @repository.project.title %> can browse and clone
-    this repository.
+    <%= link_to(t("views.collaborators.add_new"),
+    [:new, repository.project, repository, :committership], :class => "btn btn-primary") -%>
   </p>
-<% else %>
-  <h2>Repository is private</h2>
-  <p>Note: To see this project, collaborators on <strong><%= @repository.project.title
-                                                             %></strong> need to be <%= link_to "granted read access",
-                                                                                        project_repository_repository_memberships_path(@repository.project,
-                                                                                                                                       @repository) %> in addition to their
-    regular collaborator permissions.
+
+  <%= render_pagination_links committerships -%>
+
+  <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #d5d5d5;">
+    <% if repository.public? %>
+      <strong>This repository is open</strong>.
+      Anyone with access to the <%= @repository.project.title %> project can
+      browse and clone this repository.
+    <% else %>
+      <strong>This repository is private</strong>.
+      To be able to browse and clone this repository, collaborators on
+      the <%= repository.project.title %> project need to be
+      <%= link_to "granted read access", project_repository_repository_memberships_path(repository.project, @repository) %> in addition to their
+      regular collaborator permissions.
+    <% end %>
   </p>
-<% end %>
 
-<%= render_pagination_links @committerships -%>
+  <%= render("permission_explanation") %>
 
-<%= render "permission_explanation" %>
-
-<%= content_for :sidebar do -%>
-  <ul class="links actions navigation">
-    <li>
-      <%= link_to t("views.collaborators.add_new"),
-          [:new, @owner, @containing_project, @repository, :committership] -%>
-    </li>
-    <% if admin?(current_user, @repository) -%>
-      <li class="update_access"><%= link_to "Manage read access", project_repository_repository_memberships_path(@repository.project, @repository) -%></li>
-    <% end -%>
-  </ul>
-
-  <h4>Permission overview:</h4>
-  <%= collaborators("Reviewers", "review", reviewers(@repository)) %>
-  <%= collaborators("Committers", "commit", committers(@repository)) %>
-  <%= collaborators("Administrators", "administrator", administrators(@repository)) %>
-<% end -%>
+</div>
