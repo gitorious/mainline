@@ -44,7 +44,7 @@ class SSHClientTest < ActiveSupport::TestCase
     uri = request.env["REQUEST_URI"]
 
     route = Rails.application.routes.recognize_path(uri)
-    assert_equal "repositories", route[:controller]
+    assert_equal "repository_configurations", route[:controller]
     assert_equal "writable_by", route[:action]
     assert_equal "foo", route[:project_id]
     assert_equal "bar", route[:id]

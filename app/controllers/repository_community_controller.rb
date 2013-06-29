@@ -18,8 +18,7 @@
 
 class RepositoryCommunityController < ApplicationController
   before_filter :login_required
-  before_filter :find_repository_owner, :except => [:writable_by, :repository_config]
-
+  before_filter :find_repository_owner
   renders_in_site_specific_context
 
   def index

@@ -249,8 +249,8 @@ Gitorious::Application.routes.draw do
         get "/search_clones" => "repository_clone_searches#show"
         get :committers
         get :confirm_delete
-        get :writable_by
-        get "/config" => "repositories#repository_config"
+        get "/writable_by" => "repository_configurations#writable_by"
+        get "/config" => "repository_configurations#show"
         get "/ownership/edit" => "repository_ownerships#edit", :as => :transfer_ownership
         put "/ownership" => "repository_ownerships#update"
       end

@@ -23,12 +23,10 @@
 require "gitorious/app"
 
 class RepositoriesController < ApplicationController
-  before_filter :login_required, :except => [:index, :show, :writable_by, :repository_config]
-  before_filter :find_repository_owner, :except => [:writable_by, :repository_config]
-  before_filter :unauthorized_repository_owner_and_project, :only => [:writable_by, :repository_config]
+  before_filter :login_required, :except => [:index, :show]
+  before_filter :find_repository_owner
   before_filter :find_and_require_repository_adminship, :only => [:edit, :update, :destroy]
-  always_skip_session :only => [:repository_config, :writable_by]
-  renders_in_site_specific_context :except => [:writable_by, :repository_config]
+  renders_in_site_specific_context
 
   def index
     if term = params[:filter]
@@ -51,7 +49,7 @@ class RepositoriesController < ApplicationController
   end
 
   def show
-    repository = repository_to_clone
+    repository = find_repository
 
     page = JustPaginate.page_value(params[:page])
     events, total_pages = JustPaginate.paginate(page, Event.per_page, repository.events.count) do |index_range|
@@ -126,37 +124,6 @@ class RepositoriesController < ApplicationController
     edit
   end
 
-  # Used internally to check write permissions by gitorious
-  def writable_by
-    @repository = @owner.cloneable_repositories.find_by_name_in_project!(params[:id], @containing_project)
-    user = User.find_by_login(params[:username])
-
-    if user && result = /^refs\/merge-requests\/(\d+)$/.match(params[:git_path].to_s)
-      # git_path is a merge request
-      begin
-        if merge_request = @repository.merge_requests.find_by_sequence_number!(result[1]) and (merge_request.user == user)
-          render :text => "true" and return
-        end
-      rescue ActiveRecord::RecordNotFound # No such merge request
-      end
-    elsif user && can_push?(user, @repository)
-      render :text => "true" and return
-    end
-    render :text => 'false' and return
-  end
-
-  def repository_config
-    @repository = @owner.cloneable_repositories.find_by_name_in_project!(params[:id],
-      @containing_project)
-    authorize_configuration_access(@repository)
-    config_data = "real_path:#{@repository.real_gitdir}\n"
-    config_data << "force_pushing_denied:"
-    config_data << (@repository.deny_force_pushing? ? 'true' : 'false')
-    headers["Cache-Control"] = "public, max-age=600"
-
-    render :text => config_data, :content_type => "text/x-yaml"
-  end
-
   def confirm_delete
     repository = authorize_access_to(@owner.repositories.find_by_name!(params[:id]))
     unless can_delete?(current_user, repository)
@@ -169,7 +136,7 @@ class RepositoriesController < ApplicationController
   end
 
   def destroy
-    @repository = repository_to_clone
+    @repository = find_repository
     if can_delete?(current_user, @repository)
       repo_name = @repository.name
       flash[:notice] = I18n.t "repositories_controller.destroy_notice"
@@ -220,19 +187,7 @@ class RepositoriesController < ApplicationController
     end
   end
 
-  def unauthorized_repository_owner_and_project
-    @owner = Project.find_by_slug!(params[:project_id])
-    @project = @owner
-  end
-
-  def authorize_configuration_access(repository)
-    return true if !Gitorious.private_repositories?
-    if !can_read?(User.find_by_login(params[:username]), repository)
-      raise Gitorious::Authorization::UnauthorizedError.new(request.fullpath)
-    end
-  end
-
-  def repository_to_clone
+  def find_repository
     repo = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     authorize_access_to(repo)
   end
