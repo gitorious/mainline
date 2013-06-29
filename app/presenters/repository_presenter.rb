@@ -45,6 +45,7 @@ class RepositoryPresenter
   def deny_force_pushing; repository.deny_force_pushing; end
   def merge_requests_enabled; repository.merge_requests_enabled; end
   def owner_id; repository.owner_id; end
+  def to_key; repository.to_key; end
 
   def show_clone_list_search?
     group_clone_count >= 5 || user_clone_count >= 5
@@ -94,13 +95,16 @@ class RepositoryPresenter
     repository.committerships.groups
   end
 
-
   def group_clones
     repository.clones.by_groups.fresh
   end
 
   def open_merge_request_count
     repository.open_merge_requests.count
+  end
+
+  def self.model_name
+    Repository.model_name
   end
 
   def slug

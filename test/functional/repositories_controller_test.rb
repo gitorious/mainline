@@ -460,10 +460,11 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response :success
     end
 
-    should "GETs edit/n successfully" do
+    should "GETs edit successfully" do
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
+
       assert_response :success
-      assert_equal @repository, assigns(:repository)
+      assert_match @repository.name, @response.body
       assert_match "nonpack", @response.body
       assert_match "test/master", @response.body
       assert_match "test/chacon", @response.body

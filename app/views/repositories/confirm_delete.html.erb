@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
   #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
@@ -20,20 +20,26 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+<%= partial("repositories/repo_header", {
+        :repository => repository,
+        :project => repository.project,
+        :app => Gitorious,
+        :active => :admin,
+        :header_level => 2
+      }) %>
 
-<%= dialog_box(t("views.repos.confirm_delete", :repo => @repository.name, :title => h(@owner.title))) do %>
-  <p class="important_message">
-    <%= t("views.repos.message_delete") %>
-
-    <%= form_for [@repository.project, @repository], :html => {:method => :delete} do |f| -%>
-    <%= f.submit(t("views.repos.btn_delete")) -%>
-<% end -%>
-</p>
-<% end -%>
-
-<%= content_for :sidebar do -%>
-  <ul class="links navigation">
-    <li><%= link_to t("views.projects.back"),
-            [:edit, @repository.project, @repository] -%></li>
-  </ul>
-<% end -%>
+<div class="container">
+  <div class="alert alert-error">
+    <%= form_for [repository.project, repository], :html => { :method => :delete, :class => "form-horizontal" } do |f| -%>
+      <fieldset>
+        <h1>Permanently delete repository <%= repository.slug %>?</h1>
+        <p>
+          Are you sure you want to delete this repository? There is no going
+          back. The repository along with all its meta data will be irrevokably
+          removed.
+        </p>
+        <button class="btn btn-primary" type="submit">I understand, permanently remove this repository</button>
+      </fieldset>
+    <% end -%>
+  </div>
+</div>

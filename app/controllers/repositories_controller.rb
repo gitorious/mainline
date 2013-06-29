@@ -26,8 +26,7 @@ class RepositoriesController < ApplicationController
   before_filter :login_required, :except => [:index, :show, :writable_by, :repository_config]
   before_filter :find_repository_owner, :except => [:writable_by, :repository_config]
   before_filter :unauthorized_repository_owner_and_project, :only => [:writable_by, :repository_config]
-  before_filter :find_and_require_repository_adminship,
-  :only => [:edit, :update, :confirm_delete, :destroy]
+  before_filter :find_and_require_repository_adminship, :only => [:edit, :update, :destroy]
   always_skip_session :only => [:repository_config, :writable_by]
   renders_in_site_specific_context :except => [:writable_by, :repository_config]
 
@@ -159,11 +158,14 @@ class RepositoriesController < ApplicationController
   end
 
   def confirm_delete
-    @repository = repository_to_clone
-    unless can_delete?(current_user, @repository)
-      flash[:error] = I18n.t "repositories_controller.adminship_error"
+    repository = authorize_access_to(@owner.repositories.find_by_name!(params[:id]))
+    unless can_delete?(current_user, repository)
+      flash[:error] = I18n.t("repositories_controller.adminship_error")
       redirect_to(@owner) and return
     end
+    render("confirm_delete", :layout => "ui3/layouts/application", :locals => {
+        :repository => RepositoryPresenter.new(repository)
+      })
   end
 
   def destroy
