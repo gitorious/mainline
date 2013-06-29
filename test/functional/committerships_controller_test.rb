@@ -76,15 +76,6 @@ class CommittershipsControllerTest < ActionController::TestCase
         assert_match cs.committer.title, @response.body
       end
     end
-
-    context "committership pagination" do
-      setup do
-        login_as :johan
-        @params = { :project_id => @project.to_param, :repository_id => @repository.to_param }
-      end
-
-      should_scope_pagination_to(:index, Committership, :delete_all => false)
-    end
   end
 
   context "GET new" do

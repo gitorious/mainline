@@ -24,13 +24,9 @@ class CommittershipsController < ApplicationController
   renders_in_site_specific_context
 
   def index
-    committerships = paginate(page_free_redirect_options) do
-      @repository.committerships.paginate(:page => params[:page])
-    end
-    return if committerships.length == 0 && params.key?(:page)
     render(:index, :layout => "ui3/layouts/application", :locals => {
         :repository => RepositoryPresenter.new(@repository),
-        :committerships => committerships
+        :committerships => @repository.committerships
       })
   end
 
