@@ -25,6 +25,7 @@
       <link href="<%= stylesheet %>" rel="stylesheet" type="text/css">
     <% end %>
     <%= content_for(:head) %>
+    <%= csrf_meta_tag %>
   </head>
   <body<%= " class=\"#{@body_class}\"".html_safe if @body_class %>>
     <div class="gts-masthead navbar">

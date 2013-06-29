@@ -67,6 +67,7 @@ else
       "/ui3/js/src/components/timeago.js",
       "/ui3/js/src/components/collapse.js",
       "/ui3/js/src/components/repository-admin.js",
+      "/ui3/js/src/components/rails-links.js",
       "/ui3/js/src/gitorious.js",
     ])
     Gitorious.stylesheets.concat([

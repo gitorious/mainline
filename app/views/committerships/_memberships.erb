@@ -28,9 +28,8 @@
     <p>
       <strong>This repository is private</strong>.
       To be able to browse and clone this repository, collaborators on
-      the <%= repository.project.title %> project need to be
-      <%= link_to "granted read access", project_repository_repository_memberships_path(repository.project, repository) %> in addition to their
-      regular committerships.
+      the <%= repository.project.title %> project need to be granted read
+      access in addition to their regular committerships.
     </p>
     <table class="table table-striped">
       <thead>
@@ -61,7 +60,7 @@
     <p>
       <%= link_to("Remove all collaborators", { :controller => "repository_content_memberships", :action => "destroy", :id => "all" },
                   :method => :delete, :confirm => "Are you sure? This will delete all #{memberships.count} members") %>
-      to <%= text(:make_public) %>
+      to make this repository public.
     </p>
   <% end %>
 </div>
