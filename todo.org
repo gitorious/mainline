@@ -1,4 +1,4 @@
-* Gitorious 3 [4/15]
+* Gitorious 3 [4/13]
 ** TODO Extract new markdown_hint function (repositories/new)
 ** DONE enable_merge_requests / merge_requests_enabled - make sure it defaults to true
 ** DONE In repositories/show, make sure the question mark toggles the repo help
@@ -15,5 +15,3 @@
 ** TODO Fix ref selector visual glitch in Chrome
 ** TODO Add Capillary in new design
 ** TODO Clone page
-** TODO Refactor content_memberships controller into a use case
-** TODO Use ^^ use case on committerships#index to manage committerships and memberships from one page

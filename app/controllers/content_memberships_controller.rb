@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -21,23 +21,15 @@ class ContentMembershipsController < ApplicationController
   before_filter :login_required
   renders_in_site_specific_context :only => [:index]
 
-  def index
-    @memberships = paginate(page_free_redirect_options) do
-      content.content_memberships.paginate(:page => params[:page])
-    end
-    @root = Breadcrumb.const_get("#{content.class.name}Memberships".to_sym).new(content)
-    render_action(:index)
-  end
-
   def create
     membership = content.content_memberships.new
     membership.member = member(params[:user], params[:group])
     membership.save
-    redirect_to :action => "index"
+    redirect_to(redirect_options)
   rescue ActiveRecord::RecordNotFound => err
     m = err.message.match(/([^\s]+) with [^\s]+ = (.*)/)
     flash[:error] = "No such #{m[1].downcase} '#{m[2]}'"
-    index
+    create_error
   end
 
   def destroy
@@ -46,7 +38,7 @@ class ContentMembershipsController < ApplicationController
     else
       content.content_memberships.find(params[:id]).destroy
     end
-    redirect_to :action => "index"
+    redirect_to(redirect_options)
   end
 
   helper_method :memberships_path
@@ -55,16 +47,13 @@ class ContentMembershipsController < ApplicationController
   helper_method :content_path
 
   protected
+  def redirect_options
+    { :action => "index" }
+  end
+
   def member(user, group)
     return User.find_by_login!(user[:login]) if user && !user[:login].empty?
     return Team.find_by_name!(group[:name]) if group && !group[:name].empty?
     content.owner
-  end
-
-  def render_action(action)
-    @site_name = Gitorious.site_name
-    @content = content
-    @class_name = @content.class.name.downcase
-    render :template => "content_memberships/#{action}"
   end
 end

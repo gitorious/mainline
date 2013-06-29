@@ -1,0 +1,67 @@
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #d5d5d5;">
+  <% if repository.public? %>
+s    <p>
+      <strong>This repository is public</strong>.
+      Anyone with access to the <%= repository.project.title %> project can
+      browse and clone this repository.
+      <%= link_to("Make private", project_repository_repository_memberships_path(repository.project, repository), :method => :post) %>.
+    </p>
+  <% else %>
+    <p>
+      <strong>This repository is private</strong>.
+      To be able to browse and clone this repository, collaborators on
+      the <%= repository.project.title %> project need to be
+      <%= link_to "granted read access", project_repository_repository_memberships_path(repository.project, repository) %> in addition to their
+      regular committerships.
+    </p>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Member</th>
+          <th>Since</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% memberships.each do |membership| %>
+          <% if !membership.member.nil? %>
+          <tr>
+            <td>
+              <%= link_to(h(membership.member.title), membership.member) -%>
+              (<%= membership.member.class.human_name -%>)
+            </td>
+            <td><%= l(membership.created_at, :format => :short) -%></td>
+            <td class="member-buttons">
+              <%= link_to(t("views.common.remove"),
+                          project_repository_repository_membership_path(repository.project, repository, membership),
+                          :method => :delete, :class => "btn btn-danger") -%>
+            </td>
+          </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+    <p>
+      <%= link_to("Remove all collaborators", { :controller => "repository_content_memberships", :action => "destroy", :id => "all" },
+                  :method => :delete, :confirm => "Are you sure? This will delete all #{memberships.count} members") %>
+      to <%= text(:make_public) %>
+    </p>
+  <% end %>
+</div>

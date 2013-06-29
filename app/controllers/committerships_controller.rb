@@ -26,7 +26,8 @@ class CommittershipsController < ApplicationController
   def index
     render(:index, :layout => "ui3/layouts/application", :locals => {
         :repository => RepositoryPresenter.new(@repository),
-        :committerships => @repository.committerships
+        :committerships => @repository.committerships,
+        :memberships => @repository.content_memberships
       })
   end
 

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -21,7 +21,20 @@ class ProjectMembershipsController < ContentMembershipsController
   before_filter :find_project
   before_filter :require_admin
 
+  def index
+    @memberships = content.content_memberships
+    @root = Breadcrumb::ProjectMemberships.new(content)
+    @site_name = Gitorious.site_name
+    @content = @project
+    @class_name = "project"
+    render :template => "content_memberships/index"
+  end
+
   protected
+  def create_error
+    index
+  end
+
   def require_private_repos
     if !Gitorious.private_repositories?
       find_project if @project.nil?

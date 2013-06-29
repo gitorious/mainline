@@ -76,9 +76,7 @@ module Gitorious
             "destroyPath" => app.confirm_delete_project_repository_path(project, repository),
             "ownershipPath" => app.transfer_ownership_project_repository_path(project, repository),
             "committershipsPath" => app.project_repository_committerships_path(project, repository)
-          }.tap do |admin|
-            admin["membershipsPath"] = app.project_repository_repository_memberships_path(project, repository) if Gitorious.private_repositories?
-          end
+          }
         }
       end
 

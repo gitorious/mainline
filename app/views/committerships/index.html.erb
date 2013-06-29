@@ -62,22 +62,11 @@
     [:new, repository.project, repository, :committership], :class => "btn btn-primary") -%>
   </p>
 
-  <%= render_pagination_links committerships -%>
+  <%= render("committerships/memberships", {
+          :repository => repository,
+          :memberships => memberships
+        }) if Gitorious.private_repositories? %>
 
-  <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #d5d5d5;">
-    <% if repository.public? %>
-      <strong>This repository is open</strong>.
-      Anyone with access to the <%= @repository.project.title %> project can
-      browse and clone this repository.
-    <% else %>
-      <strong>This repository is private</strong>.
-      To be able to browse and clone this repository, collaborators on
-      the <%= repository.project.title %> project need to be
-      <%= link_to "granted read access", project_repository_repository_memberships_path(repository.project, @repository) %> in addition to their
-      regular collaborator permissions.
-    <% end %>
-  </p>
-
-  <%= render("permission_explanation") %>
+  <%= render("committerships/permission_explanation") %>
 
 </div>

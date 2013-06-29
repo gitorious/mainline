@@ -93,15 +93,6 @@ class UserRepositoryViewStateControllerTest < ActionController::TestCase
       assert_equal "/#{prefix}/committerships", paths["committershipsPath"]
     end
 
-    should "include repository access admin URL" do
-      Gitorious.stubs(:private_repositories?).returns(true)
-      login_as(:johan)
-      get :show, :id => @repository.id, :format => "json"
-
-      paths = JSON.parse(response.body)["repository"]["admin"]
-      assert_equal "/johans-project/johansprojectrepos/repository_memberships", paths["membershipsPath"]
-    end
-
     should "indicate that user watches repository" do
       login_as(:johan)
       get :show, :id => @repository.id, :format => "json"

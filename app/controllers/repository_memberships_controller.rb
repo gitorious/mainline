@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,18 @@ class RepositoryMembershipsController < ContentMembershipsController
   before_filter :require_admin
 
   protected
+  def create_error
+    render("committerships/index", :layout => "ui3/layouts/application", :locals => {
+        :repository => RepositoryPresenter.new(@repository),
+        :committerships => @repository.committerships,
+        :memberships => @repository.content_memberships
+      })
+  end
+
+  def redirect_options
+    { :controller => "committerships", :action => "index" }
+  end
+
   def require_private_repos
     if !Gitorious.private_repositories?
       find_project_and_repository if @repository.nil?

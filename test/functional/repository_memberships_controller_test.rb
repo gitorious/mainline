@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -28,30 +28,6 @@ class RepositoryMembershipsControllerTest < ActionController::TestCase
   context "With private repos" do
     setup do
       enable_private_repositories
-    end
-
-    context "index" do
-      should "reject unauthorized user from listing memberships" do
-        login_as :mike
-        get :index, params
-        assert_response 403
-      end
-
-      should "allow owner to manage access" do
-        login_as :johan
-        get :index, params
-        assert_response 200
-      end
-
-      should "state that repository is public" do
-        login_as :moe
-        @repository = repositories(:moes)
-        get :index, params
-
-        assert_response 200
-        assert_match /Repository is open/, @response.body
-        assert_match /Make private/, @response.body
-      end
     end
 
     context "create" do
@@ -91,13 +67,13 @@ class RepositoryMembershipsControllerTest < ActionController::TestCase
         assert can_read?(team, @repository)
       end
 
-      should "redirect back to index" do
+      should "redirect back to committership index" do
         login = @user.login
         login_as :johan
 
         post :create, params(:user => { :login => login }, :group => { :name => "" })
         assert_response :redirect
-        assert_redirected_to :action => "index"
+        assert_redirected_to :controller => "committerships", :action => "index"
       end
 
       should "render index if user can not be found" do
@@ -142,24 +118,13 @@ class RepositoryMembershipsControllerTest < ActionController::TestCase
         login_as :johan
         delete :destroy, params(:id => @membership.id)
         assert_response :redirect
-        assert_redirected_to :action => "index"
+        assert_redirected_to :controller => "committerships", :action => "index"
       end
 
       should "remove all members to make repository public" do
         login_as :johan
         delete :destroy, params(:id => "all")
         assert_equal 0, @repository.content_memberships.count
-      end
-    end
-  end
-
-  context "With private repos disabled" do
-    should "redirect to repository index" do
-      Gitorious::Configuration.override("enable_private_repositories" => false) do
-        login_as :moe
-        @repository = repositories(:moes)
-        get :index, params
-        assert_redirected_to :controller => "repositories", :action => "show", :id => @repository.to_param
       end
     end
   end
