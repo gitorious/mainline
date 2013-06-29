@@ -20,14 +20,15 @@
         :repository => repository,
         :project => repository.project,
         :app => Gitorious,
-        :active => :admin
+        :active => :admin,
+        :header_level => 2
       }) %>
 
 <div class="container">
   <%= error_messages(repository) -%>
   <%= form_for(repository, :as => :repository, :url => transfer_ownership_project_repository_url(repository.project, repository), :method => "put", :html => { :class => "form-horizontal" }) do |f| -%>
     <fieldset>
-      <legend>Transfer ownership for <%= repository.slug %></legend>
+      <legend><%= @title = "Transfer ownership for #{repository.slug}" %></legend>
       <div class="control-group">
         <%= f.label :owner_id, "New owner", :class => "control-label" -%>
         <div class="controls">

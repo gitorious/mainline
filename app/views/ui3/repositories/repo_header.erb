@@ -16,16 +16,17 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
 %><%
+header_level = defined?(header_level) && header_level || 1
 @body_class = "gts-private" if repository.private?
 ref = defined?(ref) && !ref.nil? ? ref : "HEAD"
 %><div class="gts-repo-header" data-gts-env-user-repository-path="/users/view_state/repository/<%= repository.id %>.json">
   <div class="container">
     <div class="row">
-      <h1 class="span">
+      <h<%= header_level %> class="span">
         <!--img src=" img_url('/project-logo.png') " width="32" height="32" alt="gitorious logo"-->
         <a href="<%= project_path(project) %>"><%= project.slug %></a> /
         <span><%=h repository.name %></span>
-      </h1>
+      </h<%= header_level %>>
     </div>
     <div class="row">
       <div class="span">
@@ -71,7 +72,7 @@ git push</pre>
         <%= project_description(project) %>
       </div>
     </div>
-    <ul class="nav nav-tabs gts-repository-nav">
+    <ul class="nav nav-tabs gts-repository-nav" <%= "data-gts-active=#{defined?(active) && active.to_s}"  %>>
       <%= repository_navigation([
               [:source, url_for(File.join("/", repository.project.to_param, repository.to_param, "source", "#{repository.head_candidate_name}:")), "Source code"],
               [:activities, project_repository_path(repository.project, repository), "Activities"],
