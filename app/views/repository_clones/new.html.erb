@@ -17,54 +17,57 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+<% @page_title = "Clone #{h(repository.name)}" %>
+<div class="gts-repo-header">
+  <div class="container">
+    <div class="row">
+      <h3 class="span">
+        <%= link_to(h(project.title), project) -%>
+      </h3>
+    </div>
+  </div>
+</div>
 
-<%= breadcrumbs_from(Breadcrumb::CloneRepository.new(repository_to_clone)) -%>
-
-<%= content_for :extra_head do -%>
-  <script type="text/javascript" charset="utf-8">
-$(document).ready(function() {
-    var group_selection_changed = function() {
-        var select_element = $("#repository_owner_id_group_select");
-        var sel = null;
-        jQuery.each(select_element[0].options, function(){
-            if ($(this).val() == select_element.val()) sel = this;
-        });
-        $("#repository_name").val(sel.text + "-<%= repository_to_clone.name -%>");
-        $("#repository_owner_type_group")[0].checked = true;
-    };
-    $("#repository_owner_id_group_select").change(function(e) {
-        group_selection_changed();
-    });
-    $("#repository_owner_type_group").click(function(e) {
-        group_selection_changed();
-    });
-    $("#repository_owner_type_user").click(function(e) {
-        $("#repository_name").val("<%= current_user.login -%>s-<%= repository_to_clone.name -%>");
-    });
-});
-  </script>
-<% end -%>
-
-<h1><%= t("views.repos.create_title",
-          :clone_name => h(repository_to_clone.name),
-          :clone_url => project_repository_path(repository_to_clone.project, repository_to_clone),
-          :project_name => h(owner.title),
-          :project_url => project_path(owner)).html_safe %></h1>
-
-<%= error_messages(clone) -%>
-
-<%= form_for(clone, {
-        :url => create_clone_project_repository_path(repository_to_clone.project, repository_to_clone),
-        :builder => GitoriousFormBuilder
-      }) do |f| -%>
-  <p>
-    <%= f.current_user_or_group(:owner, t("views.repos.owner"),
-        :hint => "Clone the repository as either yourself or a group you are in",
-        :default => :user).html_safe -%>
-  </p>
-  <p>
-    <%= f.label :name, t("views.repos.name", :name => current_user.login).html_safe -%>:<br />
-    <%= f.text_field :name -%>
-  </p>
-  <%= f.submit t("views.repos.btn_clone") -%>
-<% end -%>
+<div class="container">
+  <h2><%= t("views.repos.create_title",
+            :clone_name => h(repository.name),
+            :clone_url => project_repository_path(project, repository),
+            :project_name => h(project.title),
+            :project_url => project_path(project)).html_safe %></h2>
+  <%= error_messages(clone) -%>
+  <%= form_for(clone, {
+          :url => create_clone_project_repository_path(project, repository),
+          :html => { :class => "clone-repository-form form-horizontal",
+                     :"data-gts-repository-to-clone" => repository.name }
+        }) do |f| -%>
+    <fieldset>
+      <div class="control-group">
+        <%= f.label :owner, "Owner", :class => "control-label" -%>
+        <div class="controls">
+          <label class="radio">
+            <input type="radio" name="repository[owner_type]" id="repository_owner_type_user" value="User" data-gts-cloning-user="<%= current_user.login %>" checked>
+            Me
+          </label>
+          <label class="radio">
+            <input type="radio" name="repository[owner_type]" id="repository_owner_type_group" value="Group">
+            <select id="repository_owner_id_group_select" name="repository[owner_id]">
+              <% Team.by_admin(current_user).each do |group| %>
+                <option value="<%= group.id %>"><%= group.name %></option>
+              <% end %>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="control-group">
+        <%= f.label :name, "Name", :class => "control-label" -%>
+        <div class="controls">
+          <%= f.text_field :name, :class => "input-xlarge" -%>
+          <p class="help-block">E.g. performance-fixes, <%= current_user.login %>-sandbox, etc</p>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit"><%= t("views.repos.btn_clone") %></button>
+      </div>
+    </fieldset>
+  <% end %>
+</div>

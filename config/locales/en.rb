@@ -458,7 +458,7 @@
         :current_committers => "Committers",
         :remove => "Remove",
         :clone_breadcrumb => "Clone Repository",
-        :create_title => "Create a clone of <a href=\"%{clone_url}\">%{clone_name}</a> <small>in <a href=\"%{project_url}\">%{project_name}</a></small>",
+        :create_title => "Create a clone of <a href=\"%{clone_url}\">%{clone_name}</a> in <a href=\"%{project_url}\">%{project_name}</a>",
         :edit_group => "Edit/show team members",
         :show_group => "Show team members",
         :by_teams => "Team clones",
