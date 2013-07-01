@@ -349,6 +349,20 @@ archive_work_dir: "/var/git/tarballs-work"
 # set.
 #ssh_fingerprint: "7e:af:8d:ec:f0:39:5e:ba:52:16:ce:19:fa:d4:b8:7d"
 
+# Default OpenID provider URL, e.g.
+# https://www.google.com/accounts/o8/id. Blank by default.
+# To disable OpenID completely, see config/authentication.sample.yml
+#default_openid_provider_url:
+
+# When Gitorious boots up, it will require each file in this array.
+# The files are simply required - there's no other interaction.
+#post_load:
+#  - /some/file/to/load.rb
+
+#########################################################################
+# UI theming settings. Most of these settings only apply to the new UI. #
+#########################################################################
+
 # Add more view paths if you want to override some or all of
 # Gitorious' views. Make sure you know what you're doing before
 # attepting this - there is no API guarantee from the current
@@ -364,22 +378,13 @@ archive_work_dir: "/var/git/tarballs-work"
 #
 # This setting accepts either a single path or multiple paths, using
 # the YAML list syntax.
-#additional_view_paths: vendor/plugin/mysite/views
+#additional_view_paths:
 
-# Default OpenID provider URL, e.g.
-# https://www.google.com/accounts/o8/id. Blank by default.
-# To disable OpenID completely, see config/authentication.sample.yml
-#default_openid_provider_url:
-
-######################################################################
-# The following are UI theming settings. They are deprecated, and    #
-# most, if not all of them will soon be changed/replaced or removed. #
-######################################################################
-
-# When Gitorious boots up, it will require each file in this array.
-# The files are simply required - there's no other interaction.
-#post_load:
-#  - /some/file/to/load.rb
+#########################################################################
+# Deprecated Gitorious 2 UI theming settings. These settings will only  #
+# work in the old UI, and as the old UI is phased out, they will        #
+# eventually be removed entirely.                                       #
+#########################################################################
 
 # Is this gitorious.org? Read: should we have a very flashy homepage?
 #is_gitorious_dot_org: true
