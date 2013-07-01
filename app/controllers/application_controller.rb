@@ -19,19 +19,16 @@
 #++
 require "gitorious"
 require "gitorious/view"
+require "gitorious/view/site_helper"
 
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
-
-class UnexpectedSiteContext < Exception;
-  attr_reader :params
-  def initialize(params); @params = params; end
-end
 
 class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include RoutingHelper
   include Gitorious::Authorization
+  include Gitorious::View::SiteHelper
   protect_from_forgery
 
   before_filter :public_and_logged_in
@@ -48,7 +45,7 @@ class ApplicationController < ActionController::Base
   rescue_from Grit::Git::GitTimeout, :with => :render_git_timeout
   rescue_from RecordThrottling::LimitReachedError, :with => :render_throttled_record
   rescue_from Gitorious::Authorization::UnauthorizedError, :with => :render_unauthorized
-  rescue_from(UnexpectedSiteContext) { |site| redirect_to(site.params) }
+  rescue_from(UnexpectedSiteContext) { |site| redirect_to(site.target) }
 
   def rescue_action(exception)
     return super if !Rails.env.production?
@@ -61,10 +58,6 @@ class ApplicationController < ActionController::Base
     else
       super
     end
-  end
-
-  def current_site
-    @current_site || Site.default
   end
 
   protected
@@ -240,17 +233,9 @@ class ApplicationController < ActionController::Base
     [branch_ref, path]
   end
 
-  def find_current_site(project = nil)
-    project ||= @project
-    @current_site ||= begin
-                        if project
-                          project.site
-                        else
-                          if !subdomain_without_common.blank?
-                            Site.find_by_subdomain(subdomain_without_common)
-                          end
-                        end
-                      end
+  # Hook for Gitorious::View::SiteHelper#find_current_site
+  def current_project
+    @project
   end
 
   def pick_layout_based_on_site
@@ -259,11 +244,6 @@ class ApplicationController < ActionController::Base
     else
       "application"
     end
-  end
-
-  def subdomain_without_common
-    tld_length = Gitorious.host.split(".").length - 1
-    request.subdomains(tld_length).select{|s| s !~ /^(ww.|secure)$/}.first
   end
 
   def redirect_to_current_site_subdomain
@@ -457,34 +437,6 @@ class ApplicationController < ActionController::Base
       f.when(:authorization_required) { |c| render_unauthorized }
       f.when(:current_user_required) { |c| current_user_only_redirect }
       block.call(f) if !block.nil?
-    end
-  end
-
-  # TODO: Project argument is optional now to support the old
-  # redirect_to_current_site method. Remove when all uses of the
-  # filter has been converted
-  def verify_site_context!(project = nil)
-    return true if !request.get?
-    site = find_current_site(project)
-    return true if site.nil?
-
-    if !site.subdomain.blank?
-      if subdomain_without_common != site.subdomain
-        host = "#{site.subdomain}.#{Gitorious.host}"
-        raise UnexpectedSiteContext.new({
-            :only_path => false,
-            :host => "#{host}#{request.port_string}"
-          }.merge(request.params))
-      end
-    elsif !subdomain_without_common.blank?
-      host_without_subdomain = {
-        :only_path => false,
-        :host => Gitorious.host
-      }
-      if ![80, 443].include?(request.port)
-        host_without_subdomain[:host] << ":#{request.port}"
-      end
-      raise UnexpectedSiteContext.new(host_without_subdomain)
     end
   end
 

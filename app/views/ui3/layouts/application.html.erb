@@ -19,19 +19,22 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title><%= @title %> - Gitorious</title>
+    <title><%= @title %> - <%= current_site.title %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <% Gitorious.stylesheets.each do |stylesheet| %>
       <link href="<%= stylesheet %>" rel="stylesheet" type="text/css">
     <% end %>
     <%= content_for(:head) %>
-    <%= csrf_meta_tag %>
+    <%= if respond_to?(:protect_against_forgery?) && protect_against_forgery?
+          [tag("meta", :name => "csrf-param", :class => "csrf-param", :content => request_forgery_protection_token),
+           tag("meta", :name => "csrf-token", :class => "csrf-token", :content => form_authenticity_token)].join("\n").html_safe
+        end %>
   </head>
   <body<%= " class=\"#{@body_class}\"".html_safe if @body_class %>>
     <div class="gts-masthead navbar">
       <div class="navbar-inner">
         <div class="container">
-          <a class="gts-logo" href="<%= root_path %>"><img src="/ui3/images/gitorious2013.png" alt="Gitorious" title="Gitorious"></a>
+          <a class="gts-logo" href="<%= root_path %>"><%= site_logo(current_site).html_safe %></a>
           <div class="pull-right">
             <form action="<%= search_path %>" class="navbar-search pull-left" method="get">
               <input type="search" placeholder="Search" class="search-query span2" name="q">

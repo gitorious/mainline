@@ -24,6 +24,7 @@ require "gitorious/view/repository_helper"
 require "gitorious/view/project_helper"
 require "gitorious/view/ui_helper"
 require "gitorious/view/dolt_url_helper"
+require "gitorious/view/site_helper"
 require "gitorious/dolt/repository_resolver"
 
 views = Rails.root + "app/views/ui3"
@@ -47,6 +48,7 @@ module DoltViewHelpers
   include Gitorious::View::UIHelper
   include Gitorious::View::ProjectHelper
   include Gitorious::View::RepositoryHelper
+  include Gitorious::View::SiteHelper
   include ::Dolt::View::SmartBlobRenderer
 end
 

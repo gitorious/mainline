@@ -23,6 +23,7 @@ module Gitorious
   class RepositoryBrowser < ::Dolt::Sinatra::Base
     include ::Dolt::View::MultiRepository
     include Gitorious::View::DoltUrlHelper
+    include Gitorious::View::SiteHelper
 
     def self.instance; @instance; end
     def self.instance=(instance); @instance = instance; end
@@ -36,8 +37,8 @@ module Gitorious
 
     get "/*/source/*:*" do
       repo, ref, path = params[:splat]
-      env["dolt"] = { :repository => repo }
-      tree_entry(repo, ref, path)
+      configure_env(repo)
+      tree_entry(repo, ref, path, env_data)
     end
 
     get "/*/source/*" do
@@ -46,8 +47,8 @@ module Gitorious
 
     get "/*/raw/*:*" do
       repo, ref, path = params[:splat]
-      env["dolt"] = { :repository => repo }
-      raw(repo, ref, path)
+      configure_env(repo)
+      raw(repo, ref, path, env_data)
     end
 
     get "/*/raw/*" do
@@ -56,8 +57,8 @@ module Gitorious
 
     get "/*/blame/*:*" do
       repo, ref, path = params[:splat]
-      env["dolt"] = { :repository => repo }
-      blame(repo, ref, path)
+      configure_env(repo)
+      blame(repo, ref, path, env_data)
     end
 
     get "/*/blame/*" do
@@ -66,8 +67,8 @@ module Gitorious
 
     get "/*/history/*:*" do
       repo, ref, path = params[:splat]
-      env["dolt"] = { :repository => repo }
-      history(repo, ref, path, (params[:commit_count] || 20).to_i)
+      configure_env(repo)
+      history(repo, ref, path, (params[:commit_count] || 20).to_i, env_data)
     end
 
     get "/*/history/*" do
@@ -76,20 +77,20 @@ module Gitorious
 
     get "/*/refs" do
       repo = params[:splat].first
-      env["dolt"] = { :repository => repo }
-      refs(repo)
+      configure_env(repo)
+      refs(repo, env_data)
     end
 
     get "/*/tree_history/*:*" do
       repo, ref, path = params[:splat]
-      env["dolt"] = { :repository =>  repo }
-      tree_history(repo, ref, path)
+      configure_env(repo)
+      tree_history(repo, ref, path, 1, env_data)
     end
 
     get %r{/(.*)/archive/(.*)?\.(tar\.gz|tgz|zip)} do
       begin
         repo, ref, format = params[:captures]
-        env["dolt"] = { :repository =>  repo }
+        configure_env(repo)
         filename = actions.archive(repo, ref, format)
         add_sendfile_headers(filename, format)
         body("")
@@ -117,6 +118,19 @@ module Gitorious
       repo = args.shift
       ref = resolve_repository(repo).head_candidate_name
       redirect("/#{repo}/#{action}/#{ref}:" + args.join)
+    end
+
+    def configure_env(repo_slug)
+      env["dolt"] = { :repository => repo_slug }
+      begin
+        verify_site_context!(Project.find_by_slug(repo_slug.split("/").first))
+      rescue UnexpectedSiteContext => err
+        redirect(err.target)
+      end
+    end
+
+    def env_data
+      { :env => env, :current_site => current_site }
     end
   end
 end
