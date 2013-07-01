@@ -1,68 +1,72 @@
 #!/usr/bin/env ruby
 
-require "highline/import"
+require File.expand_path(File.dirname(__FILE__) + "/setup")
+Gitorious::CLI.new.run_with_gitorious_environment do
 
-if ARGV.length < 2
-  puts <<-EOF
+  require "highline/import"
+
+  if ARGV.length < 2
+    puts <<-EOF
 This script should be run with the old and new config file names:
     bin/upgrade-gitorious3-config config/gitorious.yml config/gitorious3.yml
 
 If you choose a different output file name than config/gitorious.yml, you
 must manually put it in place afterwards
   EOF
-  exit 1
-end
-
-require "yaml"
-
-if !File.exists?(ARGV[0])
-  puts "File #{ARGV[0]} can not be found. Unable to continue"
-  exit 1
-end
-
-if File.exists?(ARGV[1])
-  question = "File #{ARGV[1]} already exists.\n" +
-    "Are you sure you want to replace it? (y/n)"
-  exit 1 if ask(question).strip != "y"
-  `cp #{ARGV[1]} #{ARGV[1]}.bu-#{Time.now.to_i}`
-end
-
-old = YAML.load_file(ARGV[0])
-
-def optional(settings, setting)
-  return "##{setting}:" if !settings.key?(setting)
-  "#{setting}: #{settings[setting]}"
-end
-
-def unported(settings, setting)
-  if settings.key?(setting)
-    puts "WARNING! #{setting} configuration not automatically ported,\n" +
-      "please edit the setting manually."
-  end
-end
-
-all = (old["test"] || {}).merge(old["development"] || {}).merge(old["production"] || {})
-
-File.open(ARGV[1], "w") do |f|
-  if old["production"]["messaging_adapter"] == "stomp"
-    puts "WARNING! Messaging adapter stomp is no longer supported. \n" +
-      "Refer to the Readme for information on running Redis and Resque. \n" +
-      "Temporarily using the sync adapter, please update gitorious.yml \n" +
-      "once Redis is set up properly."
+    exit 1
   end
 
-  unported(all, "licenses")
-  unported(all, "post_load")
-  unported(all, "additional_footer_links")
-  unported(all, "common_stylesheets")
-  unported(all, "external_stylesheets")
+  require "yaml"
 
-  puts "Please be advised that only your production settings are ported"
-  puts "If you need to port your development settings as well, you must"
-  puts "do so manually. Refer to the generated configuration file for"
-  puts "available settings."
+  if !File.exists?(ARGV[0])
+    puts "File #{ARGV[0]} can not be found. Unable to continue"
+    exit 1
+  end
 
-  f.puts <<-CONFIG
+  if File.exists?(ARGV[1])
+    question = "File #{ARGV[1]} already exists.\n" +
+      "Are you sure you want to replace it? (y/n)"
+    exit 1 if ask(question).strip != "y"
+    `cp #{ARGV[1]} #{ARGV[1]}.bu-#{Time.now.to_i}`
+  end
+
+  old = YAML.load_file(ARGV[0])
+
+  def optional(settings, setting)
+    return "##{setting}:" if !settings.key?(setting)
+    "#{setting}: #{settings[setting]}"
+  end
+
+  def unported(settings, setting)
+    if settings.key?(setting)
+      puts "WARNING! #{setting} configuration not automatically ported,\n" +
+        "please edit the setting manually."
+    end
+  end
+
+  all = (old["test"] || {}).merge(old["development"] || {}).merge(old["production"] || {})
+
+
+  File.open(ARGV[1], "w") do |f|
+    if old["production"]["messaging_adapter"] == "stomp"
+      puts "WARNING! Messaging adapter stomp is no longer supported. \n" +
+        "Refer to the Readme for information on running Redis and Resque. \n" +
+        "Temporarily using the sync adapter, please update gitorious.yml \n" +
+        "once Redis is set up properly."
+    end
+
+    unported(all, "licenses")
+    unported(all, "post_load")
+    unported(all, "additional_footer_links")
+    unported(all, "common_stylesheets")
+    unported(all, "external_stylesheets")
+
+    puts "Please be advised that only your production settings are ported"
+    puts "If you need to port your development settings as well, you must"
+    puts "do so manually. Refer to the generated configuration file for"
+    puts "available settings."
+
+    f.puts <<-CONFIG
 # The Gitorious configuration file controls several aspects of your
 # setup. While the default settings will work to some extent, you are
 # strongly recommended to review these settings upon initial
@@ -549,5 +553,6 @@ development:
 # Test configuration can be found in test/gitorious.yml
   CONFIG
 
-  puts "config/gitorious.yml upgraded!"
+    puts "config/gitorious.yml upgraded!"
+  end
 end
