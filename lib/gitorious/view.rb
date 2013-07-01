@@ -40,5 +40,28 @@ module Gitorious
     def self.blog_url
       Gitorious::Configuration.get("discussion_url", "http://blog.gitorious.org")
     end
+
+    def self.footer_links(app)
+      return @footer_links if @footer_links && Rails.env.production?
+      if subdomain = app.current_site.subdomain
+        @footer_links = Gitorious::Configuration.get("#{subdomain}_footer_links") do
+          global_footer_links(app)
+        end
+      else
+        @footer_links = global_footer_links(app)
+      end
+    end
+
+    private
+    def self.global_footer_links(app)
+      Gitorious::Configuration.get("footer_links") do
+        [["About Gitorious", app.about_path],
+          ["Discussion group", "http://groups.google.com/group/gitorious"],
+          ["Blog", "http://blog.gitorious.org"],
+          ["Terms of Service", "http://en.gitorious.org/tos"],
+          ["Privacy Policy", "http://en.gitorious.org/privacy_policy"]] +
+          Gitorious::Configuration.get("additional_footer_links", [])
+      end
+    end
   end
 end

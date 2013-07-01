@@ -380,6 +380,23 @@ archive_work_dir: "/var/git/tarballs-work"
 # the YAML list syntax.
 #additional_view_paths:
 
+# The links to put in the footer. This is an array of tuples (arrays with
+# 2 entries), where the first is the link text and the second is the link
+# URL. If no footer links are provided, the default set will be used.
+# While additional_footer_links are deprecated, they will also be included
+# if set.
+#footer_links:
+#  - - Some text
+#    - http://somewhere.com
+#  ...
+
+# If using sites, you can configure footer links specifically for site
+# subdomains as well. Note that if you do, they will override anything in
+# footer_links, so any that are shared must be manually shared.
+#<site subdomain>_footer_links:
+#  - - Name
+#    - Url
+
 #########################################################################
 # Deprecated Gitorious 2 UI theming settings. These settings will only  #
 # work in the old UI, and as the old UI is phased out, they will        #

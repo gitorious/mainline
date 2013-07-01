@@ -16,21 +16,14 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
 %><div class="row">
-  <div class="span2">
-    <ul>
-      <li><a href="/about">About Gitorious</a></li>
-      <li><a href="http://groups.google.com/group/gitorious">Discussion group</a></li>
-    </ul>
-  </div>
-  <div class="span2">
-    <ul>
-      <li><a href="http://blog.gitorious.org">Blog</a></li>
-      <li><a href="http://en.gitorious.org/tos">Terms of Service</a></li>
-    </ul>
-  </div>
-  <div class="span2">
-    <ul>
-      <li><a href="http://en.gitorious.org/privacy_policy">Privacy Policy</a></li>
-    </ul>
-  </div>
+  <% links = Gitorious::View.footer_links(self)
+     links.each_slice((links.length / 3.0).ceil) do |slice| %>
+    <div class="span2">
+      <ul>
+        <% slice.each do |link| %>
+          <li><a href="<%= link[1] %>"><%= link[0] %></a></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 </div>
