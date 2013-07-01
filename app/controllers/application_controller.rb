@@ -24,6 +24,7 @@ require "gitorious/view/site_helper"
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
+require	"breadcrumb"
 class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include RoutingHelper

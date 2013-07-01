@@ -25,6 +25,9 @@
 require "openid"
 require "yadis"
 require "gitorious"
+require "gitorious/authentication/configuration"
+require "gitorious/authentication/kerberos_authentication"
+require "gitorious/authentication/credentials"
 
 # This controller handles the login/logout function of the site.
 class SessionsController < ApplicationController
