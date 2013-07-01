@@ -21,7 +21,7 @@
     <meta charset="utf-8">
     <title><%= @title %> - <%= current_site.title %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <% Gitorious.stylesheets.each do |stylesheet| %>
+    <% Gitorious::View.theme_stylesheets(current_site).each do |stylesheet| %>
       <link href="<%= stylesheet %>" rel="stylesheet" type="text/css">
     <% end %>
     <%= content_for(:head) %>
@@ -72,7 +72,7 @@
         data-gts-env-commit-url-template="<%= project_repository_commit_path(repo.project, repo, "%oid%").sub("%oid%", "\#{oid}") %>">
       </script>
     <% end %>
-    <% Gitorious.javascripts.each do |javascript| %>
+    <% Gitorious::View.theme_javascripts(current_site).each do |javascript| %>
       <script src="<%= javascript %>"></script>
     <% end %>
   </body>

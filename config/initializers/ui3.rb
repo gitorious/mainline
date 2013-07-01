@@ -15,6 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious/view"
 
 def cached(file)
   ctime = (Rails.root + "public" + file).ctime.to_i
@@ -22,8 +23,8 @@ def cached(file)
 end
 
 def add_prod_assets
-  Gitorious.javascripts << cached("ui3/dist/gitorious3.min.js")
-  Gitorious.stylesheets.concat([
+  Gitorious::View.javascripts << cached("ui3/dist/gitorious3.min.js")
+  Gitorious::View.stylesheets.concat([
     cached("ui3/lib/bootstrap/css/bootstrap.min.css"),
     cached("ui3/lib/bootstrap/css/bootstrap-responsive.min.css"),
     cached("ui3/dist/gitorious3.min.css")
@@ -39,7 +40,7 @@ else
     $stderr.puts("    git submodule update --init --recursive\n")
     add_prod_assets
   else
-    Gitorious.javascripts.concat([
+    Gitorious::View.javascripts.concat([
       "/ui3/js/lib/culljs/lib/cull.js",
       "/ui3/js/lib/dome/lib/dome.js",
       "/ui3/js/lib/dome/lib/event.js",
@@ -70,12 +71,12 @@ else
       "/ui3/js/src/components/rails-links.js",
       "/ui3/js/src/gitorious.js",
     ])
-    Gitorious.stylesheets.concat([
+    Gitorious::View.stylesheets.concat([
       "/ui3/lib/bootstrap/css/bootstrap.min.css",
       "/ui3/lib/bootstrap/css/bootstrap-responsive.min.css",
       "/ui3/css/gitorious.css"
     ])
   end
 
-  Gitorious.javascripts << "/ui3/js/src/logger.js"
+  Gitorious::View.javascripts << "/ui3/js/src/logger.js"
 end

@@ -42,25 +42,52 @@ module Gitorious
     end
 
     def self.footer_links(app)
-      return @footer_links if @footer_links && Rails.env.production?
-      if subdomain = app.current_site.subdomain
-        @footer_links = Gitorious::Configuration.get("#{subdomain}_footer_links") do
-          global_footer_links(app)
-        end
-      else
-        @footer_links = global_footer_links(app)
-      end
-    end
-
-    private
-    def self.global_footer_links(app)
-      Gitorious::Configuration.get("footer_links") do
+      @footer_links ||= {}
+      sd = app.current_site.subdomain
+      return @footer_links[sd] if @footer_links[sd] && Rails.env.production?
+      @footer_links[sd] = site_overridable_config(app.current_site, "footer_links") do
         [["About Gitorious", app.about_path],
           ["Discussion group", "http://groups.google.com/group/gitorious"],
           ["Blog", "http://blog.gitorious.org"],
           ["Terms of Service", "http://en.gitorious.org/tos"],
-          ["Privacy Policy", "http://en.gitorious.org/privacy_policy"]] +
-          Gitorious::Configuration.get("additional_footer_links", [])
+          ["Privacy Policy", "http://en.gitorious.org/privacy_policy"]]
+      end + Gitorious::Configuration.get("additional_footer_links", [])
+    end
+
+    def self.javascripts
+      @javascripts ||= []
+    end
+
+    def self.stylesheets
+      @stylesheets ||= []
+    end
+
+    def self.theme_javascripts(site)
+      @themejs ||= {}
+      return @themejs[site.subdomain] if @themejs[site.subdomain] && Rails.env.production?
+      @themejs[site.subdomain] = javascripts
+      theme = site_overridable_config(site, "theme_js")
+      @themejs[site.subdomain] = @themejs[site.subdomain] + [theme] if theme
+      @themejs[site.subdomain]
+    end
+
+    def self.theme_stylesheets(site)
+      @themecss ||= {}
+      return @themecss[site.subdomain] if @themecss[site.subdomain] && Rails.env.production?
+      @themecss[site.subdomain] = stylesheets
+      theme = site_overridable_config(site, "theme_css")
+      @themecss[site.subdomain] = @themecss[site.subdomain] + [theme] if theme
+      @themecss[site.subdomain]
+    end
+
+    private
+    def self.site_overridable_config(site, setting, &block)
+      if subdomain = site.subdomain
+        Gitorious::Configuration.get("#{subdomain}_#{setting}") do
+          Gitorious::Configuration.get(setting, &block)
+        end
+      else
+        Gitorious::Configuration.get(setting, &block)
       end
     end
   end

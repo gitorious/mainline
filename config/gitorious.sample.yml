@@ -397,6 +397,19 @@ archive_work_dir: "/var/git/tarballs-work"
 #  - - Name
 #    - Url
 
+# Theme - extend the new Gitorious UI with an additional CSS and/or
+# JavaScript path. Gitorious does not check that the corresponding files
+# exist on disk, meaning that you can put them anywhere, as long as you
+# configure your front-end webserver to serve the files at the configured
+# paths.
+#theme_css: /some/file.css
+#theme_js: /some/script.js
+
+# If using sites, you can configure a theme specifically for site subdomains
+# as well. If you do, they will override the global theme.
+#<site subdomain>_theme_css: /mysite/theme/style.css
+#<site subdomain>_theme_js: /mysite/theme/script.js
+
 #########################################################################
 # Deprecated Gitorious 2 UI theming settings. These settings will only  #
 # work in the old UI, and as the old UI is phased out, they will        #
