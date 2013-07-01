@@ -35,8 +35,8 @@ module Gitorious
         }
 
         content = flash.inject("") do |html, f|
-          "#{html}<div class=\"alert #{types[f[0]]}\"><strong>#{f[1]}" +
-            "</strong></div>".html_safe
+          msg = f[1] =~ /<strong/ ? f[1] : "<strong>#{f[1]}</strong>"
+          "#{html}<div class=\"alert #{types[f[0]]}\">#{msg}</div>".html_safe
         end
 
         return "" if content == ""
