@@ -60,6 +60,11 @@ GEM
     addressable (2.2.8)
     arel (3.0.2)
     backports (3.1.1)
+    better_errors (0.9.0)
+      coderay (>= 1.0.0)
+      erubis (>= 2.6.6)
+    binding_of_caller (0.7.2)
+      debug_inspector (>= 0.0.1)
     bouncy-castle-java (1.5.0146.1)
     builder (3.0.4)
     capillary (1.0.2)
@@ -74,10 +79,12 @@ GEM
     childprocess (0.3.6)
       ffi (~> 1.0, >= 1.0.6)
     cocaine (0.4.2)
+    coderay (1.0.9)
     coercible (0.2.0)
       backports (~> 3.0, >= 3.1.0)
       descendants_tracker (~> 0.0.1)
     daemons (1.1.0)
+    debug_inspector (0.0.2)
     descendants_tracker (0.0.1)
     diff-lcs (1.1.2)
     dolt (0.20.0)
@@ -306,6 +313,8 @@ DEPENDENCIES
   SystemTimer (~> 1.2)
   activerecord-jdbcmysql-adapter
   acts-as-taggable-on (~> 2.3)
+  better_errors
+  binding_of_caller
   capillary (~> 1.0.1)
   capybara (= 1.0.1)
   daemons (= 1.1.0)
