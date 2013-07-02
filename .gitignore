@@ -19,7 +19,6 @@ data/hooks/custom-update
 db/sphinx/*
 log/
 public/javascripts/all.js
-public/javascripts/capillary.js
 public/stylesheets/gts-common.css
 public/images/sites/*
 public/stylesheets/all.css

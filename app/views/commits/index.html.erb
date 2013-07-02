@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -17,37 +17,33 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-
-<% @title = t("views.logs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
+<% @title = t("views.logs.title_clean", :repo_url => h(repository.url_path), :ref => h(ref)) -%>
 <% content_for(:head) do %>
   <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url,
         :title => atom_auto_discovery_title) -%>
 <% end %>
 
-  <%= partial("repositories/repo_header", {
-          :repository => repository,
-          :project => repository.project,
-          :ref => ref,
-          :app => Gitorious,
-          :active => :commits
-        }) %>
+<%= partial("repositories/repo_header", {
+        :repository => repository,
+        :project => repository.project,
+        :ref => ref,
+        :app => Gitorious,
+        :active => :commits
+      }) %>
 
 <div class="container">
-
-<ul class="nav nav-tabs">
+  <div class="gts-ref-selector-ph"></div>
+  <ul class="nav nav-tabs">
     <li class="active"><a>Log</a></li>
     <li>
-      <%= link_to "Graph #{@ref}", project_repository_graph_in_ref_path(@project,
-                                                                  @repository, params[:branch])+"?page=#{page}" %>
+      <%= link_to("Graph <span class=\"gts-oid\">#{ref}</span>".html_safe,
+                  project_repository_graph_in_ref_path(repository.project, repository, params[:branch])+"?page=#{page}") %>
     </li>
   </ul>
+  <h1><%= t("views.logs.title", :repo_url => h(repository.url_path), :ref => h(ref)).html_safe -%></h1>
 
-<h1>
-  <%= t("views.logs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
-</h1>
-
-<%= cache([[@project, @repository], :commits, @ref, commits.current_page], {:expires_in => 10.minutes}) do -%>
-  <%= render(:partial => "log", :locals => {
+  <%= cache([[repository.project, repository], :commits, ref, commits.current_page], { :expires_in => 10.minutes }) do -%>
+    <%= render(:partial => "log", :locals => {
             :repository => repository,
             :ref => ref,
             :commits => commits,
@@ -55,7 +51,5 @@
             :total_pages => total_pages,
             :atom_auto_discovery_url => atom_auto_discovery_url,
             :atom_auto_discovery_title => atom_auto_discovery_title}) -%>
-<% end -%>
-
-
+  <% end -%>
 </div>

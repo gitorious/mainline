@@ -315,7 +315,8 @@
         :delete_account => "Delete account"
       },
       :logs => {
-        :title => "Commits in %{repo_url}:%{ref}",
+        :title_clean => "Commits in %{repo_url}:%{ref}",
+        :title => "Commits in %{repo_url}:<span class=\"gts-oid\">%{ref}</span>",
         :project => "Project",
         :maintainer => "Maintainer",
         :head_tree => "HEAD tree",

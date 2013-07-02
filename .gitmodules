@@ -1,6 +1,3 @@
-[submodule "public/javascripts/lib/capillary"]
-        path = public/javascripts/lib/capillary
-        url = https://git.gitorious.org/capillary/capillary-js.git
 [submodule "public/javascripts/lib/raphael"]
         path = public/javascripts/lib/raphael
         url = https://github.com/DmitryBaranovskiy/raphael.git

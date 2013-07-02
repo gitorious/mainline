@@ -12,7 +12,6 @@ namespace :assets do
     rm("public/stylesheets/all.css")
     rm("public/javascripts/gts-*.js")
     rm("public/javascripts/all.js")
-    rm("public/javascripts/capillary.js")
     rm("public/**/*/gts-*.*")
     puts "Removed generated stylesheets and javascripts"
   end

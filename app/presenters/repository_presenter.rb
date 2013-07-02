@@ -47,6 +47,7 @@ class RepositoryPresenter
   def merge_requests_enabled; repository.merge_requests_enabled; end
   def owner_id; repository.owner_id; end
   def to_key; repository.to_key; end
+  def url_path; repository.url_path; end
 
   def show_clone_list_search?
     group_clone_count >= 5 || user_clone_count >= 5

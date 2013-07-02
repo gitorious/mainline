@@ -72,6 +72,7 @@ else
       "/ui3/js/src/components/rails-links.js",
       "/ui3/js/src/components/clone-name-suggestion.js",
       "/ui3/js/src/components/loading.js",
+      "/ui3/js/src/components/oid-ref-interpolator.js",
       "/ui3/js/src/gitorious.js",
     ])
     Gitorious::View.stylesheets.concat([
