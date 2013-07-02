@@ -1,5 +1,5 @@
-* Gitorious 3 [10/14]
-** TODO Extract new markdown_hint function (repositories/new)
+* Gitorious 3 [11/14]
+** DONE Extract new markdown_hint function (repositories/new)
 ** DONE enable_merge_requests / merge_requests_enabled - make sure it defaults to true
 ** DONE In repositories/show, make sure the question mark toggles the repo help
 ** DONE Fix up the repositories/edit page with new UI
@@ -16,7 +16,7 @@
 ** DONE Theme CSS
 ** DONE Theme JS
 ** DONE Various JS errors (supressed click event)
-* Views to port to UI3 [0/76]
+* Views to port to UI3 [2/76]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit
 ** TODO Admin::ProjectProposals#index
@@ -31,13 +31,13 @@
 ** TODO CommitComments#index
 ** TODO CommitDiffs#index
 ** TODO CommitDiffs#compare
-** TODO Commits#index
+** DONE Commits#index
 ** TODO Commits#show
 ** TODO Committerships#new
 ** TODO ContentMemberships#index
 ** TODO Events#index
 ** TODO Favorites#index
-** TODO Graphs#index
+** DONE Graphs#index
 ** TODO Groups#index
 ** TODO Groups#new
 ** TODO Groups#show
