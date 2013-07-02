@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -20,12 +20,12 @@
 #++
 
 namespaced_atom_feed do |feed|
-  feed.title("Gitorious: #{@repository.url_path} activity")
-  feed.updated((@events.blank? ? Time.now : @events.first.created_at))
+  feed.title("Gitorious: #{repository.url_path} activity")
+  feed.updated((events.blank? ? Time.now : events.first.created_at))
 
-  @events.each do |event|
+  events.each do |event|
     action, body, category = action_and_body_for_event(event)
-    item_url = project_repository_commits_path(@repository.project, @repository, :only_path => false)
+    item_url = project_repository_commits_path(repository.project, repository, :only_path => false)
     feed.entry(event, :url => item_url) do |entry|
       entry.title("#{h(event.actor_display)} #{strip_tags(action)}")
 entry_content = <<-EOS
@@ -37,7 +37,7 @@ EOS
         entry_content << "<ul>"
         event.events.commits.each do |commit_event|
           entry_content << %Q{<li>#{h(commit_event.git_actor.name)} }
-          commit_url = project_repository_commit_path(@repository.project, @repository, commit_event.data)
+          commit_url = project_repository_commit_path(repository.project, repository, commit_event.data)
           entry_content << %Q{#{link_to(h(commit_event.data[0,7]), commit_url)}}
           entry_content << %Q{: #{truncate(h(commit_event.body), :length => 75)}</li>}
         end

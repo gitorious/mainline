@@ -48,33 +48,6 @@ class RepositoriesController < ApplicationController
     end
   end
 
-  def show
-    repository = find_repository
-
-    page = JustPaginate.page_value(params[:page])
-    events, total_pages = JustPaginate.paginate(page, Event.per_page, repository.events.count) do |index_range|
-      repository.events.all(:offset => [index_range.first, 0].max, :limit => index_range.count, :order => "created_at desc")
-    end
-
-    response.headers["Refresh"] = "5" unless repository.ready
-
-    respond_to do |format|
-      format.html do
-        render(:action => :show, :layout => "ui3/layouts/application", :locals => {
-            :repository => RepositoryPresenter.new(repository),
-            :ref => repository.head_candidate_name,
-            :events => events,
-            :page => page,
-            :total_pages => total_pages,
-            :atom_auto_discovery_url => project_repository_path(repository.project, repository, :format => :atom),
-            :atom_auto_discovery_title => "#{repository.title} ATOM feed"
-          })
-      end
-      format.xml  { render :xml => repository }
-      format.atom {  }
-    end
-  end
-
   def new
     outcome = PrepareProjectRepository.new(self, @project, current_user).execute({})
     params[:private] = Gitorious.repositories_default_private?

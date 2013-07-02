@@ -1,4 +1,4 @@
-* Gitorious 3 [11/14]
+* Gitorious 3 [11/15]
 ** DONE Extract new markdown_hint function (repositories/new)
 ** DONE enable_merge_requests / merge_requests_enabled - make sure it defaults to true
 ** DONE In repositories/show, make sure the question mark toggles the repo help
@@ -10,6 +10,7 @@
 ** TODO Activities needs to be rendered prettier
 ** TODO Make the repository source code tab the default
 ** TODO Fix ref selector visual glitch in Chrome
+** TODO Expose "resend repo creation message"
 ** DONE Clone page
 ** DONE NameErrors in production
 ** DONE Footer (links)

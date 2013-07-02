@@ -234,15 +234,6 @@ class RoutingTest < ActionController::TestCase
   context "Repository routing" do
     context "by projects" do
       should "recognize /projectname/reponame" do
-        assert_recognizes({ :controller => "repositories",
-                            :action => "show",
-                            :project_id => "gitorious",
-                            :id => "mainline",
-                          }, {
-                            :path => "/gitorious/mainline",
-                            :method => :get
-                          })
-
         assert_recognizes({ :controller => "merge_requests",
                             :action => "index",
                             :project_id => "gitorious",
@@ -252,27 +243,21 @@ class RoutingTest < ActionController::TestCase
                             :method => :get
                           })
 
-        assert_generates("/gitorious/mainline", {
-                           :controller => "repositories",
-                           :action => "show",
-                           :project_id => "gitorious",
-                           :id => "mainline",
-                         })
+        assert_recognizes({ :controller => "repository_activities",
+            :action => "index",
+            :project_id => "gitorious",
+            :id => "mainline",
+          }, {
+            :path => "/gitorious/mainline/activities",
+            :method => :get
+          })
 
-        assert_generates("/gitorious/mainline/trees", {
-                           :controller => "trees",
-                           :action => "index",
-                           :project_id => "gitorious",
-                           :repository_id => "mainline",
-                         })
-
-        assert_generates("/gitorious/mainline/trees/foo/bar/baz", {
-                           :controller => "trees",
-                           :action => "show",
-                           :project_id => "gitorious",
-                           :repository_id => "mainline",
-                           :branch_and_path => "foo/bar/baz"
-                         })
+        assert_generates("/gitorious/mainline/activities", {
+            :controller => "repository_activities",
+            :action => "index",
+            :project_id => "gitorious",
+            :id => "mainline"
+          })
       end
 
       should "recognize /projectname/repositories" do
@@ -293,29 +278,13 @@ class RoutingTest < ActionController::TestCase
                          })
       end
 
-      # TODO: There's nothing reserved here?
-      should "recognize /projectname/starts-with-reserved-name" do
-        assert_recognizes({ :controller => "repositories",
-                            :action => "show",
-                            :project_id => "myproject",
-                            :id => "users-test-repo",
-                          }, "/myproject/users-test-repo")
-
-        assert_generates("/myproject/users-test-repo", {
-                           :controller => "repositories",
-                           :action => "show",
-                           :project_id => "myproject",
-                           :id => "users-test-repo",
-                         })
-      end
-
       should "recognize /projectname/reponame with explicit format" do
-        assert_recognizes({ :controller => "repositories",
-                            :action => "show",
+        assert_recognizes({ :controller => "repository_activities",
+                            :action => "index",
                             :project_id => "gitorious",
                             :format => "xml",
                             :id => "mainline",
-                          }, "/gitorious/mainline.xml")
+                          }, "/gitorious/mainline/activities.xml")
 
         assert_recognizes({ :controller => "merge_requests",
                             :action => "index",
@@ -324,9 +293,9 @@ class RoutingTest < ActionController::TestCase
                             :repository_id => "mainline",
                           }, "/gitorious/mainline/merge_requests.xml")
 
-        assert_generates("/gitorious/mainline.xml", {
-                           :controller => "repositories",
-                           :action => "show",
+        assert_generates("/gitorious/mainline/activities.xml", {
+                           :controller => "repository_activities",
+                           :action => "index",
                            :project_id => "gitorious",
                            :id => "mainline",
                            :format => "xml",

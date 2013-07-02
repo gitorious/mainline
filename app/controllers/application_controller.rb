@@ -24,7 +24,7 @@ require "gitorious/view/site_helper"
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
-require	"breadcrumb"
+require "breadcrumb"
 class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include RoutingHelper
@@ -132,18 +132,13 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_access_to(thing)
-    if Gitorious.private_repositories?
-      return authorize_access_with_private_repositories_enabled(thing)
-    else
-      return thing
-    end
+    return thing if !Gitorious.private_repositories?
+    authorize_access_with_private_repositories_enabled(thing)
   end
 
   def authorize_access_with_private_repositories_enabled(thing)
-    if !can_read?(current_user, thing)
-      raise Gitorious::Authorization::UnauthorizedError.new(request.fullpath)
-    end
-    return thing
+    return thing if can_read?(current_user, thing)
+    raise Gitorious::Authorization::UnauthorizedError.new(request.fullpath)
   end
 
   def find_project

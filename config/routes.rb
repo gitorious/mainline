@@ -241,7 +241,7 @@ Gitorious::Application.routes.draw do
     #   /gitorious/mainline/edit
     resources(:repositories, {
                 :path => "/",
-                :only => [:show, :edit, :update, :destroy]
+                :only => [:edit, :update, :destroy]
               }) do
       member do
         post "/create_clone" => "repository_clones#create"
@@ -253,13 +253,13 @@ Gitorious::Application.routes.draw do
         get "/config" => "repository_configurations#show"
         get "/ownership/edit" => "repository_ownerships#edit", :as => :transfer_ownership
         put "/ownership" => "repository_ownerships#update"
+        get "/activities" => "repository_activities#index", :as => :activities
       end
 
       resources :comments
 
       get "/comments/commit/:sha" => "comments#commit", :as => :commit_comment
       match "/comments/preview" => "comments#preview", :as => :comments_preview, :via => [:get, :post]
-
       match "/community", :controller => :repository_community, :action => :index
 
       resources :merge_requests do

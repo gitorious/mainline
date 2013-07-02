@@ -69,70 +69,6 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
   end
 
-  # context "paginating repository events" do
-  #   setup do
-  #     @params = {
-  #       :project_id => repositories(:johans).project.to_param,
-  #       :id => repositories(:johans).to_param
-  #     }
-  #   end
-
-  #   should_scope_pagination_to(:show, Event)
-  # end
-
-  context "#show" do
-    setup do
-      @project = projects(:johans)
-      @repo = @project.repositories.mainlines.first
-    end
-
-    should "GET projects/1/repositories/1 is successful" do
-      @repo.stubs(:git).returns(stub_everything("git mock"))
-      do_show_get(@repo)
-      assert_response :success
-    end
-
-    should "scopes GET :show to the project_id" do
-      repo = repositories(:moes)
-      repo.stubs(:git).returns(stub_everything("git mock"))
-      do_show_get(repo, @project)
-      assert_response 404
-    end
-
-    should "issues a Refresh header if repo is not ready yet" do
-      @repo.stubs(:ready).returns(false)
-      do_show_get(@repo)
-      assert_response :success
-      assert_not_nil @response.headers["Refresh"]
-    end
-
-    should "find the project repository" do
-      get(:show, {
-          :project_id => repositories(:johans).project.to_param,
-          :id => repositories(:johans).to_param
-        })
-
-      assert_response :success
-      assert_match repositories(:johans).project.slug, @response.body
-      assert_match repositories(:johans).name, @response.body
-    end
-  end
-
-  context "#show as XML" do
-    setup do
-      @project = projects(:johans)
-    end
-
-    should "GET projects/1/repositories/1.xml is successful" do
-      repo = @project.repositories.mainlines.first
-      repo.stubs(:has_commits?).returns(false)
-      repo.stubs(:git).returns(stub_everything("git mock"))
-      get :show, :project_id => @project.to_param, :id => repo.to_param, :format => "xml"
-      assert_response :success
-      assert_equal repo.to_xml, @response.body
-    end
-  end
-
   context "#destroy" do
     setup do
       @project = projects(:johans)
@@ -398,38 +334,6 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
   end
 
-  context "with committer (not owner) logged in" do
-    should_eventually "GET projects/1/repositories/3 and have merge request link" do
-      login_as :mike
-      project = projects(:johans)
-      repository = project.repositories.clones.first
-      committership = repository.committerships.new
-      committership.committer = users(:mike)
-      committership.permissions = Committership::CAN_REVIEW | Committership::CAN_COMMIT
-      committership.save!
-
-      Project.expects(:find_by_slug!).with(project.slug).returns(project)
-      repository.stubs(:has_commits?).returns(true)
-
-      get :show, :project_id => project.to_param, :id => repository.to_param
-      assert_equal nil, flash[:error]
-      assert_select("#sidebar ul.links li a[href=?]",
-        new_project_repository_merge_request_path(project, repository),
-        :content => "Request merge")
-    end
-  end
-
-   should "not display git:// link when disabling the git daemon" do
-     Gitorious.stubs(:git_daemon).returns(nil)
-     project = projects(:johans)
-     repository = project.repositories.mainlines.first
-     repository.update_attribute(:ready, true)
-
-    get :show, :project_id => project.to_param, :id => repository.to_param
-
-    assert_no_match(/git:\/\//, @response.body)
-  end
-
   context "With private projects" do
     setup do
       enable_private_repositories
@@ -468,17 +372,6 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "allow authorize users to get user repositories" do
       login_as :johan
       get :index, :user_id => users(:johan).to_param, :project_id => @project.to_param
-      assert_response 200
-    end
-
-    should "disallow unauthorized users to show repository" do
-      get :show, :project_id => @project.to_param, :id => @repository.to_param
-      assert_response 403
-    end
-
-    should "allow authorized users to get show repository" do
-      login_as :johan
-      get :show, :project_id => @project.to_param, :id => @repository.to_param
       assert_response 200
     end
 
@@ -608,26 +501,6 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_equal 2, assigns(:repositories).length
     end
 
-    should "disallow unauthorized users to show repository" do
-      get :show, :project_id => @project.to_param, :id => @repository.to_param
-      assert_response 403
-    end
-
-    should "allow authorized users to get show repository" do
-      login_as :johan
-      get :show, :project_id => @project.to_param, :id => @repository.to_param
-      assert_response 200
-    end
-
-    should "allow site admin to get show repository" do
-      user = users(:mike)
-      user.is_admin = true
-      user.save
-      login_as :mike
-      get :show, :project_id => @project.to_param, :id => @repository.to_param
-      assert_response 200
-    end
-
     should "disallow unauthorized user to edit repository" do
       login_as :mike
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
@@ -689,11 +562,6 @@ class RepositoriesControllerTest < ActionController::TestCase
         assert Repository.last.private?
       end
     end
-  end
-
-  def do_show_get(repos, project = nil)
-    project ||= repos.project
-    get :show, :project_id => project.slug, :id => repos.name
   end
 
   def do_delete(repos)

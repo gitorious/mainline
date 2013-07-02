@@ -22,9 +22,9 @@
         :title => atom_auto_discovery_title) -%>
 <% end %>
 <% if !repository.ready? %>
-  <%= render(:partial => "pending", :locals => { :repository => repository }) %>
+  <%= render(:partial => "repositories/pending", :locals => { :repository => repository }) %>
 <% elsif !repository.has_commits? && committers(repository).include?(current_user) %>
-  <%= render(:partial => "getting_started", :locals => { :repository => repository }) %>
+  <%= render(:partial => "repositories/getting_started", :locals => { :repository => repository }) %>
 <% else %>
   <%= partial("repositories/repo_header", {
           :repository => repository,
