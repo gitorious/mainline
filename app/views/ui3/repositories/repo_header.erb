@@ -43,7 +43,7 @@ ref = defined?(ref) && !ref.nil? ? ref : "HEAD"
         <a href="<%= archive_url(repository.path_segment, ref, "tar.gz") %>" class="btn gts-download" rel="tooltip" data-original-title="Download <%= refname(ref) %> as .tar.gz">
           <i class="icon icon-download"></i> Download
         </a>
-        <a href="<%= favorites_path(:watchable_id => repository.id, :watchable_type => repository.class.name) %>" class="btn"><i class="icon icon-star-empty"></i> Watch</a>
+        <%= link_to "<i class=\"icon icon-star-empty\"></i>Watch".html_safe, favorites_path(:watchable_id => repository.id, :watchable_type => "Repository"), :class => "btn", :method => :post %>
         <a href="<%= clone_project_repository_path(repository.project, repository) %>" class="btn">Clone</a>
       </div>
     </div>
