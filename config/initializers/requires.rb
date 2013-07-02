@@ -25,3 +25,4 @@ require 'rdiscount'
 silence_warnings do
   BlueCloth = RDiscount
 end
+require "gitorious_form_builder"
