@@ -1,0 +1,12 @@
+#!/bin/sh
+
+cd public/ui3/
+git pull origin master
+cd ../..
+mkdir -p public/dist/js
+mkdir -p public/dist/css
+cp public/ui3/dist/gitorious3.min.js public/dist/js/gitorious3.min.js
+cp public/ui3/dist/gitorious3-capillary.min.js public/dist/js/gitorious3-capillary.min.js
+cp public/ui3/dist/gitorious3.min.css public/dist/css/gitorious3.min.css
+cp public/ui3/js/src/logger.js public/dist/js/logger.js
+cp -r public/ui3/lib/bootstrap public/dist/.

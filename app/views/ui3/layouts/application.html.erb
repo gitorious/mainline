@@ -75,5 +75,6 @@
     <% Gitorious::View.theme_javascripts(current_site).each do |javascript| %>
       <script src="<%= javascript %>"></script>
     <% end %>
+    <%= content_for(:footer) %>
   </body>
 </html>

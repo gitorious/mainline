@@ -23,11 +23,11 @@ def cached(file)
 end
 
 def add_prod_assets
-  Gitorious::View.javascripts << cached("ui3/dist/gitorious3.min.js")
+  Gitorious::View.javascripts << cached("dist/js/gitorious3.min.js")
   Gitorious::View.stylesheets.concat([
-    cached("ui3/lib/bootstrap/css/bootstrap.min.css"),
-    cached("ui3/lib/bootstrap/css/bootstrap-responsive.min.css"),
-    cached("ui3/dist/gitorious3.min.css")
+    cached("dist/bootstrap/css/bootstrap.min.css"),
+    cached("dist/bootstrap/css/bootstrap-responsive.min.css"),
+    cached("dist/css/gitorious3.min.css")
   ])
 end
 
@@ -53,6 +53,7 @@ else
       "/ui3/js/lib/timeago/timeago.js",
       "/ui3/js/src/app.js",
       "/ui3/js/src/cache.js",
+      "/ui3/js/src/json-request.js",
       "/ui3/js/src/components/dropdown.js",
       "/ui3/js/src/components/ganalytics.js",
       "/ui3/js/src/components/abbrev.js",
@@ -70,6 +71,7 @@ else
       "/ui3/js/src/components/repository-admin.js",
       "/ui3/js/src/components/rails-links.js",
       "/ui3/js/src/components/clone-name-suggestion.js",
+      "/ui3/js/src/components/loading.js",
       "/ui3/js/src/gitorious.js",
     ])
     Gitorious::View.stylesheets.concat([
@@ -79,5 +81,5 @@ else
     ])
   end
 
-  Gitorious::View.javascripts << "/ui3/js/src/logger.js"
+  Gitorious::View.javascripts << "/dist/js/logger.js"
 end
