@@ -1,11 +1,8 @@
-* Gitorious 3 [9/18]
+* Gitorious 3 [10/14]
 ** TODO Extract new markdown_hint function (repositories/new)
 ** DONE enable_merge_requests / merge_requests_enabled - make sure it defaults to true
 ** DONE In repositories/show, make sure the question mark toggles the repo help
 ** DONE Fix up the repositories/edit page with new UI
-** TODO Fix up the commits controller UI
-** TODO Fix up the diffs controller UI
-** TODO Fix up Merge request UI
 ** DONE Add repository admin menu
 *** Transfer ownership
 *** Delete repo
@@ -13,10 +10,86 @@
 ** TODO Activities needs to be rendered prettier
 ** TODO Make the repository source code tab the default
 ** TODO Fix ref selector visual glitch in Chrome
-** TODO Add Capillary in new design
 ** DONE Clone page
 ** DONE NameErrors in production
 ** DONE Footer (links)
 ** DONE Theme CSS
 ** DONE Theme JS
-** TODO Various JS errors (supressed click event)
+** DONE Various JS errors (supressed click event)
+* Views to port to UI3 [0/76]
+** TODO Admin::Diagnostics#index
+** TODO Admin::OauthSettings#edit
+** TODO Admin::ProjectProposals#index
+** TODO Admin::ProjectProposals#new
+** TODO Admin::Repositories#index
+** TODO Admin::Users#index
+** TODO Admin::Users#new
+** TODO Aliases#index
+** TODO Aliases#new
+** TODO Comments#index
+** TODO Comments#new
+** TODO CommitComments#index
+** TODO CommitDiffs#index
+** TODO CommitDiffs#compare
+** TODO Commits#index
+** TODO Commits#show
+** TODO Committerships#new
+** TODO ContentMemberships#index
+** TODO Events#index
+** TODO Favorites#index
+** TODO Graphs#index
+** TODO Groups#index
+** TODO Groups#new
+** TODO Groups#show
+** TODO Keys#index
+** TODO Keys#new
+** TODO Keys#show
+** TODO Licenses#edit
+** TODO Licenses#show
+** TODO Memberships#edit
+** TODO Memberships#index
+** TODO Memberships#new
+** TODO MergeRequests#edit
+** TODO MergeRequests#index
+** TODO MergeRequests#legacy
+** TODO MergeRequests#new
+** TODO MergeRequests#show
+** TODO MergeRequestVersions#show
+** TODO Messages#index
+** TODO Messages#new
+** TODO Messages#sent
+** TODO Messages#show
+** TODO OpenIdUsers#new
+** TODO Pages#edit
+** TODO Pages#git_access
+** TODO Pages#history
+** TODO Pages#index
+** TODO Pages#no_page
+** TODO Pages#show
+** TODO PasswordResets#new
+** TODO PasswordResets#reset
+** TODO Passwords#edit
+** TODO ProjectMemberships#index
+** TODO Projects#edit
+** TODO Projects#edit_slug
+** TODO Projects#index
+** TODO Projects#new
+** TODO Projects#show
+** TODO Repositories#index
+** TODO Searches#show
+** TODO Sessions#new
+** TODO Site#about{,es,pt-BR}
+** TODO Site#contact
+** TODO Site#dashboard
+** TODO Site#faq{,es,pt-BR}
+** TODO Site#index
+** TODO Site#public_index
+** TODO SiteWikiPages#edit
+** TODO SiteWikiPages#git_access
+** TODO SiteWikiPages#history
+** TODO SiteWikiPages#index
+** TODO SiteWikiPages#show
+** TODO UserActivations#show
+** TODO Users#edit
+** TODO Users#new
+** TODO Users#show
