@@ -234,6 +234,22 @@ class RoutingTest < ActionController::TestCase
   context "Repository routing" do
     context "by projects" do
       should "recognize /projectname/reponame" do
+        assert_generates("/gitorious/mainline", {
+                           :controller => "repositories",
+                           :action => "show",
+                           :project_id => "gitorious",
+                           :id => "mainline",
+                         })
+
+        assert_recognizes({ :controller => "repositories",
+            :action => "show",
+            :project_id => "gitorious",
+            :id => "mainline",
+          }, {
+            :path => "/gitorious/mainline",
+            :method => :get
+          })
+
         assert_recognizes({ :controller => "merge_requests",
                             :action => "index",
                             :project_id => "gitorious",

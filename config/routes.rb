@@ -241,7 +241,7 @@ Gitorious::Application.routes.draw do
     #   /gitorious/mainline/edit
     resources(:repositories, {
                 :path => "/",
-                :only => [:edit, :update, :destroy]
+                :only => [:show, :edit, :update, :destroy]
               }) do
       member do
         post "/create_clone" => "repository_clones#create"
@@ -326,5 +326,7 @@ Gitorious::Application.routes.draw do
       match "/blobs/blame/*branch_and_path" => "blobs#blame", :as => :blame
       match "/blobs/*branch_and_path" => "blobs#show", :as => :blob, :branch_and_path => /.*/
     end
+
+    match "/:id" => Gitorious::RepositoryBrowser.instance, :as => :repository
   end
 end
