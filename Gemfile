@@ -47,6 +47,8 @@ group :postgres do
 end
 
 group :development do
+  gem "better_errors"
+  gem "binding_of_caller"
   gem "foreman", "~> 0.41"
   gem "thin", "~> 1.2"
 end
