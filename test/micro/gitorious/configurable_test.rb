@@ -218,6 +218,85 @@ class ConfigurationTest < MiniTest::Spec
       assert_equal "https", @config.get("scheme")
     end
   end
+
+  describe "group overrides" do
+    it "gets group override" do
+      config = Gitorious::Configurable.new
+      config.append(:mysite => { :one => 1 })
+
+      assert_equal 1, config.group_get(:mysite, :one)
+    end
+
+    it "gets global setting if no group override" do
+      config = Gitorious::Configurable.new
+      config.append(:one => 1)
+
+      assert_equal 1, config.group_get(:mysite, :one)
+    end
+
+    it "gets default if no group override and no global" do
+      config = Gitorious::Configurable.new
+      config.append(:one => 1)
+
+      assert_equal 42, config.group_get(:mysite, :two, 42)
+    end
+
+    it "gets default from block if no group override and no global" do
+      config = Gitorious::Configurable.new
+      config.append(:one => 1)
+
+      assert_equal 42, config.group_get(:mysite, :two) { 42 }
+    end
+
+    it "gets global setting if group is nil" do
+      config = Gitorious::Configurable.new
+      config.append(:one => 1)
+
+      assert_equal 1, config.group_get(nil, :one)
+    end
+
+    it "gets default if group is nil and no global" do
+      config = Gitorious::Configurable.new
+      config.append(:one => 1)
+
+      assert_equal 42, config.group_get(nil, :two, 42)
+    end
+
+    it "gets default from block if group is nil and no global" do
+      config = Gitorious::Configurable.new
+      config.append(:one => 1)
+
+      assert_equal 42, config.group_get(nil, :two) { 42 }
+    end
+
+    it "gets global if setting does not exist in group" do
+      config = Gitorious::Configurable.new
+      config.append(:mysite => { :one => 1 }, :two => 2)
+
+      assert_equal 2, config.group_get(:mysite, :two)
+    end
+
+    it "gets setting from nested group" do
+      config = Gitorious::Configurable.new
+      config.append(:sites => { :mysite => { :one => 1 } })
+
+      assert_equal 1, config.group_get([:sites, :mysite], :one)
+    end
+
+    it "gets default when sub-group is missing" do
+      config = Gitorious::Configurable.new
+      config.append(:sites => { :one => 1 })
+
+      assert_equal 2, config.group_get([:sites, :mysite], :one, 2)
+    end
+
+    it "gets global when sub-group is missing" do
+      config = Gitorious::Configurable.new
+      config.append(:sites => { :one => 1 }, :one => 13)
+
+      assert_equal 13, config.group_get([:sites, :mysite], :one, 2)
+    end
+  end
 end
 
 class Hell < RuntimeError; end

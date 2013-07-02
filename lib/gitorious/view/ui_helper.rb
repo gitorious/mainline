@@ -25,11 +25,9 @@ module Gitorious
       end
 
       def site_logo(site)
-        logo = "/ui3/images/gitorious2013.png"
-        if !site.subdomain.nil?
-          custom = File.join("images/sites", site.subdomain, "logo.png")
-          logo = "/#{custom}" if (Rails.root + "public/#{custom}").exist?
-        end
+        logo = Gitorious::Configuration.group_get(
+          ["sites", site.subdomain], "logo_url", "/ui3/images/gitorious2013.png"
+          )
         "<img src=\"#{logo}\" alt=\"#{site.title}\" title=\"#{site.title}\">"
       end
 

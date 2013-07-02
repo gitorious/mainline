@@ -52,7 +52,11 @@ class FooterLinksTest < ActionDispatch::IntegrationTest
     Site.any_instance.stubs(:subdomain).returns("mysite")
     Gitorious::Configuration.override({
         "footer_links" => [["#1", "/gogogo"], ["#2", "/here"]],
-        "mysite_footer_links" => [["#3", "/somewhere"]]
+        "sites" => {
+          "mysite" => {
+            "footer_links" => [["#3", "/somewhere"]]
+          }
+        }
       }) do
       get "http://mysite.gitorious.local/johans-project/johansprojectrepos"
 

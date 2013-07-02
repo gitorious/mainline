@@ -45,7 +45,7 @@ module Gitorious
       @footer_links ||= {}
       sd = app.current_site.subdomain
       return @footer_links[sd] if @footer_links[sd] && Rails.env.production?
-      @footer_links[sd] = site_overridable_config(app.current_site, "footer_links") do
+      @footer_links[sd] = Gitorious::Configuration.group_get(["sites", app.current_site.subdomain], "footer_links") do
         [["About Gitorious", app.about_path],
           ["Discussion group", "http://groups.google.com/group/gitorious"],
           ["Blog", "http://blog.gitorious.org"],
@@ -66,7 +66,7 @@ module Gitorious
       @themejs ||= {}
       return @themejs[site.subdomain] if @themejs[site.subdomain] && Rails.env.production?
       @themejs[site.subdomain] = javascripts
-      theme = site_overridable_config(site, "theme_js")
+      theme = Gitorious::Configuration.group_get(["sites", site.subdomain], "theme_js")
       @themejs[site.subdomain] = @themejs[site.subdomain] + [theme] if theme
       @themejs[site.subdomain]
     end
@@ -75,20 +75,9 @@ module Gitorious
       @themecss ||= {}
       return @themecss[site.subdomain] if @themecss[site.subdomain] && Rails.env.production?
       @themecss[site.subdomain] = stylesheets
-      theme = site_overridable_config(site, "theme_css")
+      theme = Gitorious::Configuration.group_get(["sites", site.subdomain], "theme_css")
       @themecss[site.subdomain] = @themecss[site.subdomain] + [theme] if theme
       @themecss[site.subdomain]
-    end
-
-    private
-    def self.site_overridable_config(site, setting, &block)
-      if subdomain = site.subdomain
-        Gitorious::Configuration.get("#{subdomain}_#{setting}") do
-          Gitorious::Configuration.get(setting, &block)
-        end
-      else
-        Gitorious::Configuration.get(setting, &block)
-      end
     end
   end
 end

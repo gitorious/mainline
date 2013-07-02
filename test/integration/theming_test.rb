@@ -42,8 +42,12 @@ class ThemingTest < ActionDispatch::IntegrationTest
     Gitorious::Configuration.override({
         "theme_css" => "/default-theme.css",
         "theme_js" => "/default-theme.js",
-        "mysite_theme_css" => "/site-theme.css",
-        "mysite_theme_js" => "/site-theme.js"
+        "sites" => {
+          "mysite" => {
+            "theme_css" => "/site-theme.css",
+            "theme_js" => "/site-theme.js"
+          }
+        }
       }) do
       get "http://mysite.gitorious.local/johans-project/johansprojectrepos"
 

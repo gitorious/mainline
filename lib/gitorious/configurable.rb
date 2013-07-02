@@ -129,6 +129,41 @@ module Gitorious
       default
     end
 
+    # Look up settings that may be overridden in specific block.
+    #
+    # Given this config:
+    #
+    #     theme_css: /theme.css
+    #     theme_js: /theme.js
+    #
+    #     mysite:
+    #       theme_css: /mytheme.css
+    #       theme_js: /mytheme.js
+    #
+    # Then this code:
+    #
+    #     get_overridable("mysite", "theme_css", "/styles.css")
+    #
+    # Will return "/mytheme.css". If the mysite theme_css override is removed,
+    # then it will return "/theme.css". If the global theme_css setting is
+    # also removed, then the default value of "/styles.css" is used. The
+    # function can also take a block that computes the default, like #get.
+    #
+    def group_get(groups, setting, default = nil, &block)
+      groups = Array(groups)
+      top_level_group = groups.shift
+      override = get_group_override(get(top_level_group), groups)
+      return override[setting] if !override[setting].nil?
+      get(setting, default, &block)
+    end
+
+    def get_group_override(settings, groups)
+      groups.inject(settings) do |settings, group|
+        return {} if settings.nil?
+        settings[group]
+      end || {}
+    end
+
     # Temporarily override settings. Pass in a hash that will be
     # prepended. The method will then yield itself to a block, and
     # when the block completes, the settings are pruned. Provided

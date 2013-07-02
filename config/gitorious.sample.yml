@@ -390,13 +390,6 @@ archive_work_dir: "/var/git/tarballs-work"
 #    - http://somewhere.com
 #  ...
 
-# If using sites, you can configure footer links specifically for site
-# subdomains as well. Note that if you do, they will override anything in
-# footer_links, so any that are shared must be manually shared.
-#<site subdomain>_footer_links:
-#  - - Name
-#    - Url
-
 # Theme - extend the new Gitorious UI with an additional CSS and/or
 # JavaScript path. Gitorious does not check that the corresponding files
 # exist on disk, meaning that you can put them anywhere, as long as you
@@ -405,10 +398,29 @@ archive_work_dir: "/var/git/tarballs-work"
 #theme_css: /some/file.css
 #theme_js: /some/script.js
 
-# If using sites, you can configure a theme specifically for site subdomains
-# as well. If you do, they will override the global theme.
-#<site subdomain>_theme_css: /mysite/theme/style.css
-#<site subdomain>_theme_js: /mysite/theme/script.js
+#########################################################################
+# Site overrides - provide one key for each site subdomain to override  #
+# global settings                                                       #
+#########################################################################
+
+# Overridable settings:
+# footer_links
+# theme_css
+# theme_js
+# logo_url
+
+#sites:
+#  mysite:
+#    footer_links:
+#      ...
+#    theme_css: http://themes/mytheme.css
+#    theme_js: http://themes/mytheme.js
+#    logo_url: http://themes/logo.png
+#
+#  othersite:
+#    footer_links:
+#      ...
+#
 
 #########################################################################
 # Deprecated Gitorious 2 UI theming settings. These settings will only  #
