@@ -34,11 +34,16 @@ class GraphsController < ApplicationController
     return handle_unknown_ref(@ref, @git, REF_TYPE) if head.nil?
 
     if stale_conditional?(head.commit.id, head.commit.committed_date.utc)
-      @root = Breadcrumb::Branch.new(head, @repository)
       @commits = @repository.cached_paginated_commits(@ref, params[:page])
       @atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, params[:branch], :atom)
       respond_to do |format|
-        format.html
+        format.html do
+          render(:action => :index, :layout => "ui3/layouts/application", :locals => {
+            :repository => RepositoryPresenter.new(@repository),
+            :ref => @repository.head_candidate_name,
+            :atom_auto_discovery_url => project_repository_path(@repository.project, @repository, :format => :atom),
+            :atom_auto_discovery_title => "#{@repository.title} ATOM feed"})
+        end
       end
     end
   end

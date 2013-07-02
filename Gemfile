@@ -24,6 +24,7 @@ gem "mysql2", :platforms => :ruby
 gem "highline"
 gem "use_case", "~> 0.13"
 gem "virtus", :git => "https://github.com/solnic/virtus.git"
+gem "rake", "~> 10.0"
 
 group :openid do
   gem "ruby-yadis", "0.3.4", :require => "yadis"
@@ -52,7 +53,6 @@ end
 
 group :git_proxy do
   gem "proxymachine", "1.2.4"
-  gem "rake", "~> 0.9"
 end
 
 group :messaging do

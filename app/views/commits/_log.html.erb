@@ -18,35 +18,28 @@
 #++
 %>
 
-<% users_by_email = Repository.users_by_commits(@commits) %>
+<% users_by_email = Repository.users_by_commits(commits) %>
 <% no_pagination ||= false -%>
-<ul class="events w-750">
-<% @commits.group_by{|c| l(c.committed_date, :format => :human) }.each do |day, commits| -%>
-  <li>
-    <p class="date"><%= day -%></p>
-    <ul class="event_instances">
+<% commits.group_by{|c| l(c.committed_date, :format => :human) }.each do |day, commits| -%>
+    <p class="gts-date-heading"><%= day -%></p>
       <% commits.each do |commit| -%>
         <% user = users_by_email[commit.author.email] %>
-        <li class="event_instance <%= commit.merge? ? 'merge_commit' : 'commit' -%>">
-          <p class="event_date"><%= l(commit.committed_date, :format => :short_time) %></p>
+        <div class="gts-commit <%= commit.merge? ? 'merge_commit' : 'commit' -%>">
+
+          <p class="gts-log-message">
+          <%= link_to h(commit.id_abbrev), project_repository_commit_path(@project, @repository, commit.id) -%>: <%= commit.short_message -%>
+          </p>
+
+          <p>
           <%= avatar_from_email(commit.author.email, :size => 16)  %>
-          <div class="event_meta">
-            <p>
-              <%= user ? link_to(user.login, user_path(user)) : h(force_utf8(commit.author.name)) -%>
-              <strong><%= t("views.logs.committed") %></strong> <%= link_to h(commit.id_abbrev),
-                project_repository_commit_path(@project, @repository, commit.id) -%>
-            </p>
-            <p>
-              <div class="commit_message">
-                <%= link_to simple_format(h(commit.short_message)),
-                  project_repository_commit_path(@project, @repository, commit.id) -%>
-              </div>
-            </p>
-          </div>
-        </li>
+          <%= user ? link_to(user.login, user_path(user)) : h(force_utf8(commit.author.name)) -%>
+          <span class="event-time"><%= l(commit.committed_date, :format => :short_time) %></span>
+          </p>
+
+        </div>
       <% end -%>
-    </ul>
-  </li>
 <% end -%>
-</ul>
-<%= render_pagination_links (@commits) unless no_pagination -%>
+
+  <% unless no_pagination -%>
+  <%= raw JustPaginate.page_navigation(page, total_pages) { |page_no| "?page=#{page_no}" } -%>
+  <% end -%>
