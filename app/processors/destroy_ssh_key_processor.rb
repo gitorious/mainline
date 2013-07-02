@@ -16,15 +16,15 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
 class DestroySshKeyProcessor
   include Gitorious::Messaging::Consumer
   consumes "/queue/GitoriousDestroySshKey"
 
   def on_message(message)
-    logger.debug("Processor removing SSH key: #{message['key']}")
-    ssh_key = SshKeyFile.format(SshKey.find(message["id"]))
+    logger.warn("Processor removing SSH key: #{message['data']}")
+    ssh_key = message["data"]
     key_file = SshKeyFile.new
     key_file.delete_key(ssh_key)
+    logger.info "Deleted key "
   end
 end
