@@ -26,6 +26,6 @@ class DestroySshKeyProcessorTest < ActiveSupport::TestCase
     key = SshKeyFile.format(ssh_key)
     SshKeyFile.any_instance.expects(:delete_key).with(key)
 
-    DestroySshKeyProcessor.new.on_message("id" => ssh_key.id)
+    DestroySshKeyProcessor.new.on_message("data" => key)
   end
 end
