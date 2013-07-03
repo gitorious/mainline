@@ -18,7 +18,7 @@
 require "dolt/sinatra/base"
 require "libdolt/view/multi_repository"
 require "gitorious/view/dolt_url_helper"
-require "better_errors"
+require "better_errors" if RUBY_VERSION > "1.9"
 module Gitorious
   class RepositoryBrowser < ::Dolt::Sinatra::Base
     include ::Dolt::View::MultiRepository
@@ -26,8 +26,10 @@ module Gitorious
     include Gitorious::View::SiteHelper
 
     configure :development do
-      use BetterErrors::Middleware
-      BetterErrors.application_root = Rails.root.to_s
+      if RUBY_VERSION > "1.9"
+        use BetterErrors::Middleware
+        BetterErrors.application_root = Rails.root.to_s
+      end
     end
 
     def self.instance; @instance; end
