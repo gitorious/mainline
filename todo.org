@@ -1,8 +1,8 @@
-* Gitorious 3 [2/7]
+* Gitorious 3 [4/7]
 ** DONE Fix Repository#show so it redirects to Dolt
 ** DONE Site-specific footer links
-** TODO Add tmp redirects (307) to Dolt for certain cases
-** TODO Remove error handling from Dolt's RepositoryActions
+** DONE Add tmp redirects (307) to Dolt for certain cases
+** DONE Remove error handling from Dolt's RepositoryActions
 ** TODO Expose "resend repo creation message"
 ** TODO Activities needs to be rendered prettier
 ** TODO Fix ref selector visual glitch in Chrome

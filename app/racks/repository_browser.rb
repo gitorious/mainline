@@ -25,6 +25,11 @@ module Gitorious
     include Gitorious::View::DoltUrlHelper
     include Gitorious::View::SiteHelper
 
+    configure :development do
+      use BetterErrors::Middleware
+      BetterErrors.application_root = Rails.root.to_s
+    end
+
     def self.instance; @instance; end
     def self.instance=(instance); @instance = instance; end
 
