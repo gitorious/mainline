@@ -22,6 +22,15 @@ ref = defined?(ref) && !ref.nil? ? ref : "HEAD"
 %><div class="gts-repo-header" data-gts-env-user-repository-path="/users/view_state/repository/<%= repository.id %>.json">
   <div class="container">
     <div class="row">
+      <% if !(parent = repository.parent).nil? %>
+        <a href="<%= new_project_repository_merge_request_path(repository.project, repository) %>" class="btn btn-primary gts-request-merge pull-right">Request merge</a>
+        <p class="gts-clone-source">
+          <i title="Cloned from <%= parent.slug %>" class="icon icon-share-alt"></i>
+          Cloned from
+          <a href="<%= project_path(parent.project) %>"><%= parent.project.slug %></a> /
+          <a href="<%= project_repository_path(parent.project, parent) %>"><%= parent.name %></a>
+        </p>
+      <% end %>
       <h<%= header_level %> class="span">
         <!--img src=" img_url('/project-logo.png') " width="32" height="32" alt="gitorious logo"-->
         <a href="<%= project_path(project) %>"><%= project.slug %></a> /
