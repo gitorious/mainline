@@ -24,6 +24,7 @@
 require "digest/sha1"
 require_dependency "event"
 require "open_id_authentication"
+require "create_openid_user"
 
 class User < ActiveRecord::Base
   include UrlLinting

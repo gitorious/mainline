@@ -18,7 +18,7 @@
 require "dolt/sinatra/base"
 require "libdolt/view/multi_repository"
 require "gitorious/view/dolt_url_helper"
-
+require "better_errors"
 module Gitorious
   class RepositoryBrowser < ::Dolt::Sinatra::Base
     include ::Dolt::View::MultiRepository
