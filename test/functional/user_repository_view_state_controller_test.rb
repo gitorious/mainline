@@ -97,14 +97,20 @@ class UserRepositoryViewStateControllerTest < ActionController::TestCase
       login_as(:johan)
       get :show, :id => @repository.id, :format => "json"
 
-      assert JSON.parse(response.body)["repository"]["watching"]
+      watch = {
+        "watching" => true,
+        "watchPath" => "/favorites?watchable_id=1&watchable_type=Repository",
+        "unwatchPath" => "/favorites/#{users(:johan).favorites.first.id}"
+      }
+      assert_equal watch, JSON.parse(response.body)["repository"]["watch"]
     end
 
-    should "indicate that user is not watching repository" do
+    should "indicate that user can watch repository" do
       login_as(:moe)
       get :show, :id => @repository.id, :format => "json"
 
-      assert !JSON.parse(response.body)["repository"]["watching"]
+      watch = { "watching" => false, "watchPath" => "/favorites?watchable_id=1&watchable_type=Repository" }
+      assert_equal watch, JSON.parse(response.body)["repository"]["watch"]
     end
 
     should "indicate available clone protocols" do

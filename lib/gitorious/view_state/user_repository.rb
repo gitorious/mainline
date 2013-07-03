@@ -51,7 +51,7 @@ module Gitorious
         is_admin = !!app.admin?(user, repository)
         {
           "administrator" => is_admin,
-          "watching" => user.watching?(repository),
+          "watch" => watch,
           "cloneProtocols" => clone_protocols
         }.merge(is_admin ? repo_admin_hash : {})
       end
@@ -78,6 +78,17 @@ module Gitorious
             "committershipsPath" => app.project_repository_committerships_path(project, repository)
           }
         }
+      end
+
+      def watch
+        favorite = user.favorites.find { |f| f.watchable == repository }
+        hash = {
+          "watching" => !favorite.nil?,
+          "watchPath" => app.favorites_path(:watchable_id => repository.id,
+                                            :watchable_type => "Repository")
+        }
+        hash["unwatchPath"] = app.favorite_path(favorite) if !favorite.nil?
+        hash
       end
 
       private
