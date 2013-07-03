@@ -19,7 +19,7 @@ require "test_helper"
 
 class ThemingTest < ActionDispatch::IntegrationTest
   should "render default CSS and JS in UI3" do
-    get "/johans-project/johansprojectrepos"
+    get "/johans-project/johansprojectrepos/activities"
 
     assert_match "gitorious3.min.css", response.body
     assert_match "gitorious3.min.js", response.body
@@ -30,7 +30,7 @@ class ThemingTest < ActionDispatch::IntegrationTest
         "theme_css" => "/theme.css",
         "theme_js" => "/theme.js"
       }) do
-      get "/johans-project/johansprojectrepos"
+      get "/johans-project/johansprojectrepos/activities"
 
       assert_match "/theme.css", response.body
       assert_match "/theme.js", response.body
@@ -49,7 +49,7 @@ class ThemingTest < ActionDispatch::IntegrationTest
           }
         }
       }) do
-      get "http://mysite.gitorious.local/johans-project/johansprojectrepos"
+      get "http://mysite.gitorious.local/johans-project/johansprojectrepos/activities"
 
       refute_match "default-theme", response.body
       assert_match "/site-theme.css", response.body

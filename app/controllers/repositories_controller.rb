@@ -23,10 +23,17 @@
 require "gitorious/app"
 
 class RepositoriesController < ApplicationController
+  include Gitorious::View::DoltUrlHelper
   before_filter :login_required, :except => [:index, :show]
   before_filter :find_repository_owner
   before_filter :find_and_require_repository_adminship, :only => [:edit, :update, :destroy]
   renders_in_site_specific_context
+
+  def show
+    repository = @project.repositories.find_by_name!(params[:id])
+    repo = RepositoryPresenter.new(repository).slug
+    redirect_to(tree_entry_url(repo, repository.head.commit, ""), :status => 307)
+  end
 
   def index
     if term = params[:filter]

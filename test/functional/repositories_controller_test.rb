@@ -35,6 +35,19 @@ class RepositoriesControllerTest < ActionController::TestCase
 
   should_render_in_site_specific_context
 
+  context "#show" do
+    should "temporarily redirect to the repository browser" do
+      head = Object.new
+      def head.commit; "abcdef"; end
+      Repository.any_instance.stubs(:head).returns(head)
+
+      get :show, :project_id => @project.to_param, :id => @repo.to_param
+
+      assert_response 307
+      assert_redirected_to "/johans-project/johansprojectrepos/source/abcdef:"
+    end
+  end
+
   context "#index" do
     setup do
       @project = projects(:johans)

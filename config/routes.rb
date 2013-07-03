@@ -326,7 +326,5 @@ Gitorious::Application.routes.draw do
       match "/blobs/blame/*branch_and_path" => "blobs#blame", :as => :blame
       match "/blobs/*branch_and_path" => "blobs#show", :as => :blob, :branch_and_path => /.*/
     end
-
-    match "/:id" => Gitorious::RepositoryBrowser.instance, :as => :repository
   end
 end

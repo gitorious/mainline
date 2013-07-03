@@ -19,7 +19,7 @@ require "test_helper"
 
 class FooterLinksTest < ActionDispatch::IntegrationTest
   should "render default footer links in UI3" do
-    get "/johans-project/johansprojectrepos"
+    get "/johans-project/johansprojectrepos/activities"
 
     assert_response :success
     assert_match "About Gitorious", response.body
@@ -28,7 +28,7 @@ class FooterLinksTest < ActionDispatch::IntegrationTest
 
   should "render additional footer links in UI3" do
     Gitorious::Configuration.override({ "additional_footer_links" => [["A", "/gogogo"]] }) do
-      get "/johans-project/johansprojectrepos"
+      get "/johans-project/johansprojectrepos/activities"
 
       assert_match "/gogogo", response.body
     end
@@ -38,7 +38,7 @@ class FooterLinksTest < ActionDispatch::IntegrationTest
     Gitorious::Configuration.override({
         "footer_links" => [["#1", "/gogogo"], ["#2", "/here"]]
       }) do
-      get "/johans-project/johansprojectrepos"
+      get "/johans-project/johansprojectrepos/activities"
 
       assert_match "#1", response.body
       assert_match "/gogogo", response.body
@@ -58,7 +58,7 @@ class FooterLinksTest < ActionDispatch::IntegrationTest
           }
         }
       }) do
-      get "http://mysite.gitorious.local/johans-project/johansprojectrepos"
+      get "http://mysite.gitorious.local/johans-project/johansprojectrepos/activities"
 
       refute_match "#1", response.body
       assert_match "#3", response.body
