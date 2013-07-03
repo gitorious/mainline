@@ -14,9 +14,12 @@
 #   GNU Affero General Public License for more details.
 #
 #   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
+require "gitorious/diff/base_callback"
+require "gitorious/diff/comment_callback"
+require "gitorious/diff/inline_table_callback"
+require "gitorious/diff/sidebyside_table_callback"
 module DiffHelper
   # Takes a unified diff as input and renders it as html
   def render_diff(udiff, display_mode = "inline")
