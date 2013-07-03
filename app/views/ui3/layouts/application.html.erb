@@ -62,7 +62,7 @@
     <% end %>
     <%= yield %>
     <div class="footer">
-      <%= partial("layouts/footer") %>
+      <%= partial("layouts/footer", :current_site => current_site) %>
     </div>
     <script data-gts-env-analytics-account="UA-52238-3" data-gts-env-analytics-domain-name=".gitorious.org"></script>
     <% repo = defined?(repository_meta) ? repository_meta : (defined?(repository) ? repository : nil) %>

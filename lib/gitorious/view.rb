@@ -41,11 +41,11 @@ module Gitorious
       Gitorious::Configuration.get("discussion_url", "http://blog.gitorious.org")
     end
 
-    def self.footer_links(app)
+    def self.footer_links(app, current_site)
       @footer_links ||= {}
-      sd = app.current_site.subdomain
+      sd = current_site.subdomain
       return @footer_links[sd] if @footer_links[sd] && Rails.env.production?
-      @footer_links[sd] = Gitorious::Configuration.group_get(["sites", app.current_site.subdomain], "footer_links") do
+      @footer_links[sd] = Gitorious::Configuration.group_get(["sites", current_site.subdomain], "footer_links") do
         [["About Gitorious", app.about_path],
           ["Discussion group", "http://groups.google.com/group/gitorious"],
           ["Blog", "http://blog.gitorious.org"],

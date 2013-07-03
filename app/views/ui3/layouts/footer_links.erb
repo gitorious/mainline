@@ -16,7 +16,7 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
 %><div class="row">
-  <% links = Gitorious::View.footer_links(self)
+  <% links = Gitorious::View.footer_links(self, current_site)
      links.each_slice((links.length / 3.0).ceil) do |slice| %>
     <div class="span2">
       <ul>
