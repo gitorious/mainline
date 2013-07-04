@@ -71,6 +71,8 @@ GEM
       xpath (~> 0.1.4)
     childprocess (0.3.9)
       ffi (~> 1.0, >= 1.0.11)
+    ci_reporter (1.9.0)
+      builder (>= 2.1.2)
     climate_control (0.0.3)
       activesupport (>= 3.0)
     cocaine (0.5.1)
@@ -276,6 +278,7 @@ DEPENDENCIES
   binding_of_caller
   capillary (~> 1.0.1)
   capybara (= 1.0.1)
+  ci_reporter
   daemons (= 1.1.0)
   diff-lcs (= 1.1.2)
   dolt (~> 0.23)

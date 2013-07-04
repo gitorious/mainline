@@ -40,6 +40,7 @@ group :test do
   gem "capybara", "1.0.1"
   gem "launchy", "2.0.5" # used only for Capybara's save_and_open_page for launching the browser
   gem "minitest", "4.2.0"
+  gem "ci_reporter"
 end
 
 group :postgres do
