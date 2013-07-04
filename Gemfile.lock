@@ -6,11 +6,12 @@ GIT
 
 GIT
   remote: https://github.com/solnic/virtus.git
-  revision: 026455b07d91ebd94fb502603095a22868aa1a6e
+  revision: 97a161f19d20a961094112464075c284d68d35e4
   specs:
-    virtus (1.0.0.beta0)
+    virtus (1.0.0.beta1)
       abstract_type (~> 0.0.5)
       adamantium (~> 0.0.7)
+      backports (~> 3.0, >= 3.1.0)
       coercible (~> 0.2)
       descendants_tracker (~> 0.0.1)
 
