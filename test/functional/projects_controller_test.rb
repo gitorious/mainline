@@ -148,13 +148,12 @@ class ProjectsControllerTest < ActionController::TestCase
         login_as :johan
 
         assert_difference("Project.count") do
-          post :create, :project => {
+          post :create, { :project => {
             :title => "project x",
             :slug => "projectx",
             :description => "projectx's description",
             :owner_type => "User",
-            :private => "1"
-          }
+          }, :private => "1" }
         end
 
         assert Project.last.private?
