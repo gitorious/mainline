@@ -56,8 +56,7 @@ sudo yum install -y ruby ruby-devel rubygems
 # RubyGems must be up to date in order for Gitorious to work well
 sudo gem update --system
 
-# Download, configure and compile Sphinx, the search engine used by
-# Gitorious.
+# Install Sphinx, the search engine used by Gitorious.
 sudo yum install sphinx
 
 PATH=/usr/local/bin:$PATH
@@ -140,7 +139,7 @@ development:
   merge_request_diff_timeout: 30
 " > config/gitorious.yml
 
-bundle exec rake db:schema:load
+bin/rake db:schema:load
 
 # Finally, create a user for yourself. Be sure to answer yes when
 # asked if the user should be an admin. If you want to (manually) test
@@ -171,11 +170,7 @@ chmod 0600 /home/$GITORIOUS_USER/.ssh/authorized_keys
 
 # To run in production, you must install Redis for background
 # processing.
-curl -o redis-2.6.4.tar.gz http://redis.googlecode.com/files/redis-2.6.4.tar.gz
-tar xvzf redis-2.6.4.tar.gz
-cd redis-2.6.4
-make
-sudo make install
+sudo yum install redis
 
 echo "Start a Redis instance by running redis-server"
 echo "To install Redis as a service, refer to"
