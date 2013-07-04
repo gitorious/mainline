@@ -1,4 +1,4 @@
-== Guide to Hacking Gitorious
+## Guide to Hacking Gitorious
 
 To get started you need a working Gitorious setup. Gitorious ships
 with two scripts that gets most enough services up and running to work
@@ -15,7 +15,7 @@ Alternatively, if you're OK with working through a virtual machine,
 you can grab the fully automated installer or one of the pre-built VMs
 from http://getgitorious.org.
 
-=== Coding style
+### Coding style
 
 * Two spaces, no tabs, for indention
 * Don't use and and or for boolean tests, instead always use && and ||
@@ -25,7 +25,7 @@ from http://getgitorious.org.
 
 (copied mostly verbatim from dev.rubyonrails.org)
 
-=== Branching model
+### Branching model
 
 Gitorious uses
 [the git-flow branching model](http://nvie.com/posts/a-successful-git-branching-model/)

@@ -145,9 +145,17 @@ bundle exec rake db:schema:load
 # users later.
 bin/create-user
 
-# The gitorious script is used when you push/pull over SSH. It needs
-# to be on path.
-sudo ln -s $GITORIOUS_ROOT/gitorious/bin/gitorious /usr/local/bin/gitorious
+# The gitorious script is used when you push/pull over SSH. You could
+# create a symlink in /usr/bin, but we'll create a small shim instead.
+# This way you'll be able to alter PATH to load another version of Ruby
+# than the one in the default path without altering ~git/.bashrc or
+# equivalent.
+
+cat << EOF > /usr/bin/gitorious
+#!/bin/sh
+
+exec $GITORIOUS_ROOT/bin/gitorious $@
+EOF
 
 echo "Now you should be able to run the application in development mode:"
 echo "rails server # or just rails s"
