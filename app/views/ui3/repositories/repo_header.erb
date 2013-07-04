@@ -34,7 +34,7 @@ ref = defined?(ref) && !ref.nil? ? ref : "HEAD"
       <h<%= header_level %> class="span">
         <!--img src=" img_url('/project-logo.png') " width="32" height="32" alt="gitorious logo"-->
         <a href="<%= project_path(project) %>"><%= project.slug %></a> /
-        <span><%=h repository.name %></span>
+        <a href="<%= project_repository_path(project, repository) %>"><%= repository.name %></a>
       </h<%= header_level %>>
     </div>
     <div class="row">
