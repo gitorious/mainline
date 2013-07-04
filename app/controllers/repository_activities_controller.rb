@@ -31,8 +31,6 @@ class RepositoryActivitiesController < ApplicationController
       repository.events.all(:offset => [index_range.first, 0].max, :limit => index_range.count, :order => "created_at desc")
     end
 
-    response.headers["Refresh"] = "3" unless repository.ready
-
     respond_to do |format|
       format.html do
         render(:action => :index, :locals => {

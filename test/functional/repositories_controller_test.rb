@@ -40,11 +40,21 @@ class RepositoriesControllerTest < ActionController::TestCase
       head = Object.new
       def head.commit; "abcdef"; end
       Repository.any_instance.stubs(:head).returns(head)
+      @repo.update_attribute(:ready, true)
+      @repo.save
 
       get :show, :project_id => @project.to_param, :id => @repo.to_param
 
       assert_response 307
       assert_redirected_to "/johans-project/johansprojectrepos/source/abcdef:"
+    end
+
+    should "issue a Refresh header if repo is not ready yet" do
+      @repo.update_attribute(:ready, false)
+      @repo.save
+      get :show, :project_id => @project.to_param, :id => @repo.to_param
+      assert_response :success
+      assert_not_nil @response.headers["Refresh"]
     end
   end
 

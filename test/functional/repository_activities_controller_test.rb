@@ -16,7 +16,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "test_helper"
-
 class RepositoryActivitiesControllerTest < ActionController::TestCase
   def setup
     @settings = Gitorious::Configuration.prepend("enable_private_repositories" => false)
@@ -45,13 +44,6 @@ class RepositoryActivitiesControllerTest < ActionController::TestCase
       repo.stubs(:git).returns(stub_everything("git mock"))
       get :index, :project_id => @project.to_param, :id => repo.to_param
       assert_response 404
-    end
-
-    should "issue a Refresh header if repo is not ready yet" do
-      @repo.stubs(:ready).returns(false)
-      get :index, :project_id => @project.to_param, :id => @repo.to_param
-      assert_response :success
-      assert_not_nil @response.headers["Refresh"]
     end
 
     should "find the project repository" do

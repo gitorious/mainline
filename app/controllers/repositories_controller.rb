@@ -31,6 +31,16 @@ class RepositoriesController < ApplicationController
 
   def show
     repository = @project.repositories.find_by_name!(params[:id])
+
+    if !repository.ready?
+      response.headers["Refresh"] = "3"
+      render(:action => "show", :layout => "ui3/layouts/application", :locals => {
+          :repository => repository,
+          :atom_auto_discovery_url => activities_project_repository_path(repository.project, repository, :format => :atom),
+          :atom_auto_discovery_title => "#{repository.title} ATOM feed"
+        }) and return
+    end
+
     repo = RepositoryPresenter.new(repository).slug
     redirect_to(tree_entry_url(repo, repository.head.commit, ""), :status => 307)
   end

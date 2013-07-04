@@ -48,7 +48,7 @@ class RepositoryPresenter
   def owner_id; repository.owner_id; end
   def to_key; repository.to_key; end
   def url_path; repository.url_path; end
-  def parent; RepositoryPresenter.new(repository.parent); end
+  def parent; repository.parent && RepositoryPresenter.new(repository.parent); end
 
   def show_clone_list_search?
     group_clone_count >= 5 || user_clone_count >= 5
