@@ -47,8 +47,8 @@
           If you haven't already,
           <a href="http://git-scm.com">download and install Git</a>. Then provide some basic configuration to Git:
         </p>
-        <pre class="prettyprint">git config --global user.name "<%=h current_user.fullname || "Your full name" -%>"
-git config --global user.email "<%=h current_user.email -%>"</pre>
+        <pre class="prettyprint">git config --global user.name "<%=h current_user && current_user.fullname || "Your full name" -%>"
+git config --global user.email "<%=h current_user && current_user.email || "your@email.com" -%>"</pre>
         <h3>Create a new Git repository</h3>
         <p>
           If your project is not already using Git, initialize a
