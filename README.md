@@ -50,14 +50,14 @@ administration interface that allows for resending of messages, introspection
 and general statistics about your queue. To use it, set messaging_adapter to
 "resque" in gitorious.yml:
 
-  messaging_adapter: resque
+    messaging_adapter: resque
 
 To use Resque, you need to install and run Redis. This is described in detail on
 the official Resque page: https://github.com/resque/resque
 
 To process messages from the queue with Resque, you need to run rake:
 
-  RAILS_ENV=production QUEUE=* bin/rake resque:work
+    RAILS_ENV=production QUEUE=* bin/rake resque:work
 
 You can also run a worker for a single, or a handful of queues too. This allows
 you to assign different priority to different queues. The list of queues in use
