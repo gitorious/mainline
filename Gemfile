@@ -14,7 +14,7 @@ gem "will_paginate", "~>3.0"
 gem "just_paginate", "0.1"
 gem "net-ldap", "~> 0.3"
 gem "capillary", "~> 1.0.1"
-gem "nokogiri", "~> 1.5"
+gem "nokogiri", "~> 1.5", "< 1.6"
 gem "memcache-client", "~> 1.8"
 gem "unicorn", "~> 4.3.1", :platforms => :ruby
 gem "exception_notification", :require => "exception_notifier"
@@ -36,6 +36,7 @@ group :test do
   gem "mocha", "0.9.10", :require => false
   gem "factory_girl_rails", "~> 1.7"
   gem "shoulda", "~> 3.3"
+  gem "shoulda-matchers", "~> 1.4", :platforms => :ruby_18
   gem "rots", :git => "https://github.com/roman/rots.git"
   gem "capybara", "1.0.1"
   gem "launchy", "2.0.5" # used only for Capybara's save_and_open_page for launching the browser
