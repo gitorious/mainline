@@ -20,6 +20,6 @@
 class GroupAutoCompletionsController < ApplicationController
   def index
     @groups = Team.find_fuzzy(params[:q])
-    render :text => @groups.map{|g| g.name }.join("\n")
+    render :text => @groups.map{|g| g.name }.join("\n"), :content_type => Mime::TEXT
   end
 end

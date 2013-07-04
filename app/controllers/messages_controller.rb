@@ -126,6 +126,6 @@ class MessagesController < ApplicationController
 
   def auto_complete_for_message_recipients
     @users = User.find_fuzzy(params[:q]).reject{|u|u == current_user}.map{|u| u.login }.join("\n")
-    render :text => @users
+    render :text => @users, :content_type => Mime::TEXT
   end
 end
