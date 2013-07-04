@@ -15,7 +15,10 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
+require "push_spec_parser"
+require "push_event_logger"
+require "gitorious/web_hook_generator"
+require "gitorious/wiki/update_event_logger"
 class PushProcessor
   include Gitorious::Messaging::Consumer
   consumes "/queue/GitoriousPush"

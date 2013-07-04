@@ -18,7 +18,8 @@
 require "dolt/sinatra/base"
 require "libdolt/view/multi_repository"
 require "gitorious/view/dolt_url_helper"
-require "better_errors"
+require "better_errors" if RUBY_VERSION > "1.9"
+
 module Gitorious
   class RepositoryBrowser < ::Dolt::Sinatra::Base
     include ::Dolt::View::MultiRepository
@@ -26,8 +27,20 @@ module Gitorious
     include Gitorious::View::SiteHelper
 
     configure :development do
-      use BetterErrors::Middleware
-      BetterErrors.application_root = Rails.root.to_s
+      if RUBY_VERSION > "1.9"
+        use BetterErrors::Middleware
+        BetterErrors.application_root = Rails.root.to_s
+      end
+    end
+
+    def render_empty_repository(repository)
+      pid, rid = repository.split("/")
+      uid = request.session["user_id"]
+      @template ||= (Rails.root + "app/views/repositories/_getting_started.html.erb").to_s
+      renderer.render({ :file => @template }, {
+          :repository => Project.find_by_slug!(pid).repositories.find_by_name!(rid),
+          :current_user => uid && User.find(uid)
+        })
     end
 
     def self.instance; @instance; end
@@ -40,16 +53,14 @@ module Gitorious
     #   -> 302 /gitorious/mainline/source/2d4e282d02f438043fc425cc99a781774d22561a:
     def redirect_refs?; true; end
 
-    get "/:project_id/:repository_id" do
-      repo = "#{params[:project_id]}/#{params[:repository_id]}"
-      configure_env(repo)
-      tree_entry(repo, "HEAD", "", env_data)
-    end
-
     get "/*/source/*:*" do
-      repo, ref, path = params[:splat]
-      configure_env(repo)
-      tree_entry(repo, ref, path, env_data)
+      begin
+        repo, ref, path = params[:splat]
+        configure_env(repo)
+        tree_entry(repo, ref, path, env_data)
+      rescue Rugged::ReferenceError => err
+        render_empty_repository(repo)
+      end
     end
 
     get "/*/source/*" do

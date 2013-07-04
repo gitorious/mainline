@@ -6,7 +6,7 @@
 ** DONE Expose "resend repo creation message"
 ** DONE Fix ref selector visual glitch in Chrome
 ** DONE Repository not ready - don't redirect
-** TODO No commits - Dolt freaks out
+** DONE No commits - Dolt freaks out
 ** TODO Link to request merge (requestMergePath in view state, place next to admin)
 ** TODO "Intelligent" clone button
 ** TODO Link repo in repo_header
