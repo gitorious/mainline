@@ -32,7 +32,7 @@ UserValidator = UseCase::Validator.define do
   validates_length_of :email, :within => 5..100
   validates_format_of :avatar_file_name, :with => /\.(jpe?g|gif|png|bmp|svg|ico)$/i, :allow_blank => true
   validate :normalized_openid_identifier
-  validate :unique_login
+  validate :uniqueness
 
   # Helps validations not raise errors on Ruby 1.8.7
   def self.model_name
@@ -47,8 +47,9 @@ UserValidator = UseCase::Validator.define do
     errors.add(:password, "should match confirmation") if password != password_confirmation
   end
 
-  def unique_login
+  def uniqueness
     errors.add(:login, "is already taken") if !uniq_login?
+    errors.add(:email, "is already taken") if !uniq_email?
   end
 
   def normalized_openid_identifier

@@ -100,13 +100,23 @@ class UserValidatorTest < MiniTest::Shoulda
   end
 
   should "require unique login" do
-    user = new_user(:identity_url => "€&/()")
+    user = new_user
     def user.uniq_login?; false; end
 
     result = UserValidator.call(user)
 
     refute result.valid?
     refute_equal [], result.errors[:login]
+  end
+
+  should "require unique email" do
+    user = new_user
+    def user.uniq_email?; false; end
+
+    result = UserValidator.call(user)
+
+    refute result.valid?
+    refute_equal [], result.errors[:email]
   end
 
   should "require password confirmation" do

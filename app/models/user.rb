@@ -342,6 +342,11 @@ class User < ActiveRecord::Base
     existing.nil? || existing == self
   end
 
+  def uniq_email?
+    existing = User.find_by_email(email)
+    existing.nil? || existing == self
+  end
+
   def identity_url=(url)
     self[:identity_url] = normalize_identity_url(url)
   rescue OpenID::DiscoveryFailure
