@@ -31,9 +31,26 @@ The steps to upgrade are as follows:
   make pushes slow.
 * Update your config/database.yml. The adapter used to be named
   "mysql", it is now called "mysql2".
-* script/gitorious has moved to bin/gitorious. If you have this script
-  symlinked onto your PATH, please make the symlink over, this time
-  pointing it to bin/gitorious.
+* Previous install guides recommended setting up a symlink to the
+  gitorious script from Gitorious from somewhere on the default PATH
+  on your system. If your server has such a symlink, remove it and
+  replace it with a small wrapper script which allows you to use a
+  non-system Ruby. Replace `GITORIOUS_ROOT` (if necessary) and the
+  `PATH` assignment below to point to your Ruby 1.9 install, and run
+  the following:
+
+```sh
+which gitorious >/dev/null 2>&1 && rm $(which gitorious) || echo "No symlink"
+
+GITORIOUS_ROOT=/var/www/gitorious/app
+
+cat << EOF > /usr/bin/gitorious
+#!/bin/sh
+PATH=/path/to/ruby19:$PATH
+exec $GITORIOUS_ROOT/bin/gitorious $@
+EOF
+```
+
 * script/git-proxy has moved to bin/git-proxy. If you have this script
   symlinked onto your PATH, please make the symlink over, this time
   pointing it to bin/git-proxy.
