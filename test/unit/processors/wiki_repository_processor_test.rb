@@ -32,6 +32,7 @@ class WikiRepositoryCreationProcessorTest < ActiveSupport::TestCase
   end
 
   should "create git repository" do
+    RepositoryHooks.stubs(:create)
     GitBackend.expects(:create).with("/tmp/git/repositories/moes-project/tracking.git")
     @processor.on_message("id" => @repository.id)
   end
