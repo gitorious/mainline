@@ -1,4 +1,4 @@
-* Gitorious 3 [9/13]
+* Gitorious 3 [11/12]
 ** DONE Fix Repository#show so it redirects to Dolt
 ** DONE Site-specific footer links
 ** DONE Add tmp redirects (307) to Dolt for certain cases
@@ -7,10 +7,9 @@
 ** DONE Fix ref selector visual glitch in Chrome
 ** DONE Repository not ready - don't redirect
 ** DONE No commits - Dolt freaks out
-** TODO Link to request merge (requestMergePath in view state, place next to admin)
-** TODO "Intelligent" clone button
+** DONE Link to request merge (requestMergePath in view state, place next to admin)
+** DONE "Intelligent" clone button
 ** DONE Link repo in repo_header
-** TODO Add project logo
 ** TODO Activities needs to be rendered prettier
 * Views to port to UI3 [2/76]
 ** TODO Admin::Diagnostics#index
