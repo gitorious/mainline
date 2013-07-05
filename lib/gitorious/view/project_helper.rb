@@ -23,6 +23,10 @@ module Gitorious
         # Eventually: Support markdown here
         "<p>#{project.description}</p>".html_safe
       end
+
+      def repository_description(repository)
+        "<p>#{repository.description}</p>".html_safe
+      end
     end
   end
 end
