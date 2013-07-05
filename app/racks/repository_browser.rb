@@ -64,49 +64,85 @@ module Gitorious
     end
 
     get "/*/source/*" do
-      force_ref(params[:splat], "source")
+      begin
+        force_ref(params[:splat], "source")
+      rescue Rugged::ReferenceError => err
+        render_empty_repository(repo)
+      end
     end
 
     get "/*/raw/*:*" do
-      repo, ref, path = params[:splat]
-      configure_env(repo)
-      raw(repo, ref, path, env_data)
+      begin
+        repo, ref, path = params[:splat]
+        configure_env(repo)
+        raw(repo, ref, path, env_data)
+      rescue Rugged::ReferenceError => err
+        render_empty_repository(repo)
+      end
     end
 
     get "/*/raw/*" do
-      force_ref(params[:splat], "raw")
+      begin
+        force_ref(params[:splat], "raw")
+      rescue Rugged::ReferenceError => err
+        render_empty_repository(repo)
+      end
     end
 
     get "/*/blame/*:*" do
-      repo, ref, path = params[:splat]
-      configure_env(repo)
-      blame(repo, ref, path, env_data)
+      begin
+        repo, ref, path = params[:splat]
+        configure_env(repo)
+        blame(repo, ref, path, env_data)
+      rescue Rugged::ReferenceError => err
+        render_empty_repository(repo)
+      end
     end
 
     get "/*/blame/*" do
-      force_ref(params[:splat], "blame")
+      begin
+        force_ref(params[:splat], "blame")
+      rescue Rugged::ReferenceError => err
+        render_empty_repository(repo)
+      end
     end
 
     get "/*/history/*:*" do
-      repo, ref, path = params[:splat]
-      configure_env(repo)
-      history(repo, ref, path, (params[:commit_count] || 20).to_i, env_data)
+      begin
+        repo, ref, path = params[:splat]
+        configure_env(repo)
+        history(repo, ref, path, (params[:commit_count] || 20).to_i, env_data)
+      rescue Rugged::ReferenceError => err
+        render_empty_repository(repo)
+      end
     end
 
     get "/*/history/*" do
-      force_ref(params[:splat], "history")
+      begin
+        force_ref(params[:splat], "history")
+      rescue Rugged::ReferenceError => err
+        render_empty_repository(repo)
+      end
     end
 
     get "/*/refs" do
-      repo = params[:splat].first
-      configure_env(repo)
-      refs(repo, env_data)
+      begin
+        repo = params[:splat].first
+        configure_env(repo)
+        refs(repo, env_data)
+      rescue Rugged::ReferenceError => err
+        render_empty_repository(repo)
+      end
     end
 
     get "/*/tree_history/*:*" do
-      repo, ref, path = params[:splat]
-      configure_env(repo)
-      tree_history(repo, ref, path, 1, env_data)
+      begin
+        repo, ref, path = params[:splat]
+        configure_env(repo)
+        tree_history(repo, ref, path, 1, env_data)
+      rescue Rugged::ReferenceError => err
+        render_empty_repository(repo)
+      end
     end
 
     get %r{/(.*)/archive/(.*)?\.(tar\.gz|tgz|zip)} do
@@ -117,7 +153,7 @@ module Gitorious
         add_sendfile_headers(filename, format)
         body("")
       rescue Exception => err
-        error(err, repo, ref)
+        render_error(err, repo, ref)
       end
     end
 
