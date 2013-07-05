@@ -122,6 +122,53 @@ class UserRepositoryViewStateControllerTest < ActionController::TestCase
       assert_equal "ssh", protocols["default"]
     end
 
+    should "include clone URL" do
+      login_as(:johan)
+      get :show, :id => @repository.id, :format => "json"
+
+      repository = JSON.parse(response.body)["repository"]
+      assert_equal "/johans-project/johansprojectrepos/clone", repository["clonePath"]
+    end
+
+    should "not include clone URL for own repo clown" do
+      repo = repositories(:johans2)
+      repo.owner = users(:johan)
+      repo.save
+
+      login_as(:johan)
+      get :show, :id => repositories(:johans2).id, :format => "json"
+
+      repository = JSON.parse(response.body)["repository"]
+      assert_nil repository["clonePath"]
+    end
+
+    should "include request merge path" do
+      repository = repositories(:johans2)
+      repository.owner = users(:johan)
+      repository.save
+      login_as(:johan)
+      get :show, :id => repositories(:johans2).id, :format => "json"
+
+      repository = JSON.parse(response.body)["repository"]
+      assert_equal "/johansprojectrepos/johansprojectrepos-clone/merge_requests/new", repository["requestMergePath"]
+    end
+
+    should "not include request merge path for non-clone" do
+      login_as(:johan)
+      get :show, :id => @repository.id, :format => "json"
+
+      repository = JSON.parse(response.body)["repository"]
+      assert_nil repository["requestMergePath"]
+    end
+
+    should "not include request merge path for repo not admined by user" do
+      login_as(:moe)
+      get :show, :id => repositories(:johans2).id, :format => "json"
+
+      repository = JSON.parse(response.body)["repository"]
+      assert_nil repository["requestMergePath"]
+    end
+
     should "indicate available clone protocols for non-owner" do
       login_as(:moe)
       get :show, :id => @repository.id, :format => "json"

@@ -52,7 +52,9 @@ module Gitorious
         {
           "administrator" => is_admin,
           "watch" => watch,
-          "cloneProtocols" => clone_protocols
+          "cloneProtocols" => clone_protocols,
+          "clonePath" => clone_path,
+          "requestMergePath" => request_merge_path
         }.merge(is_admin ? repo_admin_hash : {})
       end
 
@@ -91,7 +93,16 @@ module Gitorious
         hash
       end
 
-      private
+      def clone_path
+        return nil if repository.parent && repository.owner == user
+        app.clone_project_repository_path(repository.project, repository)
+      end
+
+      def request_merge_path
+        return nil if user.nil? || repository.parent.nil? || !app.admin?(user, repository)
+        app.new_project_repository_merge_request_path(repository.parent, repository)
+      end
+
       def app; @app; end
       def repository; @repository; end
       def project; @repository.project; end
