@@ -62,9 +62,10 @@ EOF
   switching to the correct user, and can be called without changing
   directories into the Gitorious root directory.
 
-  `/var/www/gitorious/app/bin/search_engine start`
-  `/var/www/gitorious/app/bin/search_engine stop`
-  `/var/www/gitorious/app/bin/search_engine restart`
-
+```sh
+/var/www/gitorious/app/bin/search_engine start
+/var/www/gitorious/app/bin/search_engine stop
+/var/www/gitorious/app/bin/search_engine restart
+```
   should all work.
 * Restart your server.
