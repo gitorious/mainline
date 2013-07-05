@@ -48,7 +48,7 @@
 #     $ git ls-remote git://gitorious.local/some/repo.git
 #
 #Bundler.require(:default, :git_proxy) if defined?(Bundler)
-
+ENV["RAILS_ENV"] ||= "production"
 require "pathname"
 require (Pathname(__FILE__) + "../../config/environment.rb").realpath
 require "optparse"

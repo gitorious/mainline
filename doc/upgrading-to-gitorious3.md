@@ -128,6 +128,12 @@ EOF
 chmod 0755 /usr/bin/gitorious
 ```
 
+Install bundler.
+
+```sh
+source /etc/profile.d/chruby.sh && gem install bundler
+```
+
 * script/git-proxy has moved to bin/git-proxy. If you have this script
   symlinked onto your PATH, please make the symlink over, this time
   pointing it to bin/git-proxy.
