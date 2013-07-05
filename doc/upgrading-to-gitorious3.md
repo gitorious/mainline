@@ -6,6 +6,66 @@ This brought with it a few changes, and since the upgrade wasn't going
 to be fully automated anyway, we took the opportunity to make a few
 other long pending issues.
 
+## Install a Ruby version manager and an updated Ruby version
+
+Getting the right Ruby version from your system's package manager may
+be tricky. We highly recommend that you install two tools which will
+make your life a lot easier.
+
+### Install Ruby-install
+
+First of all install
+[ruby-install](https://github.com/postmodern/ruby-install), a simple
+tool to install custom versions of Ruby either system-wide or for a
+single user:
+
+```sh
+sudo -s
+cd /tmp
+wget -O ruby-install-0.2.1.tar.gz
+https://github.com/postmodern/ruby-install/archive/v0.2.1.tar.gz
+tar -xzvf ruby-install-0.2.1.tar.gz
+cd ruby-install-0.2.1/
+make install
+exit
+```
+
+### Install Ruby 1.9.3 with ruby-install
+
+Next, use `ruby-install` to install Ruby 1.9.3-p448:
+
+```sh
+sudo -s
+ruby-install ruby 1.9.3-p448
+exit
+```
+
+### Install chruby
+
+Now, install [chruby](https://github.com/postmodern/chruby), a
+non-intrusive Ruby version switcher:
+
+```sh
+sudo -s
+cd /tmp
+wget -O chruby-0.3.6.tar.gz https://github.com/postmodern/chruby/archive/v0.3.6.tar.gz
+tar -xzvf chruby-0.3.6.tar.gz
+cd chruby-0.3.6/
+make install
+exit
+```
+
+Now, set up the newly installed Ruby version as system default:
+
+```sh
+sudo -s
+cat << EOF > /etc/profile.d/chruby.sh
+source /usr/local/share/chruby/chruby.sh
+chruby 1.9.3-p448
+EOF
+exit
+```
+
 The steps to upgrade are as follows:
 
 * Upgrade Ruby to version 1.9.3. This step is completely optional, but
@@ -35,20 +95,24 @@ The steps to upgrade are as follows:
   gitorious script from Gitorious from somewhere on the default PATH
   on your system. If your server has such a symlink, remove it and
   replace it with a small wrapper script which allows you to use a
-  non-system Ruby. Replace `GITORIOUS_ROOT` (if necessary) and the
-  `PATH` assignment below to point to your Ruby 1.9 install, and run
-  the following:
+  non-system Ruby. Replace `GITORIOUS_ROOT` (if necessary), and run
+  the following (please note that this assumes you installed chruby,
+  ruby-install and the specified Ruby version above):
 
 ```sh
-which gitorious >/dev/null 2>&1 && rm $(which gitorious) || echo "No symlink"
+which gitorious >/dev/null 2>&1 && rm -f $(which gitorious) || echo "No symlink"
 
 GITORIOUS_ROOT=/var/www/gitorious/app
 
 cat << EOF > /usr/bin/gitorious
 #!/bin/sh
-PATH=/path/to/ruby19:$PATH
+
+RUBIES=(/opt/rubies/*)
+source /etc/profile.d/chruby.sh
+
 exec $GITORIOUS_ROOT/bin/gitorious $@
 EOF
+chmod 0755 /usr/bin/gitorious
 ```
 
 * script/git-proxy has moved to bin/git-proxy. If you have this script
