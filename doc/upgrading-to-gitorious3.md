@@ -22,8 +22,7 @@ single user:
 ```sh
 sudo -s
 cd /tmp
-wget -O ruby-install-0.2.1.tar.gz
-https://github.com/postmodern/ruby-install/archive/v0.2.1.tar.gz
+wget -O ruby-install-0.2.1.tar.gz https://github.com/postmodern/ruby-install/archive/v0.2.1.tar.gz
 tar -xzvf ruby-install-0.2.1.tar.gz
 cd ruby-install-0.2.1/
 make install
@@ -110,7 +109,7 @@ cat << EOF > /usr/bin/gitorious
 RUBIES=(/opt/rubies/*)
 source /etc/profile.d/chruby.sh
 
-exec $GITORIOUS_ROOT/bin/gitorious $@
+exec $GITORIOUS_ROOT/bin/gitorious \$@
 EOF
 chmod 0755 /usr/bin/gitorious
 ```
