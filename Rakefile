@@ -3,11 +3,15 @@
 
 require File.expand_path("../config/application", __FILE__)
 require "rake"
+require "ci/reporter/rake/minitest"
 
 if RUBY_VERSION < "1.9"
-  require "ci/reporter/rake/test_unit"
-else
-  require "ci/reporter/rake/minitest"
+  require "rcov/rcovtask"
+  Rcov::RcovTask.new do |t|
+    t.libs << "test"
+    t.test_files = FileList["test/**/*_test.rb"]
+    t.rcov_opts += %w{--exclude gems,ruby/1.}
+  end
 end
 
 Gitorious::Application.load_tasks

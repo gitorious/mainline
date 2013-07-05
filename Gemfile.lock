@@ -197,6 +197,7 @@ GEM
       thor (>= 0.14.6, < 2.0)
     raindrops (0.11.0)
     rake (10.1.0)
+    rcov (1.0.0)
     rdiscount (1.6.8)
     rdoc (3.12.2)
       json (~> 1.4)
@@ -226,6 +227,10 @@ GEM
     shoulda-context (1.1.4)
     shoulda-matchers (1.4.1)
       activesupport (>= 3.0.0)
+    simplecov (0.7.1)
+      multi_json (~> 1.0)
+      simplecov-html (~> 0.7.1)
+    simplecov-html (0.7.1)
     sinatra (1.4.3)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -308,6 +313,7 @@ DEPENDENCIES
   rails (= 3.2.12)
   rails_autolink (~> 1.0)
   rake (~> 10.0)
+  rcov
   rdiscount (~> 1.6)
   resque (~> 1.23)
   rots!
@@ -316,6 +322,7 @@ DEPENDENCIES
   ruby-yadis (= 0.3.4)
   shoulda (~> 3.3)
   shoulda-matchers (~> 1.4)
+  simplecov
   state_machine (~> 1.1)
   thin (~> 1.2)
   thinking-sphinx (~> 2.0.10)

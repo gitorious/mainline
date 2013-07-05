@@ -42,6 +42,8 @@ group :test do
   gem "launchy", "2.0.5" # used only for Capybara's save_and_open_page for launching the browser
   gem "minitest", "4.2.0"
   gem "ci_reporter"
+  gem "rcov", :platforms => :ruby_18
+  gem "simplecov", :platforms => :ruby_19
 end
 
 group :postgres do
