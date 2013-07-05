@@ -6,11 +6,25 @@ This brought with it a few changes, and since the upgrade wasn't going
 to be fully automated anyway, we took the opportunity to make a few
 other long pending issues.
 
+## IMPORTANT! Assumptions / Disclaimers
+
+This upgrade walkthrough assumes a Gitorious 2 installation
+similar to what you'd get if you ran the automated Gitorious Community
+Installer for a recent version of Gitorious (for instance v2.4.12).
+
+An alternative to upgrading your existing server is to simply install
+Gitorious 3 on a new server from scratch, and use the snapshot/restore
+scripts to migrate from the old instance to the new one.
+
+If you have an older community installation, or a custom, manual
+installation, please don't proceed with the upgrade instructions below
+unless you are absolutely sure you know what you are doing.
+
 ## Install a Ruby version manager and an updated Ruby version
 
 Getting the right Ruby version from your system's package manager may
 be tricky. We highly recommend that you install two tools which will
-make your life a lot easier.
+make your life a lot easier: ruby-install and chruby.
 
 ### Install Ruby-install
 
@@ -22,8 +36,7 @@ single user:
 ```sh
 sudo -s
 cd /tmp
-wget -O ruby-install-0.2.1.tar.gz
-https://github.com/postmodern/ruby-install/archive/v0.2.1.tar.gz
+wget -O ruby-install-0.2.1.tar.gz https://github.com/postmodern/ruby-install/archive/v0.2.1.tar.gz
 tar -xzvf ruby-install-0.2.1.tar.gz
 cd ruby-install-0.2.1/
 make install
@@ -110,9 +123,15 @@ cat << EOF > /usr/bin/gitorious
 RUBIES=(/opt/rubies/*)
 source /etc/profile.d/chruby.sh
 
-exec $GITORIOUS_ROOT/bin/gitorious $@
+exec $GITORIOUS_ROOT/bin/gitorious \$@
 EOF
 chmod 0755 /usr/bin/gitorious
+```
+
+Install bundler.
+
+```sh
+source /etc/profile.d/chruby.sh && gem install bundler
 ```
 
 * script/git-proxy has moved to bin/git-proxy. If you have this script
