@@ -188,7 +188,7 @@ module Gitorious
     end
 
     def env_data
-      { :env => env, :current_site => current_site }
+      { :env => env, :current_site => current_site, :session => session }
     end
   end
 end
