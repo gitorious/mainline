@@ -52,4 +52,8 @@ SshKeyValidator = UseCase::Validator.define do
     temp_key.delete
     return $?.success?
   end
+
+  def self.model_name
+    SshKey.model_name
+  end
 end

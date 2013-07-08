@@ -32,4 +32,8 @@ RepositoryValidator = UseCase::Validator.define do
     errors.add(:key, I18n.t(message.call("name"))) if !uniq_name?
     errors.add(:key, I18n.t(message.call("hashed_path"))) if !uniq_hashed_path?
   end
+
+  def self.model_name
+    Repository.model_name
+  end
 end
