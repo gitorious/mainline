@@ -27,6 +27,7 @@ require "libdolt"
 require "gitorious"
 require "gitorious/view/dolt_url_helper"
 require "gitorious/view/repository_helper"
+require "gitorious/view/avatar_helper"
 
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
@@ -40,6 +41,7 @@ module ApplicationHelper
   include GroupRoutingHelper
   include Gitorious::CacheInPrivateHelper
   include DoltViewHelpers
+  include Gitorious::View::AvatarHelper
 
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 
@@ -185,59 +187,6 @@ module ApplicationHelper
       return stylesheet_link_tag("syntax_themes/idle")
     end
     out.join("\n").html_safe
-  end
-
-  def gravatar_url_for(email, options = {})
-    prefix = request.ssl? ? "https://secure" : "http://www"
-    scheme = request.ssl? ? "https" : "http"
-    options.reverse_merge!(:default => "images/default_face.gif")
-    port_string = [443, 80].include?(request.port) ? "" : ":#{request.port}"
-    "#{prefix}.gravatar.com/avatar/" +
-    (email.nil? ? "" : Digest::MD5.hexdigest(email.downcase)) + "&amp;default=" +
-      u("#{scheme}://#{Gitorious.host}#{port_string}" +
-      "/#{options.delete(:default)}") +
-    options.map { |k,v| "&amp;#{k}=#{v}" }.join
-  end
-
-  # For a User object, return either his/her avatar or the gravatar for her email address
-  # Options
-  # - Pass on :size for the height+width of the image in pixels
-  # - Pass on :version for a named version/style of the avatar
-  def avatar(user, options={})
-    if user.avatar?
-      avatar_style = options.delete(:version) || :thumb
-      image_options = { :alt => 'avatar'}.merge(:width => options[:size], :height => options[:size])
-      image_tag(user.avatar.url(avatar_style), image_options)
-    else
-      gravatar(user.email, options)
-    end
-  end
-
-  # Returns an avatar from an email address (for instance from a commit) where we don't have an actual User object
-  def avatar_from_email(email, options={})
-    return if email.blank?
-    avatar_style = options.delete(:version) || :thumb
-    image = User.find_avatar_for_email(email, avatar_style)
-    if image == :nil
-      gravatar(email, options)
-    else
-      image_options = { :alt => 'avatar'}.merge(:width => options[:size], :height => options[:size])
-      image_tag(image, image_options)
-    end
-  end
-
-  def gravatar(email, options = {}, image_options = {})
-    size = options[:size]
-    image_options = image_options.merge({ :alt => "avatar" })
-    if size
-      image_options.merge!(:width => size, :height => size)
-    end
-    image_tag(gravatar_url_for(email, options), image_options)
-  end
-
-  def gravatar_frame(email, options = {})
-    extra_css_class = options[:style] ? " gravatar_#{options[:style]}" : ""
-    %{<div class="gravatar#{extra_css_class}">#{gravatar(email, options)}</div>}.html_safe
   end
 
   def flashes

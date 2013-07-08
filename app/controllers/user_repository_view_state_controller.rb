@@ -16,8 +16,11 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "gitorious/view_state/user_repository"
+require "gitorious/view/avatar_helper"
 
 class UserRepositoryViewStateController < ApplicationController
+  include Gitorious::View::AvatarHelper
+
   def show
     respond_to do |format|
       user = current_user == :false ? nil : current_user

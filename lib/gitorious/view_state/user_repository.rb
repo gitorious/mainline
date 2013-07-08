@@ -42,7 +42,8 @@ module Gitorious
           "profilePath" => app.user_path(user),
           "editPath" => app.edit_user_path(user),
           "messagesPath" => app.messages_path,
-          "logoutPath" => app.logout_path
+          "logoutPath" => app.logout_path,
+          "avatarPath" => app.avatar_url(user)
         }
       end
 

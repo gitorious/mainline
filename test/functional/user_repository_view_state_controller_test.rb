@@ -65,6 +65,20 @@ class UserRepositoryViewStateControllerTest < ActionController::TestCase
       assert_equal "/~moe", JSON.parse(response.body)["user"]["profilePath"]
       assert_equal "/messages", JSON.parse(response.body)["user"]["messagesPath"]
       assert_equal "/logout", JSON.parse(response.body)["user"]["logoutPath"]
+      assert_equal "http://www.gravatar.com/avatar/a59f9d19e6a527f11b016650dde6f4c9&amp;default=http://gitorious.test/images/default_face.gif", JSON.parse(response.body)["user"]["avatarPath"]
+    end
+
+    should "incude avatar if user has one" do
+      login_as(:johan)
+      user = users(:johan)
+      avatar = Object.new
+      def avatar.url(type); "/avatar"; end
+      User.any_instance.stubs(:avatar?).returns(true)
+      User.any_instance.stubs(:avatar).returns(avatar)
+
+      get :show, :id => @repository.id, :format => "json"
+
+      assert_equal "/avatar", JSON.parse(response.body)["user"]["avatarPath"]
     end
 
     should "indicate that user is not an administrator for the repository" do
