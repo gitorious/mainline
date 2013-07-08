@@ -30,8 +30,7 @@ class CommitCommentsControllerTest < ActionController::TestCase
       comment = create_comment
       get(:index, params)
 
-      assert_equal [comment], assigns(:comments)
-      assert_equal 1, assigns(:comment_count)
+      assert_match comment.body, @response.body
     end
 
     should "have a different last-modified if there is a comment" do
