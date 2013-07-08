@@ -157,4 +157,56 @@ source /etc/profile.d/chruby.sh && gem install bundler
 /var/www/gitorious/app/bin/search_engine restart
 ```
   should all work.
+
+* If you don't have a /var/www/gitorious/app/config/unicorn.rb file,
+  create it using the version controlled sample file:
+
+```sh
+cp /var/www/gitorious/app/config/unicorn.sample.rb /var/www/gitorious/app/config/unicorn.rb
+```
+
+* If you have installed with the Gitorious Community Installer you use
+  monit to keep Unicorn, Thinking Sphinx etc running. You'll need to
+  tell monit to use the specific Ruby version you installed
+  above. Update the monit config files handling starting/stopping the
+  services in question:
+
+#/etc/monit.d/unicorn.monit:
+```sh
+check process unicorn with pidfile /var/www/gitorious/app/tmp/pids/unicorn.pid
+  start program = "/usr/local/bin/chruby-exec ruby-1.9.3-p448 -- /var/www/gitorious/app/bin/unicorn -c config/unicorn.rb -D"
+  stop program = "/bin/sh -c '/bin/kill `cat /var/www/gitorious/app/tmp/pids/unicorn.pid`'"
+```
+
+#/etc/monit.d/git-proxy.monit:
+```sh
+check process git-proxy with pidfile /var/www/gitorious/app/log/git-proxy.pid
+  start program = "/usr/local/bin/chruby-exec ruby-1.9.3-p448 -- /var/www/gitorious/app/bin/git-proxy --pid=/var/www/gitorious/app/log/git-proxy.pid --detach --log=/var/www/gitorious/app/log/git-proxy.log1"
+  stop program = "/bin/kill `cat /var/www/gitorious/app/log/git-proxy.pid`"
+  if failed port 9418 then restart
+```
+
+#/etc/monit.d/thinking-sphinx.monit
+```sh
+check process thinking-sphinx with pidfile /var/www/gitorious/app/log/searchd.production.pid
+  start program = "/usr/local/bin/chruby-exec ruby-1.9.3-p448 -- /var/www/gitorious/app/bin/rake ts:start"
+  stop program = "/usr/local/bin/chruby-exec ruby-1.9.3-p448 -- /var/www/gitorious/app/bin/rake ts:stop"
+```
+
+#/etc/init/resque-worker.conf
+```sh
+description "Run a Resque worker on all queues"
+author "Marius Mårnes Mathiesen <marius@gitorious.com>"
+
+start on started rc RUNLEVEL=[35]
+stop on runlevel [06]
+
+env PATH=/bin:/usr/bin:/usr/local/bin
+env QUEUE=*
+env PIDFILE=/var/www/gitorious/app/tmp/pids/resque-worker1.pid
+
+exec /usr/local/bin/chruby-exec ruby-1.9.3-p448 -- /var/www/gitorious/app/bin/rake resque:work
+respawn
+```
+
 * Restart your server.
