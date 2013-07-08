@@ -209,4 +209,10 @@ exec /usr/local/bin/chruby-exec ruby-1.9.3-p448 -- /var/www/gitorious/app/bin/ra
 respawn
 ```
 
+* Rebuild the search index
+
+```sh
+cd /var/www/gitorious/app && bin/rake ts:rebuild
+```
+
 * Restart your server.
