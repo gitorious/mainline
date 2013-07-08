@@ -143,7 +143,7 @@ source /etc/profile.d/chruby.sh && gem install bundler
 * script/git-proxy has moved to bin/git-proxy. If you have this script
   symlinked onto your PATH, please make the symlink over, this time
   pointing it to bin/git-proxy.
-* Gitorious has migrated from using the ultrasphinx gem for intefacing
+* Gitorious has migrated from using the ultrasphinx gem for interfacing
   with the Sphinx search engine. If you have rake tasks or crontab
   entries for controlling this, you should use the bin/search_engine
   script instead of shelling out to rake. This script will load the
