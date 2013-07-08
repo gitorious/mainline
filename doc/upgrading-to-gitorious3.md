@@ -36,7 +36,7 @@ single user:
 ```sh
 sudo -s
 cd /tmp
-wget -O ruby-install-0.2.1.tar.gz https://github.com/postmodern/ruby-install/archive/v0.2.1.tar.gz
+wget --no-check-certificate -O ruby-install-0.2.1.tar.gz https://github.com/postmodern/ruby-install/archive/v0.2.1.tar.gz
 tar -xzvf ruby-install-0.2.1.tar.gz
 cd ruby-install-0.2.1/
 make install
@@ -88,6 +88,12 @@ The steps to upgrade are as follows:
   Gitorious may no longer support Ruby 1.8.7. Note: If you upgrade
   Ruby, you must reinstall passenger if you are serving the app with
   it.
+* Make sure you have at least version 1.3.5 of the Bundler rubygem
+  installed ("gem install bundler", then reboot and "bundler -v" to
+  verify).
+* Install new dependencies: postgresql dev libraries.
+  Example for yum-based package install:
+  "yum install postgresql-devel.i686"
 * Upgrade your gitorious.yml. This can be done automatically for you
   by running bin/upgrade-gitorious3-config. Your old configuration
   will mostly work. If you decide to not upgrade it at this point, the
