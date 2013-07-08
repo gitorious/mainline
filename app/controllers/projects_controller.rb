@@ -21,7 +21,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "gitorious/project_xml_serializer"
+require "project_xml_serializer"
 
 class ProjectsController < ApplicationController
   include ProjectFilters
@@ -58,7 +58,7 @@ class ProjectsController < ApplicationController
       }
 
       format.xml do
-        render(:xml => Gitorious::ProjectXMLSerializer.new(@projects).render(current_user))
+        render(:xml => ProjectXMLSerializer.new(self, @projects).render(current_user))
       end
 
       format.atom { }
