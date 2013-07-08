@@ -100,7 +100,7 @@ module Gitorious
 
       def request_merge_path
         return nil if user.nil? || repository.parent.nil? || !app.admin?(user, repository)
-        app.new_project_repository_merge_request_path(repository.parent, repository)
+        app.new_project_repository_merge_request_path(repository.project, repository.parent)
       end
 
       def app; @app; end

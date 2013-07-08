@@ -150,7 +150,7 @@ class UserRepositoryViewStateControllerTest < ActionController::TestCase
       get :show, :id => repositories(:johans2).id, :format => "json"
 
       repository = JSON.parse(response.body)["repository"]
-      assert_equal "/johansprojectrepos/johansprojectrepos-clone/merge_requests/new", repository["requestMergePath"]
+      assert_equal "/johans-project/johansprojectrepos/merge_requests/new", repository["requestMergePath"]
     end
 
     should "not include request merge path for non-clone" do
