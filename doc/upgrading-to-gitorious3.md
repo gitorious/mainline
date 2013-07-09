@@ -20,11 +20,34 @@ If you have an older community installation, or a custom, manual
 installation, please don't proceed with the upgrade instructions below
 unless you are absolutely sure you know what you are doing.
 
+## Upgrading an older version of Gitorious
+
+If you do decide to attempt upgrading a pre-2.4.x version of
+Gitorious, keep the following in mind:
+
+* If you are using stomp server or ActiveMQ with the Gitorious stomp
+  backend, you must replace it. Gitorious no longer supports stomp.
+  The replacement is Redis and Resque. Install Redis from source, and
+  take a look at doc/templates/upstart/resque-worker.conf for a sample
+  configuration for Resque workers. If your installation is
+  low-traffic and performance is not critical, you can also consider
+  using the "sync" messaging adapter. Note however, that this will
+  make pushes slow.
+
+* If you upgrade Ruby (see below), you must reinstall passenger if you
+are serving the app with it.
+
 ## Install a Ruby version manager and an updated Ruby version
+
+Gitorious now supports Ruby 1.9.3, and you should take advantage of
+the performance boost that comes along with it. Future versions of
+Gitorious may no longer support Ruby 1.8.7.
 
 Getting the right Ruby version from your system's package manager may
 be tricky. We highly recommend that you install two tools which will
-make your life a lot easier: ruby-install and chruby.
+make your life a lot easier: ruby-install and chruby. The instructions
+below will show how to do so in CentOS but should work in other
+distros as well.
 
 ### Install Ruby-install
 
@@ -81,35 +104,66 @@ exit
 
 The steps to upgrade are as follows:
 
-* Upgrade Ruby to version 1.9.3. This step is completely optional, but
-  recommended. Gitorious did not properly support Ruby 1.9 in previous
-  versions. Now it does, and you should take advantage of the
-  performance boost that comes along with it. Future versions of
-  Gitorious may no longer support Ruby 1.8.7. Note: If you upgrade
-  Ruby, you must reinstall passenger if you are serving the app with
-  it.
+
+* Fetch the latest code from the Gitorious project, check out version 3. Example:
+
+```sh
+cd /var/www/gitorious/app/ && git fetch origin && git checkout next
+```
+
+* Install new dependencies: the native postgresql development
+  libraries. Example for yum-based package install in CentOS (64bit):
+
+```sh
+yum install postgresql-devel.x86_64
+```
+
 * Make sure you have at least version 1.3.5 of the Bundler rubygem
-  installed ("gem install bundler", then reboot and "bundler -v" to
-  verify).
-* Install new dependencies: postgresql dev libraries.
-  Example for yum-based package install:
-  "yum install postgresql-devel.i686"
+  installed.
+
+```sh
+su git
+source /etc/profile.d/chruby.sh && gem install bundler
+```
+
+  Then run "bundler -v" to verify.
+
+* Remove any old local bundle-managed gems.
+
+```sh
+rm -rf /var/www/gitorious/app/.bundle
+```
+
+Then run bundler in in the Gitorious root:
+
+```sh
+cd /var/www/gitorious/app/ && bundle
+```
+
+Update all submodules:
+
+```sh
+cd /var/www/gitorious/app/ && env GIT_SSL_NO_VERIFY=true git submodule update --init --recursive
+```
+
 * Upgrade your gitorious.yml. This can be done automatically for you
-  by running bin/upgrade-gitorious3-config. Your old configuration
-  will mostly work. If you decide to not upgrade it at this point, the
-  app will print deprecation warnings for settings that have changed.
-  The upgrade script keeps a copy of your existing configuration.
-* Run `bundle` in the Gitorious root.
-* If you are using stomp server or ActiveMQ with the Gitorious stomp
-  backend, you must replace it. Gitorious no longer supports stomp.
-  The replacement is Redis and Resque. Install Redis from source, and
-  take a look at doc/templates/upstart/resque-worker.conf for a sample
-  configuration for Resque workers. If your installation is
-  low-traffic and performance is not critical, you can also consider
-  using the "sync" messaging adapter. Note however, that this will
-  make pushes slow.
+  by running bin/upgrade-gitorious3-config.
+
+```sh
+cd /var/www/gitorious/app/
+bin/upgrade-gitorious3-config config/gitorious.yml config/gitorious3.yml
+cp config/gitorious.yml config/gitorious2.yml
+cp config/gitorious3.yml config/gitorious.yml
+```sh
+
+  Your old configuration will mostly work. If you decide to not
+  upgrade it at this point, the app will print deprecation warnings
+  for settings that have changed.  The upgrade script keeps a copy of
+  your existing configuration.
+
 * Update your config/database.yml. The adapter used to be named
   "mysql", it is now called "mysql2".
+
 * Previous install guides recommended setting up a symlink to the
   gitorious script from Gitorious from somewhere on the default PATH
   on your system. If your server has such a symlink, remove it and
@@ -134,12 +188,6 @@ EOF
 chmod 0755 /usr/bin/gitorious
 ```
 
-Install bundler.
-
-```sh
-source /etc/profile.d/chruby.sh && gem install bundler
-```
-
 * script/git-proxy has moved to bin/git-proxy. If you have this script
   symlinked onto your PATH, please make the symlink over, this time
   pointing it to bin/git-proxy.
@@ -152,8 +200,8 @@ source /etc/profile.d/chruby.sh && gem install bundler
   directories into the Gitorious root directory.
 
 ```sh
-/var/www/gitorious/app/bin/search_engine start
 /var/www/gitorious/app/bin/search_engine stop
+/var/www/gitorious/app/bin/search_engine start
 /var/www/gitorious/app/bin/search_engine restart
 ```
   should all work.
@@ -165,20 +213,31 @@ source /etc/profile.d/chruby.sh && gem install bundler
 cp /var/www/gitorious/app/config/unicorn.sample.rb /var/www/gitorious/app/config/unicorn.rb
 ```
 
-* If you have installed with the Gitorious Community Installer you use
-  monit to keep Unicorn, Thinking Sphinx etc running. You'll need to
-  tell monit to use the specific Ruby version you installed
-  above. Update the monit config files handling starting/stopping the
-  services in question:
+* Update the monit and upstart config files to use the correct version of Ruby
 
-#/etc/monit.d/unicorn.monit:
+If you have installed with the Gitorious Community Installer you use
+Monit to keep services like Unicorn, Thinking Sphinx etc
+running. You'll need to tell Monit to use the specific Ruby version
+you installed above for running each of the services.
+
+Update the monit config files handling starting/stopping the services
+in question:
+
+#/etc/monit.d/unicorn.monit
 ```sh
 check process unicorn with pidfile /var/www/gitorious/app/tmp/pids/unicorn.pid
   start program = "/usr/local/bin/chruby-exec ruby-1.9.3-p448 -- /var/www/gitorious/app/bin/unicorn -c config/unicorn.rb -D"
   stop program = "/bin/sh -c '/bin/kill `cat /var/www/gitorious/app/tmp/pids/unicorn.pid`'"
 ```
 
-#/etc/monit.d/git-proxy.monit:
+If you have the old git-daemons monit script, remove it: Replace it with a new git-proxy monit script, see below.
+
+```sh
+rm /etc/monit.d/git-daemons.monit
+touch /etc/monit.d/git-proxy.monit
+```
+
+#/etc/monit.d/git-proxy.monit
 ```sh
 check process git-proxy with pidfile /var/www/gitorious/app/log/git-proxy.pid
   start program = "/usr/local/bin/chruby-exec ruby-1.9.3-p448 -- /var/www/gitorious/app/bin/git-proxy --pid=/var/www/gitorious/app/log/git-proxy.pid --detach --log=/var/www/gitorious/app/log/git-proxy.log1"
@@ -215,4 +274,19 @@ respawn
 cd /var/www/gitorious/app && bin/rake ts:rebuild
 ```
 
-* Restart your server.
+* Make sure the git user owns all files in the Gitorious application
+
+```sh
+cd /var/www/gitorious/app/ && chown -R git:git *
+```
+
+
+* Stop all currently running services, clean out pidfiles
+
+```sh
+monit stop all
+find . | grep [.]pid | xargs rm
+monit start all
+```
+
+* Reboot your server to check if everything comes up again.
