@@ -18,7 +18,6 @@
 require "dolt/sinatra/base"
 require "libdolt/view/multi_repository"
 require "gitorious/view/dolt_url_helper"
-require "better_errors" if RUBY_VERSION > "1.9"
 
 module Gitorious
   class RepositoryBrowser < ::Dolt::Sinatra::Base
@@ -26,11 +25,10 @@ module Gitorious
     include Gitorious::View::DoltUrlHelper
     include Gitorious::View::SiteHelper
 
-    configure :development do
-      if RUBY_VERSION > "1.9"
-        use BetterErrors::Middleware
-        BetterErrors.application_root = Rails.root.to_s
-      end
+    if Rails.env.production? && RUBY_VERSION > "1.9"
+      require "better_errors"
+      use BetterErrors::Middleware
+      BetterErrors.application_root = Rails.root.to_s
     end
 
     def render_empty_repository(repository)
