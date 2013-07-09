@@ -103,6 +103,12 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_response 302
       end
 
+      should "not throw an error when slug is taken" do
+        login_as :johan
+        put :edit_slug, :id => projects(:johans).to_param, :project => { :slug => projects(:moes).slug }
+        assert_response :success
+      end
+
       should "not render private repo update for unauthorized user" do
         login_as :mike
         put :update, :id => projects(:johans).to_param, :project => {}

@@ -84,6 +84,7 @@ module TestHelper
     def self.first; new; end
     def self.count; @count || 0; end
 
+    def self.model_name; ActiveModel::Name.new(self); end
     private
     def self.register
       @count ||= 0

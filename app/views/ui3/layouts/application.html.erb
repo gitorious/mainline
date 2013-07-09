@@ -25,10 +25,10 @@
       <link href="<%= stylesheet %>" rel="stylesheet" type="text/css">
     <% end %>
     <%= content_for(:head) %>
-    <%= if respond_to?(:protect_against_forgery?) && protect_against_forgery?
-          [tag("meta", :name => "csrf-param", :class => "csrf-param", :content => request_forgery_protection_token),
-           tag("meta", :name => "csrf-token", :class => "csrf-token", :content => form_authenticity_token)].join("\n").html_safe
-        end %>
+    <% if session[:_csrf_token] %>
+      <meta class="csrf-param" content="authenticity_token" name="csrf-param">
+      <meta class="csrf-token" content="<%= session[:_csrf_token] %>" name="csrf-token">
+    <% end %>
   </head>
   <body<%= " class=\"#{@body_class}\"".html_safe if @body_class %>>
     <div class="gts-masthead navbar">

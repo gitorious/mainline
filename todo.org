@@ -1,4 +1,4 @@
-* Gitorious 3 [11/12]
+* Gitorious 3 [12/15]
 ** DONE Fix Repository#show so it redirects to Dolt
 ** DONE Site-specific footer links
 ** DONE Add tmp redirects (307) to Dolt for certain cases
@@ -11,6 +11,9 @@
 ** DONE "Intelligent" clone button
 ** DONE Link repo in repo_header
 ** TODO Activities needs to be rendered prettier
+** TODO setup-dev-env guides should use chruby/ruby-install
+** TODO setup-dev-env should not recommend bin/rake
+** DONE bin/create-user uses the wrong User API
 * Views to port to UI3 [2/76]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit

@@ -34,4 +34,8 @@ ProjectValidator = UseCase::Validator.define do
   def unique_slug
     errors.add(:key, I18n.t("project.unique_slug_validation_message")) if !uniq?
   end
+
+  def self.model_name
+    Project.model_name
+  end
 end

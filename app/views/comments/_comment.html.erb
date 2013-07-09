@@ -21,7 +21,7 @@
 %>
 <a name="<%= dom_id(comment) -%>"></a>
 <%= comment_block(comment) do -%>
-  <%- if comment.state_change -%>
+  <%- if comment.state_changed_from -%>
   <p class="meta_body">
     &#x2192; State changed <%- if comment.state_changed_from -%>from
     <span class="changed"><%=h comment.state_changed_from %></span><%- end -%> to

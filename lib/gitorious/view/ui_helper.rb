@@ -26,7 +26,7 @@ module Gitorious
 
       def site_logo(site)
         logo = Gitorious::Configuration.group_get(
-          ["sites", site.subdomain], "logo_url", "/ui3/images/gitorious2013.png"
+          ["sites", site.subdomain], "logo_url", "/dist/images/gitorious2013.png"
           )
         "<img src=\"#{logo}\" alt=\"#{site.title}\" title=\"#{site.title}\">"
       end

@@ -156,7 +156,7 @@ bin/create-user
 cat << EOF > /usr/bin/gitorious
 #!/bin/sh
 
-exec $GITORIOUS_ROOT/bin/gitorious $@
+exec $GITORIOUS_ROOT/bin/gitorious "$@"
 EOF
 
 echo "Now you should be able to run the application in development mode:"

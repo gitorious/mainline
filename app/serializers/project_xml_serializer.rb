@@ -15,21 +15,18 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-module Gitorious
-  class ProjectXMLSerializer
-    include Gitorious::Authorization
+class ProjectXMLSerializer
+  def initialize(app, projects)
+    @app = app
+    @projects = projects
+  end
 
-    def initialize(projects)
-      @projects = projects
-    end
-
-    def render(user)
-      prolog = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-      @projects.inject("#{prolog}<projects type=\"array\">") do |xml, p|
-        mainlines = filter_authorized(user, p.repositories.mainlines)
-        clones = filter_authorized(user, p.repositories.clones)
-        xml + p.to_xml({ :skip_instruct => true }, mainlines, clones)
-      end + "</projects>"
-    end
+  def render(user)
+    prolog = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+    @projects.inject("#{prolog}<projects type=\"array\">") do |xml, p|
+      mainlines = @app.filter_authorized(user, p.repositories.mainlines)
+      clones = @app.filter_authorized(user, p.repositories.clones)
+      xml + p.to_xml({ :skip_instruct => true }, mainlines, clones)
+    end + "</projects>"
   end
 end

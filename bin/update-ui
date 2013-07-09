@@ -10,3 +10,4 @@ cp public/ui3/dist/gitorious3-capillary.min.js public/dist/js/gitorious3-capilla
 cp public/ui3/dist/gitorious3.min.css public/dist/css/gitorious3.min.css
 cp public/ui3/js/src/logger.js public/dist/js/logger.js
 cp -r public/ui3/lib/bootstrap public/dist/.
+cp -r public/ui3/images public/dist/.

@@ -21,7 +21,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "gitorious/project_xml_serializer"
+require "project_xml_serializer"
 
 class ProjectsController < ApplicationController
   include ProjectFilters
@@ -58,7 +58,7 @@ class ProjectsController < ApplicationController
       }
 
       format.xml do
-        render(:xml => Gitorious::ProjectXMLSerializer.new(@projects).render(current_user))
+        render(:xml => ProjectXMLSerializer.new(self, @projects).render(current_user))
       end
 
       format.atom { }
@@ -137,10 +137,14 @@ class ProjectsController < ApplicationController
     @root = Breadcrumb::EditProject.new(@project)
     if request.put?
       @project.slug = params[:project][:slug]
-      if @project.save
+      begin
+        @project.save
         @project.create_event(Action::UPDATE_PROJECT, @project, current_user)
         flash[:success] = "Project slug updated"
         redirect_to :action => :show, :id => @project.slug and return
+      rescue ActiveRecord::RecordNotUnique
+        @project.reload
+        flash[:error] = "The slug isn't unique"
       end
     end
   end

@@ -32,4 +32,8 @@ MembershipValidator = UseCase::Validator.define do
       errors.add(:role, "The group creator cannot be demoted")
     end
   end
+
+  def self.model_name
+    Membership.model_name
+  end
 end

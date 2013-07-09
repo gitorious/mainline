@@ -31,7 +31,7 @@ GITORIOUS_USER=`whoami`
 # front-end code.
 git submodule update --recursive --init
 
-# Create the required directoryes
+# Create the required directories
 cd $GITORIOUS_ROOT
 mkdir repositories
 mkdir tarball-cache
@@ -148,7 +148,7 @@ bin/create-user
 cat << EOF > /usr/bin/gitorious
 #!/bin/sh
 
-exec $GITORIOUS_ROOT/bin/gitorious $@
+exec $GITORIOUS_ROOT/bin/gitorious "$@"
 EOF
 
 echo "Now you should be able to run the application in development mode:"
