@@ -137,7 +137,7 @@ rm -rf /var/www/gitorious/app/.bundle
 Then run bundler in in the Gitorious root:
 
 ```sh
-cd /var/www/gitorious/app/ && bundle
+cd /var/www/gitorious/app/ && bundle --deployment
 ```
 
 Update all submodules:
