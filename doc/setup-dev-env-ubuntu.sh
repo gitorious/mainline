@@ -31,7 +31,7 @@ GITORIOUS_USER=`whoami`
 # front-end code.
 git submodule update --recursive --init
 
-# Create the required directoryes
+# Create the required directories
 cd $GITORIOUS_ROOT
 mkdir repositories
 mkdir tarball-cache
