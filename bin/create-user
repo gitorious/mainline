@@ -16,19 +16,22 @@ Gitorious::CLI.new.run_with_gitorious_environment do
 
   password = ask("Enter password: ") { |q| q.echo = "*" }
 
-  user = User.new(:email => email, :terms_of_use => "1")
-  user.login = login
-  user.password = user.password_confirmation = password
+  outcome = CreateAdminUser.new.execute({
+      :login => login,
+      :email => email,
+      :password => password,
+      :password_confirmation => password,
+      :terms_of_use => true,
+      :is_admin => ask("Make user admin? (y/n) ") == "y"
+    })
 
-  user.is_admin = ask("Make user admin? (y/n) ") == "y"
-
-  if !user.valid?
+  outcome.failure do |user|
     puts "Unable to create user:"
     puts user.errors.full_messages.map { |m| "  - #{m}" }.join("\n")
-    exit
+    exit 1
   end
 
-  user.save!
-  user.activate
-  puts "User '#{login}' created successfully."
+  outcome.success do |user|
+    puts "User '#{user.login}' created successfully."
+  end
 end
