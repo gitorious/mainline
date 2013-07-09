@@ -23,17 +23,7 @@
         <a href="<%= project_path(repository.project) %>"><%= repository.project.slug %></a> /
         <span><%= repository.name %></span>
       </h1>
-      <div class="pull-right dropdown">
-        <a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-cog"></i> Admin</a>
-        <ul class="dropdown-menu">
-          <li><a href="/edit-repo"><i class="icon-pencil"></i> Edit repository</a></li>
-          <li><a href="/delete-repo"><i class="icon-trash"></i> Delete repository</a></li>
-          <li class="divider"></li>
-          <li><a href="/change-name"><i class="i"></i> Change name</a></li>
-          <li><a href="/manage-collaborators"><i class="i"></i> Manage collaborators</a></li>
-          <li><a href="/transfer-ownership"><i class="i"></i> Transfer ownership</a></li>
-        </ul>
-      </div>
+      <div class="gts-repository-admin-ph gts-placeholder"></div>
     </div>
     <%= project_description(repository.project) %>
     <div class="row">
