@@ -39,7 +39,8 @@ module Gitorious
       @template ||= (Rails.root + "app/views/repositories/_getting_started.html.erb").to_s
       renderer.render({ :file => @template }, {
           :repository => Project.find_by_slug!(pid).repositories.find_by_name!(rid),
-          :current_user => uid && User.find(uid)
+          :current_user => uid && User.find(uid),
+          :session => session
         })
     end
 
