@@ -23,7 +23,6 @@ class CloneRepositoryInput < NewRepositoryInput
   attribute :login, String
   attribute :owner_type, String
   attribute :owner_id, Integer
-  attribute :description, String
 end
 
 class CloneRepositoryCommand < CreateRepositoryCommand

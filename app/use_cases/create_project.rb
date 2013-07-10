@@ -21,8 +21,6 @@ require "virtus"
 class NewProjectParams
   include Virtus
   attribute :title, String
-  attribute :user, User
-  attribute :user_id, Integer
   attribute :slug, String
   attribute :description, String
   attribute :default_merge_request_status_id, Integer
