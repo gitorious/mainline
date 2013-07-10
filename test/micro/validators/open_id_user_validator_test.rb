@@ -18,8 +18,8 @@
 require "fast_test_helper"
 require "validators/open_id_user_validator"
 
-class OpenIdUserValidatorTest < MiniTest::Shoulda
-  should "accept new open id user" do
+class OpenIdUserValidatorTest < MiniTest::Spec
+  it "accepts new open id user" do
     result = OpenIdUserValidator.call(User.new({
           :login => "schmoe",
           :email => "moe@schmoe.example",

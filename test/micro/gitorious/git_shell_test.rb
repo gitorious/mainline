@@ -18,20 +18,20 @@
 require "fast_test_helper"
 require "gitorious/git_shell"
 
-class GitShellTest < MiniTest::Shoulda
-  context "Sanitization" do
-    setup do
+class GitShellTest < MiniTest::Spec
+  describe "Sanitization" do
+    before do
       @shell = Gitorious::GitShell.new
     end
 
-    should "sanitize parameters sent to it" do
+    it "sanitizes parameters sent to it" do
       expected = "/usr/bin/git --git-dir=/dir.git log --graph " +
         "--pretty=format:\"%H§%P§%ai§%ae§%d§%s§\" "
       @shell.expects(:execute).with(expected)
       @shell.graph_log("/dir.git")
     end
 
-    should "remove anything but valid git object names" do
+    it "removes anything but valid git object names" do
       expected = "/usr/bin/git --git-dir=/project.git log --graph " +
         "--pretty=format:\"%H§%P§%ai§%ae§%d§%s§\" \\`id\\>/tmp/command\\`"
       @shell.expects(:execute).with(expected)

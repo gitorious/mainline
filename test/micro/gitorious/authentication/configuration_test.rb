@@ -20,31 +20,31 @@ require "gitorious/authentication/configuration"
 require "gitorious/authentication/database_authentication"
 require "gitorious/authentication/ldap_authentication"
 
-class Gitorious::Authentication::ConfigurationTest < MiniTest::Shoulda
-  context "Default configuration" do
-    setup do
+class Gitorious::Authentication::ConfigurationTest < MiniTest::Spec
+  describe "Default configuration" do
+    before do
       Gitorious::Authentication::Configuration.authentication_methods.clear
     end
 
-    should "use database authentication as default" do
+    it "uses database authentication as default" do
       assert_equal 0, Gitorious::Authentication::Configuration.authentication_methods.size
       Gitorious::Authentication::Configuration.configure({})
       assert_equal 1, Gitorious::Authentication::Configuration.authentication_methods.size
     end
 
-    should "only exclude database authentication when instructed to do so" do
+    it "only excludes database authentication when instructed to do so" do
       Gitorious::Authentication::Configuration.configure({"disable_default" => "true"})
       assert_equal 0, Gitorious::Authentication::Configuration.authentication_methods.size
     end
 
-    should "not allow several auth methods of same type" do
+    it "does not allow several auth methods of same type" do
       2.times {Gitorious::Authentication::Configuration.use_default_configuration}
       assert_equal 1, Gitorious::Authentication::Configuration.authentication_methods.size
     end
   end
 
-  context "LDAP authentication" do
-    setup do
+  describe "LDAP authentication" do
+    before do
       Gitorious::Authentication::Configuration.authentication_methods.clear
       options = {"methods" => [{ "adapter" => "Gitorious::Authentication::LDAPAuthentication",
                                  "server" => "directory.example",
@@ -57,21 +57,21 @@ class Gitorious::Authentication::ConfigurationTest < MiniTest::Shoulda
       @ldap = Gitorious::Authentication::Configuration.authentication_methods.last
     end
 
-    should "configure LDAP authentication" do
+    it "configures LDAP authentication" do
       assert_equal "directory.example", @ldap.server
     end
   end
 
-  context "OpenID authentication" do
-    setup do
+  describe "OpenID authentication" do
+    before do
       Gitorious::Authentication::Configuration.reset!
     end
 
-    should "by default be enabled" do
+    it "is enabled by default" do
       assert Gitorious::Authentication::Configuration.openid_enabled?, "Openid should be enabled. Current methods are #{Gitorious::Authentication::Configuration.authentication_methods.inspect}"
     end
 
-    should "disable OpenID" do
+    it "disables OpenID" do
       Gitorious::Authentication::Configuration.configure({"enable_openid" => false})
       refute Gitorious::Authentication::Configuration.openid_enabled?
     end

@@ -23,8 +23,8 @@ class App < MessageHub
   def admin?(actor, subject); true; end
 end
 
-class CreateTrackingRepositoryCommandTest < MiniTest::Shoulda
-  def setup
+class CreateTrackingRepositoryCommandTest < MiniTest::Spec
+  before do
     @app = App.new
     @user = User.new
     @project = Project.new
@@ -37,8 +37,8 @@ class CreateTrackingRepositoryCommandTest < MiniTest::Shoulda
     @command = CreateTrackingRepositoryCommand.new(@app, @repository)
   end
 
-  context "#build" do
-    should "add new repository to project" do
+  describe "#build" do
+    it "adds new repository to project" do
       repository = @command.build
 
       assert_equal "tracking_repository_for_42", repository.name
@@ -49,8 +49,8 @@ class CreateTrackingRepositoryCommandTest < MiniTest::Shoulda
     end
   end
 
-  context "#execute" do
-    should "create repository" do
+  describe "#execute" do
+    it "creates repository" do
       count = Repository.count
       repository = @command.execute(@command.build)
 
@@ -62,20 +62,20 @@ class CreateTrackingRepositoryCommandTest < MiniTest::Shoulda
       refute repository.merge_requests_enabled
     end
 
-    should "create committership for owner" do
+    it "creates committership for owner" do
       repository = @command.build
       repository.committerships.expects(:create_for_owner!).with(@user)
       @command.execute(repository)
     end
 
-    should "create public project by default" do
+    it "creates public project by default" do
       Repository.stubs(:private_on_create?).returns(false)
       repository = @command.execute(@command.build)
 
       assert repository.public?
     end
 
-    should "create private project if parent is private" do
+    it "creates private project if parent is private" do
       @repository.make_private
       @repository.content_memberships = [OpenStruct.new(:member => { :id => 42 })]
       repository = @command.execute(@command.build)
@@ -84,7 +84,7 @@ class CreateTrackingRepositoryCommandTest < MiniTest::Shoulda
       assert_equal [{ :id => 42 }], repository.content_memberships
     end
 
-    should "post creation message" do
+    it "posts creation message" do
       repository = @command.build
       repository.id = 13
       repository = @command.execute(repository)

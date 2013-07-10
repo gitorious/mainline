@@ -19,9 +19,9 @@ require "fast_test_helper"
 require "vendor/grit/lib/grit"
 require "gitorious/commit"
 
-class CommitTest < MiniTest::Shoulda
-  context "Commits from registered users" do
-    setup do
+class CommitTest < MiniTest::Spec
+  describe "Commits from registered users" do
+    before do
       @user = User.new(:email => "moe@example.com")
       @committer = Grit::Actor.new("John Committer", @user.email)
       @author = Grit::Actor.new("Jane Author", "jane@g.org")
@@ -34,37 +34,37 @@ class CommitTest < MiniTest::Shoulda
       @commit = Gitorious::Commit.new(grit_commit)
     end
 
-    should "have an email" do
+    it "has an email" do
       assert_equal @user.email, @commit.email
     end
 
-    should "find its user if email matches" do
+    it "finds its user if email matches" do
       assert_equal @user, @commit.user
     end
 
-    should "wrap its sha as data" do
+    it "wraps its sha as data" do
       assert_equal "a"*40, @commit.data
     end
 
-    should "have created_at" do
+    it "has created_at" do
       assert_equal @committed_at, @commit.created_at
     end
 
-    should "wrap its message as body" do
+    it "wraps its message as body" do
       assert_equal @body, @commit.body
     end
 
-    should "have an actor display" do
+    it "has an actor display" do
       assert_equal "John Committer", @commit.actor_display
     end
 
-    should "have its id mirror the sha" do
+    it "has its id mirror the sha" do
       assert_equal "a"*40, @commit.id
     end
   end
 
-  context "Commits from non-gitorious users" do
-    setup do
+  describe "Commits from non-gitorious users" do
+    before do
       @committer = Grit::Actor.new("John Committer", "noone@invalid.org")
       @author = Grit::Actor.new("Jane Author", "jane@g.org")
       grit_commit = Grit::Commit.new(nil, "a"*40, [], nil,
@@ -74,27 +74,27 @@ class CommitTest < MiniTest::Shoulda
       @commit = Gitorious::Commit.new(grit_commit)
     end
 
-    should "have an email" do
+    it "has an email" do
       assert_equal @committer.email, @commit.email
     end
 
-    should "find its user if email matches" do
+    it "finds its user if email matches" do
       assert_nil @commit.user
     end
   end
 
-  context "Fetching commits for an event" do
-    setup do
+  describe "Fetching commits for an event" do
+    before do
       @git = mock
       @event_id = 2
     end
 
-    should "call commits_between" do
+    it "calls commits_between" do
       @git.expects(:commits_between).with(SHA, OTHER_SHA).returns([])
       result = Gitorious::Commit.load_commits_between(@git, SHA, OTHER_SHA, @event_id)
     end
 
-    should "be cached" do
+    it "is cached" do
       Rails.cache.expects(:fetch).with("commits_for_push_event_#{@event_id}").returns([])
       result = Gitorious::Commit.load_commits_between(@git, SHA, OTHER_SHA, @event_id)
     end

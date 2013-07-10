@@ -34,10 +34,10 @@ class DummyPublisher
   end
 end
 
-class GitoriousMessagingTest < MiniTest::Shoulda
-  context "publisher" do
-    context "publish" do
-      should "call do_publish with queue and json" do
+class GitoriousMessagingTest < MiniTest::Spec
+  describe "publisher" do
+    describe "publish" do
+      it "calls do_publish with queue and json" do
         publisher = DummyPublisher.new
 
         publisher.publish("queue_name", :id => 42, :action => "do_it")
@@ -55,22 +55,22 @@ class GitoriousMessagingTest < MiniTest::Shoulda
     def on_message(message); end
   end
 
-  context "consumer" do
-    should "pass JSON parsed message to on_message" do
+  describe "consumer" do
+    it "passes JSON parsed message to on_message" do
       consumer = DummyConsumer.new
       consumer.expects(:on_message).with({ "id" => 42 })
 
       consumer.consume('{"id": 42}')
     end
 
-    should "pass untampered hash message to on_message" do
+    it "passes untampered hash message to on_message" do
       consumer = DummyConsumer.new
       consumer.expects(:on_message).with({ :id => 42 })
 
       consumer.consume({ :id => 42 })
     end
 
-    should "call on_error if JSON parsing the message fails" do
+    it "calls on_error if JSON parsing the message fails" do
       consumer = DummyConsumer.new
       consumer.expects(:on_error).with do |err|
         err.class == JSON::ParserError
@@ -79,7 +79,7 @@ class GitoriousMessagingTest < MiniTest::Shoulda
       consumer.consume("{id}")
     end
 
-    should "call on_error if on_message raises" do
+    it "calls on_error if on_message raises" do
       consumer = DummyConsumer.new
       consumer.stubs(:on_message).raises(
         Gitorious::Messaging::AbortMessageException.new("Oops"))
@@ -92,14 +92,14 @@ class GitoriousMessagingTest < MiniTest::Shoulda
       consumer.consume({ :id => 42 })
     end
 
-    should "verify that the ActiveRecord connection is alive" do
+    it "verifies that the ActiveRecord connection is alive" do
       ActiveRecord::Base.expects(:verify_active_connections!)
 
       consumer = DummyConsumer.new
       consumer.verify_connections!
     end
 
-    should "verify that the ActiveRecord connection is alive on message" do
+    it "verifies that the ActiveRecord connection is alive on message" do
       ActiveRecord::Base.expects(:verify_active_connections!)
 
       consumer = DummyConsumer.new

@@ -20,38 +20,38 @@ require "fast_test_helper"
 require "gitorious/ssh/client"
 require "gitorious/ssh/strainer"
 
-class SSHStrainerTest < MiniTest::Shoulda
-  should "raise if command includes a newline" do
+class SSHStrainerTest < MiniTest::Spec
+  it "raises if command includes a newline" do
     assert_raises(Gitorious::SSH::BadCommandError) do
       Gitorious::SSH::Strainer.new("foo\nbar").parse!
     end
   end
 
-  should "raise if command has more than one argument" do
+  it "raises if command has more than one argument" do
     assert_raises(Gitorious::SSH::BadCommandError) do
       Gitorious::SSH::Strainer.new("git-upload-pack 'bar baz'").parse!
     end
   end
 
-  should "raise if command does not have an argument" do
+  it "raises if command does not have an argument" do
     assert_raises(Gitorious::SSH::BadCommandError) do
       Gitorious::SSH::Strainer.new("git-upload-pack").parse!
     end
   end
 
-  should "raise if it gets a bad command" do
+  it "raises if it gets a bad command" do
     assert_raises(Gitorious::SSH::BadCommandError) do
       Gitorious::SSH::Strainer.new("evil 'foo'").parse!
     end
   end
 
-  should "raise if it receives an unsafe argument" do
+  it "raises if it receives an unsafe argument" do
     assert_raises(Gitorious::SSH::BadCommandError) do
       Gitorious::SSH::Strainer.new("git-upload-pack /evil/attack").parse!
     end
   end
 
-  should "only allow the specified readonly command" do
+  it "only allows the specified readonly command" do
     assert_raises(Gitorious::SSH::BadCommandError) do
       Gitorious::SSH::Strainer.new("git-pull foo bar").parse!
     end
@@ -61,7 +61,7 @@ class SSHStrainerTest < MiniTest::Shoulda
     end
   end
 
-  should "accept non-dashed version git upload-pack" do
+  it "accepts non-dashed version git upload-pack" do
     s = Gitorious::SSH::Strainer.new("git upload-pack 'foo/bar.git'").parse!
     assert_equal "git upload-pack", s.verb
 
@@ -72,7 +72,7 @@ class SSHStrainerTest < MiniTest::Shoulda
     assert_equal "git upload-pack", s.verb
   end
 
-  should "accept non-dashed version git receive-pack" do
+  it "accepts non-dashed version git receive-pack" do
     s = Gitorious::SSH::Strainer.new("git receive-pack 'foo/bar.git'").parse!
     assert_equal "git receive-pack", s.verb
 
@@ -83,7 +83,7 @@ class SSHStrainerTest < MiniTest::Shoulda
     assert_equal "git receive-pack", s.verb
   end
 
-  should "accept git+ssh style urls" do
+  it "accepts git+ssh style urls" do
     s = Gitorious::SSH::Strainer.new("git-receive-pack '/foo/bar.git'").parse!
     assert_equal "foo/bar.git", s.path
 
@@ -94,13 +94,13 @@ class SSHStrainerTest < MiniTest::Shoulda
     assert_equal "~foo/bar.git", s.path
   end
 
-  should "raise if it receives too many arguments" do
+  it "raises if it receives too many arguments" do
     assert_raises(Gitorious::SSH::BadCommandError) do
       Gitorious::SSH::Strainer.new("git-receive-pack 'foo/bar.git' baz").parse!
     end
   end
 
-  should "raises if it receives an unsafe argument that almost looks kosher" do
+  it "raises if it receives an unsafe argument that almost looks kosher" do
     assert_raises(Gitorious::SSH::BadCommandError) do
       Gitorious::SSH::Strainer.new("git-upload-pack '/evil/path'").parse!
     end
@@ -142,7 +142,7 @@ class SSHStrainerTest < MiniTest::Shoulda
     end
   end
 
-  should "raises if it receives an empty path" do
+  it "raises if it receives an empty path" do
     assert_raises(Gitorious::SSH::BadCommandError) do
       Gitorious::SSH::Strainer.new("git-upload-pack ''").parse!
     end
@@ -152,44 +152,44 @@ class SSHStrainerTest < MiniTest::Shoulda
     end
   end
 
-  should "returns self when running #parse" do
+  it "returns self when running #parse" do
     strainer = Gitorious::SSH::Strainer.new("git-upload-pack 'foo/bar.git'")
     strainer2 = strainer.parse!
     assert_instance_of Gitorious::SSH::Strainer, strainer2
     assert_equal strainer, strainer2
   end
 
-  should "sets the path of the parsed command" do
+  it "sets the path of the parsed command" do
     cmd = Gitorious::SSH::Strainer.new("git-upload-pack 'foo/bar.git'").parse!
     assert_equal "foo/bar.git", cmd.path
   end
 
-  should "can parse user-style urls prefixed with a tilde" do
+  it "can parse user-style urls prefixed with a tilde" do
     cmd = Gitorious::SSH::Strainer.new("git-upload-pack '~foo/bar.git'").parse!
     assert_equal "~foo/bar.git", cmd.path
   end
 
-  should "allow user names with an uppercase first letter" do
+  it "allows user names with an uppercase first letter" do
     strainer = Gitorious::SSH::Strainer.new("git-upload-pack '~Oldtimer/repo.git'").parse!
     assert_equal "~Oldtimer/repo.git", strainer.path
   end
 
-  should "allow group names with an uppercase first letter" do
+  it "allows group names with an uppercase first letter" do
     strainer = Gitorious::SSH::Strainer.new("git upload-pack '+Oldtimers/repo.git'").parse!
     assert_equal "+Oldtimers/repo.git", strainer.path
   end
 
-  should "can parse team-style urls prefixed with a plus" do
+  it "can parse team-style urls prefixed with a plus" do
     cmd = Gitorious::SSH::Strainer.new("git-upload-pack '+foo/bar.git'").parse!
     assert_equal "+foo/bar.git", cmd.path
   end
 
-  should "can parse user-style urls with project name and prefixed with a tilde" do
+  it "can parse user-style urls with project name and prefixed with a tilde" do
     cmd = Gitorious::SSH::Strainer.new("git-upload-pack '~foo/bar/baz.git'").parse!
     assert_equal "~foo/bar/baz.git", cmd.path
   end
 
-  should "can parse team-style urls with project name and prefixed with a plus" do
+  it "can parse team-style urls with project name and prefixed with a plus" do
     cmd = Gitorious::SSH::Strainer.new("git-upload-pack '+foo/bar/baz.git'").parse!
     assert_equal "+foo/bar/baz.git", cmd.path
   end

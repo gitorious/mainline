@@ -18,13 +18,13 @@
 require "fast_test_helper"
 require "validators/password_validator"
 
-class PasswordValidatorTest < MiniTest::Shoulda
-  should "validate presence of password" do
+class PasswordValidatorTest < MiniTest::Spec
+  it "validates presence of password" do
     result = PasswordValidator.call(User.new)
     refute_equal [], result.errors[:password]
   end
 
-  should "require password confirmation" do
+  it "requires password confirmation" do
     user = User.new(:password => "heythere", :password_confirmation => "")
     result = PasswordValidator.call(user)
     refute_equal [], result.errors[:password]

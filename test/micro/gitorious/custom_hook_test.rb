@@ -18,8 +18,8 @@
 require "fast_test_helper"
 require "gitorious/custom_hook"
 
-class CustomHookTest < MiniTest::Shoulda
-  should "use executable script in data/hooks" do
+class CustomHookTest < MiniTest::Spec
+  it "uses executable script in data/hooks" do
     File.stubs(:executable?).returns(true)
     hook = Gitorious::CustomHook.new("pre-receive")
 
@@ -27,7 +27,7 @@ class CustomHookTest < MiniTest::Shoulda
     assert_equal File.expand_path(expected), hook.path
   end
 
-  should "use configured script" do
+  it "uses configured script" do
     File.stubs(:executable?).returns(false)
     Gitorious::Configuration.override("custom_pre_receive_hook" => "/tmp/cpr") do
       hook = Gitorious::CustomHook.new("pre-receive")
@@ -36,7 +36,7 @@ class CustomHookTest < MiniTest::Shoulda
     end
   end
 
-  should "execute script without arguments" do
+  it "executes script without arguments" do
     File.stubs(:executable?).returns(false)
     File.stubs(:executable?).with("/tmp/cpr").returns(true)
     Gitorious::Configuration.override("custom_pre_receive_hook" => "/tmp/cpr") do
@@ -47,7 +47,7 @@ class CustomHookTest < MiniTest::Shoulda
     end
   end
 
-  should "execute script with arguments" do
+  it "executes script with arguments" do
     File.stubs(:executable?).returns(false)
     File.stubs(:executable?).with("/tmp/cpr").returns(true)
     Gitorious::Configuration.override("custom_pre_receive_hook" => "/tmp/cpr") do

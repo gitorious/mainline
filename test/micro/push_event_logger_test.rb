@@ -20,45 +20,45 @@ require "app/models/action"
 require "push_spec_parser"
 require "push_event_logger"
 
-class PushEventLoggerTest < MiniTest::Shoulda
-  context "deciding what events to create" do
-    context "for tags" do
-      should "create meta event when creating" do
+class PushEventLoggerTest < MiniTest::Spec
+  describe "deciding what events to create" do
+    describe "for tags" do
+      it "creates meta event when creating" do
         spec = PushSpecParser.new(NULL_SHA, SHA, "refs/tags/1.0")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
         assert logger.create_meta_event?
       end
 
-      should "not create push event when creating" do
+      it "does not create push event when creating" do
         spec = PushSpecParser.new(NULL_SHA, SHA, "refs/tags/1.0")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
         assert !logger.create_push_event?
       end
 
-      should "not create meta event when updating" do
+      it "does not create meta event when updating" do
         spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/tags/1.0")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
         assert !logger.create_meta_event?
       end
 
-      should "not create push event when updating" do
+      it "does not create push event when updating" do
         spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/tags/1.0")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
         assert !logger.create_push_event?
       end
 
-      should "create meta event when deleting" do
+      it "creates meta event when deleting" do
         spec = PushSpecParser.new(SHA, NULL_SHA, "refs/tags/1.0")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
         assert logger.create_meta_event?
       end
 
-      should "not create push event when deleting" do
+      it "does not create push event when deleting" do
         spec = PushSpecParser.new(SHA, NULL_SHA, "refs/tags/1.0")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
@@ -66,43 +66,43 @@ class PushEventLoggerTest < MiniTest::Shoulda
       end
     end
 
-    context "for heads" do
-      should "create meta event when creating" do
+    describe "for heads" do
+      it "creates meta event when creating" do
         spec = PushSpecParser.new(NULL_SHA, SHA, "refs/heads/master")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
         assert logger.create_meta_event?
       end
 
-      should "not create push event when creating" do
+      it "does not create push event when creating" do
         spec = PushSpecParser.new(NULL_SHA, SHA, "refs/heads/master")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
         assert !logger.create_push_event?
       end
 
-      should "not create meta event when updating" do
+      it "does not create meta event when updating" do
         spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/master")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
         assert !logger.create_meta_event?
       end
 
-      should "create push event when updating" do
+      it "creates push event when updating" do
         spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/master")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
         assert logger.create_push_event?
       end
 
-      should "create meta event when deleting" do
+      it "creates meta event when deleting" do
         spec = PushSpecParser.new(SHA, NULL_SHA, "refs/heads/master")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
         assert logger.create_meta_event?
       end
 
-      should "not create push event when deleting" do
+      it "does not create push event when deleting" do
         spec = PushSpecParser.new(SHA, NULL_SHA, "refs/heads/master")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
@@ -110,8 +110,8 @@ class PushEventLoggerTest < MiniTest::Shoulda
       end
     end
 
-    context "for merge requests" do
-      should "not create meta event when updating" do
+    describe "for merge requests" do
+      it "does not create meta event when updating" do
         spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/merge-requests/134")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
@@ -119,7 +119,7 @@ class PushEventLoggerTest < MiniTest::Shoulda
       end
     end
 
-    should "not create a push event when updating" do
+    it "does not create a push event when updating" do
       spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/merge-requests/134")
       logger = PushEventLogger.new(Repository.new, spec, User.new)
 
@@ -127,9 +127,9 @@ class PushEventLoggerTest < MiniTest::Shoulda
     end
   end
 
-  context "deciding the action for the meta event" do
-    context "for tags" do
-      should "be Action::CREATE_TAG when creating a tag" do
+  describe "deciding the action for the meta event" do
+    describe "for tags" do
+      it "is Action::CREATE_TAG when creating a tag" do
         spec = PushSpecParser.new(NULL_SHA, SHA, "refs/tags/feature")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
@@ -137,7 +137,7 @@ class PushEventLoggerTest < MiniTest::Shoulda
         assert_equal Action::CREATE_TAG, event.action
       end
 
-      should "be Action::DELETE_TAG when deleting a tag" do
+      it "is Action::DELETE_TAG when deleting a tag" do
         spec = PushSpecParser.new(SHA, NULL_SHA, "refs/tags/feature")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
@@ -146,8 +146,8 @@ class PushEventLoggerTest < MiniTest::Shoulda
       end
     end
 
-    context "for heads" do
-      should "be Action::CREATE_BRANCH when creating a head" do
+    describe "for heads" do
+      it "is Action::CREATE_BRANCH when creating a head" do
         spec = PushSpecParser.new(NULL_SHA, SHA, "refs/heads/master")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
@@ -155,7 +155,7 @@ class PushEventLoggerTest < MiniTest::Shoulda
         assert_equal Action::CREATE_BRANCH, event.action
       end
 
-      should "be Action::DELETE_BRANCH when deleting a head" do
+      it "is Action::DELETE_BRANCH when deleting a head" do
         spec = PushSpecParser.new(SHA, NULL_SHA, "refs/heads/master")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
@@ -165,8 +165,8 @@ class PushEventLoggerTest < MiniTest::Shoulda
     end
   end
 
-  context "meta events" do
-    setup do
+  describe "meta events" do
+    before do
       @repository = Repository.new #repositories(:johans)
       @project = @repository.project
       @user = @repository.user
@@ -174,45 +174,45 @@ class PushEventLoggerTest < MiniTest::Shoulda
       @logger = PushEventLogger.new(@repository, @create_spec, @user)
     end
 
-    should "be new records" do
+    it "is new records" do
       event = @logger.build_meta_event
 
       assert event.new_record?
     end
 
-    should "belong to repository's project" do
+    it "belongs to repository's project" do
       event = @logger.build_meta_event
 
       assert_equal @project, event.project
     end
 
-    should "belong to the user pushing" do
+    it "belongs to the user pushing" do
       event = @logger.build_meta_event
 
       assert_equal @user, event.user
     end
 
-    should "target repository" do
+    it "targets repository" do
       event = @logger.build_meta_event
 
       assert_equal @repository, event.target
     end
 
-    should "identify name of the head that changed" do
+    it "identifies name of the head that changed" do
       event = @logger.build_meta_event
 
       assert_equal @create_spec.ref_name, event.data
     end
 
-    should "build and save meta event" do
+    it "builds and saves meta event" do
       event = @logger.create_meta_event
 
       assert !event.new_record?
     end
   end
 
-  context "Meta event message" do
-    should "describe new branches" do
+  describe "Meta event message" do
+    it "describes new branches" do
       new_branch_spec = PushSpecParser.new(NULL_SHA, SHA, "refs/heads/master")
       logger = PushEventLogger.new(Repository.new, new_branch_spec, User.new)
       event = logger.build_meta_event
@@ -220,7 +220,7 @@ class PushEventLoggerTest < MiniTest::Shoulda
       assert_equal("Created branch master", event.body)
     end
 
-    should "describe new tags" do
+    it "describes new tags" do
       new_tag_spec = PushSpecParser.new(NULL_SHA, SHA, "refs/tags/release")
       logger = PushEventLogger.new(Repository.new, new_tag_spec, User.new)
       event = logger.build_meta_event
@@ -229,7 +229,7 @@ class PushEventLoggerTest < MiniTest::Shoulda
       assert_equal "Created tag release", event.body
     end
 
-    should "describe deleted tags" do
+    it "describes deleted tags" do
       deleted_tag_spec = PushSpecParser.new(SHA, NULL_SHA, "refs/tags/release")
       logger = PushEventLogger.new(Repository.new, deleted_tag_spec, User.new)
       event = logger.build_meta_event
@@ -238,7 +238,7 @@ class PushEventLoggerTest < MiniTest::Shoulda
       assert_equal "Deleted tag release", event.body
     end
 
-    should "describe deleted branches" do
+    it "describes deleted branches" do
       deleted_branch_spec = PushSpecParser.new(SHA, NULL_SHA, "refs/heads/topic")
       logger = PushEventLogger.new(Repository.new, deleted_branch_spec, User.new)
       event = logger.build_meta_event
@@ -247,8 +247,8 @@ class PushEventLoggerTest < MiniTest::Shoulda
     end
   end
 
-  context "Push event" do
-    setup do
+  describe "Push event" do
+    before do
       @repository = Repository.new #repositories(:johans)
       @user = User.new #users(:johan)
       @spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/master")
@@ -256,23 +256,23 @@ class PushEventLoggerTest < MiniTest::Shoulda
       @event = @logger.build_push_event
     end
 
-    should "have a user" do
+    it "has a user" do
       assert_equal @user, @event.user
     end
 
-    should "have a project" do
+    it "has a project" do
       assert_equal @repository.project, @event.project
     end
 
-    should "have a target" do
+    it "has a target" do
       assert_equal @repository, @event.target
     end
 
-    should "have an action" do
+    it "has an action" do
       assert_equal Action::PUSH_SUMMARY, @event.action
     end
 
-    should "know how many commits were pushed" do
+    it "knows how many commits were pushed" do
       git = mock
       git.expects(:rev_list).with({:count => true}, [SHA,OTHER_SHA].join("..")).returns("6")
       grit = mock(:git => git)
@@ -281,7 +281,7 @@ class PushEventLoggerTest < MiniTest::Shoulda
       assert_equal(6, @logger.calculate_commit_count)
     end
 
-    should "create a push event with the appropriate data" do
+    it "creates a push event with the appropriate data" do
       @logger.expects(:calculate_commit_count).returns(10)
       event = @logger.create_push_event
 
@@ -289,33 +289,33 @@ class PushEventLoggerTest < MiniTest::Shoulda
     end
   end
 
-  context "Parsing the event body" do
-    setup do
+  describe "Parsing the event body" do
+    before do
       body = [SHA, OTHER_SHA, "master", "10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
       @result = PushEventLogger.parse_event_data(body)
     end
 
-    should "contain the start sha" do
+    it "contains the start sha" do
       assert_equal SHA, @result[:start_sha]
     end
 
-    should "contain the end sha" do
+    it "contains the end sha" do
       assert_equal OTHER_SHA, @result[:end_sha]
     end
 
-    should "contain the branch name" do
+    it "contains the branch name" do
       assert_equal "master", @result[:branch]
     end
 
-    should "contain the commit count" do
+    it "contains the commit count" do
       assert_equal "10", @result[:commit_count]
     end
 
-    should "contain a shortened start sha" do
+    it "contains a shortened start sha" do
       assert_equal SHA[0,7], @result[:start_sha_short]
     end
 
-    should "contain a shortened end sha" do
+    it "contains a shortened end sha" do
       assert_equal OTHER_SHA[0,7], @result[:end_sha_short]
     end
   end

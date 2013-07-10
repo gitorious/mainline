@@ -18,34 +18,34 @@
 require "fast_test_helper"
 require "gitorious/wiki/content"
 
-class WikiContentTest < MiniTest::Shoulda
+class WikiContentTest < MiniTest::Spec
   include Gitorious::Wiki::Content
 
-  context "White-listing of specific tags" do
-    should "allow a table" do
+  describe "White-listing of specific tags" do
+    it "allows a table" do
       html = "<table><tr><td>Yo!</td></tr></table>"
       assert_equal(html, sanitize_wiki_content(html))
     end
 
-    should "remove non-allowed tags from content" do
+    it "removes non-allowed tags from content" do
       good_html = "<table><tr><td>Hey!</td></tr></table>"
       bad_html = good_html + "<script>alert('Yikes!')</script>"
       assert_equal good_html, sanitize_wiki_content(bad_html)
     end
   end
 
-  context "attributes" do
-    should "render ids on headings to enable the toc" do
+  describe "attributes" do
+    it "renders ids on headings to enable the toc" do
       html = "<h2 id=\"hey\">Hey</h2>"
       assert_equal html, sanitize_wiki_content(html)
     end
 
-    should "render href on links" do
+    it "renders href on links" do
       html = "<a href=\"/home\">Hey</h2>"
       assert_equal html, sanitize_wiki_content(html)
     end
 
-    should "render images" do
+    it "renders images" do
       html = "<img src=\"foo.png\">"
       assert_equal html, sanitize_wiki_content(html)
     end

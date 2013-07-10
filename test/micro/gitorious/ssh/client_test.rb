@@ -24,8 +24,8 @@ class RepositoryRoot
   def self.default_base_path; "/tmp"; end
 end
 
-class SSHClientTest < MiniTest::Shoulda
-  def setup
+class SSHClientTest < MiniTest::Spec
+  before do
     @strainer = Gitorious::SSH::Strainer.new("git-upload-pack 'foo/bar.git'").parse!
     @real_path = "abc/123/defg.git"
     @full_real_path = File.join(RepositoryRoot.default_base_path, @real_path)
@@ -34,47 +34,47 @@ class SSHClientTest < MiniTest::Shoulda
     @not_ok_stub = stub("ok response mock", :body => "nil")
   end
 
-  should "parse the project name from the passed in Strainer" do
+  it "parses the project name from the passed in Strainer" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     assert_equal "foo", client.project_name
   end
 
-  should "parse the repository name from the passed in Strainer" do
+  it "parses the repository name from the passed in Strainer" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     assert_equal "bar", client.repository_name
   end
 
-  context "namespacing" do
-    setup do
+  describe "namespacing" do
+    before do
       @team_strainer = Gitorious::SSH::Strainer.new("git-upload-pack '+foo/bar/baz.git'").parse!
       @user_strainer = Gitorious::SSH::Strainer.new("git-upload-pack '~foo/bar/baz.git'").parse!
     end
 
-    should "parse the project name from a team namespaced repo" do
+    it "parses the project name from a team namespaced repo" do
       client = Gitorious::SSH::Client.new(@team_strainer, "johan")
       assert_equal "+foo", client.project_name
       assert_equal "bar/baz", client.repository_name
     end
 
-    should "parse the project name from a user namespaced repo" do
+    it "parses the project name from a user namespaced repo" do
       client = Gitorious::SSH::Client.new(@user_strainer, "johan")
       assert_equal "~foo", client.project_name
       assert_equal "bar/baz", client.repository_name
     end
   end
 
-  should "set the username that was passed into it" do
+  it "sets the username that was passed into it" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     assert_equal "johan", client.user_name
   end
 
-  should "return the correct authentication URL" do
+  it "returns the correct authentication URL" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     assert_equal Gitorious.client.url("/foo/bar/writable_by?username=johan"), client.writable_by_query_url
   end
 
-  context "configuration parsing" do
-    should "parse the basic configuration format" do
+  describe "configuration parsing" do
+    it "parses the basic configuration format" do
       client = Gitorious::SSH::Client.new(@strainer, "johan")
       connection_stub = stub_everything("connection stub")
       connection_stub.expects(:get).with("/foo/bar/config?username=johan").returns(@ok_stub)
@@ -83,7 +83,7 @@ class SSHClientTest < MiniTest::Shoulda
       assert_equal "false", client.configuration["force_pushing_denied"]
     end
 
-    should "know if force_pushing is allowed" do
+    it "knows if force_pushing is allowed" do
       client = Gitorious::SSH::Client.new(@strainer, "johan")
       connection_stub = stub_everything("connection stub")
       connection_stub.expects(:get).with("/foo/bar/config?username=johan").returns(@ok_stub)
@@ -91,7 +91,7 @@ class SSHClientTest < MiniTest::Shoulda
       assert !client.force_pushing_denied?
     end
 
-    should "ask gets the real path from the query url" do
+    it "asks gets the real path from the query url" do
       client = Gitorious::SSH::Client.new(@strainer, "johan")
       connection_stub = stub_everything("connection_stub")
       connection_stub.expects(:get) \
@@ -102,14 +102,14 @@ class SSHClientTest < MiniTest::Shoulda
       assert_equal @full_real_path, client.real_path
     end
 
-    should "raise if the pre-receive hook is not executable" do
+    it "raises if the pre-receive hook is not executable" do
       client = Gitorious::SSH::Client.new(@strainer, "johan")
       client.stubs(:real_path).returns("/tmp/foo.git")
       File.expects(:"executable?").with("/tmp/foo.git/hooks/pre-receive").returns(false)
       assert !client.pre_receive_hook_exists?
     end
 
-    should "raises if the real path does not exist" do
+    it "raises if the real path does not exist" do
       client = Gitorious::SSH::Client.new(@strainer, "johan")
       connection_stub = stub_everything("connection_stub")
       connection_stub.expects(:get) \
@@ -122,7 +122,7 @@ class SSHClientTest < MiniTest::Shoulda
       end
     end
 
-    should "raises if the real path is not returned" do
+    it "raises if the real path is not returned" do
       client = Gitorious::SSH::Client.new(@strainer, "johan")
       connection_stub = stub_everything("connection_stub")
       connection_stub.expects(:get) \
@@ -135,7 +135,7 @@ class SSHClientTest < MiniTest::Shoulda
     end
   end
 
-  should "return the command we can safely execute with git-shell" do
+  it "returns the command we can safely execute with git-shell" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     connection_stub = stub_everything("connection_stub")
     connection_stub.expects(:get) \

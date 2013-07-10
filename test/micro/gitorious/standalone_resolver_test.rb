@@ -18,25 +18,25 @@
 require "fast_test_helper"
 require "gitorious/standalone_resolver"
 
-class StandaloneResolverTest < MiniTest::Shoulda
-  def setup
+class StandaloneResolverTest < MiniTest::Spec
+  before do
     @project_repo_path = "/project/repository.git"
     @group_repo_path = "/+team/project/repository.git"
     @user_repo_path = "/~user/project/repository.git"
   end
 
-  context "Resolving paths" do
-    should "resolve regular repositories" do
+  describe "Resolving paths" do
+    it "resolves regular repositories" do
       resolver = Gitorious::StandaloneResolver.new(@group_repo_path)
       assert_equal(["project","repository"], resolver.resolve)
     end
 
-    should "resolve group repositories" do
+    it "resolves group repositories" do
       resolver = Gitorious::StandaloneResolver.new(@group_repo_path)
       assert_equal(["project","repository"], resolver.resolve)
     end
 
-    should "resolve user repositories" do
+    it "resolves user repositories" do
       resolver = Gitorious::StandaloneResolver.new(@user_repo_path)
       assert_equal(["project","repository"], resolver.resolve)
     end

@@ -14,13 +14,7 @@ classes), is welcome here. These tests should be fast - TDD-able fast.
 ## Writing micro tests
 
 Micro tests are simple: pop a new file in `test/micro`. It should
-contain one class inheriting from one of two classes: `MiniTest::Spec`
-or `MiniTest::Shoulda`. The `MiniTest::Shoulda` class is really just a
-bunch of aliases on top of `MiniTest::Spec`, and is mostly intended to
-support old test cases being ported over. New tests are better written
-directly with `MiniTest::Spec`. Yes, the method names are `it`, and
-yes, that may loook strange, but they are structurally the same, and
-avoiding the aliases avoids a level of pointless indirection.
+contain one class inheriting from `MiniTest::Spec`.
 
 The test needs to `require "fast_test_helper"`. This file defines a
 very minimal Rails shim, so you can still test stuff that depends on

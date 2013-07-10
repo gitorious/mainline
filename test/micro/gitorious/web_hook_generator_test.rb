@@ -20,8 +20,8 @@ require "vendor/grit/lib/grit"
 require "push_spec_parser"
 require "gitorious/web_hook_generator"
 
-class WebHookGeneratorTest < MiniTest::Shoulda
-  def setup
+class WebHookGeneratorTest < MiniTest::Spec
+  before do
     @repository = Repository.new
     @repository.project = Project.new(:slug => "my-project", :description => "Yes, mine")
     @repository.clones = [{}]
@@ -37,33 +37,33 @@ class WebHookGeneratorTest < MiniTest::Shoulda
     @generator = Gitorious::WebHookGenerator.new(@repository, @spec, @user)
   end
 
-  context "Generating payload" do
-    should "contain the start sha" do
+  describe "Generating payload" do
+    it "contains the start sha" do
       payload = @generator.payload
       assert_equal SHA, payload[:before]
     end
 
-    should "contain the end sha" do
+    it "contains the end sha" do
       payload = @generator.payload
       assert_equal OTHER_SHA, payload[:after]
     end
 
-    should "contain the username of the pusher" do
+    it "contains the username of the pusher" do
       payload = @generator.payload
       assert_equal @user.login, payload[:pushed_by]
     end
 
-    should "contain the ref pushed to" do
+    it "contains the ref pushed to" do
       payload = @generator.payload
       assert_equal "master", payload[:ref]
     end
 
-    should "contain the pushed_at in XML schema" do
+    it "contains the pushed_at in XML schema" do
       payload = @generator.payload
       assert_equal @repository.last_pushed_at.xmlschema, payload[:pushed_at]
     end
 
-    should "contain project name and description" do
+    it "contains project name and description" do
       project = @repository.project
       project.update_attribute(:slug, "my-project")
       project.update_attribute(:description, "Yes, mine")
@@ -73,7 +73,7 @@ class WebHookGeneratorTest < MiniTest::Shoulda
       assert_equal "Yes, mine", payload[:project][:description]
     end
 
-    should "contain repository information" do
+    it "contains repository information" do
       @repository.name = "name"
       @repository.description = "Terrible hacks"
       payload = @generator.payload
@@ -87,15 +87,15 @@ class WebHookGeneratorTest < MiniTest::Shoulda
     end
   end
 
-  context "commits" do
-    should "get commits between start and end sha" do
+  describe "commits" do
+    it "gets commits between start and end sha" do
       grit = mock
       grit.expects(:commits_between).with(SHA, OTHER_SHA).returns([])
       @repository.stubs(:git).returns(grit)
       @generator.fetch_commits
     end
 
-    should "return list of commit details" do
+    it "returns list of commit details" do
       commits = @generator.fetch_commits
 
       assert_equal 1, commits.count
@@ -110,7 +110,7 @@ class WebHookGeneratorTest < MiniTest::Shoulda
       assert_equal "#{@repository.browse_url}/commit/#{SHA}", commit[:url]
     end
 
-    should "contain a list of commits" do
+    it "contains a list of commits" do
       payload = @generator.payload
 
       assert_kind_of Array, payload[:commits]

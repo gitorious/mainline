@@ -18,35 +18,35 @@
 require "fast_test_helper"
 require "gitorious/diagnostics"
 
-class DiagnosticsTest < MiniTest::Shoulda
+class DiagnosticsTest < MiniTest::Spec
   include Gitorious::Diagnostics
 
-  context "Self-diagnostics" do
-    should "detect if any current ps entry contains given string" do
+  describe "Self-diagnostics" do
+    it "detects if any current ps entry contains given string" do
       assert atleast_one_process_name_matching("test")
     end
 
-    should "verify file existence" do
+    it "verifies file existence" do
       assert !file_present?("/tmp/file_not_there.txt")
       assert file_present?(__FILE__)
     end
 
-    should "verify dir existence" do
+    it "verifies dir existence" do
       assert !dir_present?("/dir_not_there")
       assert dir_present?(File.dirname(__FILE__))
     end
 
-    should "verify user existence" do
+    it "verifies user existence" do
       assert !user_exists?("sir_not_in_this_movie")
       assert user_exists?(me)
     end
 
-    should "verify current user identity" do
+    it "verifies current user identity" do
       assert !current_user?("sir_not_in_this_movie")
       assert current_user?(me)
     end
 
-    should "verify file ownership" do
+    it "verifies file ownership" do
       assert !owned_by_user?("/etc/hosts", me)
       assert !owned_by_user?(__FILE__, "root")
       assert owned_by_user?(__FILE__, me)

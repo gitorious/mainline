@@ -20,15 +20,15 @@ require "authentication_test_helper"
 require "gitorious/authentication/credentials"
 require "gitorious/authentication/ssl_authentication"
 
-class Gitorious::Authentication::SSLAuthenticationTest < MiniTest::Shoulda
+class Gitorious::Authentication::SSLAuthenticationTest < MiniTest::Spec
   include Gitorious::SSLTestHelper
 
-  context "Authentication" do
-    setup do
+  describe "Authentication" do
+    before do
       @ssl = Gitorious::Authentication::SSLAuthentication.new({})
     end
 
-    should "return the actual user" do
+    it "returns the actual user" do
       moe = User.new
       User.stubs(:find_by_login).with("moe").returns(moe)
       assert_equal(moe, @ssl.authenticate(valid_client_credentials("moe", "moe@example.com")))

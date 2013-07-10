@@ -25,32 +25,13 @@ require "mocha"
 require "pathname"
 require((defined?(Rails) ? Rails.root : "") + "config/initializers/gitorious_config")
 
-# Use this class in old test cases that dpeends on Shoulda.
-# http://metaskills.net/2011/01/25/from-test-unit-shoulda-to-minitest-spec-minishoulda/
-module MiniTest
-  class Shoulda < MiniTest::Spec
-    class << self
-      alias :setup :before unless defined?(Rails)
-      alias :teardown :after unless defined?(Rails)
-      alias :should :it
-      alias :context :describe
-    end
-
-    alias :assert_no_match :refute_match
-    alias :assert_not_nil :refute_nil
-    alias :assert_not_equal :refute_equal
-
-    def assert_nothing_raised(&block)
-      block.call # this assertion no longer exists!
-    end
-  end
-end
-
-
 class MiniTest::Spec
   def assert_cache_header(cache_control, rack_response)
     actual = rack_response[1]["Cache-Control"]
     assert_equal cache_control.gsub(" ", ""), actual.gsub(" ","")
+  end
+  def assert_nothing_raised(&block)
+    block.call # this assertion no longer exists!
   end
 end
 # Constants used throughout
