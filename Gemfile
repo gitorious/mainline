@@ -86,4 +86,12 @@ group :dolt do
   gem "libdolt", "~> 0.23"
   gem "dolt", "~> 0.23"
   gem "tiltout", "~> 1.4"
+
+  # Markup formats
+  gem "redcarpet"
+  gem "RedCloth"
+  gem "rdoc"
+  gem "org-ruby"
+  gem "creole"
+  gem "wikicloth"
 end
