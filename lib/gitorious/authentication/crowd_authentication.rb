@@ -19,7 +19,7 @@ require "net/http"
 require "nokogiri"
 require "gitorious/authentication/crowd/api"
 require "gitorious/authentication/crowd/user"
-require "use_cases/create_system_user"
+require "use_cases/create_activated_user"
 
 module Gitorious
   module Authentication

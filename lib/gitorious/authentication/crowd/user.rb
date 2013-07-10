@@ -40,7 +40,7 @@ module Gitorious
       end
 
       def to_user
-        CreateSystemUser.new.execute({
+        CreateActivatedUser.new.execute({
             :login => username,
             :fullname => display_name,
             :email => email

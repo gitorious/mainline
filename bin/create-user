@@ -16,7 +16,7 @@ Gitorious::CLI.new.run_with_gitorious_environment do
 
   password = ask("Enter password: ") { |q| q.echo = "*" }
 
-  outcome = CreateAdminUser.new.execute({
+  outcome = CreateActivatedUser.new.execute({
       :login => login,
       :email => email,
       :password => password,

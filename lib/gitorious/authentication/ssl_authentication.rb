@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "use_cases/create_system_user"
+require "use_cases/create_activated_user"
 
 module Gitorious
   module Authentication
@@ -41,7 +41,7 @@ module Gitorious
       end
 
       def auto_register(username, env)
-        CreateSystemUser.new.execute({
+        CreateActivatedUser.new.execute({
             :login => username,
             :email => env["SSL_CLIENT_S_DN_Email"],
             :fullname => env["SSL_CLIENT_S_DN_CN"]

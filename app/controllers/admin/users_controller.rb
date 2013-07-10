@@ -38,7 +38,7 @@ class Admin::UsersController < AdminController
   end
 
   def create
-    outcome = CreateAdminUser.new.execute(params[:user])
+    outcome = CreateActivatedUser.new.execute(params[:user])
     pre_condition_failed(outcome)
 
     respond_to do |wants|

@@ -17,25 +17,37 @@
 #++
 require "use_cases/create_user"
 require "commands/activate_user_command"
+require "validators/new_user_validator"
 
 class NewAdminUserParams < NewUserParams
   attribute :is_admin, Boolean
 end
 
-class CreateAdminUserCommand < CreateUserCommand
+class CreateActivatedUserCommand
   def execute(user)
     user.save!
     user.accept_terms!
     user
   end
+
+  def build(params)
+    hash = params.to_hash.merge(:terms_of_use => true)
+
+    if !params.password
+      hash[:password] = User.generate_random_password
+      hash[:password_confirmation] = hash[:password]
+    end
+
+    User.new(hash)
+  end
 end
 
-class CreateAdminUser
+class CreateActivatedUser
   include UseCase
 
   def initialize
     input_class(NewAdminUserParams)
-    step(CreateAdminUserCommand.new, :validator => NewUserValidator)
+    step(CreateActivatedUserCommand.new, :validator => NewUserValidator)
     step(ActivateUserCommand.new, :builder => lambda { |user| user })
   end
 end

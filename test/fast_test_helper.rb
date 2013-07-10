@@ -106,7 +106,8 @@ if !defined?(Rails)
 
   class User < TestHelper::Model
     attr_accessor :login, :fullname, :email, :password, :password_confirmation, :activation_code,
-    :terms_of_use, :aasm_state, :activated_at, :avatar_file_name, :identity_url, :crypted_password
+    :terms_of_use, :aasm_state, :activated_at, :avatar_file_name, :identity_url, :crypted_password,
+    :is_admin
 
     def initialize(attributes = {})
       super

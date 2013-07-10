@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "gitorious/authentication/configuration"
-require "use_cases/create_system_user"
+require "use_cases/create_activated_user"
 
 module Gitorious
   module Authentication
@@ -84,7 +84,7 @@ module Gitorious
         email = username + '@' + @email_domain
         log("Kerberos: username after transform_username: '#{login}'.")
         log("Kerberos: email '#{email}'.")
-        CreateSystemUser.new.execute({ :login => login, :email => email }).result
+        CreateActivatedUser.new.execute({ :login => login, :email => email }).result
       end
 
       def log(message)

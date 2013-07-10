@@ -18,7 +18,7 @@
 require "net/ldap"
 require "gitorious"
 require "gitorious/authentication/ldap_configurator"
-require "use_cases/create_system_user"
+require "use_cases/create_activated_user"
 
 module Gitorious
   module Authentication
@@ -135,7 +135,7 @@ module Gitorious
 
           attributes[:email] = "#{username}.example@#{Gitorious.host}" if attributes[:email].blank?
 
-          CreateSystemUser.new.execute(attributes).result
+          CreateActivatedUser.new.execute(attributes).result
         end
       end
 
