@@ -1,24 +1,110 @@
-Gitorious.org
-=============
+# Gitorious.org
 
-Contributing
-============
+Gitorious is a web application for hosting, managing and contributing on Git
+repositories.
+
+# Contributing
 
 Please see HACKING
 
-License
-=======
+# License
 
 Please see the LICENSE file
 
+# Performing tasks on the command line
 
-Further documentation
-=====================
+Gitorious 3 ships with a set of high-level abstractions called use cases and
+commands. These can be used to carry out many tasks e.g. from the command-line.
+Using the use cases ensures that every step of a certain task is carried out,
+and you don't end up with inconsistent data. The following list is a brief
+overview over what's available, see the app/use_cases directory for more
+details.
+
+All use cases return an "outcome" object. It has an API for determining
+success/failure and helpers to base your program flow on the result. See more
+about these objects at the [Use case gem](http://github.com/cjohansen/use_case).
+
+## Activating users
+
+Activate a user with an activation code:
+
+```rb
+outcome = ActivateUser.new.execute(:code => "activation code")
+outcome.success? # true/false
+outcome.result # User object
+```
+
+If you have a user object that you want to activate, you can use the underlying
+command directly:
+
+```rb
+user = ActivateUserCommand.new.execute(user)
+```
+
+## Change password
+
+User passwords can either be set directly on the user objects, or through a use
+case, which will make some additional checks:
+
+```rb
+user = User.find_by_login("dude")
+user.password = user.password_confirmation = "passw0rd!!"
+user.save
+
+# ...or:
+
+outcome = ChangePassword.new(user).execute({
+  :current_password => "password",
+  :password => "battery horse staple",
+  :password_confirmation => "battery horse staple"
+})
+```
+
+## Clone repository
+
+(Prepare repository clone)
+
+## Create user
+
+## Create system user
+
+## Create admin user
+
+## Create OpenID user
+
+## Add user to group (create membership)
+
+## Create project
+
+## Create project repository
+
+(Prepare creating a project repository)
+
+## Add SSH key
+
+## Remove SSH key
+
+## Generate a password reset token
+
+(Prepare a password reset)
+
+## List committers
+
+## List mainlines
+
+## Determine if repository is writable be user
+
+## Reset password
+
+## Search repository clones
+
+## Update a user
+
+# Further documentation
+
 http://getgitorious.com is the main source of official documentation.
 
-
-Messaging server
-================
+# Messaging server
 
 Many Gitorious operations are performed asynchronously to ensure good
 performance. Examples of such tasks includes updating the database when pushing
@@ -31,8 +117,7 @@ Gitorious provides several messaging implementations ("adapters"). The
 alternatives along with how to install and run them are presented below. You
 only need one of these alternatives.
 
-Sync adapter
-------------
+## Sync adapter
 
 Processes messages synchronously, which means that no extra process is
 required. This is a very simple solution, but will yield poor performance. It's
@@ -42,8 +127,7 @@ messaging_adapter in gitorious.yml to "sync":
 
   messaging_adapter: sync
 
-Resque adapter
---------------
+## Resque adapter
 
 Resque uses Redis as a backend for messaging. It comes with a nice
 administration interface that allows for resending of messages, introspection
@@ -69,15 +153,13 @@ handle queue names with slashes in them, we strip queue names such that the
 aforementioned queue will be named GitoriousPostReceiveWebHook under Resque.
 
 
-More Help
-=========
+# More Help
 
 * Consult the mailinglist (http://groups.google.com/group/gitorious) or drop
   by #gitorious on irc.freenode.net if you have questions.
 
 
-Gotchas
-=======
+# Gotchas
 
 Gitorious will add a 'forced command' to your ~/.ssh/authorized_keys file for
 the target host: if you start finding ssh oddities suspect this first. Don't
