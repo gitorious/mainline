@@ -105,6 +105,7 @@ class UserRepositoryViewStateControllerTest < ActionController::TestCase
       assert_equal "/#{prefix}/confirm_delete", paths["destroyPath"]
       assert_equal "/#{prefix}/ownership/edit", paths["ownershipPath"]
       assert_equal "/#{prefix}/committerships", paths["committershipsPath"]
+      assert_equal "/#{prefix}/web_hooks", paths["webHooksPath"]
     end
 
     should "indicate that user watches repository" do
