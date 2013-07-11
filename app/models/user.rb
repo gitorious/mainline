@@ -130,10 +130,17 @@ class User < ActiveRecord::Base
     I18n.t("activerecord.models.user")
   end
 
-  # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
+  # Authenticates a user by their login name/email and unencrypted password.  Returns the user or nil.
   def self.authenticate(email, password)
-    u = find :first, :conditions => ["email = ? and activated_at IS NOT NULL and suspended_at IS NULL", email] # need to get the salt
-    u && u.authenticated?(password) ? u : nil
+    collection = where('activated_at IS NOT NULL AND suspended_at IS NULL')
+
+    user = if email.include?('@')
+      collection.where("email = ?", email).first
+    else
+      collection.where("login = ?", email).first
+    end
+
+    user && user.authenticated?(password) ? user : nil
   end
 
   def self.generate_random_password(n = 12)

@@ -68,8 +68,12 @@ class UserTest < ActiveSupport::TestCase
     assert_equal users(:johan), User.authenticate("johan2@js.com", "test")
   end
 
-  should "authenticate user" do
+  should "authenticate user with his email" do
     assert_equal users(:johan), User.authenticate("johan@johansorensen.com", "test")
+  end
+
+  should "authenticate user with his login" do
+    assert_equal users(:johan), User.authenticate("johan", "test")
   end
 
   should "set remember token" do
