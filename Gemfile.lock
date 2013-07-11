@@ -72,7 +72,7 @@ GEM
     debug_inspector (0.0.2)
     descendants_tracker (0.0.1)
     diff-lcs (1.1.2)
-    dolt (0.23.0)
+    dolt (0.24.0)
       json (~> 1.5)
       libdolt (~> 0.23)
       sinatra (~> 1.0)
@@ -109,7 +109,7 @@ GEM
     json (1.7.7)
     just_paginate (0.1)
     kgio (2.8.0)
-    libdolt (0.23.0)
+    libdolt (0.24.0)
       htmlentities (~> 4.3)
       json (~> 1.7)
       makeup (~> 0.2)
@@ -268,7 +268,7 @@ DEPENDENCIES
   creole
   daemons (= 1.1.0)
   diff-lcs (= 1.1.2)
-  dolt (~> 0.23)
+  dolt (~> 0.24)
   exception_notification
   factory_girl_rails (~> 1.7)
   foreman (~> 0.41)
@@ -279,7 +279,7 @@ DEPENDENCIES
   jruby-openssl
   json (>= 1.7.7, < 1.8)
   just_paginate (= 0.1)
-  libdolt (~> 0.23)
+  libdolt (~> 0.24)
   memcache-client (~> 1.8)
   mime-types (~> 1.16)
   minitest (= 4.2.0)
