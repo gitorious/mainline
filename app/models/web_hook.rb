@@ -16,13 +16,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class Hook < ActiveRecord::Base
-  include Gitorious::Authorization
+class WebHook < ActiveRecord::Base
   belongs_to :repository
   belongs_to :user
+  self.table_name = :hooks
 
   validates_presence_of :user, :url
-  validates_presence_of :repository, :unless => Proc.new { |hook| hook.user && hook.site_admin?(hook.user) }, :message => "is required for non admins"
+  validates_presence_of :repository, :unless => Proc.new { |hook| hook.user && Gitorious::App.site_admin?(hook.user) }, :message => "is required for non admins"
   validate :valid_url_format
 
   def self.global_hooks

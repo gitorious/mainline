@@ -33,7 +33,7 @@ class WebHookProcessor
   end
 
   def notify_web_hooks(payload)
-    [Hook.global_hooks, repository.hooks].flatten.each do |hook|
+    [WebHook.global_hooks, repository.web_hooks].flatten.each do |hook|
       begin
         Timeout.timeout(10) do
           result = post_payload(hook, payload)
