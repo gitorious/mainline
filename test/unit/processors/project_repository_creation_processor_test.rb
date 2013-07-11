@@ -19,13 +19,13 @@ require "test_helper"
 require "pathname"
 
 class ProjectRepositoryCreationProcessorTest < ActiveSupport::TestCase
-   def setup
+  def setup
     GitBackend.stubs(:create)
     RepositoryHooks.stubs(:create)
     @repository = repositories(:moes)
     @processor = ProjectRepositoryCreationProcessor.new
-    @gitdir = Pathname("/tmp/git/repos/moes-project/moesprojectrepos.git")
-    RepositoryRoot.stubs(:expand).with("moes-project/moesprojectrepos.git").returns(@gitdir)
+    @gitdir = Pathname("/tmp/git/repos/b13/de7/574a4a04fb250257dcb5a7d6ef01dcf290.git")
+    RepositoryRoot.stubs(:expand).with("b13/de7/574a4a04fb250257dcb5a7d6ef01dcf290.git").returns(@gitdir)
   end
 
   should "create git repository" do

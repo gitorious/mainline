@@ -23,6 +23,6 @@ class TrackingRepositoryCreationProcessor
   def on_message(message)
     repository = Repository.find(message["id"].to_i)
     logger.info("Processing new tracking repository: #<Repository id: #{repository.id}, path: #{repository.repository_plain_path}>")
-    RepositoryCloner.clone(repository.parent.real_gitdir, repository.gitdir)
+    RepositoryCloner.clone(repository.parent.real_gitdir, repository.real_gitdir)
   end
 end

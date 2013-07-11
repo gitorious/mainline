@@ -23,7 +23,7 @@ class ProjectRepositoryCreationProcessor
   def on_message(message)
     repository = Repository.find(message["id"].to_i)
     logger.info("Processing new project repository: #<Repository id: #{repository.id}, path: #{repository.repository_plain_path}>")
-    full_path = RepositoryRoot.expand(repository.gitdir)
+    full_path = RepositoryRoot.expand(repository.real_gitdir)
     GitBackend.create(full_path.to_s)
     RepositoryHooks.create(full_path)
     repository.ready = true
