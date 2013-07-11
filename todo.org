@@ -1,4 +1,4 @@
-* Gitorious 3 [12/15]
+* Gitorious 3 [13/22]
 ** DONE Fix Repository#show so it redirects to Dolt
 ** DONE Site-specific footer links
 ** DONE Add tmp redirects (307) to Dolt for certain cases
@@ -14,6 +14,13 @@
 ** TODO setup-dev-env guides should use chruby/ruby-install
 ** TODO setup-dev-env should not recommend bin/rake
 ** DONE bin/create-user uses the wrong User API
+** TODO No method error with resque?
+** TODO Getting started page: URLs in repo header
+** TODO Put views/ui3/repositories/repo_header.erb in views/repositories
+** TODO Share small repo header between pending/getting started
+** DONE Dolt needs to display readmes in every directory (like Gitorious)
+** TODO Shebangs/linguist
+** TODO UI for webhooks
 * Views to port to UI3 [2/76]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit
