@@ -40,7 +40,7 @@ group :test do
   gem "minitest", "4.2.0"
   gem "ci_reporter"
   gem "rcov", :platforms => :ruby_18
-  gem "simplecov", :platforms => :ruby_19
+  gem "simplecov", :platforms => [:ruby_19, :ruby_20]
 end
 
 group :postgres do
