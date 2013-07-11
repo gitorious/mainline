@@ -48,12 +48,8 @@ class Hook < ActiveRecord::Base
   def valid_url_format
     begin
       uri = URI.parse(url)
-      if uri.host.blank?
-        errors.add(:url, "must be a valid URL")
-      end
-      if uri.scheme != "http"
-        errors.add(:url, "must be a HTTP URL")
-      end
+      errors.add(:url, "must be a valid URL") and return if uri.host.blank?
+      errors.add(:url, "must be a HTTP URL") and return if uri.scheme != "http"
     rescue URI::InvalidURIError
       errors.add(:url, "must be a valid URL")
     end
