@@ -233,6 +233,18 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
     Gitorious::Configuration.get("only_site_admins_can_create_teams")
   end
 
+  def self.executor
+    return @executor if @executor
+
+    if Rails.env.test?
+      require 'gitorious/test_executor'
+      @executor = TestExecutor.new
+    else
+      require 'gitorious/command_executor'
+      @executor = CommandExecutor.new
+    end
+  end
+
   private
   def self.cache?
     return Rails.env.production? if defined?(Rails)
