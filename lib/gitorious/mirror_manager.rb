@@ -21,14 +21,38 @@ module Gitorious
       @mirrors = mirrors
     end
 
-    def init(repository)
-      mirrors.each do |mirror|
-        Gitorious.executor.run("ssh #{mirror} init #{repository.gitdir}")
+    def init_repository(repository)
+      execute_on_mirrors do |mirror|
+        "ssh #{mirror} init #{repository.real_gitdir}"
+      end
+    end
+
+    def clone_repository(src_repository, dst_repository)
+      execute_on_mirrors do |mirror|
+        "ssh #{mirror} clone #{src_repository.real_gitdir} #{dst_repository.real_gitdir}"
+      end
+    end
+
+    def delete_repository(repository)
+      execute_on_mirrors do |mirror|
+        "ssh #{mirror} delete #{repository.real_gitdir}"
+      end
+    end
+
+    def push(repository)
+      execute_on_mirrors do |mirror|
+        "git push --gitdir=#{repository.full_repository_path} --mirror #{mirror}:#{repository.real_gitdir}"
       end
     end
 
     private
 
     attr_reader :mirrors
+
+    def execute_on_mirrors
+      mirrors.each do |mirror|
+        Gitorious.executor.run(yield(mirror))
+      end
+    end
   end
 end

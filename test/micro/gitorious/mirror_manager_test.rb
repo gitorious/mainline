@@ -23,16 +23,56 @@ class GitoriousMirrorManagerTest < MiniTest::Shoulda
     Gitorious.executor.reset!
   end
 
-  context "init" do
+  context "init_repository" do
     should "execute the proper ssh command for each mirror" do
       mirrors = ["git@mirror1.gitorious.org", "git@mirror2.gitorious.org"]
       mirror_manager = Gitorious::MirrorManager.new(mirrors)
-      repository = Repository.new(:gitdir => "foo/bar")
+      repository = Repository.new(:real_gitdir => "foo/bar")
 
-      mirror_manager.init(repository)
+      mirror_manager.init_repository(repository)
 
       assert_equal "ssh git@mirror1.gitorious.org init foo/bar", Gitorious.executor.executed_commands.first
       assert_equal "ssh git@mirror2.gitorious.org init foo/bar", Gitorious.executor.executed_commands.last
+    end
+  end
+
+  context "clone_repository" do
+    should "execute the proper ssh command for each mirror" do
+      mirrors = ["git@mirror1.gitorious.org", "git@mirror2.gitorious.org"]
+      mirror_manager = Gitorious::MirrorManager.new(mirrors)
+      src_repository = Repository.new(:real_gitdir => "foo/bar")
+      dst_repository = Repository.new(:real_gitdir => "baz/qux")
+
+      mirror_manager.clone_repository(src_repository, dst_repository)
+
+      assert_equal "ssh git@mirror1.gitorious.org clone foo/bar baz/qux", Gitorious.executor.executed_commands.first
+      assert_equal "ssh git@mirror2.gitorious.org clone foo/bar baz/qux", Gitorious.executor.executed_commands.last
+    end
+  end
+
+  context "delete_repository" do
+    should "execute the proper ssh command for each mirror" do
+      mirrors = ["git@mirror1.gitorious.org", "git@mirror2.gitorious.org"]
+      mirror_manager = Gitorious::MirrorManager.new(mirrors)
+      repository = Repository.new(:real_gitdir => "foo/bar")
+
+      mirror_manager.delete_repository(repository)
+
+      assert_equal "ssh git@mirror1.gitorious.org delete foo/bar", Gitorious.executor.executed_commands.first
+      assert_equal "ssh git@mirror2.gitorious.org delete foo/bar", Gitorious.executor.executed_commands.last
+    end
+  end
+
+  context "push" do
+    should "execute the proper ssh command for each mirror" do
+      mirrors = ["git@mirror1.gitorious.org", "git@mirror2.gitorious.org"]
+      mirror_manager = Gitorious::MirrorManager.new(mirrors)
+      repository = Repository.new(:real_gitdir => "foo/bar", :full_repository_path => '/sth')
+
+      mirror_manager.push(repository)
+
+      assert_equal "git push --gitdir=/sth --mirror git@mirror1.gitorious.org:foo/bar", Gitorious.executor.executed_commands.first
+      assert_equal "git push --gitdir=/sth --mirror git@mirror2.gitorious.org:foo/bar", Gitorious.executor.executed_commands.last
     end
   end
 end
