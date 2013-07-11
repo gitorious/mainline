@@ -1,0 +1,47 @@
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<%= partial("repositories/repo_header", {
+        :repository => repository,
+        :project => repository.project,
+        :app => Gitorious,
+        :active => :admin,
+        :header_level => 2
+      }) %>
+
+<div class="container">
+  <%= error_messages(hook) -%>
+  <%= form_for(hook, :as => :hook, :url => project_repository_hook_url(repository.project, repository, hook), :method => "post", :html => { :class => "form-horizontal" }) do |f| -%>
+    <fieldset>
+      <legend><%= @title = "Adding hook for #{repository.slug}" %></legend>
+      <div class="control-group">
+        <%= f.label :url, :class => "control-label" -%>
+        <div class="controls">
+          <%= f.text_field :url, :class => "input-xlarge" -%>
+          <p class="help-block">
+            A payload will be <code>POST</code>-ed to this URL everytime someone
+            pushes to this repository.
+          </p>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Add hook</button>
+      </div>
+    </fieldset>
+  <% end %>
+</div>
