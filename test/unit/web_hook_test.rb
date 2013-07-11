@@ -22,22 +22,6 @@ require "test_helper"
 
 class WebHookTest < ActiveSupport::TestCase
   should belong_to(:repository)
-  should validate_presence_of(:user)
-  should validate_presence_of(:url)
-
-  context "URL validation" do
-    should "require a valid URL" do
-      hook = WebHook.new(:url => "http:/gitorious.org/web-hooks")
-      assert !hook.valid?
-      assert_not_nil hook.errors[:url]
-    end
-
-    should "require http URLs" do
-      hook = WebHook.new(:url => "https://gitorious.org/web-hooks")
-      assert !hook.valid?
-      assert_not_nil hook.errors[:url]
-    end
-  end
 
   context "Global hooks" do
     should "find hooks not associated to a repository" do
@@ -53,13 +37,6 @@ class WebHookTest < ActiveSupport::TestCase
     should "be global" do
       assert WebHook.new(:url => "http://foo.com").global?
       assert !WebHook.new(:url => "http://foo.com", :repository => repositories(:johans)).global?
-    end
-
-    should "only be created by admins" do
-      hook = WebHook.new(:url => "http://foo.com", :user => users(:moe))
-      assert !hook.valid?
-      refute_nil hook.errors[:repository]
-      refute_equal 0, hook.errors[:repository].length
     end
   end
 

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,29 +15,20 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "use_case"
 
-class WebHook < ActiveRecord::Base
-  belongs_to :repository
-  belongs_to :user
-  self.table_name = :hooks
+WebHookValidator = UseCase::Validator.define do
+  validates_presence_of :user, :url
+  validates_presence_of :repository, :unless => Proc.new { |hook| hook.user && Gitorious::App.site_admin?(hook.user) }, :message => "is required for non admins"
+  validate :valid_url_format
 
-  def self.global_hooks
-    find(:all, :conditions => {:repository_id => nil})
-  end
-
-  def successful_connection(message)
-    self.successful_request_count += 1
-    self.last_response = message
-    save
-  end
-
-  def failed_connection(message)
-    self.failed_request_count += 1
-    self.last_response = message
-    save
-  end
-
-  def global?
-    repository.nil?
+  def valid_url_format
+    begin
+      uri = URI.parse(url)
+      errors.add(:url, "must be a valid URL") and return if uri.host.blank?
+      errors.add(:url, "must be a HTTP URL") and return if uri.scheme != "http"
+    rescue URI::InvalidURIError
+      errors.add(:url, "must be a valid URL")
+    end
   end
 end
