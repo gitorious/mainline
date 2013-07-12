@@ -18,8 +18,8 @@
 require "fast_test_helper"
 require "validators/web_hook_test_validator"
 
-class WebHookTestValidatorTest < MiniTest::Shoulda
-  should "require a commit" do
+class WebHookTestValidatorTest < MiniTest::Spec
+  it "requires a commit" do
     repository = Object.new
     Rugged::Repository.stubs(:new).returns(repository)
 
@@ -36,7 +36,7 @@ class WebHookTestValidatorTest < MiniTest::Shoulda
     assert result.errors[:repository]
   end
 
-  should "pass when repository has a commit" do
+  it "passes when repository has a commit" do
     repository = Object.new
 
     def repository.head

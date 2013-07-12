@@ -18,8 +18,8 @@
 require "fast_test_helper"
 require "validators/web_hook_validator"
 
-class WebHookValidatorTest < MiniTest::Shoulda
-  should "validate presence of user and url" do
+class WebHookValidatorTest < MiniTest::Spec
+  it "validates presence of user and url" do
     result = WebHookValidator.call(WebHook.new)
 
     refute result.valid?
@@ -27,21 +27,21 @@ class WebHookValidatorTest < MiniTest::Shoulda
     assert result.errors[:url]
   end
 
-  should "require repository for regular users" do
+  it "requires repository for regular users" do
     result = WebHookValidator.call(WebHook.new(:user => User.new))
 
     refute result.valid?
     assert result.errors[:repository]
   end
 
-  should "not require repository for site admins" do
+  it "does not require repository for site admins" do
     Gitorious::App.stubs(:site_admin?).returns(true)
     result = WebHookValidator.call(WebHook.new(:user => User.new, :url => "http://somewhere.com"))
 
     assert result.valid?
   end
 
-  should "require valid http (not https) URL" do
+  it "requires valid http (not https) URL" do
     refute WebHookValidator.call(web_hook("http")).valid?
     refute WebHookValidator.call(web_hook("http://")).valid?
     refute WebHookValidator.call(web_hook("https://somewhere.com")).valid?
