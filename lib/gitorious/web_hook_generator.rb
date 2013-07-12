@@ -27,11 +27,14 @@ module Gitorious
       @user = user
     end
 
-    def generate!
+    def generate!(hook = nil)
       publish_notification({
           :user => @user.login,
           :repository_id => @repository.id,
-          :payload => payload})
+          :payload => payload
+        }.merge(hook.nil? ? {} : {
+            :web_hook => hook.url
+          }))
     end
 
     def publish_notification(data)

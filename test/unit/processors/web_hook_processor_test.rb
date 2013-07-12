@@ -48,11 +48,12 @@ class WebHookProcessorTest < ActiveSupport::TestCase
 
   context "Extracting the message" do
     setup do
-      @processor.expects(:notify_web_hooks).with(@payload)
+      @processor.expects(:notify_web_hooks).with(@payload, [])
       @processor.consume({
           :user => @user.login,
           :repository_id => @repository.id,
-          :payload => @payload}.to_json)
+          :payload => @payload
+        }.to_json)
     end
 
     should "extract the repository from the message" do
@@ -81,6 +82,19 @@ class WebHookProcessorTest < ActiveSupport::TestCase
       WebHook.expects(:global_hooks).returns(WebHook.new(:url => "http://baz.com/"))
       @processor.expects(:post_payload).times(3).returns(successful_response)
       @processor.notify_web_hooks(@payload)
+    end
+
+    should "post the payload only to named web hook" do
+      add_hook_url(@repository, "http://foo.com/")
+      add_hook_url(@repository, "http://bar.com/")
+      @processor.expects(:post_payload).times(1).returns(successful_response)
+
+      @processor.consume({
+          :user => @user.login,
+          :repository_id => @repository.id,
+          :payload => @payload,
+          :web_hook => "http://bar.com/"
+        }.to_json)
     end
 
     should "do a HTTP POST to the hook url" do
@@ -156,5 +170,4 @@ class WebHookProcessorTest < ActiveSupport::TestCase
       assert !@processor.successful_response?(response)
     end
   end
-
 end
