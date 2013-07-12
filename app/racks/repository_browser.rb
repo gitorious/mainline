@@ -99,7 +99,7 @@ module Gitorious
 
     get "/*/refs" do
       repo = params[:splat].first
-      safe_action(repo, ref) do
+      safe_action(repo) do
         configure_env(repo)
         refs(repo, env_data)
       end
