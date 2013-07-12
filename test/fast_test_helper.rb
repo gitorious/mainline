@@ -135,7 +135,7 @@ if !defined?(Rails)
     attr_accessor :project, :user, :name, :hooks, :description, :browse_url,
       :clones, :owner, :user_id, :owner_id, :project_id, :parent_id,
       :merge_requests_enabled, :kind, :parent, :content_memberships,
-      :full_repository_path, :gitdir, :open_merge_requests
+      :full_repository_path, :gitdir, :open_merge_requests, :real_gitdir
 
     def committerships
       return @cs if @cs
@@ -159,7 +159,6 @@ if !defined?(Rails)
     def watched_by!(watcher); end
     def project_repo?; true; end
     def tracking_repo?; false; end
-    def real_gitdir; ""; end
     def set_repository_path; end
     def self.reserved_names; []; end
     def self.private_on_create?(repo); false; end
