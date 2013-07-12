@@ -41,7 +41,7 @@ module Gitorious
 
     def push(repository)
       execute_on_mirrors do |mirror|
-        "git push --gitdir=#{repository.full_repository_path} --mirror #{mirror}:#{repository.real_gitdir}"
+        "git push --git-dir=#{repository.full_repository_path} --mirror #{mirror}:#{repository.real_gitdir}"
       end
     end
 
