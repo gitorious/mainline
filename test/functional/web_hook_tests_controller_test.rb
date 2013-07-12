@@ -36,11 +36,11 @@ class WebHookTestsControllerTest < ActionController::TestCase
       post(:create, {
           :project_id => @project.to_param,
           :repository_id => @repository.to_param,
-          :id => @web_hook.to_param
+          :web_hook_id => @web_hook.to_param
         })
 
       assert_response :redirect
-      assert_equal "Payload sent to http://somewhere.com", flash[:info]
+      assert_equal "Payload sent to http://somewhere.com", flash[:notice]
     end
 
     should "render form and errors if unsuccessful" do
@@ -51,7 +51,7 @@ class WebHookTestsControllerTest < ActionController::TestCase
       post(:create, {
           :project_id => @project.to_param,
           :repository_id => @repository.to_param,
-          :id => @web_hook.to_param
+          :web_hook_id => @web_hook.to_param
         })
 
       assert_response :redirect

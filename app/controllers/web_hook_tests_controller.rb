@@ -20,7 +20,7 @@ class WebHookTestsController < ApplicationController
   before_filter :login_required
 
   def create
-    hook = repository.web_hooks.find(params[:id])
+    hook = repository.web_hooks.find(params[:web_hook_id])
     outcome = TestWebHook.new(Gitorious::App, hook, current_user).execute
     pre_condition_failed(outcome)
     outcome.failure do |validation|
@@ -28,18 +28,15 @@ class WebHookTestsController < ApplicationController
       redirect_back(hook)
     end
     outcome.success do |hook|
-      flash[:info] = "Payload sent to #{hook.url}"
+      flash[:notice] = "Payload sent to #{hook.url}"
       redirect_back(hook)
     end
   end
 
   private
   def redirect_back(hook)
-    redirect_to(project_repository_web_hook_tests_path({
-          :project => hook.repository.project,
-          :repository => hook.repository,
-          :id => hook.id
-        }))
+    repo = hook.repository
+    redirect_to(project_repository_web_hooks_path(repo.project, repo))
   end
 
   def repository

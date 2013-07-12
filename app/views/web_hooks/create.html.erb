@@ -25,8 +25,8 @@
       }) %>
 
 <div class="container">
-  <%= error_messages(hook) -%>
-  <%= form_for(hook, :as => :hook, :url => project_repository_web_hooks_url(repository.project, repository, hook), :method => "post", :html => { :class => "form-horizontal" }) do |f| -%>
+  <%= error_messages(web_hook) -%>
+  <%= form_for(web_hook, :as => :web_hook, :url => project_repository_web_hooks_url(repository.project, repository, web_hook), :method => "post", :html => { :class => "form-horizontal" }) do |f| -%>
     <%= render :partial => "form", :locals => { :form => f, :repository => repository } %>
   <% end %>
 </div>

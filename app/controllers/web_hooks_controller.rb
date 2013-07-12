@@ -31,8 +31,8 @@ class WebHooksController < ApplicationController
   def index
     render(:index, :locals => {
         :repository => RepositoryPresenter.new(repository),
-        :hooks => repository.web_hooks,
-        :hook => WebHook.new(:repository => repository)
+        :web_hooks => repository.web_hooks,
+        :web_hook => WebHook.new(:repository => repository)
       })
   end
 
@@ -44,7 +44,7 @@ class WebHooksController < ApplicationController
     outcome.failure do |validation|
       render(:create, :locals => {
           :repository => RepositoryPresenter.new(repository),
-          :hook => validation
+          :web_hook => validation
         })
     end
 

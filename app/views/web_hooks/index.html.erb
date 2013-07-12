@@ -25,9 +25,9 @@
       }) %>
 <% @title = "Web hooks for #{repository.slug}" %>
 <div class="container">
-  <% if hooks.count > 0 %>
-    <div class="row">
-      <div class="span8">
+  <div class="row">
+    <div class="span8">
+      <% if web_hooks.count > 0 %>
         <h1>Web hooks for <a href="<%= project_repository_path(repository.project, repository) %>"><%= repository.slug %></a></h1>
         <table class="table table-striped">
           <thead>
@@ -38,7 +38,7 @@
             </tr>
           </thead>
           <tbody>
-            <% hooks.each do |hook| %>
+            <% web_hooks.each do |hook| %>
             <tr>
               <td><%= hook.url %></td>
               <td>
@@ -48,17 +48,17 @@
                 <a href="<%= project_repository_web_hook_path(repository.project, repository, hook) %>" data-method="delete"><i class="icon icon-remove"></i> Remove</a>
               </td>
               <td class="gts-cell-small">
-                <a href="#"><i class="icon icon-play-circle"></i> Test</a>
+                <a href="<%= project_repository_web_hook_tests_path(repository.project, repository, hook) %>" data-method="post"><i class="icon icon-play-circle"></i> Test</a>
               </td>
             </tr>
             <% end %>
           </tbody>
         </table>
-        <h2>Add web hook</h2>
-        <%= form_for(hook, :as => :hook, :url => project_repository_web_hooks_url(repository.project, repository, hook), :method => "post", :html => { :class => "form-horizontal" }) do |f| -%>
-          <%= render :partial => "form", :locals => { :form => f, :repository => repository } %>
-        <% end %>
-      </div>
+      <% end %>
+      <h2>Add web hook</h2>
+      <%= form_for(web_hook, :as => :web_hook, :url => project_repository_web_hooks_url(repository.project, repository, web_hook), :method => "post", :html => { :class => "form-horizontal" }) do |f| -%>
+        <%= render :partial => "form", :locals => { :form => f, :repository => repository } %>
+      <% end %>
     </div>
-  <% end %>
+  </div>
 </div>
