@@ -18,6 +18,7 @@
 require "gitorious/configurable"
 require "gitorious/mount_point"
 require "gitorious/openid"
+require "gitorious/kerberos"
 
 module Gitorious
   VERSION = "3.0.0"

@@ -296,7 +296,7 @@
         :chg_passwd_title => "Change your password",
         :chg_passwd_breadcrumb => "Change Password",
         :new_passwd => "New password",
-        :new_passwd_conf => "New password confirmation",
+        :new_passwd_conf => "Confirm password",
         :edit_details => "Edit details",
         :show_title => "Account",
         :details_title => "Account details",

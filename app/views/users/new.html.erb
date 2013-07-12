@@ -27,12 +27,7 @@
       <h1 class="span"><%= @title = "Sign up for #{Gitorious.site_name}" %></h1>
     </div>
     <p><%= t("views.users.create_description") %></p>
-    <ul class="nav nav-tabs gts-header-nav" <%= "data-gts-active=#{defined?(active) && active.to_s}"  %>>
-      <li class="active"><a>Sign up</a></li>
-      <li><%= link_to "Log in", login_path %></li>
-      <li><%= link_to "Log in with OpenID", login_path %></li>
-      <li><%= link_to t("views.sessions.forgot"), forgot_password_users_path -%></li>
-    </ul>
+    <%= login_menu(:signup) %>
   </div>
 </div>
 

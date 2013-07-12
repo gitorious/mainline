@@ -87,6 +87,7 @@ Gitorious::Application.routes.draw do
   resource :sessions
   get "/sessions" => "sessions#create", :as => :open_id_complete
   get "/login" => "sessions#new", :as => :login
+  get "/login/http" => "sessions#http"
   get "/logout" => "sessions#destroy", :as => :logout
 
   ### R4. Groups

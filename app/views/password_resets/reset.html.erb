@@ -17,30 +17,35 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<div id="content">
-  <%= error_messages(user) %>
-  <%= form_for user, :url => reset_password_users_path(params[:token]), :method => :put do |f| -%>
-    <div class="form-wrapper" id="resetpw">
-      <div id="reset-pw">
-        <h1><%= t("views.users.chg_passwd_title") %></h1>
-        <p>Type in your new password.</p>
-        <div class="horisontal-shadow"></div>
-        <ul>
-          <li>
-            <%= f.label :password, t("views.users.new_passwd") -%>
-            <%= f.password_field :password, :class => "text" -%>
-          </li>
-          <li>
-            <%= f.label :password_confirmation, t("views.users.new_passwd_conf") -%>
-            <%= f.password_field :password_confirmation, :class => "text" -%>
-          </li>
-          <li>
-            <div class="submit">
-              <%= f.submit t("views.users.chg_passwd_action") -%>
-            </div>
-          </li>
-        </ul>
-      </div>
+
+<div class="gts-site-header">
+  <div class="container">
+    <div class="row">
+      <h1 class="span"><%= @title = t("views.users.chg_passwd_title") %></h1>
     </div>
+    <%= login_menu(:forgot_password) %>
+  </div>
+</div>
+
+<div class="container">
+  <%= error_messages(user) %>
+  <%= form_for(user, :url => reset_password_users_path(params[:token]), :method => :put, :html => { :class => "form-horizontal" }) do |form| -%>
+    <fieldset>
+      <div class="control-group">
+        <%= form.label :password, t("views.users.new_passwd"), :class => "control-label" -%>
+        <div class="controls">
+          <%= form.password_field :password, :class => "input-xlarge" -%>
+        </div>
+      </div>
+      <div class="control-group">
+        <%= form.label :password_confirmation, t("views.users.new_passwd_conf"), :class => "control-label" -%>
+        <div class="controls">
+          <%= form.password_field :password_confirmation, :class => "input-xlarge" -%>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit"><%= t("views.users.chg_passwd_action") %></button>
+      </div>
+    </fieldset>
   <% end -%>
 </div>

@@ -22,79 +22,21 @@
   #++
   %>
 
-<div id="content">
-  <%= login_method %>
-  <%= form_tag sessions_path do -%>
-    <div class="form-wrapper" id="login">
-      <div id="log-in">
-        <h1>Log in to <%= Gitorious.site_name %></h1>
-        <% if Gitorious::OpenID.enabled? %>
-          <p class="openid-switch">Or log in with <a href="#" class="foo1">OpenID</a>.</p>
-        <% end %>
-        <p class="regular-switch" style="display: none">Or log in with your <a href="#" class="foo2">regular account</a>.</p>
-        <% kerberos = Gitorious::Authentication::Configuration.authentication_methods.detect do |m|
-             Gitorious::Authentication::KerberosAuthentication === m
-           end %>
-        <% if kerberos %>
-          <p>Or log in with <%= link_to 'Kerberos', :controller => "sessions", :action=> "http" %> (single sign-on).</p>
-        <% end %>
-        <div class="horisontal-shadow"></div>
-        <% if flash[:error] %>
-          <div class="error">
-            <p><%= flash[:error] %></p>
-          </div>
-        <% end %>
-        <div id="regular_login_fields">
-          <ul>
-            <li>
-              <label for="email"><%= login_field_label %></label>
-              <%= text_field_tag 'email', params[:email] %>
-            </li>
-            <li>
-              <label for="password"><%= t("views.sessions.passwd") %></label>
-              <%= password_field_tag 'password', '' %>
-            </li>
-            <li>
-              <div class="tos">
-                <%= check_box_tag 'remember_me' %>
-                <label for="remember_me"><%= t("views.sessions.remember") %></label>
-              </div>
-              <div class="submit">
-                <%= submit_tag t("views.sessions.submit") %>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <% if Gitorious::OpenID.enabled? %>
-        <div id="openid_login_fields" class="login_hidden">
-          <ul>
-            <li>
-              <%= label_tag :openid_url, t("views.sessions.openid") %>
-              <%= text_field_tag 'openid_url', params[:openid_url] || Gitorious::OpenID.default_provider_url -%>
-            </li>
-            <li>
-              <div class="tos">
-                <%= check_box_tag :openid_remember_me %>
-                <label for="openid_remember_me"><%= t("views.sessions.remember") %></label>
-              </div>
-              <div class="submit">
-                <%= submit_tag t("views.sessions.submit") %>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <% end %>
-      </div>
+<div class="gts-site-header">
+  <div class="container">
+    <div class="row">
+      <h1 class="span"><%= @title = "Log in to #{Gitorious.site_name}" %></h1>
     </div>
-  <% end -%>
+    <%= login_menu(Gitorious::OpenID.enabled? && params[:method] == "openid" ? :openid : :login) %>
+  </div>
+</div>
 
-  <p class="alt_links">
-    <small>
-      <% if Gitorious.registrations_enabled? -%>
-        <%= link_to t("views.sessions.register"), new_user_path -%>
-        &mdash;
-      <% end -%>
-      <%= link_to t("views.sessions.forgot"), forgot_password_users_path -%>
-    </small>
-  </p>
+<div class="container">
+  <%= form_tag(sessions_path, :class => "form-horizontal") do -%>
+    <% if Gitorious::OpenID.enabled? && params[:method] == "openid" %>
+      <%= render :partial => "openid_form" %>
+    <% else %>
+      <%= render :partial => "form" %>
+    <% end %>
+  <% end -%>
 </div>

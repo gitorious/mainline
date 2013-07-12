@@ -9,7 +9,7 @@
 ** TODO setup-dev-env guides should use chruby/ruby-install
 ** TODO setup-dev-env should not recommend bin/rake
 ** TODO No method error with resque?
-* Views to port to UI3 [7/76]
+* Views to port to UI3 [10/76]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit
 ** TODO Admin::ProjectProposals#index
@@ -59,8 +59,8 @@
 ** TODO Pages#index
 ** TODO Pages#no_page
 ** TODO Pages#show
-** TODO PasswordResets#new
-** TODO PasswordResets#reset
+** DONE PasswordResets#new
+** DONE PasswordResets#reset
 ** TODO Passwords#edit
 ** TODO ProjectMemberships#index
 ** TODO Projects#edit
@@ -70,7 +70,7 @@
 ** TODO Projects#show
 ** TODO Repositories#index
 ** TODO Searches#show
-** TODO Sessions#new
+** DONE Sessions#new
 ** DONE Site#about
 ** DONE Site#contact
 ** TODO Site#dashboard

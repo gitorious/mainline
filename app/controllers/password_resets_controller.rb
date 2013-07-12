@@ -19,7 +19,7 @@
 class PasswordResetsController < ApplicationController
   skip_before_filter :public_and_logged_in
   renders_in_global_context
-  layout "second_generation/application"
+  layout "ui3"
 
   def new
   end

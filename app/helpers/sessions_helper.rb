@@ -20,41 +20,26 @@
 #++
 
 module SessionsHelper
-
-  # determines which form to display for login
-  def login_method
-    if params[:method]=='openid'
-      ("<script  type=\"text/javascript\">
-         $(document).ready(function(){
-           $(\"#regular_login_fields\").toggle();
-           $(\"#openid_login_fields\").toggle();
-         })
-      </script>").html_safe
+  def login_menu(active)
+    items = menu_items.map do |item|
+      if active == item[0]
+        "<li class=\"active\"><a>#{item[1]}</a></li>"
+      else
+        "<li>#{link_to(item[1], item[2])}</li>"
+      end
     end
+
+    "<ul class=\"nav nav-tabs gts-header-nav\">#{items.join}</ul>".html_safe
   end
 
-  def switch_login(title, action)
-    link_to_function(title, (<<-EOS).html_safe)
-
-      $(".foo1").click(
-      function() {
-        $("body").css("background", "red");
-        $("#regular_login_fields").addClass("login_hidden");
-        $("#openid_login_fields").removeClass("login_hidden");
-      });
-
-    EOS
-  end
-
-  def switch_op_login(title, action)
-    link_to_function(title, (<<-EOS).html_safe)
-      $(".regular-switch a").click(
-      function() {
-        $("p.regular-switch").toggle();
-        $("#openid_login_fields").addClass("login_hidden");
-        $("#regular_login_fields").removeClass("login_hidden");
-      });
-    EOS
+  def menu_items
+    return @menu_items if @menu_items
+    @menu_items = [[:signup, "Sign up", new_user_path]]
+    @menu_items << [:login, "Log in", login_path]
+    @menu_items << [:openid, "Log in with OpenID", login_path(:method => :openid)] if Gitorious::OpenID.enabled?
+    @menu_items << [:kerberos, "Log in with Kerberos", :controller => "sessions", :action=> "http"] if Gitorious::Kerberos.enabled?
+    @menu_items << [:forgot_password, t("views.sessions.forgot"), forgot_password_users_path]
+    @menu_items
   end
 
   def login_field_label
