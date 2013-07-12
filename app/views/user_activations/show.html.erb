@@ -20,14 +20,15 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<div id="content">
-  <div class="form-wrapper" id="pendingact">
-    <div id="pending-act">
-      <h1><%= I18n.t "views.users.pending_activation.header" %></h1>
-      <div class="horisontal-shadow"></div>
-      <div class="pending-info">
-        <p><%= I18n.t "views.users.pending_activation.info" %><%= I18n.t "views.users.pending_activation.thanks" %></p>
-      </div>
+<br><br>
+<div class="container">
+  <div class="fluid-row">
+    <div class="span8">
+      <h1><%= @title = I18n.t("views.users.pending_activation.header") %></h1>
+      <p>
+        <%= I18n.t("views.users.pending_activation.info").html_safe %>
+        <%= I18n.t("views.users.pending_activation.thanks").html_safe %>
+      </p>
     </div>
   </div>
 </div>

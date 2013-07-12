@@ -219,7 +219,7 @@
         :description => "<strong>Gitorious</strong> is a great way of collaborating on distributed open source projects",
         :for_projects => "For Projects",
         :for_contributors => "For Contributors",
-        :creating_account => "<a href=\"%{path}\">Creating a user account</a> allows you to create your own project or participate in the development of any project.",
+        :creating_account => "<a href=\"%{path}\">Signing up</a> allows you to create your own projects and participate in the development of any project.",
         :newest_projects => "Latest projects",
         :view_more => "View more &raquo;",
         :dashboard => {

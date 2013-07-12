@@ -19,7 +19,7 @@
 header_level = defined?(header_level) && header_level || 1
 @body_class = "gts-private" if repository.private?
 ref = defined?(ref) && !ref.nil? ? ref : "HEAD"
-%><div class="gts-repo-header" data-gts-env-user-repository-path="/users/view_state/repository/<%= repository.id %>.json">
+%><div class="gts-site-header" data-gts-env-user-repository-path="/users/view_state/repository/<%= repository.id %>.json">
   <div class="container">
     <div class="row">
       <% if !(parent = repository.parent).nil? %>
@@ -79,7 +79,7 @@ git push</pre>
         <%= repository_description(repository) %>
       </div>
     </div>
-    <ul class="nav nav-tabs gts-repository-nav" <%= "data-gts-active=#{defined?(active) && active.to_s}"  %>>
+    <ul class="nav nav-tabs gts-header-nav" <%= "data-gts-active=#{defined?(active) && active.to_s}"  %>>
       <%= repository_navigation([
               [:source, url_for(File.join("/", repository.project.to_param, repository.to_param, "source", "#{repository.head_candidate_name}:")), "Source code"],
               [:activities, activities_project_repository_path(repository.project, repository), "Activities"],

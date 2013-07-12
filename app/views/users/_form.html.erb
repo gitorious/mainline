@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
   #
@@ -18,49 +18,40 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<div class="form-wrapper" id="signup">
-  <div id="sign-up">
-    <h1>Create a new user</h1>
-    <p class="alt-login">Or log in directly with your <%= link_to "OpenID", login_path %></p>
-    <p><%= t("views.users.create_description") %></p>
-    <div class="horisontal-shadow"></div>
-    <%= error_messages(user) %>
-    <ul>
-      <li>
-        <%= f.label :login, t(:login, :scope => "activerecord.attributes.user") -%>
-        <%= f.text_field :login -%>
-      </li>
-      <li>
-        <%= f.label :email, t(:email, :scope => "activerecord.attributes.user") -%>
-        <%= f.text_field :email -%>
-      </li>
-      <li>
-        <%= f.label :password, t(:password, :scope => "activerecord.attributes.user") -%>
-        <%= f.password_field :password %>
-      </li>
-      <li>
-        <%= f.label :password_confirmation, t(:password_confirmation, :scope => "activerecord.attributes.user") -%>
-        <%= f.password_field :password_confirmation %>
-      </li>
-      <li>
-        <div class="tos">
-          <%= f.check_box :terms_of_use  -%>
-          <label for="user_terms_of_use">I accept the <%= render :partial => "licenses/tos_link" -%></label>
-        </div>
-        <div class="submit">
-          <%= f.submit t("views.common.signup") %>
-        </div>
-      </li>
-    </ul>
+<fieldset>
+  <div class="control-group">
+    <%= form.label :login, t(:login, :scope => "activerecord.attributes.user"), :class => "control-label" -%>
+    <div class="controls">
+      <%= form.text_field :login, :class => "input-xlarge" -%>
+    </div>
   </div>
-
-</div>
-<p class="alt_links">
-  <small>
-    <% if Gitorious.public? -%>
-      <%= link_to "Log in", login_path %>
-      &mdash;
-    <% end -%>
-    <%= link_to t("views.sessions.forgot"), forgot_password_users_path -%>
-  </small>
-</p>
+  <div class="control-group">
+    <%= form.label :email, t(:email, :scope => "activerecord.attributes.user"), :class => "control-label" -%>
+    <div class="controls">
+      <%= form.text_field :email, :class => "input-xlarge" -%>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= form.label :password, t(:password, :scope => "activerecord.attributes.user"), :class => "control-label" -%>
+    <div class="controls">
+      <%= form.password_field :password, :class => "input-xlarge" -%>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= form.label :password_confirmation, t(:password_confirmation, :scope => "activerecord.attributes.user"), :class => "control-label" -%>
+    <div class="controls">
+      <%= form.password_field :password_confirmation, :class => "input-xlarge" -%>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <label class="checkbox">
+        <%= form.check_box :terms_of_use  -%>
+         I accept the <%= render :partial => "licenses/tos_link" -%>
+      </label>
+    </div>
+  </div>
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">Sign up</button>
+  </div>
+</fieldset>

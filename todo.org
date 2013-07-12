@@ -1,4 +1,4 @@
-* Gitorious 3 [15/26]
+* Gitorious 3 [15/28]
 ** DONE Fix Repository#show so it redirects to Dolt
 ** DONE Site-specific footer links
 ** DONE Add tmp redirects (307) to Dolt for certain cases
@@ -25,7 +25,9 @@
 ** DONE "Path not in tree" - better errors???
 ** DONE project#show page -> "edit contribution settings" takes me to error page
 ** TODO New repo layout: shows "log in" even though I'm already logged in. Only seems to occur on some repos, not sure yet what pattern is?
-* Views to port to UI3 [2/76]
+** TODO Rendering Readme raises error - whole tree browser doesn't work. Silently ignore markup errors in readmes.
+** TODO Add tests for repository browser
+* Views to port to UI3 [4/76]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit
 ** TODO Admin::ProjectProposals#index
@@ -98,7 +100,7 @@
 ** TODO SiteWikiPages#history
 ** TODO SiteWikiPages#index
 ** TODO SiteWikiPages#show
-** TODO UserActivations#show
+** DONE UserActivations#show
 ** TODO Users#edit
-** TODO Users#new
+** DONE Users#new
 ** TODO Users#show
