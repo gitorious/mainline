@@ -9,6 +9,6 @@ else
   tests = Dir.glob("test/micro/**/*.rb").join(" ")
 end
 
-command = "bundle exec ruby -I.:app:app/presenters:lib:test -e '%w[#{tests}].each { |t| require(t) }'"
+command = "bundle exec \"ruby -I.:app:app/presenters:lib:test -e '%w[#{tests}].each { |t| require(t) }'\""
 puts command
 system command
