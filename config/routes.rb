@@ -258,6 +258,7 @@ Gitorious::Application.routes.draw do
 
       resources :comments
       resources :web_hooks, :only => [:index, :create, :destroy]
+      resources :web_hook_tests, :only => [:create]
 
       get "/comments/commit/:sha" => "comments#commit", :as => :commit_comment
       match "/comments/preview" => "comments#preview", :as => :comments_preview, :via => [:get, :post]

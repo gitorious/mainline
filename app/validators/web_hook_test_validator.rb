@@ -22,12 +22,11 @@ WebHookTestValidator = UseCase::Validator.define do
   validate :has_commit
 
   def has_commit
-    repo = Rugged::Repository.new(full_repository_path)
-
     begin
-      errors.add(:commit, "has no commits") if !repo.head || !repo.head.target
-    rescue Rugged::ReferenceError
-      errors.add(:commit, "has no commits")
+      repo = Rugged::Repository.new(full_repository_path)
+      errors.add(:repository, "has no commits") if !repo.head || !repo.head.target
+    rescue Rugged::ReferenceError, Rugged::OSError
+      errors.add(:repository, "has no commits")
     end
   end
 end

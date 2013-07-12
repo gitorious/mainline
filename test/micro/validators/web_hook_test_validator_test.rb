@@ -27,13 +27,13 @@ class WebHookTestValidatorTest < MiniTest::Shoulda
     result = WebHookTestValidator.call(Repository.new)
 
     refute result.valid?
-    assert result.errors[:commit]
+    assert result.errors[:repository]
 
     def repository.head; raise Rugged::ReferenceError.new("Oops"); end
     result = WebHookTestValidator.call(Repository.new)
 
     refute result.valid?
-    assert result.errors[:commit]
+    assert result.errors[:repository]
   end
 
   should "pass when repository has a commit" do
