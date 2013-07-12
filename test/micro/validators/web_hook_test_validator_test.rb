@@ -20,39 +20,33 @@ require "validators/web_hook_test_validator"
 
 class WebHookTestValidatorTest < MiniTest::Shoulda
   should "require a commit" do
-    repository = Repository.new
+    repository = Object.new
+    Rugged::Repository.stubs(:new).returns(repository)
 
     def repository.head; nil; end
-    result = WebHookTestValidator.call(repository)
+    result = WebHookTestValidator.call(Repository.new)
 
     refute result.valid?
     assert result.errors[:commit]
 
-    def repository.head; raise Grit::NoSuchPathError.new("Oops"); end
-    result = WebHookTestValidator.call(repository)
+    def repository.head; raise Rugged::ReferenceError.new("Oops"); end
+    result = WebHookTestValidator.call(Repository.new)
 
     refute result.valid?
     assert result.errors[:commit]
   end
 
   should "pass when repository has a commit" do
-    repository = Repository.new
+    repository = Object.new
 
     def repository.head
       head = Object.new
-      def head.commit; Object.new; end
+      def head.target; "a" * 40; end
       head
     end
 
-    def repository.git;
-      git = Object.new
-      def git.commit(id)
-        return Object.new if Object === id
-      end
-      git
-    end
-
-    result = WebHookTestValidator.call(repository)
+    Rugged::Repository.stubs(:new).returns(repository)
+    result = WebHookTestValidator.call(Repository.new)
 
     assert result.valid?
   end

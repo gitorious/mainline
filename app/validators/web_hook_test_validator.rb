@@ -16,14 +16,17 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "use_case"
+require "rugged"
 
 WebHookTestValidator = UseCase::Validator.define do
   validate :has_commit
 
   def has_commit
+    repo = Rugged::Repository.new(full_repository_path)
+
     begin
-      errors.add(:commit, "has no commits") if !head || head.commit.nil? || git.commit(head.commit).nil?
-    rescue Grit::NoSuchPathError
+      errors.add(:commit, "has no commits") if !repo.head || !repo.head.target
+    rescue Rugged::ReferenceError
       errors.add(:commit, "has no commits")
     end
   end
