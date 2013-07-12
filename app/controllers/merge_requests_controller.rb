@@ -43,7 +43,7 @@ class MergeRequestsController < ApplicationController
 
     respond_to do |wants|
       wants.html do
-        render(:action => "index", :layout => "/ui3/layouts/application", :locals => {
+        render(:action => "index", :layout => "/ui3", :locals => {
             :repository => RepositoryPresenter.new(@repository),
             :merge_request_statuses => @repository.project.merge_request_statuses,
             :atom_auto_discovery_url => url_for(:overwrite_params => { :format => "atom" }),

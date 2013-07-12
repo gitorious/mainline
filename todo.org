@@ -1,32 +1,14 @@
-* Gitorious 3 [15/28]
-** DONE Fix Repository#show so it redirects to Dolt
-** DONE Site-specific footer links
-** DONE Add tmp redirects (307) to Dolt for certain cases
-** DONE Remove error handling from Dolt's RepositoryActions
-** DONE Expose "resend repo creation message"
-** DONE Fix ref selector visual glitch in Chrome
-** DONE Repository not ready - don't redirect
-** DONE No commits - Dolt freaks out
-** DONE Link to request merge (requestMergePath in view state, place next to admin)
-** DONE "Intelligent" clone button
-** DONE Link repo in repo_header
+* Gitorious 3 [1/10]
+** DONE Put views/ui3/repositories/repo_header.erb in views/repositories
+** TODO Getting started page: URLs in repo header
+** TODO Rendering Readme raises error - whole tree browser doesn't work. Silently ignore markup errors in readmes.
+** TODO Users need to be logged in when browsing non-repository pages too
+** TODO Add tests for repository browser
+** TODO Shebangs/linguist
 ** TODO Activities needs to be rendered prettier
 ** TODO setup-dev-env guides should use chruby/ruby-install
 ** TODO setup-dev-env should not recommend bin/rake
-** DONE bin/create-user uses the wrong User API
 ** TODO No method error with resque?
-** TODO Getting started page: URLs in repo header
-** TODO Put views/ui3/repositories/repo_header.erb in views/repositories
-** TODO Share small repo header between pending/getting started
-** DONE Dolt needs to display readmes in every directory (like Gitorious)
-** TODO Shebangs/linguist
-** TODO Site admins should be able to add site-wide web hooks
-** TODO if using_open_id? - WAT?
-** DONE "Path not in tree" - better errors???
-** DONE project#show page -> "edit contribution settings" takes me to error page
-** TODO New repo layout: shows "log in" even though I'm already logged in. Only seems to occur on some repos, not sure yet what pattern is?
-** TODO Rendering Readme raises error - whole tree browser doesn't work. Silently ignore markup errors in readmes.
-** TODO Add tests for repository browser
 * Views to port to UI3 [7/76]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit

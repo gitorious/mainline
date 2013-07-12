@@ -44,15 +44,15 @@ class SiteController < ApplicationController
   end
 
   def about
-    render :about, :layout => "ui3/layouts/application"
+    render :about, :layout => "ui3"
   end
 
   def faq
-    render :faq, :layout => "ui3/layouts/application"
+    render :faq, :layout => "ui3"
   end
 
   def contact
-    render :contact, :layout => "ui3/layouts/application"
+    render :contact, :layout => "ui3"
   end
 
   protected

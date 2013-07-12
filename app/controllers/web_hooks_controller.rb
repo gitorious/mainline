@@ -19,7 +19,7 @@ require "gitorious/app"
 
 class WebHooksController < ApplicationController
   renders_in_site_specific_context
-  layout "ui3/layouts/application"
+  layout "ui3"
   before_filter :login_required
 
   rescue_from Gitorious::Authorization::UnauthorizedError do |err|

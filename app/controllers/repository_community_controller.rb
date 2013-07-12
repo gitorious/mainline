@@ -27,7 +27,7 @@ class RepositoryCommunityController < ApplicationController
 
     respond_to do |format|
       format.html do
-        render(:action => :index, :layout => "ui3/layouts/application", :locals => {
+        render(:action => :index, :layout => "ui3", :locals => {
             :repository => RepositoryPresenter.new(repository),
             :ref => repository.head_candidate_name,
             :events => @events,

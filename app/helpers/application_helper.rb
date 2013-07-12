@@ -563,6 +563,6 @@ module ApplicationHelper
 
   # Used for compatibility with Dolt views
   def partial(template, locals = {})
-    render(:template => File.join("ui3", template), :locals => locals).html_safe
+    render(:template => template, :locals => locals).html_safe
   end
 end

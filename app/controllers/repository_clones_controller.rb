@@ -60,7 +60,7 @@ class RepositoryClonesController < ApplicationController
   end
 
   def render_form(clone)
-    render(:action => "new", :layout => "ui3/layouts/application", :locals => {
+    render(:action => "new", :layout => "ui3", :locals => {
         :repository => clone.parent,
         :clone => clone,
         :project => clone.project

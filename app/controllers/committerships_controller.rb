@@ -24,7 +24,7 @@ class CommittershipsController < ApplicationController
   renders_in_site_specific_context
 
   def index
-    render(:index, :layout => "ui3/layouts/application", :locals => {
+    render(:index, :layout => "ui3", :locals => {
         :repository => RepositoryPresenter.new(@repository),
         :committerships => @repository.committerships,
         :memberships => @repository.content_memberships

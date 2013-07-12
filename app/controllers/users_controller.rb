@@ -98,7 +98,7 @@ class UsersController < ApplicationController
 
   protected
   def render_form(user)
-    render_template(:new, { :user => user }, { :layout => "ui3/layouts/application" })
+    render_template(:new, { :user => user }, { :layout => "ui3" })
   end
 
   def find_user
