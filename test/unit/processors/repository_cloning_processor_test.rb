@@ -45,6 +45,11 @@ class RepositoryCloningProcessorTest < ActiveSupport::TestCase
     assert @repository.reload.ready?
   end
 
+  should "mirror the repository cloning" do
+    Gitorious.mirrors.expects(:clone_repository).with(@parent, @repository)
+    @processor.on_message("id" => @repository.id)
+  end
+
   should "copy disk usage information from the parent repository" do
     @parent.disk_usage = 123456
     @parent.save!

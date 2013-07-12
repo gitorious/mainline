@@ -396,6 +396,11 @@ archive_work_dir: "/var/git/tarballs-work"
 #post_load:
 #  - /some/file/to/load.rb
 
+# Git repository mirrors.
+#mirrors:
+#  - git@mirror1.example.org
+#  - git@mirror2.example.org
+
 #########################################################################
 # UI theming settings. Most of these settings only apply to the new UI. #
 #########################################################################

@@ -27,5 +27,6 @@ class RepositoryCloningProcessor
     repository.ready = true
     repository.disk_usage = repository.parent.disk_usage
     repository.save!
+    Gitorious.mirrors.clone_repository(repository.parent, repository)
   end
 end
