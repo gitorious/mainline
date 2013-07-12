@@ -22,7 +22,6 @@ class RepositoryDeletionProcessor
   consumes "/queue/GitoriousRepositoryDeletion"
 
   def on_message(message)
-    target_class = message["target_class"]
     arguments = message["arguments"]
     logger.info("Processor deleting Git repository #{arguments.inspect}")
     Repository.delete_git_repository(*arguments)
