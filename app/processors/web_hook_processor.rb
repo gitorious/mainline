@@ -41,6 +41,7 @@ class WebHookProcessor
             hook.successful_connection("#{result.code} #{result.message}")
           else
             hook.failed_connection("#{result.code} #{result.message}")
+            logger.error("Webhook failed:\n#{result.body}")
           end
         end
       rescue Errno::ECONNREFUSED
@@ -63,6 +64,7 @@ class WebHookProcessor
   end
 
   def post_payload(hook, payload)
+    log_message("POST #{hook.url}\n#{payload.to_json}")
     Net::HTTP.post_form(URI.parse(hook.url), {"payload" => payload.to_json})
   end
 
@@ -74,5 +76,9 @@ class WebHookProcessor
   def hooks(configured)
     return [repository.web_hooks.find_by_url!(configured)] if !configured.nil?
     default_hooks
+  end
+
+  def log_message(message)
+    logger.info("#{Time.now.to_s(:short)} #{message}")
   end
 end
