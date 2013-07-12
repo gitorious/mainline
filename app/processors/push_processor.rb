@@ -55,6 +55,7 @@ class PushProcessor
     repository.register_push
     repository.save
     trigger_services unless (Service.global_services.length + repository.services.length) == 0
+    Gitorious.mirrors.push(repository)
   end
 
   def trigger_services
