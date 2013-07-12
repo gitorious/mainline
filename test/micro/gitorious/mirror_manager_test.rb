@@ -54,9 +54,8 @@ class GitoriousMirrorManagerTest < MiniTest::Shoulda
     should "execute the proper ssh command for each mirror" do
       mirrors = ["git@mirror1.gitorious.org", "git@mirror2.gitorious.org"]
       mirror_manager = Gitorious::MirrorManager.new(mirrors)
-      repository = Repository.new(:real_gitdir => "foo/bar")
 
-      mirror_manager.delete_repository(repository)
+      mirror_manager.delete_repository("foo/bar")
 
       assert_equal "ssh git@mirror1.gitorious.org delete foo/bar", Gitorious.executor.executed_commands.first
       assert_equal "ssh git@mirror2.gitorious.org delete foo/bar", Gitorious.executor.executed_commands.last

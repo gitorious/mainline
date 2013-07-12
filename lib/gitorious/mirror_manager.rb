@@ -33,9 +33,9 @@ module Gitorious
       end
     end
 
-    def delete_repository(repository)
+    def delete_repository(path)
       execute_on_mirrors do |mirror|
-        "ssh #{mirror} delete #{repository.real_gitdir}"
+        "ssh #{mirror} delete #{path}"
       end
     end
 
