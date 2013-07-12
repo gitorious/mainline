@@ -22,7 +22,7 @@
 
 <h2 class="content-header">Edit contribution settings</h2>
 
-<%= form_for(@project, :url => admin_oauth_settings_path(:project_id => @project), :method => :put) do |f| -%>
+<%= form_for(@project, :url => admin_project_oauth_settings_path(:project_id => @project), :method => :put) do |f| -%>
   <fieldset>  <%- @project.oauth_settings.each do |k, v| -%>
 
       <li>

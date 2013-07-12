@@ -148,7 +148,9 @@ Gitorious::Application.routes.draw do
       end
     end
 
-    resource :oauth_settings
+    resources :projects, :only => [:show] do
+      resource :oauth_settings, :only => [:show, :edit, :update]
+    end
 
     resources :repositories, :only => [:index] do
       member do

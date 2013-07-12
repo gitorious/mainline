@@ -1,4 +1,4 @@
-* Gitorious 3 [14/24]
+* Gitorious 3 [15/26]
 ** DONE Fix Repository#show so it redirects to Dolt
 ** DONE Site-specific footer links
 ** DONE Add tmp redirects (307) to Dolt for certain cases
@@ -23,6 +23,8 @@
 ** TODO Site admins should be able to add site-wide web hooks
 ** TODO if using_open_id? - WAT?
 ** DONE "Path not in tree" - better errors???
+** DONE project#show page -> "edit contribution settings" takes me to error page
+** TODO New repo layout: shows "log in" even though I'm already logged in. Only seems to occur on some repos, not sure yet what pattern is?
 * Views to port to UI3 [2/76]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit
