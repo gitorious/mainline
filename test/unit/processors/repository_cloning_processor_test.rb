@@ -44,4 +44,9 @@ class RepositoryCloningProcessorTest < ActiveSupport::TestCase
 
     assert @repository.reload.ready?
   end
+
+  should "mirror the repository cloning" do
+    Gitorious.mirrors.expects(:clone_repository).with(@parent, @repository)
+    @processor.on_message("id" => @repository.id)
+  end
 end

@@ -28,5 +28,6 @@ class ProjectRepositoryCreationProcessor
     RepositoryHooks.create(full_path)
     repository.ready = true
     repository.save!
+    Gitorious.mirrors.init_repository(repository)
   end
 end

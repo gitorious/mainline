@@ -229,6 +229,11 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
     end
   end
 
+  def self.mirrors
+    return @mirrors if @mirrors
+    @mirrors = Gitorious::MirrorManager.new(Gitorious::Configuration.get('mirrors', []))
+  end
+
   private
   def self.cache?
     return Rails.env.production? if defined?(Rails)

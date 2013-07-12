@@ -26,5 +26,6 @@ class RepositoryCloningProcessor
     RepositoryCloner.clone_with_hooks(repository.parent.real_gitdir, repository.real_gitdir)
     repository.ready = true
     repository.save!
+    Gitorious.mirrors.clone_repository(repository.parent, repository)
   end
 end

@@ -45,4 +45,10 @@ class ProjectRepositoryCreationProcessorTest < ActiveSupport::TestCase
 
     assert @repository.reload.ready?
   end
+
+  should "mirror the repository creation" do
+    Repository.stubs(:find).with(@repository.id).returns(@repository)
+    Gitorious.mirrors.expects(:init_repository).with(@repository)
+    @processor.on_message("id" => @repository.id)
+  end
 end
