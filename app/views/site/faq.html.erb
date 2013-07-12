@@ -49,7 +49,7 @@
   <p>Easiest way is to put something like the following in your <code>.git/config</code>
     file of the repository you wish to push:
     <pre>[remote "origin"]
-      url = <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").http_safe %>
+      url = <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").html_safe %>
       fetch = +refs/heads/*:refs/remotes/origin/*
       [branch "master"]
       remote = origin
@@ -59,7 +59,7 @@
     you can setup a remote by doing the following (add --fetch to the add call to
     get the config from above):
     <pre>
-      git remote add origin <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").http_safe %>
+      git remote add origin <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").html_safe %>
       # to push the master branch to the origin remote we added above:
       git push origin master
       # after that you can just do:
