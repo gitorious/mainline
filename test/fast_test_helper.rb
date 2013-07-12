@@ -138,7 +138,7 @@ if !defined?(Rails)
       :clones, :owner, :user_id, :owner_id, :project_id, :parent_id,
       :merge_requests_enabled, :kind, :parent, :content_memberships,
       :full_repository_path, :gitdir, :open_merge_requests, :services,
-      :disk_usage, :git
+      :real_gitdir, :disk_usage, :git
 
     def committerships
       @fake_committerships ||= FakeRepositoryCommitterships.new
@@ -159,7 +159,6 @@ if !defined?(Rails)
     def watched_by!(watcher); end
     def project_repo?; true; end
     def tracking_repo?; false; end
-    def real_gitdir; ""; end
     def set_repository_path; end
     def open_merge_requests; @open_merge_requests || []; end
     def self.reserved_names; []; end
