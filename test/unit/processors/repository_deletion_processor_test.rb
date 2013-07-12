@@ -27,4 +27,9 @@ class RepositoryDeletionProcessorTest < ActiveSupport::TestCase
     Repository.expects(:delete_git_repository).with(@repository_path)
     @processor.on_message('arguments' => [@repository_path])
   end
+
+  should "mirror the repository deletion" do
+    Gitorious.mirrors.expects(:delete_repository).with(@repository_path)
+    @processor.on_message('arguments' => [@repository_path])
+  end
 end

@@ -24,6 +24,8 @@ class RepositoryDeletionProcessor
   def on_message(message)
     arguments = message["arguments"]
     logger.info("Processor deleting Git repository #{arguments.inspect}")
-    Repository.delete_git_repository(*arguments)
+    path = arguments.first
+    Repository.delete_git_repository(path)
+    Gitorious.mirrors.delete_repository(path)
   end
 end
