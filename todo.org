@@ -1,4 +1,4 @@
-* Gitorious 3 [13/22]
+* Gitorious 3 [14/24]
 ** DONE Fix Repository#show so it redirects to Dolt
 ** DONE Site-specific footer links
 ** DONE Add tmp redirects (307) to Dolt for certain cases
@@ -20,7 +20,9 @@
 ** TODO Share small repo header between pending/getting started
 ** DONE Dolt needs to display readmes in every directory (like Gitorious)
 ** TODO Shebangs/linguist
-** TODO UI for webhooks
+** TODO Site admins should be able to add site-wide web hooks
+** TODO if using_open_id? - WAT?
+** DONE "Path not in tree" - better errors???
 * Views to port to UI3 [2/76]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit
