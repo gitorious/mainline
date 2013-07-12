@@ -229,13 +229,13 @@ class PushProcessorTest < ActiveSupport::TestCase
     end
 
     should "trigger web hooks if repository has hooks" do
-      @repository.hooks.create!(:user => users(:moe), :url => "http://g.org/hooks")
+      @repository.web_hooks.create!(:user => users(:moe), :url => "http://g.org/hooks")
       @processor.expects(:trigger_hooks)
       @processor.process_push
     end
 
     should "create a generator and generate for repos with hooks" do
-      @repository.hooks.create!(:user => users(:moe), :url => "http://g.org/hooks")
+      @repository.web_hooks.create!(:user => users(:moe), :url => "http://g.org/hooks")
       Gitorious::WebHookGenerator.any_instance.expects(:generate!).once
       @processor.trigger_hooks
     end

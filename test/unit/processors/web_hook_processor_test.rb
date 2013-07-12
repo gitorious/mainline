@@ -43,16 +43,17 @@ class WebHookProcessorTest < ActiveSupport::TestCase
   end
 
   def add_hook_url(repository, url)
-    repository.hooks.create!(:user => users(:johan), :url => url)
+    repository.web_hooks.create!(:user => users(:johan), :url => url)
   end
 
   context "Extracting the message" do
     setup do
-      @processor.expects(:notify_web_hooks).with(@payload)
+      @processor.expects(:notify_web_hooks).with(@payload, [])
       @processor.consume({
           :user => @user.login,
           :repository_id => @repository.id,
-          :payload => @payload}.to_json)
+          :payload => @payload
+        }.to_json)
     end
 
     should "extract the repository from the message" do
@@ -71,21 +72,34 @@ class WebHookProcessorTest < ActiveSupport::TestCase
   end
 
   def last_hook_response(repository)
-    repository.hooks.reload.first.last_response
+    repository.web_hooks.reload.first.last_response
   end
 
   context "Notifying web hooks" do
     should "post the payload once for each hook" do
       add_hook_url(@repository, "http://foo.com/")
       add_hook_url(@repository, "http://bar.com/")
-      Hook.expects(:global_hooks).returns(Hook.new(:url => "http://baz.com/"))
+      WebHook.expects(:global_hooks).returns(WebHook.new(:url => "http://baz.com/"))
       @processor.expects(:post_payload).times(3).returns(successful_response)
       @processor.notify_web_hooks(@payload)
     end
 
+    should "post the payload only to named web hook" do
+      add_hook_url(@repository, "http://foo.com/")
+      add_hook_url(@repository, "http://bar.com/")
+      @processor.expects(:post_payload).times(1).returns(successful_response)
+
+      @processor.consume({
+          :user => @user.login,
+          :repository_id => @repository.id,
+          :payload => @payload,
+          :web_hook => "http://bar.com/"
+        }.to_json)
+    end
+
     should "do a HTTP POST to the hook url" do
       @url = "http://foo.bar/"
-      hook = Hook.new(:url => @url)
+      hook = WebHook.new(:url => @url)
       uri = URI.parse(@url)
       Net::HTTP.expects(:post_form).with(uri, {"payload" => @payload.to_json})
       @processor.post_payload(hook, @payload)
@@ -156,5 +170,4 @@ class WebHookProcessorTest < ActiveSupport::TestCase
       assert !@processor.successful_response?(response)
     end
   end
-
 end

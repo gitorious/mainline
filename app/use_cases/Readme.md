@@ -356,3 +356,17 @@ outcome = SearchClonesCommand.new(Gitorious::App, repository, user).execute({
 })
 clones = outcome.result
 ```
+
+## Create web hook
+
+Create a web hook either for a specific repository or globally for the whole
+site. Only site admins are allowed to create site-wide global hooks.
+
+```rb
+user = User.find_by_login("cjohansen")
+repository = Repository.find_by_name("gitorious")
+CreateWebHook.new(Gitorious::App, repository, user).execute({
+  :url => "http://somewhere.com"
+  # :site_wide => true #=> In this case, the repository connection is ignored
+})
+```

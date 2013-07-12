@@ -20,46 +20,23 @@
 
 require "test_helper"
 
-class HookTest < ActiveSupport::TestCase
+class WebHookTest < ActiveSupport::TestCase
   should belong_to(:repository)
-  should validate_presence_of(:user)
-  should validate_presence_of(:url)
-
-  context "URL validation" do
-    should "require a valid URL" do
-      hook = Hook.new(:url => "http:/gitorious.org/web-hooks")
-      assert !hook.valid?
-      assert_not_nil hook.errors[:url]
-    end
-
-    should "require http URLs" do
-      hook = Hook.new(:url => "https://gitorious.org/web-hooks")
-      assert !hook.valid?
-      assert_not_nil hook.errors[:url]
-    end
-  end
 
   context "Global hooks" do
     should "find hooks not associated to a repository" do
-      Hook.new(:url => "http://foo.com", :user => users(:johan)).save!
-      assert_equal 1, Hook.global_hooks.size
+      WebHook.new(:url => "http://foo.com", :user => users(:johan)).save!
+      assert_equal 1, WebHook.global_hooks.size
     end
 
     should "not find hooks associated to a repository" do
-      Hook.new(:url => "http://foo.com", :user => users(:johan), :repository => repositories(:johans)).save!
-      assert_equal 0, Hook.global_hooks.size
+      WebHook.new(:url => "http://foo.com", :user => users(:johan), :repository => repositories(:johans)).save!
+      assert_equal 0, WebHook.global_hooks.size
     end
 
     should "be global" do
-      assert Hook.new(:url => "http://foo.com").global?
-      assert !Hook.new(:url => "http://foo.com", :repository => repositories(:johans)).global?
-    end
-
-    should "only be created by admins" do
-      hook = Hook.new(:url => "http://foo.com", :user => users(:moe))
-      assert !hook.valid?
-      refute_nil hook.errors[:repository]
-      refute_equal 0, hook.errors[:repository].length
+      assert WebHook.new(:url => "http://foo.com").global?
+      assert !WebHook.new(:url => "http://foo.com", :repository => repositories(:johans)).global?
     end
   end
 
@@ -67,7 +44,7 @@ class HookTest < ActiveSupport::TestCase
     setup {
       @repository = repositories(:johans)
       @user = users(:johan)
-      @hook = @repository.hooks.create :url => "http://gitorious.org/web-hooks"
+      @hook = @repository.web_hooks.create :url => "http://gitorious.org/web-hooks"
     }
 
     should "increment a counter of invalid responses when an error occurs" do

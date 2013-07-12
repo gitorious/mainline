@@ -231,6 +231,10 @@ if !defined?(Rails)
     ADD_PROJECT_REPOSITORY = 19
     CLONE_REPOSITORY = 3
   end
+
+  class WebHook < TestHelper::Model
+    attr_accessor :url, :user, :repository
+  end
 end
 
 # Rails shims

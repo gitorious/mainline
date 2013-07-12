@@ -16,14 +16,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class Hook < ActiveRecord::Base
-  include Gitorious::Authorization
+class WebHook < ActiveRecord::Base
   belongs_to :repository
   belongs_to :user
-
-  validates_presence_of :user, :url
-  validates_presence_of :repository, :unless => Proc.new { |hook| hook.user && hook.site_admin?(hook.user) }, :message => "is required for non admins"
-  validate :valid_url_format
+  self.table_name = :hooks
 
   def self.global_hooks
     find(:all, :conditions => {:repository_id => nil})
@@ -43,19 +39,5 @@ class Hook < ActiveRecord::Base
 
   def global?
     repository.nil?
-  end
-
-  def valid_url_format
-    begin
-      uri = URI.parse(url)
-      if uri.host.blank?
-        errors.add(:url, "must be a valid URL")
-      end
-      if uri.scheme != "http"
-        errors.add(:url, "must be a HTTP URL")
-      end
-    rescue URI::InvalidURIError
-      errors.add(:url, "must be a valid URL")
-    end
   end
 end

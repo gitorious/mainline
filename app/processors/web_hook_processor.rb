@@ -26,14 +26,14 @@ class WebHookProcessor
     begin
       self.user = User.find_by_login!(message["user"])
       self.repository = Repository.find(message["repository_id"])
-      notify_web_hooks(message["payload"])
+      notify_web_hooks(message["payload"], hooks(message["web_hook"]))
     rescue ActiveRecord::RecordNotFound => e
       logger.error(e.message)
     end
   end
 
-  def notify_web_hooks(payload)
-    [Hook.global_hooks, repository.hooks].flatten.each do |hook|
+  def notify_web_hooks(payload, hooks = default_hooks)
+    hooks.each do |hook|
       begin
         Timeout.timeout(10) do
           result = post_payload(hook, payload)
@@ -64,5 +64,15 @@ class WebHookProcessor
 
   def post_payload(hook, payload)
     Net::HTTP.post_form(URI.parse(hook.url), {"payload" => payload.to_json})
+  end
+
+  private
+  def default_hooks
+    [WebHook.global_hooks, repository.web_hooks].flatten
+  end
+
+  def hooks(configured)
+    return [repository.web_hooks.find_by_url!(configured)] if !configured.nil?
+    default_hooks
   end
 end

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011, 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,7 @@
 
 # Parses the line input to git's pre-receive and post-receive hooks:
 # <old-value> SP <new-value> SP <ref-name> LF
-# 
+#
 # The parser basically knows what action this line represents (create, update,
 # delete) and whether its target is tag, a head or (custom for Gitorious) a
 # merge request. The parser also knows the ref-name of the target.
@@ -45,7 +45,7 @@ class PushSpecParser
   end
 
   def to_s
-    "<Spec from: #{@from_sha.sha} to: #{@to_sha.sha} for: #{ref_name}>"
+    "<Spec from: #{@from_sha.sha} to: #{@to_sha.sha} for: #{ref.name}>"
   end
 
   def tag?

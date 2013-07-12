@@ -55,7 +55,7 @@ class Repository < ActiveRecord::Base
                 :class_name => "MergeRequest", :order => "id desc", :dependent => :destroy
   has_many    :cloners, :dependent => :destroy
   has_many    :events, :as => :target, :dependent => :destroy
-  has_many :hooks, :dependent => :destroy
+  has_many :web_hooks, :dependent => :destroy
 
   after_destroy :post_repo_deletion_message
 
