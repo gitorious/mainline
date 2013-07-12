@@ -27,7 +27,7 @@
 ** TODO New repo layout: shows "log in" even though I'm already logged in. Only seems to occur on some repos, not sure yet what pattern is?
 ** TODO Rendering Readme raises error - whole tree browser doesn't work. Silently ignore markup errors in readmes.
 ** TODO Add tests for repository browser
-* Views to port to UI3 [4/76]
+* Views to port to UI3 [7/76]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit
 ** TODO Admin::ProjectProposals#index
@@ -89,10 +89,10 @@
 ** TODO Repositories#index
 ** TODO Searches#show
 ** TODO Sessions#new
-** TODO Site#about{,es,pt-BR}
-** TODO Site#contact
+** DONE Site#about
+** DONE Site#contact
 ** TODO Site#dashboard
-** TODO Site#faq{,es,pt-BR}
+** DONE Site#faq
 ** TODO Site#index
 ** TODO Site#public_index
 ** TODO SiteWikiPages#edit
