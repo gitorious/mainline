@@ -9,7 +9,8 @@ if RUBY_VERSION < "1.9"
   require "rcov/rcovtask"
   Rcov::RcovTask.new do |t|
     t.libs << "test"
-    t.test_files = FileList["test/**/*_test.rb"]
+    t.libs << "app"
+    t.test_files = FileList["test/micro/*_test.rb", "test/micro/**/*_test.rb"]
     t.rcov_opts += %w{--exclude gems,ruby/1.}
   end
 end
