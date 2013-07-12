@@ -25,7 +25,7 @@
       <link href="<%= stylesheet %>" rel="stylesheet" type="text/css">
     <% end %>
     <%= content_for(:head) %>
-    <% if session[:_csrf_token] %>
+    <% if defined?(session) && session[:_csrf_token] %>
       <meta class="csrf-param" content="authenticity_token" name="csrf-param">
       <meta class="csrf-token" content="<%= session[:_csrf_token] %>" name="csrf-token">
     <% end %>
