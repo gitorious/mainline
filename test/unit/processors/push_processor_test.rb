@@ -171,6 +171,12 @@ class PushProcessorTest < ActiveSupport::TestCase
         @processor.process_push
       end
     end
+
+    should "mirror the repository changes" do
+      Gitorious.mirrors.expects(:push).with(@repository)
+      @processor.load_message(@payload)
+      @processor.process_push
+    end
   end
 
   context "Wiki update" do

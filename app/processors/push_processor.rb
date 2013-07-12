@@ -53,6 +53,7 @@ class PushProcessor
     repository.register_push
     repository.save
     trigger_hooks unless (WebHook.global_hooks.length + repository.web_hooks.length) == 0
+    Gitorious.mirrors.push(repository)
   end
 
   def trigger_hooks
