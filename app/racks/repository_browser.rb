@@ -25,21 +25,10 @@ module Gitorious
     include Gitorious::View::DoltUrlHelper
     include Gitorious::View::SiteHelper
 
-    if Rails.env.production? && RUBY_VERSION > "1.9"
+    if !Rails.env.production? && RUBY_VERSION > "1.9"
       require "better_errors"
       use BetterErrors::Middleware
       BetterErrors.application_root = Rails.root.to_s
-    end
-
-    def render_empty_repository(repository)
-      pid, rid = repository.split("/")
-      uid = request.session["user_id"]
-      @template ||= (Rails.root + "app/views/repositories/_getting_started.html.erb").to_s
-      renderer.render({ :file => @template }, {
-          :repository => Project.find_by_slug!(pid).repositories.find_by_name!(rid),
-          :current_user => uid && User.find(uid),
-          :session => session
-        })
     end
 
     def self.instance; @instance; end
@@ -53,110 +42,126 @@ module Gitorious
     def redirect_refs?; true; end
 
     get "/*/source/*:*" do
-      begin
-        repo, ref, path = params[:splat]
+      repo, ref, path = params[:splat]
+      safe_action(repo, ref) do
         configure_env(repo)
         tree_entry(repo, ref, path, env_data)
-      rescue Rugged::ReferenceError => err
-        render_empty_repository(repo)
       end
     end
 
     get "/*/source/*" do
-      begin
+      safe_action(params[:splat].first) do
         force_ref(params[:splat], "source")
-      rescue Rugged::ReferenceError => err
-        render_empty_repository(repo)
       end
     end
 
     get "/*/raw/*:*" do
-      begin
-        repo, ref, path = params[:splat]
+      repo, ref, path = params[:splat]
+      safe_action(repo, ref) do
         configure_env(repo)
         raw(repo, ref, path, env_data)
-      rescue Rugged::ReferenceError => err
-        render_empty_repository(repo)
       end
     end
 
     get "/*/raw/*" do
-      begin
+      safe_action(params[:splat].first) do
         force_ref(params[:splat], "raw")
-      rescue Rugged::ReferenceError => err
-        render_empty_repository(repo)
       end
     end
 
     get "/*/blame/*:*" do
-      begin
-        repo, ref, path = params[:splat]
+      repo, ref, path = params[:splat]
+      safe_action(repo, ref) do
         configure_env(repo)
         blame(repo, ref, path, env_data)
-      rescue Rugged::ReferenceError => err
-        render_empty_repository(repo)
       end
     end
 
     get "/*/blame/*" do
-      begin
+      safe_action(params[:splat].first) do
         force_ref(params[:splat], "blame")
-      rescue Rugged::ReferenceError => err
-        render_empty_repository(repo)
       end
     end
 
     get "/*/history/*:*" do
-      begin
-        repo, ref, path = params[:splat]
+      repo, ref, path = params[:splat]
+      safe_action(repo, ref) do
         configure_env(repo)
         history(repo, ref, path, (params[:commit_count] || 20).to_i, env_data)
-      rescue Rugged::ReferenceError => err
-        render_empty_repository(repo)
       end
     end
 
     get "/*/history/*" do
-      begin
+      safe_action(params[:splat].first) do
         force_ref(params[:splat], "history")
-      rescue Rugged::ReferenceError => err
-        render_empty_repository(repo)
       end
     end
 
     get "/*/refs" do
-      begin
-        repo = params[:splat].first
+      repo = params[:splat].first
+      safe_action(repo, ref) do
         configure_env(repo)
         refs(repo, env_data)
-      rescue Rugged::ReferenceError => err
-        render_empty_repository(repo)
       end
     end
 
     get "/*/tree_history/*:*" do
-      begin
-        repo, ref, path = params[:splat]
+      repo, ref, path = params[:splat]
+      safe_action(repo, ref) do
         configure_env(repo)
         tree_history(repo, ref, path, 1, env_data)
-      rescue Rugged::ReferenceError => err
-        render_empty_repository(repo)
       end
     end
 
     get %r{/(.*)/archive/(.*)?\.(tar\.gz|tgz|zip)} do
-      begin
-        repo, ref, format = params[:captures]
+      repo, ref, format = params[:captures]
+      safe_action(repo, ref) do
         configure_env(repo)
         filename = actions.archive(repo, ref, format)
         add_sendfile_headers(filename, format)
         body("")
-      rescue Exception => err
-        render_error(err, repo, ref)
       end
     end
 
     private
+    def safe_action(repo, ref = nil)
+      begin
+        yield
+      rescue Rugged::ReferenceError => err
+        render_empty_repository(repo)
+      rescue Rugged::TreeError => err
+        render_non_existent_ref(repo, ref, err)
+      rescue StandardError => err
+        raise err if !Rails.env.production?
+        renderer.render({ :file => (Rails.root + "public/500.html").to_s }, {}, :layout => nil)
+      end
+    end
+
+    def render_empty_repository(repository)
+      pid, rid = repository.split("/")
+      uid = request.session["user_id"]
+      @template ||= (Rails.root + "app/views/repositories/_getting_started.html.erb").to_s
+      renderer.render({ :file => @template }, {
+          :repository => Project.find_by_slug!(pid).repositories.find_by_name!(rid),
+          :current_user => uid && User.find(uid),
+          :session => session
+        })
+    end
+
+    def render_non_existent_ref(repository, ref, error)
+      pid, rid = repository.split("/")
+      uid = request.session["user_id"]
+      @template ||= (Rails.root + "app/views/repositories/_non_existent_ref.html.erb").to_s
+      repo = Project.find_by_slug!(pid).repositories.find_by_name!(rid)
+      renderer.render({ :file => @template }, {
+          :repository => RepositoryPresenter.new(repo),
+          :current_user => uid && User.find(uid),
+          :session => session,
+          :ref => ref,
+          :error => error
+        })
+    end
+
     def add_sendfile_headers(filename, format)
       basename = File.basename(filename)
       user_path = basename.gsub("/", "_").gsub('"', '\"')
