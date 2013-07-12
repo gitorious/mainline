@@ -18,7 +18,7 @@
 require "fast_test_helper"
 require "validators/ssh_key_validator"
 
-class SshKeyValidatorTest < MiniTest::Shoulda
+class SshKeyValidatorTest < MiniTest::Spec
   def new_key(opts={})
     SshKey.new({
         :user_id => 1,
@@ -26,26 +26,26 @@ class SshKeyValidatorTest < MiniTest::Shoulda
     }.merge(opts))
   end
 
-  should "validate presence of user_id and key" do
+  it "validates presence of user_id and key" do
     result = SshKeyValidator.call(SshKey.new)
     refute result.valid?
     assert result.errors[:user_id]
     assert result.errors[:key]
   end
 
-  should "validate the key using ssh-keygen" do
+  it "validates the key using ssh-keygen" do
     validator = SshKeyValidator.new(new_key)
     validator.expects(:valid_key_using_ssh_keygen?).returns(false)
     refute validator.valid?
   end
 
-  should "only allow unique ssh keys across the whole site" do
+  it "only allows unique ssh keys across the whole site" do
     key = new_key
     def key.uniq?; false; end
     refute SshKeyValidator.call(key).valid?
   end
 
-  should "detect invalid ssh keys" do
+  it "detects invalid ssh keys" do
     ssh_key = new_key(:key => "")
     validator = SshKeyValidator.new(ssh_key)
     validator.stubs(:valid_key_using_ssh_keygen?).returns(true)
@@ -67,7 +67,7 @@ class SshKeyValidatorTest < MiniTest::Shoulda
     assert validator.valid?
   end
 
-  should "detect attempts at uploading private key" do
+  it "detects attempts at uploading private key" do
     ssh_key = new_key(:key => <<EOF)
 -----BEGIN RSA PRIVATE KEY-----
 Proc-Type: 4,ENCRYPTED
@@ -106,7 +106,7 @@ EOF
     assert_match "private", result.errors[:key].join("")
   end
 
-  should "allow a wider range of extended comments" do
+  it "allows a wider range of extended comments" do
     ssh_key = new_key(:key => "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE #{Gitorious.host} key")
     validator = SshKeyValidator.new(ssh_key)
     validator.stubs(:valid_key_using_ssh_keygen?).returns(true)
@@ -119,7 +119,7 @@ EOF
     assert validator.valid?
   end
 
-  should "ignore superfluous keys" do
+  it "ignores superfluous keys" do
     encoded_key = "bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU="
     k = "ssh-rsa #{encoded_key} foo@example.com"
     ssh_key = new_key(:key => "#{k}\r#{k}")

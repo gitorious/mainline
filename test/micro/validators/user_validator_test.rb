@@ -18,39 +18,39 @@
 require "fast_test_helper"
 require "validators/user_validator"
 
-class UserValidatorTest < MiniTest::Shoulda
-  context "macros" do
-    setup { @result = UserValidator.call(User.new) }
+class UserValidatorTest < MiniTest::Spec
+  describe "macros" do
+    before { @result = UserValidator.call(User.new) }
 
-    should "validate presence of login" do
+    it "validates presence of login" do
       refute_equal [], @result.errors[:login]
     end
 
-    should "validate presence of email" do
+    it "validates presence of email" do
       refute_equal [], @result.errors[:email]
     end
 
-    should "validate presence of password" do
+    it "validates presence of password" do
       refute_equal [], @result.errors[:password]
     end
   end
 
-  context "openid users" do
+  describe "openid users" do
     before do
       @user = User.new(:identity_url => "http://my.local/identity")
       @result = UserValidator.call(@user)
     end
 
-    should "not require login" do
+    it "does not require login" do
       assert_equal [], @result.errors[:login]
     end
 
-    should "not require password" do
+    it "does not require password" do
       assert_equal [], @result.errors[:password]
       assert_equal [], @result.errors[:password_confirmation]
     end
 
-    should "validate password length" do
+    it "validates password length" do
       @user.password = "p"
       result = UserValidator.call(@user)
       assert_equal [], result.errors[:password]
@@ -58,7 +58,7 @@ class UserValidatorTest < MiniTest::Shoulda
     end
   end
 
-  should "require a login without spaces" do
+  it "requires a login without spaces" do
     result = UserValidator.call(User.new(:login => "joe schmoe"))
     assert_equal ["is invalid"], result.errors[:login]
 
@@ -72,34 +72,34 @@ class UserValidatorTest < MiniTest::Shoulda
     assert_equal [], result.errors[:login]
   end
 
-  should "accept short logins" do
+  it "accepts short logins" do
     result = UserValidator.call(User.new(:login => "x"))
     assert_equal [], result.errors[:login]
   end
 
-  should "require an email that looks emailish" do
+  it "requires an email that looks emailish" do
     result = UserValidator.call(User.new(:email => "kernel.wtf"))
     assert_equal 1, result.errors[:email].length
   end
 
-  should "allow emails with aliases and sub-domains" do
+  it "allows emails with aliases and sub-domains" do
     result = UserValidator.call(new_user(:email => "ker+nel.w-t-f@foo-bar.co.uk"))
     assert result.valid?, result.errors.inspect
   end
 
-  should "allow normalized identity urls" do
+  it "allows normalized identity urls" do
     user = new_user(:identity_url => "http://johan.somewhere.com")
     result = UserValidator.call(user)
     assert result.valid?, result.errors.inspect
   end
 
-  should "disallow invalid identity_url" do
+  it "disallows invalid identity_url" do
     user = new_user(:identity_url => "€&/()")
     def user.normalize_identity_url(url); raise "Invalid"; end
     refute UserValidator.call(user).valid?
   end
 
-  should "require unique login" do
+  it "requires unique login" do
     user = new_user
     def user.uniq_login?; false; end
 
@@ -109,7 +109,7 @@ class UserValidatorTest < MiniTest::Shoulda
     refute_equal [], result.errors[:login]
   end
 
-  should "require unique email" do
+  it "requires unique email" do
     user = new_user
     def user.uniq_email?; false; end
 
@@ -119,7 +119,7 @@ class UserValidatorTest < MiniTest::Shoulda
     refute_equal [], result.errors[:email]
   end
 
-  should "require password confirmation" do
+  it "requires password confirmation" do
     user = User.new(:password => "heythere", :password_confirmation => "")
     result = UserValidator.call(user)
     refute_equal [], result.errors[:password]

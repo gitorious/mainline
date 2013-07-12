@@ -18,13 +18,13 @@
 require "fast_test_helper"
 require "validators/nil_validator"
 
-class NilValidatorTest < MiniTest::Shoulda
-  should "pass when subject is not nil" do
+class NilValidatorTest < MiniTest::Spec
+  it "passes when subject is not nil" do
     result = NilValidator.new("Ouch").call(Object.new)
     assert result.valid?
   end
 
-  should "fail with messagewhen subject is nil" do
+  it "fails with messagewhen subject is nil" do
     result = NilValidator.new("Ouch").call(nil)
     refute result.valid?
     assert_equal ["Ouch"], result.errors

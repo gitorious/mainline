@@ -18,8 +18,8 @@
 require "fast_test_helper"
 require "validators/project_validator"
 
-class ProjectValidatorTest < MiniTest::Shoulda
-  should "require a title to be valid" do
+class ProjectValidatorTest < MiniTest::Spec
+  it "requires a title to be valid" do
     project = create_project(:title => nil)
     refute ProjectValidator.call(project).valid?
 
@@ -27,12 +27,12 @@ class ProjectValidatorTest < MiniTest::Shoulda
     assert ProjectValidator.call(project).valid?
   end
 
-  should "require a slug to be valid" do
+  it "requires a slug to be valid" do
     project = create_project(:slug => nil)
     refute ProjectValidator.call(project).valid?
   end
 
-  should "have a unique slug to be valid" do
+  it "has a unique slug to be valid" do
     project = create_project
     def project.uniq?; false; end
 
@@ -40,12 +40,12 @@ class ProjectValidatorTest < MiniTest::Shoulda
     refute_nil ProjectValidator.call(project).errors[:slug]
   end
 
-  should "require an alphanumeric slug" do
+  it "requires an alphanumeric slug" do
     project = create_project(:slug => "asd asd")
     refute ProjectValidator.call(project).valid?
   end
 
-  should "not allow a reserved name as slug" do
+  it "does not allow a reserved name as slug" do
     Project.stubs(:reserved_slugs).returns(["batman", "robin"])
     project = create_project(:slug => "Batman")
     result = ProjectValidator.call(project)
@@ -54,7 +54,7 @@ class ProjectValidatorTest < MiniTest::Shoulda
     refute_nil result.errors[:slug]
   end
 
-  should "require valid home url" do
+  it "requires valid home url" do
     project = create_project
     validator = ProjectValidator.new(project)
 

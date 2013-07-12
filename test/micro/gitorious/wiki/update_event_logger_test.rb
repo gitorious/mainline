@@ -21,9 +21,9 @@ require "gitorious/wiki/commit"
 require "gitorious/wiki/commit_parser"
 require "gitorious/wiki/update_event_logger"
 
-class WikiUpdateEventLoggerTest < MiniTest::Shoulda
-  context "updating wiki" do
-    setup do
+class WikiUpdateEventLoggerTest < MiniTest::Spec
+  describe "updating wiki" do
+    before do
       @repository = Repository.new
       @repository.project = Project.new
       @user = User.new
@@ -32,7 +32,7 @@ class WikiUpdateEventLoggerTest < MiniTest::Shoulda
       @spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/master")
     end
 
-    should "create update wiki page event for updated pages" do
+    it "creates update wiki page event for updated pages" do
       @commit.modified_file_names = %w[Home.mdown]
       logger = Gitorious::Wiki::UpdateEventLogger.new(@repository, @spec, @user)
 
@@ -42,7 +42,7 @@ class WikiUpdateEventLoggerTest < MiniTest::Shoulda
       assert_equal @user, @repository.project.events.first[:user]
     end
 
-    should "create update wiki page event for added pages" do
+    it "creates update wiki page event for added pages" do
       @commit.added_file_names = %w[Home.mdown]
       logger = Gitorious::Wiki::UpdateEventLogger.new(@repository, @spec, @user)
 

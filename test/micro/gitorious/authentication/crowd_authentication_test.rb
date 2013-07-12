@@ -22,46 +22,46 @@ require "gitorious/authentication/configuration"
 require "gitorious/authentication/credentials"
 require "gitorious/authentication/crowd_authentication"
 
-class Gitorious::Authentication::ConfigurationTest < MiniTest::Shoulda
+class Gitorious::Authentication::ConfigurationTest < MiniTest::Spec
   include Gitorious::CrowdTestHelper
 
-  context "Configuration" do
-    should "require an application name" do
+  describe "Configuration" do
+    it "requires an application name" do
       assert_raises Gitorious::Authentication::ConfigurationError do
         crowd = Gitorious::Authentication::CrowdAuthentication.new({})
       end
     end
 
-    should "require an application password" do
+    it "requires an application password" do
       assert_raises Gitorious::Authentication::ConfigurationError do
         crowd = Gitorious::Authentication::CrowdAuthentication.new({"application" => "gitorious"})
       end
     end
   end
 
-  context "Authentication" do
-    setup do
+  describe "Authentication" do
+    before do
       @crowd = valid_crowd_client("context" => "/crowd")
       connection = MockHTTPConnection.new
       Net::HTTP.expects(:new).with("localhost", 8095).returns(connection)
     end
 
-    should "not accept invalid credentials" do
+    it "does not accept invalid credentials" do
       assert !@crowd.authenticate(valid_client_credentials("moe", "secret"))
     end
 
-    should "accept valid credentials" do
+    it "accepts valid credentials" do
       assert @crowd.authenticate(valid_client_credentials("moe", "LetMe1n"))
     end
 
-    should "return the actual user" do
+    it "returns the actual user" do
       user = @crowd.authenticate(valid_client_credentials("moe", "LetMe1n"))
       assert_equal("moe", user.login)
     end
   end
 
-  context "Authentication connection" do
-    should "use ssl" do
+  describe "Authentication connection" do
+    it "uses ssl" do
       crowd = valid_crowd_client("port" => 443, "context" => "/crowd")
       connection = MockHTTPConnection.new(:use_ssl => true)
       Net::HTTP.expects(:new).with("localhost", 443).returns(connection)
@@ -71,7 +71,7 @@ class Gitorious::Authentication::ConfigurationTest < MiniTest::Shoulda
       assert connection.use_ssl?
     end
 
-    should "not use ssl by default" do
+    it "does not use ssl by default" do
       crowd = valid_crowd_client("context" => "/crowd")
       connection = MockHTTPConnection.new(:use_ssl => true)
       Net::HTTP.expects(:new).with("localhost", 8095).returns(connection)
@@ -81,7 +81,7 @@ class Gitorious::Authentication::ConfigurationTest < MiniTest::Shoulda
       assert !connection.use_ssl?
     end
 
-    should "skip ssl verification if configured to do so" do
+    it "skips ssl verification if configured to do so" do
       crowd = valid_crowd_client("port" => 443, "context" => "/crowd",
                                  "disable_ssl_verification" => true)
       connection = MockHTTPConnection.new(:use_ssl => true)
@@ -92,17 +92,17 @@ class Gitorious::Authentication::ConfigurationTest < MiniTest::Shoulda
       assert_equal connection.verify_mode, OpenSSL::SSL::VERIFY_NONE
     end
 
-    should "not skip ssl verification by default" do
+    it "does not skip ssl verification by default" do
       crowd = valid_crowd_client("port" => 443, "context" => "/crowd")
       connection = MockHTTPConnection.new(:use_ssl => true)
       Net::HTTP.expects(:new).with("localhost", 443).returns(connection)
 
       crowd.authenticate(valid_client_credentials("moe", "LetMe1n"))
 
-      assert_not_equal connection.verify_mode, OpenSSL::SSL::VERIFY_NONE
+      refute_equal connection.verify_mode, OpenSSL::SSL::VERIFY_NONE
     end
 
-    should "make request to differen host/port/context" do
+    it "makes request to differen host/port/context" do
       crowd = valid_crowd_client("host" => "sso.myplace", "port" => 80)
       connection = MockHTTPConnection.new(:expected_user => "mooey")
       connection.expected_url = "/rest/usermanagement/1/authentication?username=mooey"
@@ -112,12 +112,12 @@ class Gitorious::Authentication::ConfigurationTest < MiniTest::Shoulda
     end
   end
 
-  context "Auto-registration" do
-    setup do
+  describe "Auto-registration" do
+    before do
       @crowd = valid_crowd_client("context" => "/crowd")
     end
 
-    should "transform user's login to not contain dots" do
+    it "transforms user's login to not contain dots" do
       connection = MockHTTPConnection.new(:expected_user => "mr.moe.szyslak")
       Net::HTTP.expects(:new).with("localhost", 8095).returns(connection)
 

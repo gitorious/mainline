@@ -18,8 +18,8 @@
 require "fast_test_helper"
 require "validators/repository_validator"
 
-class RepositoryValidatorTest < MiniTest::Shoulda
-  should "validate presence of required attributes" do
+class RepositoryValidatorTest < MiniTest::Spec
+  it "validates presence of required attributes" do
     repository = Repository.new
     result = RepositoryValidator.call(repository)
 
@@ -30,7 +30,7 @@ class RepositoryValidatorTest < MiniTest::Shoulda
     refute_nil result.errors[:name]
   end
 
-  should "ensure unique name" do
+  it "ensures unique name" do
     repository = new_repository
     def repository.uniq_name?; false; end
     result = RepositoryValidator.call(repository)
@@ -39,7 +39,7 @@ class RepositoryValidatorTest < MiniTest::Shoulda
     assert result.errors[:name]
   end
 
-  should "only allow alphanumeric names" do
+  it "only allows alphanumeric names" do
     repository = new_repository
     validator = RepositoryValidator.new(repository)
 
@@ -47,7 +47,7 @@ class RepositoryValidatorTest < MiniTest::Shoulda
     refute validator.valid?
 
     repository.name = "foo!bar"
-    refute validator.valid?, "valid? should be false"
+    refute validator.valid?, "valid? it be false"
 
     repository.name = "foobar"
     assert validator.valid?
@@ -56,7 +56,7 @@ class RepositoryValidatorTest < MiniTest::Shoulda
     assert validator.valid?
   end
 
-  should "reject repository with reserved name" do
+  it "rejects repository with reserved name" do
     Repository.stubs(:reserved_names).returns(["users"])
     repository = new_repository(:name => "users")
 

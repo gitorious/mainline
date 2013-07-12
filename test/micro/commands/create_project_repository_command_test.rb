@@ -22,16 +22,16 @@ class App < MessageHub
   def admin?(actor, subject); true; end
 end
 
-class CreateProjectRepositoryCommandTest < MiniTest::Shoulda
-  def setup
+class CreateProjectRepositoryCommandTest < MiniTest::Spec
+  before do
     @app = App.new
     @user = User.new
     @project = Project.new(:owner => @user)
     @command = CreateProjectRepositoryCommand.new(@app, @project, @user)
   end
 
-  context "#build" do
-    should "add new repository to project" do
+  describe "#build" do
+    it "adds new repository to project" do
       input = params
       repository = @command.build(input)
 
@@ -43,8 +43,8 @@ class CreateProjectRepositoryCommandTest < MiniTest::Shoulda
     end
   end
 
-  context "#execute" do
-    should "create repository" do
+  describe "#execute" do
+    it "creates repository" do
       count = Repository.count
       repository = execute(params)
 
@@ -55,7 +55,7 @@ class CreateProjectRepositoryCommandTest < MiniTest::Shoulda
       assert_equal :project, repository.kind
     end
 
-    should "create repository owned by group" do
+    it "creates repository owned by group" do
       group = {}
       @project.owner = group
       repository = execute(params)
@@ -63,59 +63,59 @@ class CreateProjectRepositoryCommandTest < MiniTest::Shoulda
       assert_equal group, repository.owner
     end
 
-    should "enable merge requests by default" do
+    it "enables merge requests by default" do
       repository = execute(params)
 
       assert repository.merge_requests_enabled
     end
 
-    should "opt-out of merge requests" do
+    it "opts-out of merge requests" do
       repository = execute(params("merge_requests_enabled" => "0"))
 
       refute repository.merge_requests_enabled
     end
 
-    should "create committership for owner" do
+    it "creates committership for owner" do
       repository = @command.build(params)
       repository.committerships.expects(:create_for_owner!).with(@user)
       @command.execute(repository)
     end
 
-    should "create public repository by default" do
+    it "creates public repository by default" do
       Repository.stubs(:private_on_create?).returns(false)
       repository = execute(params)
 
       assert repository.public?
     end
 
-    should "create private project" do
+    it "creates private project" do
       Repository.stubs(:private_on_create?).with(:private => true).returns(true)
       repository = execute(params(:private => "1"))
 
       assert repository.private?
     end
 
-    should "create public project" do
+    it "creates public project" do
       Repository.stubs(:private_on_create?).with(:private => false).returns(false)
       repository = execute(params(:private => "0"))
 
       assert repository.public?
     end
 
-    should "add owner favorite" do
+    it "adds owner favorite" do
       repository = @command.build(params)
       repository.expects(:watched_by!).with(@user)
       @command.execute(repository)
     end
 
-    should "create event" do
+    it "creates event" do
       repository = @command.build(params)
       repository.created_at = Time.now
       @project.expects(:create_event).with(19, repository, @user, nil, nil, repository.created_at)
       @command.execute(repository)
     end
 
-    should "post creation message" do
+    it "posts creation message" do
       repository = @command.build(params)
       repository.id = 13
       repository = @command.execute(repository)

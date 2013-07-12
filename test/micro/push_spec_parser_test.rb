@@ -19,9 +19,9 @@ require "fast_test_helper"
 require "app/models/action"
 require "push_spec_parser"
 
-class PushSpecParserTest < MiniTest::Shoulda
-  context "Actions" do
-    should "parse a tag creation" do
+class PushSpecParserTest < MiniTest::Spec
+  describe "Actions" do
+    it "parses a tag creation" do
       spec = PushSpecParser.new(NULL_SHA, OTHER_SHA, "refs/tags/topic")
 
       assert spec.action_create?
@@ -29,7 +29,7 @@ class PushSpecParserTest < MiniTest::Shoulda
       assert !spec.action_delete?
     end
 
-    should "parse a tag update" do
+    it "parses a tag update" do
       spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/tags/topic")
 
       assert spec.action_update?
@@ -37,7 +37,7 @@ class PushSpecParserTest < MiniTest::Shoulda
       assert !spec.action_delete?
     end
 
-    should "parse a tag deletion" do
+    it "parses a tag deletion" do
       spec = PushSpecParser.new(SHA, NULL_SHA, "refs/tags/topic")
 
       assert spec.action_delete?
@@ -46,8 +46,8 @@ class PushSpecParserTest < MiniTest::Shoulda
     end
   end
 
-  context "Refs" do
-    should "recognize a tag" do
+  describe "Refs" do
+    it "recognizes a tag" do
       spec = PushSpecParser.new(nil, nil, "refs/tags/topic")
 
       assert spec.tag?
@@ -55,7 +55,7 @@ class PushSpecParserTest < MiniTest::Shoulda
       assert !spec.merge_request?
     end
 
-    should "recognize a head" do
+    it "recognizes a head" do
       spec = PushSpecParser.new(nil, nil, "refs/heads/master")
 
       assert spec.head?
@@ -63,7 +63,7 @@ class PushSpecParserTest < MiniTest::Shoulda
       assert !spec.merge_request?
     end
 
-    should "recognize a merge request" do
+    it "recognizes a merge request" do
       spec = PushSpecParser.new(nil, nil, "refs/merge-requests/1")
 
       assert spec.merge_request?
@@ -71,13 +71,13 @@ class PushSpecParserTest < MiniTest::Shoulda
       assert !spec.tag?
     end
 
-    should "recognize tag name" do
+    it "recognizes tag name" do
       spec = PushSpecParser.new(nil, nil, "refs/tags/topic")
 
       assert_equal "topic", spec.ref_name
     end
 
-    should "recognize a branch with a slash in it" do
+    it "recognizes a branch with a slash in it" do
       spec = PushSpecParser.new(nil, nil, "refs/heads/release/0.5.0")
       assert_equal "release/0.5.0", spec.ref_name
     end

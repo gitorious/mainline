@@ -18,24 +18,24 @@
 require "fast_test_helper"
 require "gitorious/authorization/configuration"
 
-class Gitorious::Authorization::ConfigurationTest < MiniTest::Shoulda
-  context "Default configuration" do
-    setup do
+class Gitorious::Authorization::ConfigurationTest < MiniTest::Spec
+  describe "Default configuration" do
+    before do
       Gitorious::Authorization::Configuration.strategies.clear
     end
 
-    should "use commitership authorization as default" do
+    it "uses commitership authorization as default" do
       assert_equal 0, Gitorious::Authorization::Configuration.strategies.size
       Gitorious::Authorization::Configuration.configure({})
       assert_equal 1, Gitorious::Authorization::Configuration.strategies.size
     end
 
-    should "only exclude committerships when instructed to do so" do
+    it "only excludes committerships when instructed to do so" do
       Gitorious::Authorization::Configuration.configure({ "disable_default" => "true" })
       assert_equal 0, Gitorious::Authorization::Configuration.strategies.size
     end
 
-    should "not allow several auth methods of same type" do
+    it "does not allow several auth methods of same type" do
       2.times { Gitorious::Authorization::Configuration.use_default_configuration }
       assert_equal 1, Gitorious::Authorization::Configuration.strategies.size
     end

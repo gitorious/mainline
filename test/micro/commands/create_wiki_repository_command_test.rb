@@ -22,8 +22,8 @@ class App < MessageHub
   def admin?(actor, subject); true; end
 end
 
-class CreateWikiRepositoryCommandTest < MiniTest::Shoulda
-  def setup
+class CreateWikiRepositoryCommandTest < MiniTest::Spec
+  before do
     @app = App.new
     @user = User.new
     @project = Project.new({
@@ -34,8 +34,8 @@ class CreateWikiRepositoryCommandTest < MiniTest::Shoulda
     @command = CreateWikiRepositoryCommand.new(@app)
   end
 
-  context "#build" do
-    should "add new repository to project" do
+  describe "#build" do
+    it "adds new repository to project" do
       repository = @command.build(@project)
 
       assert_equal "entombed-gitorious-wiki", repository.name
@@ -47,21 +47,21 @@ class CreateWikiRepositoryCommandTest < MiniTest::Shoulda
     end
   end
 
-  context "#execute" do
-    should "create repository" do
+  describe "#execute" do
+    it "creates repository" do
       count = Repository.count
       repository = @command.execute(@command.build(@project))
 
       assert_equal count + 1, Repository.count
     end
 
-    should "create committership for owner" do
+    it "creates committership for owner" do
       repository = @command.build(@project)
       repository.committerships.expects(:create_for_owner!).with(@user)
       @command.execute(repository)
     end
 
-    should "post creation message" do
+    it "posts creation message" do
       repository = @command.build(@project)
       repository.id = 13
       repository = @command.execute(repository)

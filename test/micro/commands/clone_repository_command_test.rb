@@ -22,8 +22,8 @@ class App < MessageHub
   def admin?(actor, subject); true; end
 end
 
-class CloneRepositoryCommandTest < MiniTest::Shoulda
-  def setup
+class CloneRepositoryCommandTest < MiniTest::Spec
+  before do
     @app = App.new
     @repo_owner = User.new(:id => 13)
     @user = User.new(:id => 42)
@@ -46,8 +46,8 @@ class CloneRepositoryCommandTest < MiniTest::Shoulda
     end
   end
 
-  context "#build" do
-    should "add new user clone to project" do
+  describe "#build" do
+    it "adds new user clone to project" do
       repository = @command.build(params(:name => "My clone"))
 
       assert_equal "My clone", repository.name
@@ -58,7 +58,7 @@ class CloneRepositoryCommandTest < MiniTest::Shoulda
       assert repository.merge_requests_enabled
     end
 
-    should "add new group clone to project" do
+    it "adds new group clone to project" do
       repository = @command.build(params(:owner_type => "Group", :owner_id => 3))
 
       assert_equal 3, repository.owner.id
@@ -66,35 +66,35 @@ class CloneRepositoryCommandTest < MiniTest::Shoulda
       assert_equal :team, repository.kind
     end
 
-    should "suggest name from login" do
+    it "suggests name from login" do
       repository = @command.build(params(:login => "cjohansen"))
 
       assert_equal "cjohansens-kickass-repo", repository.name
     end
   end
 
-  context "#execute" do
-    should "create repository" do
+  describe "#execute" do
+    it "creates repository" do
       count = Repository.count
       repository = @command.execute(@command.build(params))
 
       assert_equal count + 1, Repository.count
     end
 
-    should "create committership for owner" do
+    it "creates committership for owner" do
       repository = @command.build(params)
       repository.committerships.expects(:create_for_owner!).with(@user)
       @command.execute(repository)
     end
 
-    should "create public clone by default" do
+    it "creates public clone by default" do
       Repository.stubs(:private_on_create?).returns(false)
       repository = @command.execute(@command.build(params))
 
       assert repository.public?
     end
 
-    should "create private clone if source repository is private" do
+    it "creates private clone if source repository is private" do
       @repository.make_private
       @repository.content_memberships = [OpenStruct.new(:member => { :id => 42 })]
       repository = @command.execute(@command.build(params))
@@ -103,20 +103,20 @@ class CloneRepositoryCommandTest < MiniTest::Shoulda
       assert_equal [{ :id => 42 }], repository.content_memberships
     end
 
-    should "create private clone" do
+    it "creates private clone" do
       Repository.stubs(:private_on_create?).returns(true)
       repository = @command.execute(@command.build(params))
 
       assert repository.private?
     end
 
-    should "add owner favorite" do
+    it "adds owner favorite" do
       repository = @command.build(params)
       repository.expects(:watched_by!).with(@user)
       @command.execute(repository)
     end
 
-    should "create event" do
+    it "creates event" do
       repository = @command.build(params)
       repository.parent_id = 42
       repository.created_at = Time.now
@@ -124,7 +124,7 @@ class CloneRepositoryCommandTest < MiniTest::Shoulda
       @command.execute(repository)
     end
 
-    should "post creation message" do
+    it "posts creation message" do
       repository = @command.build(params)
       repository.id = 13
       repository = @command.execute(repository)

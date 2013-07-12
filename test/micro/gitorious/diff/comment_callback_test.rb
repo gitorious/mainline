@@ -39,9 +39,9 @@ class Comment < TestHelper::Model
   end
 end
 
-class CommentCallbackTest < MiniTest::Shoulda
-  context "with several comments" do
-    setup do
+class CommentCallbackTest < MiniTest::Spec
+  describe "with several comments" do
+    before do
       @comments = [
                    Comment.new({
                        :lines => "1-1:1-3+2",
@@ -57,17 +57,17 @@ class CommentCallbackTest < MiniTest::Shoulda
       @callback = Gitorious::Diff::CommentCallback.new(@comments)
     end
 
-    should "have a comment count for comments starting on a given line" do
+    it "has a comment count for comments starting on a given line" do
       line = Diff::Display::AddLine.new("Yikes!", 1, false, [1,1])
       assert_equal 2, @callback.comment_count_starting_on_line(line)
     end
 
-    should "have a comment count for comments ending on a given line" do
+    it "has a comment count for comments ending on a given line" do
       line = Diff::Display::AddLine.new("Yikes!", 1, false, [1,3])
       assert_equal 1, @callback.comment_count_ending_on_line(line)
     end
 
-    should "not raise if the Line does not implement the offsets" do
+    it "does not raise if the Line does not implement the offsets" do
       line = Diff::Display::UnModLine.new("foo", 1, 1)
       assert_nothing_raised do
         @callback.comment_count_starting_on_line(line)
@@ -77,7 +77,7 @@ class CommentCallbackTest < MiniTest::Shoulda
       end
     end
 
-    should "render comments for a given line" do
+    it "renders comments for a given line" do
       template = stub
       template.expects(:render).with(:partial => "comments/inline_diff",
         :locals => {:comment => @comments.first})

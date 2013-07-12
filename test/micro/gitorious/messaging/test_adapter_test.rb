@@ -24,19 +24,19 @@ class TestPublisher
   include Gitorious::Messaging::TestAdapter::Publisher
 end
 
-class MessagingTestAdapterTest < MiniTest::Shoulda
+class MessagingTestAdapterTest < MiniTest::Spec
   include MessagingTestHelper
 
-  context "publisher" do
-    teardown do
+  describe "publisher" do
+    after do
       Gitorious::Messaging::TestAdapter.clear
     end
 
-    should "return empty array if no messages were published" do
+    it "returns empty array if no messages were published" do
       assert_equal [], Gitorious::Messaging::TestAdapter.messages_on("/queue/MyQueue")
     end
 
-    should "return array of parsed payloads when messages were published" do
+    it "returns array of parsed payloads when messages were published" do
       publisher = TestPublisher.new
       publisher.publish("/queue/MyQueue", { :id => 42 })
       publisher.publish("/queue/MyQueue", { :msg => "Ok" })
@@ -45,14 +45,14 @@ class MessagingTestAdapterTest < MiniTest::Shoulda
                    Gitorious::Messaging::TestAdapter.messages_on("/queue/MyQueue"))
     end
 
-    should "pass assertion when matching message was published" do
+    it "passes assertion when matching message was published" do
       publisher = TestPublisher.new
       publisher.publish("/queue/MyQueue", { :id => 42 })
 
       assert_published "/queue/MyQueue", "id" => 42
     end
 
-    should "fail assertion when matching message was not published" do
+    it "fails assertion when matching message was not published" do
       publisher = TestPublisher.new
       publisher.publish("/queue/MyQueue", { :id => 42 })
 

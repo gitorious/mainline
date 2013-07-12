@@ -35,7 +35,7 @@ class StubRepository
   end
 end
 
-class RepositoryResolverTest < MiniTest::Shoulda
+class RepositoryResolverTest < MiniTest::Spec
   describe Gitorious::Dolt::RepositoryResolver do
     it "exposes repository presenter as meta" do
       StubRepository.full_repository_path = Rails.root.realpath.to_s

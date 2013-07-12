@@ -18,13 +18,13 @@
 require "fast_test_helper"
 require "validators/new_user_validator"
 
-class NewUserValidatorTest < MiniTest::Shoulda
-  should "require terms to be accepted" do
+class NewUserValidatorTest < MiniTest::Spec
+  it "requires terms to be accepted" do
     result = NewUserValidator.call(User.new(:terms_of_use => false))
     refute_equal [], result.errors[:terms_of_use]
   end
 
-  should "allow terms to be accepted" do
+  it "allows terms to be accepted" do
     result = NewUserValidator.call(User.new(:terms_of_use => true))
     assert_equal [], result.errors[:terms_of_use]
   end

@@ -19,8 +19,8 @@
 require "fast_test_helper"
 require "validators/membership_validator"
 
-class MembershipValidatorTest < MiniTest::Shoulda
-  should "validate presence of group, user and role" do
+class MembershipValidatorTest < MiniTest::Spec
+  it "validates presence of group, user and role" do
     result = MembershipValidator.call(Membership.new)
 
     refute result.valid?
@@ -29,7 +29,7 @@ class MembershipValidatorTest < MiniTest::Shoulda
     assert result.errors[:role]
   end
 
-  should "require uniq user" do
+  it "requires uniq user" do
     membership = Membership.new(:user => User.new, :group => Group.new, :role => Role.new)
     def membership.uniq?; false; end
     result = MembershipValidator.call(membership)
@@ -38,14 +38,14 @@ class MembershipValidatorTest < MiniTest::Shoulda
     assert result.errors[:user_id]
   end
 
-  should "pass validation" do
+  it "passes validation" do
     membership = Membership.new(:user => User.new, :group => Group.new, :role => Role.new)
     def membership.uniq?; true; end
 
     assert MembershipValidator.call(membership).valid?
   end
 
-  should "not allow demotion of group creator" do
+  it "does not allow demotion of group creator" do
     creator = User.new
     group = Group.new(:creator => creator)
     membership = Membership.new(:user => creator, :group => group, :role => Role.member)
