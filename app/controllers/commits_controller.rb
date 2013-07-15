@@ -50,7 +50,7 @@ class CommitsController < ApplicationController
       @atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, params[:branch], :atom)
       respond_to do |format|
         format.html do
-          render(:action => :index, :layout => "ui3/layouts/application", :locals => {
+          render(:action => :index, :layout => "layouts/ui3", :locals => {
             :repository => RepositoryPresenter.new(@repository),
             :ref => @repository.head_candidate_name,
             :commits => @commits,
