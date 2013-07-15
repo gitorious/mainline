@@ -1,19 +1,17 @@
 #!/usr/bin/env ruby
 require(File.expand_path(File.dirname(__FILE__) + "/setup"))
 
-STANDBY_FILE_NAME    = 'standby.html'
-STANDBY_FILE_PATH    = File.expand_path("public/#{STANDBY_FILE_NAME}")
-STANDBY_SYMLINK_PATH = File.expand_path("public/system/#{STANDBY_FILE_NAME}")
-
 Gitorious::CLI.new.run_with_gitorious_environment do
   action = ARGV[0].to_s.strip
 
   case action
   when 'start'
-    FileUtils.ln_s STANDBY_FILE_PATH, STANDBY_SYMLINK_PATH, :force => true
-    FileUtils.ln_s '/dev/null', RepositoryRoot.expand(".hooks"), :force => true
-
-    puts 'Standby mode activated'
+    if EnableStandbyModeCommand.new(nil, File.expand_path('public')).execute
+      puts 'Standby mode activated'
+    else
+      puts %(You need to paste public key of your master instance user to local gitorious config file as the "master_public_key" first.)
+      exit 1
+    end
 
   when 'stop'
     File.unlink STANDBY_SYMLINK_PATH if File.exist?(STANDBY_SYMLINK_PATH)
