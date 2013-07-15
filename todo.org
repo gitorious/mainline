@@ -1,4 +1,4 @@
-* Gitorious 3 [1/10]
+* Gitorious 3 [1/15]
 ** DONE Put views/ui3/repositories/repo_header.erb in views/repositories
 ** TODO Getting started page: URLs in repo header
 ** TODO Rendering Readme raises error - whole tree browser doesn't work. Silently ignore markup errors in readmes.
@@ -12,6 +12,8 @@
 ** TODO JS solution to link up authors in commit logs etc (Dolt links to "~")
 ** TODO Links to "Diff <current branch>..<branch>" for each branch. But: Where?
 ** TODO if @blob.size > 500.kilobytes; flash[:error] = I18n.t "blobs_controller.raw_error", :size => @blob.size
+** TODO Refactor Dolt: Composition (less modules etc)
+** TODO Refactor Dolt: Naming
 * Views to port to UI3 [10/76]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit
