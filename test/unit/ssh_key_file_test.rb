@@ -50,6 +50,12 @@ class SshKeyFileTest < ActiveSupport::TestCase
     assert_equal File.read(fixture_key_path), @keyfile.contents
   end
 
+  should "truncate the file to zero length" do
+    @keyfile.truncate!
+
+    assert_equal '', File.read(fixture_key_path)
+  end
+
   should "adds a key to the authorized_keys file" do
     @keyfile.add_key(@keydata)
     assert @keyfile.contents.include?(@keydata)
@@ -100,6 +106,18 @@ class SshKeyFileTest < ActiveSupport::TestCase
         "\n### END KEY #{@key.id} ###\n"
 
       assert_equal exp_key, SshKeyFile.format(@key)
+    end
+  end
+
+  context "format_master_key" do
+    should "produce a proper ssh key" do
+      key = "ssh-rsa 3GeMgsBONURpIt+CdfuNmxeG...== master@puppets"
+      exp_key = "### START KEY master ###\n" +
+        "command=\"gitorious-mirror\",no-port-forwarding," +
+        "no-X11-forwarding,no-agent-forwarding,no-pty #{key}\n" +
+        "### END KEY master ###\n"
+
+      assert_equal exp_key, SshKeyFile.format_master_key(key)
     end
   end
 end

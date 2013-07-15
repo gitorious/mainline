@@ -30,6 +30,10 @@ class SshKeyFile
     File.read(@path)
   end
 
+  def truncate!
+    File.truncate(@path, 0)
+  end
+
   def add_key(key)
     File.open(@path, "a", 0600) do |file|
       file.flock(File::LOCK_EX)
@@ -49,12 +53,19 @@ class SshKeyFile
     end
   end
 
-  def self.format(key)
+  def self.format(key) # TODO: rename to format_user_key
     "### START KEY #{key.id || 'nil'} ###\n" +
       "command=\"gitorious #{key.user.login}\",no-port-forwarding," +
       "no-X11-forwarding,no-agent-forwarding,no-pty #{key.algorithm} " +
       "#{key.encoded_key} SshKey:#{key.id}-User:#{key.user.id}\n" +
       "### END KEY #{key.id || "nil"} ###\n"
+  end
+
+  def self.format_master_key(key)
+    "### START KEY master ###\n" +
+      "command=\"gitorious-mirror\",no-port-forwarding," +
+      "no-X11-forwarding,no-agent-forwarding,no-pty #{key.strip}\n" +
+      "### END KEY master ###\n"
   end
 
   protected
