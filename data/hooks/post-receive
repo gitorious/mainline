@@ -28,11 +28,8 @@ require "messaging"
 @publisher = Publisher.new
 gitdir = File.expand_path(File.join(incpath, ".."))
 
-# Equivalent to the hash in the model
-hashed_dir = gitdir.split("/")[-3,3].join("/").split(".").first
-
-# compat with the old-style paths
-hashed_dir = hashed_dir.sub(/^repositories\//, "")
+n_dir_slashs = GitoriousConfig["enable_repository_dir_sharding"] == "true" ? 3 : 2
+hashed_dir = gitdir.split("/")[-n_dir_slashs,n_dir_slashs].join("/").split(".").first
 
 hook_input_lines = ""
 
