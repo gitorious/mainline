@@ -9,6 +9,9 @@
 ** TODO setup-dev-env guides should use chruby/ruby-install
 ** TODO setup-dev-env should not recommend bin/rake
 ** TODO No method error with resque?
+** TODO JS solution to link up authors in commit logs etc (Dolt links to "~")
+** TODO Links to "Diff <current branch>..<branch>" for each branch. But: Where?
+** TODO if @blob.size > 500.kilobytes; flash[:error] = I18n.t "blobs_controller.raw_error", :size => @blob.size
 * Views to port to UI3 [10/76]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit
