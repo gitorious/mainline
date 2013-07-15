@@ -30,7 +30,7 @@
       </p>
       <p>
         <%= avatar_from_email(commit.author.email, :size => 16)  %>
-        <%= user ? link_to(user.login, user_path(user)) : h(force_utf8(commit.author.name)) -%>
+        <%= user ? link_to(user.fullname || user.login, user_path(user)) : h(force_utf8(commit.author.name)) -%>
         <span class="event-time"><%= l(commit.committed_date, :format => :short_time) %></span>
       </p>
     </div>
