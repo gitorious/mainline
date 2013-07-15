@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+require(File.expand_path(File.dirname(__FILE__) + "/setup"))
+
+STANDBY_FILE_NAME    = 'standby.html'
+STANDBY_FILE_PATH    = File.expand_path("public/#{STANDBY_FILE_NAME}")
+STANDBY_SYMLINK_PATH = File.expand_path("public/system/#{STANDBY_FILE_NAME}")
+
+Gitorious::CLI.new.run_with_gitorious_environment do
+  action = ARGV[0].to_s.strip
+
+  case action
+  when 'start'
+    FileUtils.ln_s STANDBY_FILE_PATH, STANDBY_SYMLINK_PATH, :force => true
+    FileUtils.ln_s '/dev/null', RepositoryRoot.expand(".hooks"), :force => true
+
+    puts 'Standby mode activated'
+
+  when 'stop'
+    File.unlink STANDBY_SYMLINK_PATH if File.exist?(STANDBY_SYMLINK_PATH)
+    FileUtils.ln_s File.expand_path('data/hooks'), RepositoryRoot.expand(".hooks"), :force => true
+
+    puts 'Standby mode deactivated'
+
+  when 'status'
+    if File.exist?(STANDBY_SYMLINK_PATH)
+      puts 'Standby mode ON'
+      puts 'This instance acts as a mirror'
+    else
+      puts 'Standby mode OFF'
+      puts 'This instance acts as a master'
+    end
+
+  else
+    puts "Usage: #$0 start|stop|status"
+  end
+end
