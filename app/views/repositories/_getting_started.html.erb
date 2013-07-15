@@ -16,54 +16,51 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<div class="gts-site-header gts-new-repo" data-gts-env-user-repository-path="/users/view_state/repository/<%= repository.id %>.json">
-  <div class="container">
-    <div class="row">
-      <h1 class="span">
-        <a href="<%= project_path(repository.project) %>"><%= repository.project.slug %></a> /
-        <span><%= repository.name %></span>
-      </h1>
-      <div class="gts-repository-admin-ph gts-placeholder"></div>
-    </div>
-    <%= project_description(repository.project) %>
-    <div class="row">
-      <div class="alert alert-info span6">
-        <h2>Congratulations on your new repository!</h2>
-        <p>
-          Please follow these few steps to start using your new repository.
-        </p>
-        <h3>Install and configure Git</h3>
-        <p>
-          If you haven't already,
-          <a href="http://git-scm.com">download and install Git</a>. Then provide some basic configuration to Git:
-        </p>
-        <pre class="prettyprint">git config --global user.name "<%=h current_user && current_user.fullname || "Your full name" -%>"
+<% current_user = nil if current_user == :false %>
+<%= partial("repositories/repo_header", {
+        :app => Gitorious,
+        :repository => repository,
+        :project => repository.project
+      }) %>
+
+<div class="container">
+  <div class="row">
+    <div class="alert alert-info span6">
+      <h2>Congratulations on your new repository!</h2>
+      <p>
+        Please follow these few steps to start using your new repository.
+      </p>
+      <h3>Install and configure Git</h3>
+      <p>
+        If you haven't already,
+        <a href="http://git-scm.com">download and install Git</a>. Then provide some basic configuration to Git:
+      </p>
+      <pre class="prettyprint">git config --global user.name "<%=h current_user && current_user.fullname || "Your full name" -%>"
 git config --global user.email "<%=h current_user && current_user.email || "your@email.com" -%>"</pre>
-        <h3>Create a new Git repository</h3>
-        <p>
-          If your project is not already using Git, initialize a
-          repository now:
-        </p>
-        <pre class="prettyprint">git init .</pre>
-        <p>
-          Add the existing files to Git's index and commit:
-        </p>
-        <pre class="prettyprint">git add .
+      <h3>Create a new Git repository</h3>
+      <p>
+        If your project is not already using Git, initialize a
+        repository now:
+      </p>
+      <pre class="prettyprint">git init .</pre>
+      <p>
+        Add the existing files to Git's index and commit:
+      </p>
+      <pre class="prettyprint">git add .
 git commit -m "Initial commit"</pre>
-        <h3>Push your changes</h3>
-        <p>
-          Configure your newly created Gitorious repository as a
-          "remote", then push your changes:
-        </p>
-        <pre class="prettyprint">git remote add origin <%= Gitorious.default_remote_url(repository) %>
+      <h3>Push your changes</h3>
+      <p>
+        Configure your newly created Gitorious repository as a
+        "remote", then push your changes:
+      </p>
+      <pre class="prettyprint">git remote add origin <%= Gitorious.default_remote_url(repository) %>
 git push -u origin master</pre>
-        <p>
-          The <code>-u</code> (<code>--set-upstream</code>) tells Git that your
-          <code>master</code> branch always goes to the <code>origin</code> remote.
-          Next time you can push by simply issuing:
-        </p>
-        <pre class="prettyprint">git push</pre>
-      </div>
+      <p>
+        The <code>-u</code> (<code>--set-upstream</code>) tells Git that your
+        <code>master</code> branch always goes to the <code>origin</code> remote.
+        Next time you can push by simply issuing:
+      </p>
+      <pre class="prettyprint">git push</pre>
     </div>
   </div>
 </div>

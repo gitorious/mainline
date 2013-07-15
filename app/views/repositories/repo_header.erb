@@ -19,6 +19,7 @@
 header_level = defined?(header_level) && header_level || 1
 @body_class = "gts-private" if repository.private?
 ref = defined?(ref) && !ref.nil? ? ref : "HEAD"
+has_git_backend = repository.ready? && repository.has_commits?
 %><div class="gts-site-header" data-gts-env-user-repository-path="/users/view_state/repository/<%= repository.id %>.json">
   <div class="container">
     <div class="row">
@@ -46,13 +47,15 @@ ref = defined?(ref) && !ref.nil? ? ref : "HEAD"
           <button data-toggle="collapse" data-target="#repo-url-help" class="gts-repo-url-help btn">?</button>
         </div>
       </div>
-      <div class="pull-right">
-        <a href="<%= archive_url(repository.path_segment, ref, "tar.gz") %>" class="btn gts-download" rel="tooltip" data-original-title="Download <%= refname(ref) %> as .tar.gz">
-          <i class="icon icon-download"></i> Download
-        </a>
-        <div class="gts-watch-repository-ph gts-placeholder"></div>
-        <div class="gts-clone-repository-ph gts-placeholder"></div>
-      </div>
+      <% if has_git_backend %>
+        <div class="pull-right">
+          <a href="<%= archive_url(repository.path_segment, ref, "tar.gz") %>" class="btn gts-download" rel="tooltip" data-original-title="Download <%= refname(ref) %> as .tar.gz">
+            <i class="icon icon-download"></i> Download
+          </a>
+          <div class="gts-watch-repository-ph gts-placeholder"></div>
+          <div class="gts-clone-repository-ph gts-placeholder"></div>
+        </div>
+      <% end %>
     </div>
     <div class="collapse gts-help row" id="repo-url-help">
       <div class="alert alert-info span pull-right">
@@ -79,16 +82,18 @@ git push</pre>
         <%= repository_description(repository) %>
       </div>
     </div>
-    <ul class="nav nav-tabs gts-header-nav" <%= "data-gts-active=#{defined?(active) && active.to_s}"  %>>
-      <%= repository_navigation([
-              [:source, url_for(File.join("/", repository.project.to_param, repository.to_param, "source", "#{repository.head_candidate_name}:")), "Source code"],
-              [:activities, activities_project_repository_path(repository.project, repository), "Activities"],
-              [:commits, project_repository_commits_in_ref_path(repository.project, repository, ref), "Commits"],
-              [:merge_requests, project_repository_merge_requests_path(repository.project, repository), "Merge requests <span class=\"count\">(#{repository.open_merge_request_count})</span>"],
-              [:community, url_for(File.join("/", repository.project.to_param, repository.to_param, "community")), "Community"]
-            ], :active => defined?(active) ? active : nil) %>
-      <li class="gts-repository-admin-ph gts-placeholder"></li>
-      <li class="gts-request-merge-ph gts-placeholder"></li>
-    </ul>
+    <% if has_git_backend %>
+      <ul class="nav nav-tabs gts-header-nav" <%= "data-gts-active=#{defined?(active) && active.to_s}"  %>>
+        <%= repository_navigation([
+                [:source, url_for(File.join("/", repository.project.to_param, repository.to_param, "source", "#{repository.head_candidate_name}:")), "Source code"],
+                [:activities, activities_project_repository_path(repository.project, repository), "Activities"],
+                [:commits, project_repository_commits_in_ref_path(repository.project, repository, ref), "Commits"],
+                [:merge_requests, project_repository_merge_requests_path(repository.project, repository), "Merge requests <span class=\"count\">(#{repository.open_merge_request_count})</span>"],
+                [:community, url_for(File.join("/", repository.project.to_param, repository.to_param, "community")), "Community"]
+              ], :active => defined?(active) ? active : nil) %>
+        <li class="gts-repository-admin-ph gts-placeholder"></li>
+        <li class="gts-request-merge-ph gts-placeholder"></li>
+      </ul>
+    <% end %>
   </div>
 </div>

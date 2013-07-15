@@ -1,6 +1,6 @@
-* Gitorious 3 [1/15]
+* Gitorious 3 [2/14]
 ** DONE Put views/ui3/repositories/repo_header.erb in views/repositories
-** TODO Getting started page: URLs in repo header
+** DONE Getting started page: URLs in repo header
 ** TODO Rendering Readme raises error - whole tree browser doesn't work. Silently ignore markup errors in readmes.
 ** TODO Users need to be logged in when browsing non-repository pages too
 ** TODO Add tests for repository browser
@@ -8,7 +8,6 @@
 ** TODO Activities needs to be rendered prettier
 ** TODO setup-dev-env guides should use chruby/ruby-install
 ** TODO setup-dev-env should not recommend bin/rake
-** TODO No method error with resque?
 ** TODO JS solution to link up authors in commit logs etc (Dolt links to "~")
 ** TODO Links to "Diff <current branch>..<branch>" for each branch. But: Where?
 ** TODO if @blob.size > 500.kilobytes; flash[:error] = I18n.t "blobs_controller.raw_error", :size => @blob.size

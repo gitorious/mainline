@@ -21,6 +21,7 @@
   <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url,
         :title => atom_auto_discovery_title) -%>
 <% end %>
+
 <% if !repository.ready? %>
   <%= render(:partial => "repositories/pending", :locals => { :repository => repository }) %>
 <% elsif !repository.has_commits? && committers(repository).include?(current_user) %>
