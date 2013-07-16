@@ -18,22 +18,14 @@
 class StandbyModeCommand
   Error = Class.new(StandardError)
 
-  def initialize(public_path, authorized_keys_path = nil,
-                 global_hooks_path = RepositoryRoot.expand(".hooks"))
-    @public_path = public_path
+  def initialize(standby_symlink_path, authorized_keys_path = nil,
+                 global_hooks_path = nil)
+    @standby_symlink_path = standby_symlink_path
     @authorized_keys_path = authorized_keys_path
-    @global_hooks_path = global_hooks_path
+    @global_hooks_path = global_hooks_path || RepositoryRoot.expand(".hooks")
   end
 
   private
 
-  attr_reader :public_path, :authorized_keys_path, :global_hooks_path
-
-  def standby_file_path
-    File.join(public_path, 'standby.html')
-  end
-
-  def standby_symlink_path
-    File.join(public_path, 'system', 'standby.html')
-  end
+  attr_reader :standby_symlink_path, :authorized_keys_path, :global_hooks_path
 end

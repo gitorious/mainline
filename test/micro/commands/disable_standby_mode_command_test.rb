@@ -28,15 +28,17 @@ class DisableStandbyModeCommandTest < MiniTest::Shoulda
 
     @public_path = File.join(@base_path, 'public')
     FileUtils.mkdir_p(File.join(@public_path, 'system'))
-    FileUtils.touch(File.join(@public_path, 'system', 'standby.html'))
+    @standby_symlink_path = File.join(@public_path, 'system', 'standby.html')
+    FileUtils.touch(@standby_symlink_path)
 
     @global_hooks_path = File.join(@base_path, 'hooks')
     old_hooks_path = File.join(@base_path, 'the-hooks')
     FileUtils.mkdir_p(old_hooks_path)
     FileUtils.ln_s(old_hooks_path, @global_hooks_path)
 
-    @command = DisableStandbyModeCommand.new(@public_path, @authorized_keys_path,
-                                            @global_hooks_path)
+    @command = DisableStandbyModeCommand.new(
+      @standby_symlink_path, @authorized_keys_path, @global_hooks_path
+    )
   end
 
   def teardown

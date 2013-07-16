@@ -5,13 +5,16 @@ Gitorious::CLI.new.run_with_gitorious_environment do
   require "./config/environment"
 
   action = ARGV[0].to_s.strip
-  public_path = File.expand_path('public')
+
+  public_path          = File.expand_path('public')
+  standby_file_path    = File.join(public_path, 'standby.html')
+  standby_symlink_path = File.join(public_path, 'system', 'standby.html')
 
   begin
     case action
     when 'start'
       begin
-        EnableStandbyModeCommand.new(public_path).execute
+        EnableStandbyModeCommand.new(standby_symlink_path, standby_file_path).execute
         puts 'Standby mode activated'
 
       rescue EnableStandbyModeCommand::MasterKeyMissingError
@@ -20,11 +23,11 @@ Gitorious::CLI.new.run_with_gitorious_environment do
       end
 
     when 'stop'
-      DisableStandbyModeCommand.new(public_path).execute
+      DisableStandbyModeCommand.new(standby_symlink_path).execute
       puts 'Standby mode deactivated'
 
     when 'status'
-      if File.exist?(File.join(public_path, 'system', 'standby.html'))
+      if File.exist?(standby_symlink_path)
         puts 'Standby mode ON'
         puts 'This instance acts as a mirror'
       else
