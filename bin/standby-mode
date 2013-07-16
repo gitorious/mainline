@@ -5,10 +5,11 @@ Gitorious::CLI.new.run_with_gitorious_environment do
   require "./config/environment"
 
   action = ARGV[0].to_s.strip
+  public_path = File.expand_path('public')
 
   case action
   when 'start'
-    if EnableStandbyModeCommand.new(File.expand_path('public')).execute
+    if EnableStandbyModeCommand.new(public_path).execute
       puts 'Standby mode activated'
     else
       puts %(You need to paste public key of your master instance user to local gitorious config file as the "master_public_key" first.)
@@ -16,11 +17,11 @@ Gitorious::CLI.new.run_with_gitorious_environment do
     end
 
   when 'stop'
-    DisableStandbyModeCommand.new(File.expand_path('public')).execute
+    DisableStandbyModeCommand.new(public_path).execute
     puts 'Standby mode deactivated'
 
   when 'status'
-    if File.exist?(STANDBY_SYMLINK_PATH)
+    if File.exist?(File.join(public_path, 'system', 'standby.html'))
       puts 'Standby mode ON'
       puts 'This instance acts as a mirror'
     else
