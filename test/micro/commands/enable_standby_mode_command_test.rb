@@ -69,5 +69,15 @@ class EnableStandbyModeCommandTest < MiniTest::Shoulda
 
       assert_equal 'foo', File.read(@authorized_keys_path)
     end
+
+    context "when master_public_key is missing" do
+      should "raise MasterKeyMissingError" do
+        @master_public_key = nil
+
+        assert_raises(EnableStandbyModeCommand::MasterKeyMissingError) do
+          execute_command
+        end
+      end
+    end
   end
 end

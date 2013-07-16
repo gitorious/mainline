@@ -7,29 +7,37 @@ Gitorious::CLI.new.run_with_gitorious_environment do
   action = ARGV[0].to_s.strip
   public_path = File.expand_path('public')
 
-  case action
-  when 'start'
-    if EnableStandbyModeCommand.new(public_path).execute
-      puts 'Standby mode activated'
+  begin
+    case action
+    when 'start'
+      begin
+        EnableStandbyModeCommand.new(public_path).execute
+        puts 'Standby mode activated'
+
+      rescue EnableStandbyModeCommand::MasterKeyMissingError
+        puts %(You need to paste public key of your master instance user to local gitorious config file as the "master_public_key" first.)
+        exit 1
+      end
+
+    when 'stop'
+      DisableStandbyModeCommand.new(public_path).execute
+      puts 'Standby mode deactivated'
+
+    when 'status'
+      if File.exist?(File.join(public_path, 'system', 'standby.html'))
+        puts 'Standby mode ON'
+        puts 'This instance acts as a mirror'
+      else
+        puts 'Standby mode OFF'
+        puts 'This instance acts as a master'
+      end
+
     else
-      puts %(You need to paste public key of your master instance user to local gitorious config file as the "master_public_key" first.)
-      exit 1
+      puts "Usage: #$0 start|stop|status"
     end
 
-  when 'stop'
-    DisableStandbyModeCommand.new(public_path).execute
-    puts 'Standby mode deactivated'
-
-  when 'status'
-    if File.exist?(File.join(public_path, 'system', 'standby.html'))
-      puts 'Standby mode ON'
-      puts 'This instance acts as a mirror'
-    else
-      puts 'Standby mode OFF'
-      puts 'This instance acts as a master'
-    end
-
-  else
-    puts "Usage: #$0 start|stop|status"
+  rescue => e
+    puts "Error: #{e}"
+    exit 1
   end
 end
