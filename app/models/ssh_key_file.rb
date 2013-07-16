@@ -31,7 +31,7 @@ class SshKeyFile
   end
 
   def truncate!
-    File.truncate(@path, 0)
+    File.truncate(@path, 0) if File.exist?(@path)
   end
 
   def add_key(key)

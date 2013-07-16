@@ -56,6 +56,14 @@ class SshKeyFileTest < ActiveSupport::TestCase
     assert_equal '', File.read(fixture_key_path)
   end
 
+  should "not create a new file if the file doesn't exist" do
+    File.unlink(fixture_key_path)
+
+    @keyfile.truncate!
+
+    assert !File.exist?(fixture_key_path)
+  end
+
   should "adds a key to the authorized_keys file" do
     @keyfile.add_key(@keydata)
     assert @keyfile.contents.include?(@keydata)
