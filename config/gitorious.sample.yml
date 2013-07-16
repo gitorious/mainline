@@ -396,10 +396,13 @@ archive_work_dir: "/var/git/tarballs-work"
 #post_load:
 #  - /some/file/to/load.rb
 
-# Git repository mirrors.
+# Git repository mirror list (used only on master instance)
 #mirrors:
 #  - git@mirror1.example.org
 #  - git@mirror2.example.org
+
+# Public key of the master instance user (used only on mirrors)
+#master_public_key: "ssh-rsa UGjKHjgkjf&UBUIhjJK....== user@host"
 
 #########################################################################
 # UI theming settings. Most of these settings only apply to the new UI. #
