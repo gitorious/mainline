@@ -16,15 +16,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require 'models/ssh_key_file'
+require 'commands/standby_mode_command'
 
-class EnableStandbyModeCommand
-
-  def initialize(authorized_keys_path, public_path,
-                 global_hooks_path = RepositoryRoot.expand(".hooks"))
-    @authorized_keys_path = authorized_keys_path
-    @public_path = public_path
-    @global_hooks_path = global_hooks_path
-  end
+class EnableStandbyModeCommand < StandbyModeCommand
 
   def execute
     master_public_key = Gitorious::Configuration.get("master_public_key")
@@ -32,9 +26,9 @@ class EnableStandbyModeCommand
     if master_public_key
       FileUtils.ln_s(standby_file_path, standby_symlink_path)
 
-      FileUtils.rm_rf(@global_hooks_path)
-      FileUtils.ln_s('/dev/null', @global_hooks_path)
-      key_file = SshKeyFile.new(@authorized_keys_path)
+      FileUtils.rm_rf(global_hooks_path)
+      FileUtils.ln_s('/dev/null', global_hooks_path)
+      key_file = SshKeyFile.new(authorized_keys_path)
       key_file.truncate!
       key_file.add_key(SshKeyFile.format_master_key(master_public_key))
 
@@ -44,13 +38,4 @@ class EnableStandbyModeCommand
     end
   end
 
-  private
-
-  def standby_file_path
-    File.join(@public_path, 'standby.html')
-  end
-
-  def standby_symlink_path
-    File.join(@public_path, 'system', 'standby.html')
-  end
 end
