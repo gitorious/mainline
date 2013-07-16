@@ -120,4 +120,16 @@ class SshKeyFileTest < ActiveSupport::TestCase
       assert_equal exp_key, SshKeyFile.format_master_key(key)
     end
   end
+
+  context "regenerate" do
+    should "regenerate authorized_keys file to include ready user keys" do
+      key = SshKey.new(:user => User.new)
+      SshKey.expects(:ready).returns([key])
+      SshKeyFile.expects(:format).with(key).returns('the key')
+
+      SshKeyFile.regenerate(fixture_key_path)
+
+      assert_equal 'the key', File.read(fixture_key_path)
+    end
+  end
 end

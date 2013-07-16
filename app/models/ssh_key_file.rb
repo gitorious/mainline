@@ -68,6 +68,17 @@ class SshKeyFile
       "### END KEY master ###\n"
   end
 
+  def self.regenerate(filename)
+    key_file = new(filename)
+    key_file.truncate!
+
+    SshKey.ready.each do |ssh_key|
+      if ssh_key.user
+        key_file.add_key(format(ssh_key))
+      end
+    end
+  end
+
   protected
   def default_authorized_keys_path
     File.join(File.expand_path("~"), ".ssh", "authorized_keys")
