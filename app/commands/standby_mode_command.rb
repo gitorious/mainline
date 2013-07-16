@@ -16,16 +16,16 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 class StandbyModeCommand
-  def initialize(authorized_keys_path, public_path,
+  def initialize(public_path, authorized_keys_path = nil,
                  global_hooks_path = RepositoryRoot.expand(".hooks"))
-    @authorized_keys_path = authorized_keys_path
     @public_path = public_path
+    @authorized_keys_path = authorized_keys_path
     @global_hooks_path = global_hooks_path
   end
 
   private
 
-  attr_reader :authorized_keys_path, :public_path, :global_hooks_path
+  attr_reader :public_path, :authorized_keys_path, :global_hooks_path
 
   def standby_file_path
     File.join(public_path, 'standby.html')
