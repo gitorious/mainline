@@ -16,6 +16,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 class StandbyModeCommand
+  Error = Class.new(StandardError)
+
   def initialize(public_path, authorized_keys_path = nil,
                  global_hooks_path = RepositoryRoot.expand(".hooks"))
     @public_path = public_path
