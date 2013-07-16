@@ -14,9 +14,7 @@ Gitorious::CLI.new.run_with_gitorious_environment do
     end
 
   when 'stop'
-    File.unlink STANDBY_SYMLINK_PATH if File.exist?(STANDBY_SYMLINK_PATH)
-    FileUtils.ln_s File.expand_path('data/hooks'), RepositoryRoot.expand(".hooks"), :force => true
-
+    DisableStandbyModeCommand.new(nil, File.expand_path('public')).execute
     puts 'Standby mode deactivated'
 
   when 'status'

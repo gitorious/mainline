@@ -21,6 +21,15 @@ require "ssh_key_test_helper"
 class SshKeyTest < ActiveSupport::TestCase
   include SshKeyTestHelper
 
+  context ".ready" do
+    should "return ssh keys that are ready" do
+      ssh_keys(:johan).update_attribute(:ready, true)
+      ssh_keys(:mike).update_attribute(:ready, true)
+
+      assert_equal Set.new([ssh_keys(:johan), ssh_keys(:mike)]), Set.new(SshKey.ready)
+    end
+  end
+
   should "ignore superfluous keys" do
     encoded_key = "bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU="
     k = "ssh-rsa #{encoded_key} foo@example.com"

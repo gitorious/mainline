@@ -23,6 +23,10 @@
 class SshKey < ActiveRecord::Base
   belongs_to :user
 
+  def self.ready
+    where(:ready => true)
+  end
+
   def self.human_name
     I18n.t("activerecord.models.ssh_key")
   end

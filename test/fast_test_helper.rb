@@ -207,6 +207,8 @@ if !defined?(Rails)
 
   class SshKey < TestHelper::Model
     attr_accessor :key, :user_id
+
+    def self.ready; []; end
   end
 
   class Group < TestHelper::Model
