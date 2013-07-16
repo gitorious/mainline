@@ -2,6 +2,8 @@
 require(File.expand_path(File.dirname(__FILE__) + "/setup"))
 
 Gitorious::CLI.new.run_with_gitorious_environment do
+  require "./config/environment"
+
   action = ARGV[0].to_s.strip
 
   case action
