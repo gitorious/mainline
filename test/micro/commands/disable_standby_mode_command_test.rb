@@ -35,7 +35,7 @@ class DisableStandbyModeCommandTest < MiniTest::Shoulda
     FileUtils.mkdir_p(old_hooks_path)
     FileUtils.ln_s(old_hooks_path, @global_hooks_path)
 
-    @command = DisableStandbyModeCommand.new(@authorized_keys_path, @public_path,
+    @command = DisableStandbyModeCommand.new(@public_path, @authorized_keys_path,
                                             @global_hooks_path)
   end
 
