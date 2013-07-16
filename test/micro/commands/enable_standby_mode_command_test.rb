@@ -30,14 +30,18 @@ class EnableStandbyModeCommandTest < MiniTest::Shoulda
 
     @public_path = File.join(@base_path, 'public')
     FileUtils.mkdir_p(File.join(@public_path, 'system'))
+    @standby_file_path = File.join(@public_path, 'standby.html')
+    @standby_symlink_path = File.join(@public_path, 'system', 'standby.html')
 
     @global_hooks_path = File.join(@base_path, 'hooks')
     old_hooks_path = File.join(@base_path, 'the-hooks')
     FileUtils.mkdir_p(old_hooks_path)
     FileUtils.ln_s(old_hooks_path, @global_hooks_path)
 
-    @command = EnableStandbyModeCommand.new(@public_path, @authorized_keys_path,
-                                            @global_hooks_path)
+    @command = EnableStandbyModeCommand.new(
+      @standby_symlink_path, @standby_file_path, @authorized_keys_path,
+      @global_hooks_path
+    )
   end
 
   def teardown
@@ -54,7 +58,7 @@ class EnableStandbyModeCommandTest < MiniTest::Shoulda
     should "enable the standby page" do
       execute_command
 
-      assert File.symlink?(File.join(@public_path, 'system', 'standby.html'))
+      assert File.symlink?(@standby_symlink_path)
     end
 
     should "disable all the git hooks" do
