@@ -39,6 +39,7 @@ module Rails
 end
 
 $: << (Rails.root + "lib").realpath.to_s
+$: << (Rails.root + "app/models").realpath.to_s
 require "rubygems"
 require "bundler"
 ENV["BUNDLE_GEMFILE"] = (Rails.root + "Gemfile").realpath.to_s
@@ -48,6 +49,7 @@ ENV["GIT_DIR"] = git_dir
 
 require "yaml"
 require "gitorious/messaging"
+require "repository_root"
 
 if !defined?(Gitorious::Configuration)
   conf = YAML::load_file(Rails.root + "config/gitorious.yml")
@@ -63,6 +65,8 @@ if !defined?(Gitorious::Configuration)
       Resque.redis = settings if settings
     end
   end
+
+  RepositoryRoot.default_base_path = (conf[Rails.env.to_s] || {})["repository_base_path"] || conf["repository_base_path"]
 end
 
 class Publisher

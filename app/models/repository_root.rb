@@ -37,4 +37,8 @@ class RepositoryRoot
   def self.expand(path)
     (Pathname(RepositoryRoot.default_base_path) + path).expand_path
   end
+
+  def self.relative_path(path)
+    Pathname(path).relative_path_from(Pathname(RepositoryRoot.default_base_path))
+  end
 end

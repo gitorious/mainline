@@ -26,19 +26,13 @@ $: << incpath
 require "messaging"
 
 @publisher = Publisher.new
-gitdir = File.expand_path(File.join(incpath, ".."))
-
-# Equivalent to the hash in the model
-hashed_dir = gitdir.split("/")[-3,3].join("/").split(".").first
-
-# compat with the old-style paths
-hashed_dir = hashed_dir.sub(/^repositories\//, "")
+gitdir = RepositoryRoot.relative_path(File.expand_path(File.join(incpath, ".."))).to_s
 
 hook_input_lines = ""
 
 while line = gets
   hook_input_lines << line
-  @publisher.post_message({:gitdir => hashed_dir, :message => line.chomp, :username => ENV["GITORIOUS_USER"]})
+  @publisher.post_message({:gitdir => gitdir, :message => line.chomp, :username => ENV["GITORIOUS_USER"]})
 end
 
 require "gitorious/custom_hook"

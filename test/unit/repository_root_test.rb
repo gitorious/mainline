@@ -28,4 +28,9 @@ class RepositoryRootTest < ActiveSupport::TestCase
     path = RepositoryRoot.expand("my/repo.git")
     assert_equal Pathname("/tmp/git/repositories/my/repo.git"), path
   end
+
+  should "find relative path as Pathname" do
+    path = RepositoryRoot.expand("my/repo.git")
+    assert_equal Pathname("my/repo.git"), RepositoryRoot.relative_path(path)
+  end
 end
