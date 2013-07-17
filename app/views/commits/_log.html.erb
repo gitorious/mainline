@@ -26,7 +26,7 @@
     <% user = users_by_email[commit.author.email] %>
     <div class="gts-commit <%= commit.merge? ? 'merge_commit' : 'commit' -%>">
       <p class="gts-log-message">
-        <%= link_to h(commit.id_abbrev), project_repository_commit_path(@project, @repository, commit.id) -%>: <%= commit.short_message -%>
+        <%= link_to h(commit.id_abbrev), project_repository_commit_path(@project, @repository, commit.id) -%>: <%= commit.short_message.force_encoding("utf-8") -%>
       </p>
       <p>
         <%= avatar_from_email(commit.author.email, :size => 16)  %>
