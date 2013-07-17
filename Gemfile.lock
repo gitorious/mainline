@@ -73,7 +73,7 @@ GEM
     debug_inspector (0.0.2)
     descendants_tracker (0.0.1)
     diff-lcs (1.1.2)
-    dolt (0.28.0)
+    dolt (0.28.1)
       json (~> 1.5)
       libdolt (~> 0.27)
       sinatra (~> 1.0)

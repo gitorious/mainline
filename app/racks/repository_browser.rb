@@ -58,7 +58,7 @@ module Gitorious
 
     get "/*/source/*" do
       safe_action(params[:splat].first) do
-        dolt.force_ref(params[:splat], "source")
+        force_ref(params[:splat][0], params[:splat][1], "source")
       end
     end
 
@@ -72,7 +72,7 @@ module Gitorious
 
     get "/*/raw/*" do
       safe_action(params[:splat].first) do
-        dolt.force_ref(params[:splat], "raw")
+        force_ref(params[:splat][0], params[:splat][1], "raw")
       end
     end
 
@@ -86,7 +86,7 @@ module Gitorious
 
     get "/*/blame/*" do
       safe_action(params[:splat].first) do
-        dolt.force_ref(params[:splat], "blame")
+        force_ref(params[:splat][0], params[:splat][1], "blame")
       end
     end
 
@@ -100,7 +100,7 @@ module Gitorious
 
     get "/*/history/*" do
       safe_action(params[:splat].first) do
-        dolt.force_ref(params[:splat], "history")
+        force_ref(params[:splat][0], params[:splat][1], "history")
       end
     end
 
@@ -154,8 +154,9 @@ module Gitorious
       pid, rid = repository.split("/")
       uid = request.session["user_id"]
       @template ||= (Rails.root + "app/views/repositories/_getting_started.html.erb").to_s
+      project = Project.find_by_slug!(pid)
       renderer.render({ :file => @template }, {
-          :repository => Project.find_by_slug!(pid).repositories.find_by_name!(rid),
+          :repository => RepositoryPresenter.new(project.repositories.find_by_name!(rid)),
           :current_user => uid && User.find(uid),
           :session => session
         })
@@ -189,10 +190,24 @@ module Gitorious
       end
     end
 
-    def force_ref(args, action)
-      repo = args.shift
-      ref = resolve_repository(repo).head_candidate_name
-      redirect("/#{repo}/#{action}/#{ref}:" + args.join)
+    def force_ref(repo, pathlike, action)
+      repository = dolt.resolve_repository(repo)
+
+      begin
+        # The original URL may have been missing the trailing comma if trying to
+        # browse the root director (e.g. it was like
+        # /project/repository/source/master when it should have been like
+        # /project/repository/source/master:). If this is the case, we should be
+        # able to find the oid corresponding to the ref.
+        ref = repository.rev_parse_oid(pathlike)
+        dolt.redirect("/#{repo}/#{action}/#{ref}:")
+      rescue Rugged::ReferenceError => err
+        # A reference error from Rugged tells us the path-like was not a valid
+        # ref or oid. Treat it as a path instead, and show it from the default
+        # HEAD for the repository.
+        ref = repository.head_candidate_name
+        dolt.redirect("/#{repo}/#{action}/#{ref}:" + pathlike)
+      end
     end
 
     def configure_env(repo_slug)
