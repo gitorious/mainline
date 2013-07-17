@@ -124,7 +124,7 @@ module Gitorious
       repo, ref, format = params[:captures]
       safe_action(repo, ref) do
         configure_env(repo)
-        filename = dolt.archive(repo, ref, format)
+        filename = lookup.archive(repo, ref, format)
         add_sendfile_headers(filename, format)
         body("")
       end
