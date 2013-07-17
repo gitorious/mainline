@@ -41,6 +41,10 @@ module Gitorious
           end
         end.html_safe
       end
+
+      def repository_description(repository)
+        render_markup("description.md", repository.description)
+      end
     end
   end
 end

@@ -20,12 +20,8 @@ module Gitorious
   module View
     module ProjectHelper
       def project_description(project)
-        # Eventually: Support markdown here
-        "<p>#{project.description}</p>".html_safe
-      end
-
-      def repository_description(repository)
-        "<p>#{repository.description}</p>".html_safe
+        #"<p>#{project.description}</p>".html_safe
+        render_markup("description.md", project.description)
       end
     end
   end

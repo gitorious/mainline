@@ -13,7 +13,7 @@
 ** TODO if @blob.size > 500.kilobytes; flash[:error] = I18n.t "blobs_controller.raw_error", :size => @blob.size
 ** DONE Refactor Dolt: Composition (less modules etc)
 ** DONE Refactor Dolt: Naming
-* Reported bugs [2/8]
+* Reported bugs [3/8]
 ** DONE URLs that end in colons must be understood and redirect accordingly
 https://issues.gitorious.org/issues/185
 ** DONE no error when trying to see an inexistent ref
@@ -26,7 +26,7 @@ https://issues.gitorious.org/issues/181
 https://issues.gitorious.org/issues/180
 ** TODO 500 Internal server error when listing commits
 https://issues.gitorious.org/issues/179
-** TODO Markdown is not rendered in the repository description
+** DONE Markdown is not rendered in the repository description
 https://issues.gitorious.org/issues/178
 ** TODO Configurable readme-file for opening page
 https://issues.gitorious.org/issues/186
