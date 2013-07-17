@@ -40,7 +40,8 @@ Gitorious::Application.routes.draw do
       get "/openid_build" => "open_id_users#new"
       post "/openid_create" => "open_id_users#create"
       get "/new" => "users#new"
-      get "/view_state/repository/:id.:format" => "user_repository_view_state#show", :as => :user_repository_view_state
+      get "/view_state/repository/:id.:format" => "repository_view_state#show", :as => :repository_view_state
+      get "/view_state.:format" => "user_view_state#show", :as => :view_state
 
       # Used to be we supported things like /users/~zmalltalker/mainline
       # No more, ~<user_name> is the canonical user URL namespace

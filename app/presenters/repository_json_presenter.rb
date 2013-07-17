@@ -16,49 +16,31 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class UserRepositoryJSONSerializer
-  def initialize(app, repository, user)
+class RepositoryJSONPresenter
+  def initialize(app, repository)
     @app = app
     @repository = repository
-    @user = user
   end
 
-  def render
-    JSON.dump(to_hash)
+  def render_for(user)
+    JSON.dump(hash_for(user))
   end
 
-  def to_hash
-    return {} if user.nil?
-    { "user" => user_hash, "repository" => repository_hash }
-  end
-
-  private
-  def user_hash
-    {
-      "login" => user.login,
-      "unreadMessageCount" => user.unread_message_count,
-      "dashboardPath" => app.root_path,
-      "profilePath" => app.user_path(user),
-      "editPath" => app.edit_user_path(user),
-      "messagesPath" => app.messages_path,
-      "logoutPath" => app.logout_path,
-      "avatarPath" => app.avatar_url(user)
+  def hash_for(user)
+    return {} if repository.nil?
+    is_admin = !!app.admin?(user, repository)
+    { "repository" => {
+        "administrator" => is_admin,
+        "watch" => user && watch(user),
+        "cloneProtocols" => clone_protocols(user),
+        "clonePath" => clone_path(user),
+        "requestMergePath" => request_merge_path(user)
+      }.merge(is_admin ? repo_admin_hash: {})
     }
   end
 
-  def repository_hash
-    return nil if repository.nil?
-    is_admin = !!app.admin?(user, repository)
-    {
-      "administrator" => is_admin,
-      "watch" => watch,
-      "cloneProtocols" => clone_protocols,
-      "clonePath" => clone_path,
-      "requestMergePath" => request_merge_path
-    }.merge(is_admin ? repo_admin_hash : {})
-  end
-
-  def clone_protocols
+  private
+  def clone_protocols(user)
     { "protocols" => [] }.tap do |cp|
       cp["protocols"] << "git" if repository.git_cloning?
       cp["protocols"] << "http" if repository.http_cloning?
@@ -83,7 +65,7 @@ class UserRepositoryJSONSerializer
     }
   end
 
-  def watch
+  def watch(user)
     favorite = user.favorites.find { |f| f.watchable == repository }
     hash = {
       "watching" => !favorite.nil?,
@@ -94,18 +76,16 @@ class UserRepositoryJSONSerializer
     hash
   end
 
-  def clone_path
+  def clone_path(user)
     return nil if repository.parent && repository.owner == user
     app.clone_project_repository_path(repository.project, repository)
   end
 
-  def request_merge_path
+  def request_merge_path(user)
     return nil if user.nil? || repository.parent.nil? || !app.admin?(user, repository)
     app.new_project_repository_merge_request_path(repository.project, repository.parent)
   end
 
-  def app; @app; end
-  def repository; @repository; end
+  attr_reader :app, :repository
   def project; @repository.project; end
-  def user; @user; end
 end

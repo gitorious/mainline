@@ -61,7 +61,6 @@ else
       "/ui3/js/src/components/ref-selector.js",
       "/ui3/js/src/components/tree-history.js",
       "/ui3/js/src/components/commit-linker.js",
-      "/ui3/js/src/components/user-repo-view-state.js",
       "/ui3/js/src/components/profile-menu.js",
       "/ui3/js/src/components/clone-url-selection.js",
       "/ui3/js/src/components/blob.js",
@@ -73,6 +72,8 @@ else
       "/ui3/js/src/components/clone-name-suggestion.js",
       "/ui3/js/src/components/loading.js",
       "/ui3/js/src/components/oid-ref-interpolator.js",
+      "/ui3/js/src/components/slugify.js",
+      "/ui3/js/src/components/select-details.js",
       "/ui3/js/src/gitorious.js",
     ])
     Gitorious::View.stylesheets.concat([

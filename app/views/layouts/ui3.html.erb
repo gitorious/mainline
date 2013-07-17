@@ -26,8 +26,8 @@
     <% end %>
     <%= content_for(:head) %>
     <% if defined?(session) && session[:_csrf_token] %>
-      <meta class="csrf-param" content="authenticity_token" name="csrf-param">
-      <meta class="csrf-token" content="<%= session[:_csrf_token] %>" name="csrf-token">
+      <meta class="csrf-param" content="authenticity_token" name="csrf-param" data-gts-env-csrf-param="authenticity_token">
+      <meta class="csrf-token" content="<%= session[:_csrf_token] %>" name="csrf-token" data-gts-env-csrf-token="<%= session[:_csrf_token] %>">
     <% end %>
   </head>
   <body<%= " class=\"#{@body_class}\"".html_safe if @body_class %>>
@@ -69,7 +69,8 @@
     <% if repo %>
       <script
         data-gts-env-repository-refs-url="<%= repository_refs_path(:project_id => repo.project, :repository_id => repo) %>"
-        data-gts-env-commit-url-template="<%= project_repository_commit_path(repo.project, repo, "%oid%").sub("%oid%", "\#{oid}") %>">
+        data-gts-env-commit-url-template="<%= project_repository_commit_path(repo.project, repo, "%oid%").sub("%oid%", "\#{oid}") %>"
+        data-gts-env-user-view-state-path="<%= view_state_users_path(:format => "json") %>">
       </script>
     <% end %>
     <% Gitorious::View.theme_javascripts(current_site).each do |javascript| %>

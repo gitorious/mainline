@@ -15,18 +15,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "user_repository_json_serializer"
+require "user_json_presenter"
 require "gitorious/view/avatar_helper"
 
-class UserRepositoryViewStateController < ApplicationController
+class UserViewStateController < ApplicationController
   include Gitorious::View::AvatarHelper
 
   def show
     respond_to do |format|
       user = current_user == :false ? nil : current_user
-      repo = Repository.find_by_id(params[:id])
-      serializer = UserRepositoryJSONSerializer.new(self, repo, user)
-      format.json { render(:json => serializer.render) }
+      presenter = UserJSONPresenter.new(self, user)
+      format.json { render(:json => presenter.render) }
     end
   end
 end
