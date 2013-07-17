@@ -14,12 +14,12 @@
 ** DONE Refactor Dolt: Composition (less modules etc)
 ** DONE Refactor Dolt: Naming
 ** TODO Anonymous users see SSH url
-* Reported bugs [5/8]
+* Reported bugs [6/8]
 ** DONE URLs that end in colons must be understood and redirect accordingly
 https://issues.gitorious.org/issues/185
 ** DONE no error when trying to see an inexistent ref
 https://issues.gitorious.org/issues/184
-** TODO See the commit title in the blame page
+** DONE See the commit title in the blame page
 https://issues.gitorious.org/issues/182
 ** DONE Personal clones are listed 2 times
 https://issues.gitorious.org/issues/181
