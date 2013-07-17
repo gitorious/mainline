@@ -141,9 +141,13 @@ module Gitorious
       begin
         yield
       rescue Rugged::ReferenceError => err
-        render_empty_repository(repo)
+        if ref == "HEAD"
+          render_empty_repository(repo)
+        else
+          render_non_existent_refspec(repo, ref, err)
+        end
       rescue Rugged::TreeError => err
-        render_non_existent_ref(repo, ref, err)
+        render_non_existent_refspec(repo, ref, err)
       rescue StandardError => err
         raise err if !Rails.env.production?
         renderer.render({ :file => (Rails.root + "public/500.html").to_s }, {}, :layout => nil)
@@ -162,10 +166,10 @@ module Gitorious
         })
     end
 
-    def render_non_existent_ref(repository, ref, error)
+    def render_non_existent_refspec(repository, ref, error)
       pid, rid = repository.split("/")
       uid = request.session["user_id"]
-      @template ||= (Rails.root + "app/views/repositories/_non_existent_ref.html.erb").to_s
+      @template ||= (Rails.root + "app/views/repositories/_non_existent_refspec.html.erb").to_s
       repo = Project.find_by_slug!(pid).repositories.find_by_name!(rid)
       renderer.render({ :file => @template }, {
           :repository => RepositoryPresenter.new(repo),
