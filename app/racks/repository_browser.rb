@@ -15,15 +15,22 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "dolt/sinatra/base"
+require "sinatra/base"
+require "dolt/sinatra/actions"
 require "libdolt/view/multi_repository"
 require "gitorious/view/dolt_url_helper"
 
 module Gitorious
-  class RepositoryBrowser < ::Dolt::Sinatra::Base
+  class RepositoryBrowser < ::Sinatra::Base
     include ::Dolt::View::MultiRepository
     include Gitorious::View::DoltUrlHelper
     include Gitorious::View::SiteHelper
+
+    def initialize(lookup, renderer)
+      @lookup = lookup
+      @renderer = renderer
+      super()
+    end
 
     if !Rails.env.production? && RUBY_VERSION > "1.9"
       require "better_errors"
@@ -45,13 +52,13 @@ module Gitorious
       repo, ref, path = params[:splat]
       safe_action(repo, ref) do
         configure_env(repo)
-        tree_entry(repo, ref, path, env_data)
+        dolt.tree_entry(repo, ref, path, env_data)
       end
     end
 
     get "/*/source/*" do
       safe_action(params[:splat].first) do
-        force_ref(params[:splat], "source")
+        dolt.force_ref(params[:splat], "source")
       end
     end
 
@@ -59,13 +66,13 @@ module Gitorious
       repo, ref, path = params[:splat]
       safe_action(repo, ref) do
         configure_env(repo)
-        raw(repo, ref, path, env_data)
+        dolt.raw(repo, ref, path, env_data)
       end
     end
 
     get "/*/raw/*" do
       safe_action(params[:splat].first) do
-        force_ref(params[:splat], "raw")
+        dolt.force_ref(params[:splat], "raw")
       end
     end
 
@@ -73,13 +80,13 @@ module Gitorious
       repo, ref, path = params[:splat]
       safe_action(repo, ref) do
         configure_env(repo)
-        blame(repo, ref, path, env_data)
+        dolt.blame(repo, ref, path, env_data)
       end
     end
 
     get "/*/blame/*" do
       safe_action(params[:splat].first) do
-        force_ref(params[:splat], "blame")
+        dolt.force_ref(params[:splat], "blame")
       end
     end
 
@@ -87,13 +94,13 @@ module Gitorious
       repo, ref, path = params[:splat]
       safe_action(repo, ref) do
         configure_env(repo)
-        history(repo, ref, path, (params[:commit_count] || 20).to_i, env_data)
+        dolt.history(repo, ref, path, (params[:commit_count] || 20).to_i, env_data)
       end
     end
 
     get "/*/history/*" do
       safe_action(params[:splat].first) do
-        force_ref(params[:splat], "history")
+        dolt.force_ref(params[:splat], "history")
       end
     end
 
@@ -101,7 +108,7 @@ module Gitorious
       repo = params[:splat].first
       safe_action(repo) do
         configure_env(repo)
-        refs(repo, env_data)
+        dolt.refs(repo, env_data)
       end
     end
 
@@ -109,7 +116,7 @@ module Gitorious
       repo, ref, path = params[:splat]
       safe_action(repo, ref) do
         configure_env(repo)
-        tree_history(repo, ref, path, 1, env_data)
+        dolt.tree_history(repo, ref, path, 1, env_data)
       end
     end
 
@@ -117,13 +124,19 @@ module Gitorious
       repo, ref, format = params[:captures]
       safe_action(repo, ref) do
         configure_env(repo)
-        filename = actions.archive(repo, ref, format)
+        filename = dolt.archive(repo, ref, format)
         add_sendfile_headers(filename, format)
         body("")
       end
     end
 
     private
+    attr_reader :lookup, :renderer
+
+    def dolt
+      @dolt ||= ::Dolt::Sinatra::Actions.new(self, lookup, renderer)
+    end
+
     def safe_action(repo, ref = nil)
       begin
         yield
