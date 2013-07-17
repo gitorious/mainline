@@ -1,60 +1,72 @@
 #!/bin/sh
 
-# This script will install all the necessary packages and get
-# Gitorious running on your local machine for development. It can be
-# run as is, or used as a step-by-step guide. It is STRONGLY
-# RECOMMENDED to read through the script before running it. If you're
-# already using Ruby, Sphinx (search daemon), MySQL, nginx and others,
-# it may do things you don't want.
+# This script will install all the necessary packages and get Gitorious running
+# on your local machine for development. It can be run as is, or used as a
+# step-by-step guide. It is STRONGLY RECOMMENDED to read through the script
+# before running it. If you're already using Ruby, Sphinx (search daemon),
+# MySQL, nginx and others, it may do things you don't want.
 #
-# IMPORTANT: This script/guide is NOT recommended for production
-# setups. For production setups, please refer to
-# http://getgitorious.com
+# IMPORTANT: This script/guide is NOT recommended for production setups. For
+# production setups, please refer to http://getgitorious.com
 #
-# This script has been tested on CentOS 6.2, but should work (out of
-# the box, or with minor adjustments) on any system that uses yum for
-# package management. If you're unsure, read through it before running
-# it, and/or execute individual sections manually instead.
+# This script has been tested on CentOS 6.2, but should work (out of the box, or
+# with minor adjustments) on any system that uses yum for package management. If
+# you're unsure, read through it before running it, and/or execute individual
+# sections manually instead.
 #
-# Note that this script installs Ruby from yum. This gives you 1.8.7
-# on most systems. While supported, this version of Ruby may produce
-# more warnings and the occasional oddity than normal. If you already
-# have an existing ruby installation, or prefer tools like rbenv or
-# rvm, feel free to use them instead. If doing do, modify this script
-# accordingly.
+# The Gitorious team prefers and recommends chruby for managing various Ruby
+# versions, and ruby-install to install them.
+# https://github.com/postmodern/chruby
+# https://github.com/postmodern/ruby-install
+#
+# This script installs and setups up ruby-install and chruby. If you want use
+# Ruby from yum, or some other Ruby manager (rvm, rbenv) feel free to do so.
+# Adjust this script accordingly.
 
+# The Gitorious root is _not_ where you check out the Gitorious source code. In
+# order to keep everything in one place, this directory will contain the source
+# code in its own sub-directory, and use other sub-directories for repositories
+# etc.
 GITORIOUS_ROOT=~/projects/gitorious
 GITORIOUS_USER=`whoami`
 
-# If you've obtained this script, then this part has probably already
-# been done.
-#sudo yum install -y git
-#mkdir -p $GITORIOUS_ROOT
-#cd $GITORIOUS_ROOT
-#git clone git://gitorious.org/gitorious/mainline.git gitorious
+# If you've obtained this script, then this part has probably already been done.
+sudo yum install -y git
+mkdir -p $GITORIOUS_ROOT
+cd $GITORIOUS_ROOT
+git clone git://gitorious.org/gitorious/mainline.git gitorious
 
-# Gitorious uses submodules for non-ruby dependencies, such as
-# front-end code.
+# Gitorious uses submodules for non-ruby dependencies, such as front-end code.
 git submodule update --recursive --init
 
-# Create the required directoryes
+# Create the required directories
 cd $GITORIOUS_ROOT
 mkdir repositories
 mkdir tarball-cache
 mkdir tarball-work
 mkdir -p gitorious/tmp/cache
-cd gitorious
 
-# Some system packages are required in order to build certain Ruby
-# dependencies that uses system libraries.
-sudo yum install -y make gcc gcc-c++ mysql mysql-server mysql-devel libxml2-devel libxslt-devel oniguruma-devel postgresql-devel
+# Some system packages are required in order to build certain Ruby dependencies
+# that uses system libraries.
+# NOTE: This guide installs mysql, but Gitorious will also run with Postgresql
+sudo yum install -y make gcc gcc-c++ mysql mysql-server mysql-devel libxml2-devel libxslt-devel oniguruma-devel postgresql-devel libicu-devel
 sudo service mysqld start
 
 # Install Ruby. Skip if you've already done this.
-sudo yum install -y ruby ruby-devel rubygems
+wget -O ruby-install-0.2.1.tar.gz https://github.com/postmodern/ruby-install/archive/v0.2.1.tar.gz
+tar -xzvf ruby-install-0.2.1.tar.gz
+cd ruby-install-0.2.1/
+sudo make install
+ruby-install ruby 1.9.3-p429
+cd ..
+rm -fr ruby-install-*
 
-# RubyGems must be up to date in order for Gitorious to work well
-sudo gem update --system
+wget -O chruby-0.3.6.tar.gz https://github.com/postmodern/chruby/archive/v0.3.6.tar.gz
+tar -xzvf chruby-0.3.6.tar.gz
+cd chruby-0.3.6/
+sudo make install
+
+chruby 1.9.3
 
 # Install Sphinx, the search engine used by Gitorious.
 sudo yum install sphinx
@@ -63,26 +75,21 @@ PATH=/usr/local/bin:$PATH
 
 # Bundler is the tool used to manage Gitorious' Ruby dependencies.
 # http://gembundler.com/
-sudo gem install bundler
+gem install bundler
 cd $GITORIOUS_ROOT/gitorious
-# System gems can only be installed by root
-sudo bundle install
-# Annoyingly, we have to do it again, so Bundler puts git dependencies
-# in the right place :|
 bundle install
 
-# With all the dependencies installed, let's configure Gitorious. Feel
-# free to change username and password for the database etc.
+# With all the dependencies installed, let's configure Gitorious. Feel free to
+# change username and password for the database etc.
 echo "create database gitorious;
 create database gitorious_test;
 grant all privileges on gitorious.* to gitorious@localhost identified by 'yourpassword';
 grant all privileges on gitorious_test.* to gitorious@localhost;" | mysql -u root
 
-# In a developer setup, it makes sense to use the same database for
-# the development and production environments. This way you only need
-# one set of test-data, and can use the two environments exclusively
-# to test that the application behaves correctly with the different
-# settings.
+# In a developer setup, it makes sense to use the same database for the
+# development and production environments. This way you only need one set of
+# test-data, and can use the two environments exclusively to test that the
+# application behaves correctly with the different settings.
 echo "test:
   adapter: mysql2
   database: gitorious_test
@@ -107,19 +114,21 @@ production:
   host: localhost
   encoding: utf8" > config/database.yml
 
-# Take note: This uses your user as the Gitorious user. That means
-# that Gitorious will take ownership (i.e.: destructively write to)
-# your ~/.ssh/authorized_keys. In many cases, this is not a worry. If
-# you happen to SSH into your box however, this should be done with
-# care. When Gitorious has done its thing, you can no longer SSH into
-# this box with your current user. Two solutions if this worries you:
+# Take note: This uses your user as the Gitorious user. That means that
+# Gitorious will take ownership (i.e.: destructively write to) your
+# ~/.ssh/authorized_keys. In many cases, this is not a worry. If you happen to
+# SSH into your box however, this should be done with care. When Gitorious has
+# done its thing, you can no longer SSH into this box with your current user.
+# Two solutions if this worries you:
 #
-# 1) Set up a different, dedicated git user. This is a bit of work,
-#    and requires gentle handling of file permissions and ownership.
-#    This is the way to go in production, but for development, it is
-#    a bit of a pain.
-# 2) Manually move the authorized_keys file in/out whenever you need
-#    to work on Gitorious.
+# 1) Set up a different, dedicated git user. This is a bit of work, and requires
+#    gentle handling of file permissions and ownership. This is the way to go in
+#    production, but for development, it is a bit of a pain.
+# 2) Manually move the authorized_keys file in/out whenever you need to work on
+#    Gitorious.
+# 3) Manage you own keys in ~/.ssh/authorized_keys2, which Gitorious will not
+#    touch. Make sure your sshd is configured to use it (it should be by
+#    default).
 echo "site_name: My Gitorious
 user: $GITORIOUS_USER
 scheme: http
@@ -141,17 +150,15 @@ development:
 
 bin/rake db:schema:load
 
-# Finally, create a user for yourself. Be sure to answer yes when
-# asked if the user should be an admin. If you want to (manually) test
-# certain features for non-admins, just come back and create more
-# users later.
+# Finally, create a user for yourself. Be sure to answer yes when asked if the
+# user should be an admin. If you want to (manually) test certain features for
+# non-admins, just come back and create more users later.
 bin/create-user
 
-# The gitorious script is used when you push/pull over SSH. You could
-# create a symlink in /usr/bin, but we'll create a small shim instead.
-# This way you'll be able to alter PATH to load another version of Ruby
-# than the one in the default path without altering ~git/.bashrc or
-# equivalent.
+# The gitorious script is used when you push/pull over SSH. You could create a
+# symlink in /usr/bin, but we'll create a small shim instead. This way you'll be
+# able to alter PATH to load another version of Ruby than the one in the default
+# path without altering ~git/.bashrc or equivalent.
 
 cat << EOF > /usr/bin/gitorious
 #!/bin/sh
@@ -188,9 +195,9 @@ sudo yum install -y git-daemon
 echo "Start the git-daemon like so:"
 echo "git daemon --listen=0.0.0.0 --port=9418 --export-all --base-path=$GITORIOUS_ROOT/repositories --verbose --reuseaddr $GITORIOUS_ROOT/repositories"
 
-# To do Git over HTTP, you need a frontend server, as Gitorious uses
-# Sendfile to avoid locking up a Rails process while serving
-# (potentially lots of) data to the Git client.
+# To do Git over HTTP, you need a frontend server, as Gitorious uses Sendfile to
+# avoid locking up a Rails process while serving (potentially lots of) data to
+# the Git client.
 
 echo "WARNING! Don't continue if you already have nginx configured to
 do things for you. Continue by manually reading the instructions and
