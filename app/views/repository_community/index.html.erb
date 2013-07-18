@@ -16,110 +16,95 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<% @title = t("views.repos.show_page_title", :repo => repository.name, :title => @owner.title) -%>
+<% @title = repository.slug -%>
 <% content_for(:head) do %>
   <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url,
         :title => atom_auto_discovery_title) -%>
 <% end %>
 
-  <%= partial("repositories/repo_header", {
-          :repository => repository,
-          :project => repository.project,
-          :ref => ref,
-          :app => Gitorious,
-          :active => :community,
-          :header_level => 2
-        }) %>
+<%= partial("repositories/repo_header", {
+        :repository => repository,
+        :project => repository.project,
+        :app => Gitorious,
+        :active => :community,
+        :header_level => 2
+      }) %>
 
 <div class="container">
   <div class="row-fluid">
     <div class="span8">
       <span class="fluid-row">
-
-<% if repository.has_group_clones? -%>
-  <span class="span6">
-    <h3><%= t("views.repos.by_teams") -%> (<%= repository.group_clone_count -%>)</h3>
-    <ul class="repository_list">
-      <% repository.group_clones.each do |repo| -%>
-        <%= render :partial => "repositories/repository_sidebar",
-            :locals => {:repository => repo} -%>
-      <% end -%>
-    </ul>
-  </span>
-<% end -%>
-<% if repository.has_user_clones? -%>
-  <span class="span6">
-    <h3><%= t("views.repos.by_users") -%> (<%= repository.user_clone_count -%>)</h3>
-    <ul class="repository_list">
-      <% repository.user_clones.each do |repo|-%>
-        <%= render :partial => "repositories/repository_sidebar",
-            :locals => {:repository => repo} -%>
-      <% end -%>
-      <ul>
-  </span>
-<% end -%>
-
-
-
-
-
-
-<% if !repository.has_user_clones? && !repository.has_group_clones? -%>
-  <ul>
-    <li class="hint"><%= t("views.projects.no_clones_yet") -%></li>
-  </ul>
-<% end -%>
-
+        <% if repository.has_group_clones? -%>
+          <span class="span6">
+            <h3><%= t("views.repos.by_teams") -%> (<%= repository.group_clone_count -%>)</h3>
+            <ul class="repository_list">
+              <% repository.group_clones.each do |repo| -%>
+                <%= render :partial => "repositories/repository_sidebar",
+                    :locals => {:repository => repo} -%>
+              <% end -%>
+            </ul>
+          </span>
+        <% end -%>
+        <% if repository.has_user_clones? -%>
+          <span class="span6">
+            <h3><%= t("views.repos.by_users") -%> (<%= repository.user_clone_count -%>)</h3>
+            <ul class="repository_list">
+              <% repository.user_clones.each do |repo|-%>
+                <%= render :partial => "repositories/repository_sidebar",
+                    :locals => {:repository => repo} -%>
+              <% end -%>
+              <ul>
+          </span>
+        <% end -%>
+        <% if !repository.has_user_clones? && !repository.has_group_clones? -%>
+          <ul>
+            <li class="hint"><%= t("views.projects.no_clones_yet") -%></li>
+          </ul>
+        <% end -%>
       </span>
     </div>
     <div class="span4">
       <table class="table table-striped">
         <tbody>
           <tr>
-
-          <th><%= t("views.repos.owner") %></th>
-          <td>
-          <%= link_to h(repository.owner_to_param_with_prefix), repository.owner -%>
-            <% if repository.owned_by_group? -%>
-            <small class="hint">
-        (through <%= link_to h(repository.user_to_param_with_prefix), repository.user -%>)
-            </small>
-            <% end -%>
-          </td>
-
-
-        </tr>
-        <tr>
-          <th><%= t("views.repos.created") %></th>
-          <td><%= repository.long_created_at -%></td>
-        </tr>
-
-        <tr>
-          <th><%= t("views.repos.current_committers") %></th>
-          <td>
-            <ul>
-            <% repository.user_committers.each do |cs| -%>
-            <li>
-                <%= avatar_from_email(cs.committer.email, :size => 16, :style => "tiny") %>
-                <%= link_to h(cs.committer.title), cs.committer -%>
-                <% if repository.user == cs.committer -%>
-                <small class="hint">(<%= t("views.repos.creator") %>)</small>
+            <th><%= t("views.repos.owner") %></th>
+            <td>
+              <%= link_to h(repository.owner_to_param_with_prefix), repository.owner -%>
+              <% if repository.owned_by_group? -%>
+                <small class="hint">
+                  (through <%= link_to h(repository.user_to_param_with_prefix), repository.user -%>)
+                </small>
+              <% end -%>
+            </td>
+          </tr>
+          <tr>
+            <th><%= t("views.repos.created") %></th>
+            <td><%= repository.short_created_at -%></td>
+          </tr>
+          <tr>
+            <th><%= t("views.repos.current_committers") %></th>
+            <td>
+              <ul>
+                <% repository.user_committers.each do |cs| -%>
+                  <li>
+                    <%= avatar_from_email(cs.committer.email, :size => 16, :style => "tiny") %>
+                    <%= link_to h(cs.committer.title), cs.committer -%>
+                    <% if repository.user == cs.committer -%>
+                      <small class="hint">(<%= t("views.repos.creator") %>)</small>
+                    <% end -%>
+                  </li>
                 <% end -%>
-            </li>
-            <% end -%>
-            <% repository.group_committers.each do |cs| -%>
-            <li>
-                <%= image_tag("silk/group.png") %>
-                <%= link_to h(cs.committer.to_param_with_prefix), cs.committer -%>
-            </li>
-            <% end -%>
-          </ul>
-          </td>
-        </tr>
-
-        </tbody></table>
-
-
+                <% repository.group_committers.each do |cs| -%>
+                  <li>
+                    <%= image_tag("silk/group.png") %>
+                    <%= link_to h(cs.committer.to_param_with_prefix), cs.committer -%>
+                  </li>
+                <% end -%>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

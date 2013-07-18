@@ -17,25 +17,17 @@
 #++
 
 class RepositoryCommunityController < ApplicationController
-  before_filter :find_repository_owner
   renders_in_site_specific_context
+  layout "ui3"
 
   def index
     project = Project.find_by_slug(params[:project_id])
     repository = Repository.find_by_name_in_project!(params[:repository_id], project)
 
-    respond_to do |format|
-      format.html do
-        render(:action => :index, :layout => "ui3", :locals => {
-            :repository => RepositoryPresenter.new(repository),
-            :ref => repository.head_candidate_name,
-            :events => @events,
-            :atom_auto_discovery_url => project_repository_path(repository.project, repository, :format => :atom),
-            :atom_auto_discovery_title => "#{repository.title} ATOM feed"
-          })
-      end
-    end
-
+    render(:action => :index, :locals => {
+        :repository => RepositoryPresenter.new(repository),
+        :atom_auto_discovery_url => project_repository_path(repository.project, repository, :format => :atom),
+        :atom_auto_discovery_title => "#{repository.title} ATOM feed"
+      })
   end
-
 end
