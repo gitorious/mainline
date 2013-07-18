@@ -63,19 +63,6 @@ $(document).ready(function () {
         event.preventDefault();
     });
 
-    // Project previewing
-    $("input#project_preview_button").click(function (event) {
-        var formElement = $(this).parents("form");
-        var url = $(this).attr("gts:url");
-
-        $.post(url, formElement.serialize(), function (data, response) {
-            if (response === "success") {
-                $("#project-preview").html(data).fadeIn();
-            }
-        });
-        event.preventDefault();
-    });
-
     // Markdown help toggling
     $(".markdown-help-toggler").click(function (event) {
         $(".markdown_help").toggle();

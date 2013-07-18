@@ -32,5 +32,5 @@
   </td>
   <td><%= form.text_field :description, :class => "gts-mrs-description" -%></td>
   <td><%= form.text_field :color, :class => "gts-mrs-color color_pickable" -%></td>
-  <td><%= remove_status_link(form) -%></td>
+  <td class="gts-mrs-remove"><%= form.hidden_field(:_destroy) %></td>
 </tr>
