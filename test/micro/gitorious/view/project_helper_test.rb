@@ -18,6 +18,7 @@
 require "fast_test_helper"
 require "gitorious/view/project_helper"
 require "libdolt/view/markup"
+
 class Gitorious::View::ProjectHelperTest < MiniTest::Spec
   include Gitorious::View::ProjectHelper
   include Dolt::View::Markup

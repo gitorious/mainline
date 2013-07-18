@@ -19,10 +19,6 @@
 module Gitorious
   module View
     module ProjectHelper
-      def project_description(project)
-        return "" if !project.description
-        render_markup("description.md", project.description).html_safe
-      end
     end
   end
 end

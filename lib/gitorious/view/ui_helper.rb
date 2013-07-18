@@ -51,6 +51,21 @@ module Gitorious
         "<div class=\"gts-notification\"><div class=\"container\">#{content}" +
           "</div></div>".html_safe
       end
+
+      def header_navigation(items, options = {})
+        items.inject("") do |html, item|
+          if item[0] == options[:active]
+            "#{html}<li class=\"active\"><a>#{item[2]}</a></li>"
+          else
+            "#{html}<li><a href=\"#{item[1]}\">#{item[2]}</a></li>"
+          end
+        end.html_safe
+      end
+
+      def description(object)
+        return "" if !object.description
+        render_markup("description.md", object.description).html_safe
+      end
     end
   end
 end
