@@ -21,76 +21,78 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= breadcrumbs_from(@root) -%>
-
-<h2 class="content-header"><%= t("views.projects.update_title", :link => link_to( h(project.title), project_path(project))).html_safe -%></h2>
-
-<%= error_messages(project) -%>
-<%= form_for(project, :method => "put") do |f| -%>
-  <%= render :partial => "form", :locals => { :form => f, :project => project } -%>
-
-  <div class="merge_request_statuses content-container w-730">
-    <label>Merge Request Statuses:</label><br />
-    <table class="listing" id="merge_request_statuses">
-      <thead>
-        <tr>
-          <th>Default?</th>
-          <th>Name</th>
-          <th>State</th>
-          <th>Description</th>
-          <th>Color</th>
-          <th></th>
-        <tr>
-      </thead>
-      <%= help_box(:center, :error, :style => "margin-top:10px;margin-bottom:10px;width:75%;") do -%>
-        <p><strong>Note</strong> that changing the name or state of an
-          existing status will update all affected merge requests</p>
-      <% end -%>
-      <%= f.fields_for(:merge_request_statuses) do |status_form| -%>
-        <%= render :partial => "merge_request_status_form",
-            :locals => {:form => status_form, :project_form => f} -%>
-      <% end -%>
-    </table>
-    <div class="add-link-container">
-      <div class="button right add_link"><%= add_status_link(f) -%></div>
+<% @page_title = "Update #{project.title}" %>
+<div class="gts-site-header">
+  <div class="container">
+    <div class="row">
+      <h2 class="span"><%= t("views.projects.update_title", :link => link_to( h(project.title), project_path(project))).html_safe %></h2>
     </div>
-
-    <div class="box rounded light-gray w-730">
-      <% unless project.owned_by_group? -%>
-        <p>
-          <%= f.label :owner_id, "Transfer ownership to a group <small>(optional)</small>".html_safe -%>:<br />
-          <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]},
-              :include_blank => true, :selected => nil -%>
-          <br /><small class="hint">
-            <strong>Note:</strong> This will give the group members
-            admin rights to this project, along with adding them as
-            committers to the mainline repositories (you can remove them later
-            on a per-repository basis if you want to)
-          </small>
-        </p>
-      <% end -%>
-    </div><!-- end box -->
   </div>
-  <fieldset  class="submit">
-    <input type="button" value="Preview" id="project_preview_button"
-           gts:url="<%= preview_project_path(project) -%>" />
+</div>
 
-    <%= f.submit t("views.common.update") -%>
-  </fieldset>
-<% end -%>
+<div class="container">
+  <div class="row-fluid">
+    <div class="span8">
+      <%= error_messages(project) -%>
+      <%= form_for(project, {
+              :as => :project,
+              :url => project_path(project),
+              :builder => Gitorious::View::FormBuilder,
+              :html => { :class => "form-horizontal" }
+            }) do |f| -%>
+        <fieldset>
+          <%= render(:partial => "form", :locals => {
+                :form => f,
+                :project => project,
+                :edit_slug => false,
+                :edit_urls => true
+              }) -%>
 
-<%= content_for :sidebar do -%>
-  <ul class="links navigation">
-    <% if project.owned_by_group? -%>
-      <li><%= link_to t("views.projects.project_members"), group_memberships_path(project.owner) -%></li>
-    <% end -%>
-    <li class="update_project">
-      <%= link_to t('views.projects.edit_slug_title'), edit_slug_project_path(project) %>
-    </li>
-    <% if can_delete?(current_user, project) -%>
-      <li class="delete_project">
-        <%= link_to t("views.projects.delete"), confirm_delete_project_path(project) -%>
-      </li>
-    <% end -%>
-  </ul>
-<% end -%>
+          <div class="control-group">
+            <label>Merge Request Statuses:</label>
+            <div class="controls">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Default?</th>
+                    <th>Name</th>
+                    <th>State</th>
+                    <th>Description</th>
+                    <th>Color</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <%= f.fields_for(:merge_request_statuses) do |status_form| -%>
+                  <%= render :partial => "merge_request_status_form",
+                      :locals => { :form => status_form, :project_form => f } -%>
+                <% end -%>
+              </table>
+              <div class="add-link-container">
+                <div class="button right add_link"><%= add_status_link(f) -%></div>
+              </div>
+              <p class="help-block">
+                <strong>Note</strong> that changing the name or state
+                of an existing status will update all affected merge
+                requests
+              </p>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit"><%= t("views.projects.edit") %></button>
+          </div>
+        </fieldset>
+      <% end %>
+    </div>
+    <% if Gitorious::Configuration.get("enable_sidebar_license_descriptions") %>
+      <div class="span4">
+        <h3>License overview</h3>
+        <dl>
+          <% ProjectLicense.all.each do |license| %>
+            <dt><%= license.name %></dt>
+            <%=raw "<dd>#{license.description}</dd>" if license.description %></dd>
+          <% end %>
+        </dl>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #
   #   This program is free software: you can redistribute it and/or modify
   #   it under the terms of the GNU Affero General Public License as published by
@@ -17,34 +17,33 @@
   #++
   %>
 
-<h1>Propose new project</h1>
-
-<%= error_messages(@proposal) -%>
-
-<%= form_for @proposal, :url => { :action => "create" } do |f| -%>
-<fieldset>
-  <li>
-    <%= f.label :title -%>
-    <div><%= f.text_field :title -%></div>
-  </li>
-  <li>
-    <%= f.label :description -%>
-    <div>
-      <%= f.text_area :description, :class => "text wide" -%><br />
+<div class="gts-site-header">
+  <div class="container">
+    <div class="row">
+      <h2 class="span"><%= @page_title = "Propose new project" %></h2>
     </div>
-  </li>
-</fieldset>
+      <p>
+        <strong>Note</strong>: Site admins will be notified of this
+        proposal. The project will be created once it has been
+        approved by a site admin.
+      </p>
+  </div>
+</div>
 
-<fieldset>
-  <li>
-    <div>
-      <strong>Note</strong>: Site admins will be notified of this
-      proposal. The project will be created once it has been approved
-      by a site admin.</div>
-  </li>
-</fieldset>
-
-<fieldset class="submit">
-  <%= f.submit "Submit" -%>
-</fieldset>
-<% end -%>
+<div class="container">
+    <%= error_messages(proposal) -%>
+    <%= form_for(proposal, {
+            :as => :project_proposal,
+            :url => { :action => :create },
+            :builder => Gitorious::View::FormBuilder,
+            :html => { :class => "form-horizontal" }
+          }) do |form| -%>
+      <fieldset>
+        <%= form.text_input_block(:title, t(:title, :scope => "activerecord.attributes.project")) %>
+        <%= form.textarea_md_preview(:description, "Description") %>
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Submit proposal</button>
+        </div>
+      </fieldset>
+    <% end %>
+</div>

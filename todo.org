@@ -15,11 +15,12 @@
 ** DONE Refactor Dolt: Naming
 ** DONE Anonymous users see SSH url
 ** TODO Google Analytics account is hardcoded in layout
-* Views to port to UI3 [10/76]
+** TODO No method error with resque?
+* Views to port to UI3 [13/76]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit
-** TODO Admin::ProjectProposals#index
-** TODO Admin::ProjectProposals#new
+** DONE Admin::ProjectProposals#index
+** DONE Admin::ProjectProposals#new
 ** TODO Admin::Repositories#index
 ** TODO Admin::Users#index
 ** TODO Admin::Users#new
@@ -72,7 +73,7 @@
 ** TODO Projects#edit
 ** TODO Projects#edit_slug
 ** TODO Projects#index
-** TODO Projects#new
+** DONE Projects#new
 ** TODO Projects#show
 ** TODO Repositories#index
 ** TODO Searches#show
