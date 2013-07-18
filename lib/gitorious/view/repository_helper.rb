@@ -31,21 +31,6 @@ module Gitorious
         return ref unless ref.length == 40
         ref[0...7]
       end
-
-      def repository_navigation(items, options = {})
-        items.inject("") do |html, item|
-          if item[0] == options[:active]
-            "#{html}<li class=\"active\"><a>#{item[2]}</a></li>"
-          else
-            "#{html}<li><a href=\"#{item[1]}\">#{item[2]}</a></li>"
-          end
-        end.html_safe
-      end
-
-      def repository_description(repository)
-        return "" if !repository.description
-        render_markup("description.md", repository.description).html_safe
-      end
     end
   end
 end

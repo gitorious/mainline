@@ -81,12 +81,12 @@ git push</pre>
     </div>
     <div class="row gts-description">
       <div class="span gts-repository-description-ph">
-        <%= repository_description(repository) %>
+        <%= description(repository) %>
       </div>
     </div>
     <% if has_git_backend %>
       <ul class="nav nav-tabs gts-header-nav" <%= "data-gts-active=#{defined?(active) && active.to_s}"  %>>
-        <%= repository_navigation([
+        <%= header_navigation([
                 [:source, url_for(File.join("/", repository.project.to_param, repository.to_param, "source", "#{repository.head_candidate_name}:")), "Source code"],
                 [:activities, activities_project_repository_path(repository.project, repository), "Activities"],
                 [:commits, project_repository_commits_in_ref_path(repository.project, repository, ref), "Commits"],
