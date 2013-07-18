@@ -94,12 +94,10 @@ class ProjectsController < ApplicationController
   end
 
   def new
-    if ProjectProposal.required?(current_user)
-      redirect_to(:controller => "admin/project_proposals", :action => :new) and return
-    end
-    project = Project.new
-    project.owner = current_user
-    render(:action => "new", :locals => { :project => project, :root => Breadcrumb::NewProject.new })
+    outcome = PrepareProject.new(self, current_user).execute({})
+    params[:private] = Gitorious.projects_default_private?
+    pre_condition_failed(outcome)
+    outcome.success { |result| render_form(result) }
   end
 
   def create
@@ -110,26 +108,14 @@ class ProjectsController < ApplicationController
       redirect_to(new_project_repository_path(result))
     end
 
-    pre_condition_failed(outcome) do |f|
-      f.otherwise do |pc|
-        key = "projects_controller.create_only_for_site_admins"
-        flash[:error] = I18n.t(key) if pc.is_a?(ProjectProposalRequired)
-        redirect_to(projects_path)
-      end
-    end
-
-    outcome.failure do |project|
-      render(:action => "new", :locals => {
-        :project => project,
-        :root => Breadcrumb::NewProject.new
-      })
-    end
+    pre_condition_failed(outcome)
+    outcome.failure { |project| render_form(project) }
   end
 
   def edit
     @groups = Team.by_admin(current_user)
     @root = Breadcrumb::EditProject.new(@project)
-    render :action => "edit", :locals => { :project => @project }
+    render(:action => "edit", :layout => "ui3", :locals => { :project => @project })
   end
 
   def edit_slug
@@ -197,6 +183,22 @@ class ProjectsController < ApplicationController
   end
 
   protected
+  def render_form(project)
+    render(:action => :new, :layout => "ui3", :locals => {
+      :project => project
+    })
+  end
+
+  def pre_condition_failed(outcome)
+    super(outcome) do |f|
+      f.otherwise do |pc|
+        key = "projects_controller.create_only_for_site_admins"
+        flash[:error] = I18n.t(key) if pc.is_a?(ProjectProposalRequired)
+        redirect_to(new_admin_project_proposal_path)
+      end
+    end
+  end
+
   def by_push_time(repositories)
     repositories.sort_by { |ml| ml.last_pushed_at || Time.utc(1970) }.reverse
   end

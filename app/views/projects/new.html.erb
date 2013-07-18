@@ -21,49 +21,47 @@
   #++
   %>
 
-<%= breadcrumbs_from(root) -%>
-<h2 class="content-header"><%= t("views.projects.new_title") %></h2>
-<%= error_messages(project) -%>
-<%= form_for(project, :as => project, :url => projects_path, :builder => GitoriousFormBuilder) do |f| -%>
-  <%= render :partial => "form", :locals => { :form => f, :project => project } -%>
+<div class="gts-site-header">
+  <div class="container">
+    <div class="row">
+      <h2 class="span"><%= @page_title = t("views.projects.new_title") %></h2>
+    </div>
+  </div>
+</div>
 
-  <% if Gitorious.projects_default_private? %>
-    <fieldset>
-      <li>
-        <div>
-          <%= image_tag("silk/lock.png", :class => "private_access") %>
-          This project will be private by
-          default, but can be made public after you have finished
-          creating it.
-        </div>
-      </li>
-    </fieldset>
-  <% end %>
-
-  <fieldset class="submit">
-    <%= f.submit t("views.projects.create") -%>
-  </fieldset>
-<% end -%>
-
-<%= content_for :sidebar do -%>
-  <h2>Information</h2>
-  <p class="hint"><%= t("views.projects.new_hint") %></p>
-  <%= "<div id=\"license-descriptions\"></div>" if Gitorious::Configuration.get("enable_sidebar_license_descriptions") %>
-<% end -%>
-<script type="text/javascript" src="/javascripts/gitorious/license-descriptions.js"></script>
-<script type="text/javascript">
-  $(function () {
-  var G = gitorious;
-  var options = $(".licenses option[data-description]");
-  var licenses = G.parseLicenseDetails(options);
-  G.renderLicenseDescriptionOnChange(options);
-  options.parent().change();
-
-  var target = document.getElementById("license-descriptions");
-
-  if (target) {
-  var heading = "<h2>" + jQuery("label[for=project_license]").html() + "s</h2>";
-  target.innerHTML += heading + G.renderLicenseDescriptions(licenses);
-  }
-  });
-</script>
+<div class="container">
+  <div class="row-fluid">
+    <div class="span8">
+      <%= error_messages(project) -%>
+      <%= form_for(project, {
+              :as => :project,
+              :url => projects_path,
+              :builder => Gitorious::View::FormBuilder,
+              :html => { :class => "form-horizontal" }
+            }) do |f| -%>
+        <fieldset>
+          <%= render(:partial => "form", :locals => {
+                :form => f,
+                :project => project,
+                :edit_slug => true,
+                :edit_urls => false
+              }) -%>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit"><%= t("views.projects.create") %></button>
+          </div>
+        </fieldset>
+      <% end %>
+    </div>
+    <% if Gitorious::Configuration.get("enable_sidebar_license_descriptions") %>
+      <div class="span4">
+        <h3>License overview</h3>
+        <dl>
+          <% ProjectLicense.all.each do |license| %>
+            <dt><%= license.name %></dt>
+            <%=raw "<dd>#{license.description}</dd>" if license.description %></dd>
+          <% end %>
+        </dl>
+      </div>
+    <% end %>
+  </div>
+</div>

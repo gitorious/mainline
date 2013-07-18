@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #
   #   This program is free software: you can redistribute it and/or modify
   #   it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,7 @@
   #++
   %>
 
-<tr class="merge_request_status">
+<tr>
   <td>
     <% if project_form.nil? -%>
       <small class="hint">Unsaved</small>
@@ -26,12 +26,11 @@
           :checked => form.object.default? -%>
     <% end -%>
   </td>
-  <td><%= form.text_field :name, :class => "compact" -%></td>
+  <td><%= form.text_field :name, :class => "gts-mrs-name" -%></td>
   <td>
-    <%= form.select :state, MergeRequestStatus.default_states,
-        {}, :class => "compact" -%>
+    <%= form.select :state, MergeRequestStatus.default_states, {}, :class => "gts-mrs-state" -%>
   </td>
-  <td><%= form.text_field :description, :class => "compact" -%></td>
-  <td><%= form.text_field :color, :class => "compact color_pickable" -%></td>
+  <td><%= form.text_field :description, :class => "gts-mrs-description" -%></td>
+  <td><%= form.text_field :color, :class => "gts-mrs-color color_pickable" -%></td>
   <td><%= remove_status_link(form) -%></td>
 </tr>

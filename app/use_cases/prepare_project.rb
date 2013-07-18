@@ -19,16 +19,14 @@ require "use_case"
 require "create_project_command"
 require "project_proposal_required"
 
-class CreateProject
+class PrepareProject
   include UseCase
 
   def initialize(app, user)
     input_class(NewProjectParams)
     add_pre_condition(RequiredDependency.new(:user, user))
     add_pre_condition(ProjectProposalRequired.new(user))
-    add_pre_condition(ProjectRateLimiting.new(user))
-    step(CreateProjectCommand.new(user), :validator => ProjectValidator)
-    step(CreateWikiRepositoryCommand.new(app))
-    step(lambda { |repository| repository.project })
+    create_project = CreateProjectCommand.new(user)
+    step(lambda { |project| project }, :builder => create_project)
   end
 end

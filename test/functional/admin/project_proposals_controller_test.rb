@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,9 @@ class Admin::ProjectProposalsControllerTest < ActionController::TestCase
     should "let users create project proposal & notify admins" do
       login_as_non_admin
       pre_count = ProjectProposal.all.count
+
       post :create, :project_proposal => new_proposal.attributes
+
       assert_equal pre_count+1, ProjectProposal.all.count
       assert_response :redirect
     end
@@ -34,7 +36,9 @@ class Admin::ProjectProposalsControllerTest < ActionController::TestCase
       proposal.save
       pre_count = Project.all.count
       login_as_admin
+
       post :approve, :id => proposal.to_param
+
       assert_equal pre_count+1, Project.all.count
       assert !Project.all.last.private?
       assert_response :redirect

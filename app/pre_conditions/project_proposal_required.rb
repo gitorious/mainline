@@ -15,20 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "use_case"
-require "create_project_command"
-require "project_proposal_required"
 
-class CreateProject
-  include UseCase
-
-  def initialize(app, user)
-    input_class(NewProjectParams)
-    add_pre_condition(RequiredDependency.new(:user, user))
-    add_pre_condition(ProjectProposalRequired.new(user))
-    add_pre_condition(ProjectRateLimiting.new(user))
-    step(CreateProjectCommand.new(user), :validator => ProjectValidator)
-    step(CreateWikiRepositoryCommand.new(app))
-    step(lambda { |repository| repository.project })
-  end
+class ProjectProposalRequired
+  def initialize(user); @user = user; end
+  def satisfied?(params); !ProjectProposal.required?(@user); end
 end

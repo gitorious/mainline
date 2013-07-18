@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -19,34 +19,35 @@
 module Admin
   class ProjectProposalsController < AdminController
     before_filter :require_site_admin, :except => [:new, :create]
+    layout "ui3"
 
     def index
-      @proposals = ProjectProposal.all
+      render(:index, :locals => { :proposals => ProjectProposal.all })
     end
 
     def new
-      @proposal = ProjectProposal.new
+      render(:new, :locals => { :proposal => ProjectProposal.new })
     end
 
     def create
-      @proposal = ProjectProposal.new
-      @proposal.title = params[:project_proposal][:title]
-      @proposal.description = params[:project_proposal][:description]
-      @proposal.creator = current_user
+      proposal = ProjectProposal.new
+      proposal.title = params[:project_proposal][:title]
+      proposal.description = params[:project_proposal][:description]
+      proposal.creator = current_user
 
-      if @proposal.name_clashes_with_existing_project?
+      if proposal.name_clashes_with_existing_project?
         flash[:error] = "Project with that title already exists!"
-        render :action => "new" and return
+        render(:new, :locals => { :proposal => proposal }) and return
       end
 
-      if @proposal.save
+      if proposal.save
         notify_site_admins("A new project has been proposed",
-                           "Proposal for project #{@proposal.title} submitted by #{@proposal.creator.title}", @proposal)
+          "Proposal for project #{proposal.title} submitted by #{proposal.creator.title}", proposal)
         flash[:notice] = "Project proposal created, admins have been notified and will review it."
 
         redirect_to current_user
       else
-        render :action => "new"
+        render(:new, :locals => { :proposal => proposal })
       end
     end
 

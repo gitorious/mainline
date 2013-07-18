@@ -524,7 +524,7 @@ class ProjectsControllerTest < ActionController::TestCase
         get :index
       end
 
-      assert_redirected_to(root_path)
+      assert_redirected_to(new_sessions_path)
       assert_match(/Action requires login/, flash[:error])
     end
   end
@@ -591,7 +591,7 @@ class ProjectsControllerTest < ActionController::TestCase
       post :create, :project => {}
       assert_response :redirect
       assert_match(/only site administrators/i, flash[:error])
-      assert_redirected_to projects_path
+      assert_redirected_to new_admin_project_proposal_path
     end
 
     should "succesfully POST #create if the user is a site_admin" do

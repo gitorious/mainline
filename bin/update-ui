@@ -2,6 +2,7 @@
 
 cd public/ui3/
 git pull origin master
+make
 cd ../..
 mkdir -p public/dist/js
 mkdir -p public/dist/css

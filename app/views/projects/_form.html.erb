@@ -21,63 +21,30 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<fieldset>
-  <li>
-    <%= form.label :title, t(:title, :scope => 'activerecord.attributes.project') -%>
-    <div><%= form.text_field :title -%></div>
-  </li>
-  <% unless ["edit", "update"].include?(controller.action_name) -%>
-    <li>
-      <%= form.label :slug, t(:slug, :scope => 'activerecord.attributes.project') -%>
-      <div><%= form.text_field :slug -%></div>
-    </li>
-    <li>
-      <%= form.current_user_or_group(:owner, t("views.projects.owner"),
-                                     :hint => "Select the owner of this project; either yourself or a group you are a member of").html_safe -%>
-    </li>
-  <% end -%>
-  <li>
-    <%= form.label :tag_list, t(:tag_list, :scope => 'activerecord.attributes.project') -%>
-    <div><%= form.text_field :tag_list -%></div>
-  </li>
-  <li class="licenses">
-    <%= form.label :license, license_label("activerecord.attributes.project") -%>
-    <div>
-      <%= form.select(:license, project_license_choices(:selected => default_license(project)).html_safe) -%>
-    </div>
-  </li>
-</fieldset>
-<fieldset>
-  <li>
-    <%= form.label :home_url, t(:home_url, :scope => 'activerecord.attributes.project') -%>
-    <div> <%= form.text_field :home_url -%></div>
-  </li>
-  <li>
-    <%= form.label :mailinglist_url, t(:mailinglist_url, :scope => 'activerecord.attributes.project') -%>
-    <div><%= form.text_field :mailinglist_url -%></div>
-  </li>
-  <li>
-    <%= form.label :bugtracker_url, t(:bugtracker_url, :scope => 'activerecord.attributes.project') -%>
-    <div><%= form.text_field :bugtracker_url -%></div>
-  </li>
-</fieldset>
-<fieldset>
-  <li>
-    <%= form.label :wiki_enabled, t(:wiki_enabled, :scope => 'activerecord.attributes.project') -%>
-    <div><%= form.check_box :wiki_enabled -%></div>
-  </li>
-  <% unless form.object.new_record? -%>
-    <li>
-      <%= form.label :wiki_permissions, t(:wiki_permissions, :scope => 'activerecord.attributes.repository') -%>
-      <div><%= form.select :wiki_permissions, wiki_permission_choices -%></div>
-    </li>
-  <% end -%>
-</fieldset>
-
-<fieldset>
-  <li>
-    <%= form.label :description, t(:description, :scope => 'activerecord.attributes.project') -%>
-    <div><small class="hint"><%= t("views.projects.hint").html_safe %></small>
-      <%= form.text_area :description, :class => "text wide tall" -%></div>
-  </li>
-</fieldset>
+<% scope = "activerecord.attributes.project" %>
+<%= form.text_input_block(:title, t(:title, :scope => scope)) %>
+<% if edit_slug %>
+  <%= form.text_input_block(:slug, t(:slug, :scope => scope)) %>
+<% end %>
+<%= form.owner_input_block(:owner, t("views.projects.owner"), current_user) %>
+<%= form.text_input_block(:tag_list, t(:tag_list, :scope => scope), :help => t(:tag_list_help, :scope => scope)) %>
+<%= form.select_block(
+      :license,
+      t(:license, :scope => scope),
+      project_license_choices(:selected => default_license(project)).html_safe,
+      { :help => "<div id=\"license-details\"></div>" },
+      :class => "gts-option-details", :"data-target" => "license-details"
+    ) %>
+<% if edit_urls %>
+  <%= form.text_input_block(:home_url, t(:home_url, :scope => scope)) %>
+  <%= form.text_input_block(:mailinglist_url, t(:mailinglist_url, :scope => scope)) %>
+  <%= form.text_input_block(:bugtracker_url, t(:bugtracker_url, :scope => scope)) %>
+<% end %>
+<%= form.checkbox_block(:wiki_enabled, t(:wiki_enabled, :scope => scope)) %>
+<% unless form.object.new_record? -%>
+  <%= form.select_block(:wiki_permissions, t(:wiki_permissions, :scope => scope), wiki_permission_choices) %>
+<% end -%>
+<%= form.textarea_md_preview(:description, "Description") %>
+<% if form.object.new_record? && Gitorious.private_repositories? %>
+  <%= form.private_toggle(params) %>
+<% end %>
