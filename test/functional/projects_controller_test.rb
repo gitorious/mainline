@@ -144,12 +144,6 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_no_match /Manage access/, @response.body
       end
 
-      should "display edit permissions link for admin" do
-        login_as :johan
-        get :show, :id => projects(:johans).to_param
-        assert_match /Manage access/, @response.body
-      end
-
       should "create private project" do
         login_as :johan
 
@@ -180,11 +174,6 @@ class ProjectsControllerTest < ActionController::TestCase
         get :show, :id => projects(:johans).to_param
         assert_no_match /Manage access/, @response.body
       end
-    end
-
-    should "PUT to preview" do
-      put :preview, :id => projects(:johans).to_param, :project => { :description => "Hey" }, :format => "js"
-      assert_response 200
     end
 
     should "GET projects/ succesfully" do
@@ -377,13 +366,6 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal "new name", project.reload.title
     end
 
-    should "render a preview of the project information when PUT preview" do
-      login_as :johan
-      project = projects(:johans)
-      put :preview, :id => project.to_param, :project => {:title => "something new", :description => "This is a long description"}, :format => "js"
-      assert_response :success
-    end
-
     should "require login to DELETE projects/destroy" do
       delete :destroy, :id => "gitorious"
       assert_response :redirect
@@ -560,7 +542,7 @@ class ProjectsControllerTest < ActionController::TestCase
       get :show, :id => projects(:johans).to_param
 
       assert_response :success
-      assert @layouts.include?("layouts/application")
+      assert @layouts.include?("layouts/ui3")
       assert_not_nil assigns(:current_site)
       assert_not_nil @controller.send(:current_site)
       assert_equal Site.default.title, @controller.send(:current_site).title
