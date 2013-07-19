@@ -225,6 +225,7 @@ Gitorious::Application.routes.draw do
     end
 
     resources :project_memberships, :only => [:index, :new, :create, :destroy]
+    get "/community", :controller => :project_community, :action => :index
 
     resources :pages do
       collection do
