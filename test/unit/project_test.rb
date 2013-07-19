@@ -158,47 +158,6 @@ class ProjectTest < ActiveSupport::TestCase
     refute project.repositories.include?(repositories(:johans_wiki))
   end
 
-  should "change the owner of the wiki repo as well" do
-    project = projects(:johans)
-    project.change_owner_to(groups(:team_thunderbird))
-
-    assert_equal groups(:team_thunderbird), project.owner
-    assert_equal groups(:team_thunderbird), project.wiki_repository.owner
-  end
-
-  should "allow changing ownership from a user to a group, but not the other way around" do
-    p = projects(:johans)
-    p.change_owner_to(groups(:team_thunderbird))
-    assert_equal groups(:team_thunderbird), p.owner
-
-    p.change_owner_to(users(:johan))
-    assert_equal groups(:team_thunderbird), p.owner
-  end
-
-  should "add group as admin to mainline repositories when changing ownership" do
-    p = projects(:johans)
-    assert_difference("Committership.count") { p.change_owner_to(groups(:team_thunderbird)) }
-    committership = p.repositories.mainlines.first.committerships.detect { |c|
-      c.committer == groups(:team_thunderbird)
-    }
-    assert_not_nil committership
-    assert_equal(
-      Committership::CAN_REVIEW | Committership::CAN_COMMIT | Committership::CAN_ADMIN,
-      committership.permissions)
-  end
-
-  should "manage to change ownership even if new owner already has committership on repos in project" do
-    new_owner = groups(:a_team)
-    project = projects(:johans)
-
-    repo = project.repositories.first
-    c = repo.committerships.create!(:committer => new_owner,:creator_id => new_owner.id)
-    c.build_permissions(:review, :commit, :admin)
-    c.save!
-
-    project.change_owner_to(new_owner)
-  end
-
   should "consider LdapGroup owned projects group owned" do
     project = projects(:johans)
     project.owner = ldap_groups(:first_ldap_group)

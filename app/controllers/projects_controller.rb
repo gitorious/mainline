@@ -113,8 +113,6 @@ class ProjectsController < ApplicationController
   end
 
   def edit
-    @groups = Team.by_admin(current_user)
-    @root = Breadcrumb::EditProject.new(@project)
     render(:action => "edit", :layout => "ui3", :locals => { :project => @project })
   end
 
@@ -137,16 +135,6 @@ class ProjectsController < ApplicationController
   def update
     @groups = current_user.groups.select{|g| admin?(current_user, g) }
     @root = Breadcrumb::EditProject.new(@project)
-
-    # change group, if requested
-    unless params[:project][:owner_id].blank?
-      new_owner = Team.find(params[:project].delete(:owner_id))
-      if Team.group_admin?(new_owner, current_user)
-        @project.change_owner_to(new_owner)
-      end
-    end
-
-    [:owner_id, :owner_type].each {|p| params[:project].delete(p)}
     @project.attributes = params[:project]
 
     changed = @project.changed? # Dirty attr tracking is cleared after #save

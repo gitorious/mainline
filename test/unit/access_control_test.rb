@@ -75,12 +75,6 @@ class AccessControlTest < ActiveSupport::TestCase
       assert @authorization.repository_admin?(@user, @repository)
     end
 
-    should "grant project admin" do
-      @project = @repository.project
-      @project.change_owner_to(@ldap_group)
-      assert @authorization.project_admin?(@user, @project)
-    end
-
     should "let reviewers resolve merge requests" do
       @committership.build_permissions(:review)
       @committership.save!

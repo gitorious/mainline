@@ -465,59 +465,6 @@ class ProjectsControllerTest < ActionController::TestCase
     end
   end
 
-  context "Changing owner" do
-    setup do
-      @project = projects(:johans)
-      @project.owner = users(:mike)
-      @project.save
-      @group = users(:mike).groups.first
-      login_as :mike
-    end
-
-    should "get a list of the users' groups on edit" do
-      group = groups(:a_team)
-      mike = users(:mike)
-      assert !group.member?(mike)
-      group.add_member(mike, Role.member)
-      get :edit, :id => @project.to_param
-      assert_response :success
-      assert !assigns(:groups).include?(group), "included group where user is only member"
-      assert_equal Team.by_admin(mike), assigns(:groups)
-    end
-
-    should "only get a list of groups user is admin in on update" do
-      group = groups(:a_team)
-      assert !group.member?(users(:mike))
-      group.add_member(users(:mike), Role.member)
-      put :update, :id => @project.to_param, :project => {:title => "foo"}
-      assert_response :redirect
-      assert !assigns(:groups).include?(group), "included group where user is only member"
-      assert_equal users(:mike).groups.select{|g| admin?(users(:mike), g) }, assigns(:groups)
-    end
-
-    should "change the owner" do
-      put :update, :id => @project.to_param, :project => {
-        :owner_id => @group.id
-      }
-      assert_redirected_to(project_path(@project))
-      assert_equal @group, @project.reload.owner
-      assert_equal @group, @project.wiki_repository.owner
-    end
-
-    should "change the owner only if original owner was a user" do
-      @project.owner = @group
-      @project.save!
-      new_group = Group.create!(:name => "temp")
-      new_group.add_member(users(:mike), Role.admin)
-
-      put :update, :id => @project.to_param, :project => {
-        :owner_id => new_group.id
-      }
-      assert_redirected_to(project_path(@project))
-      assert_equal @group, @project.reload.owner
-    end
-  end
-
   context "in Private Mode" do
     should "GET /projects" do
       Gitorious::Configuration.override("public_mode" => false) do

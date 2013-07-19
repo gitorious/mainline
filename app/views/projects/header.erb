@@ -1,0 +1,41 @@
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+%><%
+header_level = defined?(header_level) && header_level || 2
+@body_class = "gts-private" if project.private?
+%><div class="gts-site-header" data-gts-env-project-view-state-path="<%= project_view_state_users_path(project, :format => "json") %>">
+  <div class="container">
+    <div class="row">
+      <h<%= header_level %> class="span">
+        <a href="<%= project_path(project) %>"><%= project.title %></a>
+      </h<%= header_level %>>
+    </div>
+    <div class="row gts-description">
+      <div class="span">
+        <%= description(project) %>
+      </div>
+    </div>
+    <ul class="nav nav-tabs gts-header-nav" <%= "data-gts-active=#{defined?(active) && active.to_s}" %>>
+      <%= options = [[:activities, project_path(project), "Activities"]]
+          options << [:wiki, project_page_path(project, "Home"), "Wiki"] if project.wiki_enabled?
+          options << [:community, project_community_path(project), "Community"]
+          header_navigation(options, :active => defined?(active) ? active : nil) %>
+      <li class="gts-project-admin-ph gts-placeholder"></li>
+    </ul>
+  </div>
+</div>

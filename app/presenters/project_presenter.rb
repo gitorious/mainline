@@ -24,7 +24,11 @@ class ProjectPresenter
   def title; project.title; end
   def slug; project.slug; end
   def description; project.description; end
+  def wiki_enabled?; project.wiki_enabled?; end
+  def private?; project.private?; end
   def to_param; project.to_param; end
+  def errors; project.errors; end
+  def owner_id; project.owner_id; end
 
   def self.model_name
     Project.model_name
