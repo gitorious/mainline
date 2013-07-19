@@ -35,8 +35,7 @@ https://issues.gitorious.org/issues/179
 https://issues.gitorious.org/issues/178
 ** TODO Configurable readme-file for opening page
 https://issues.gitorious.org/issues/186
->>>>>>> Projects#edit almost there
-* Views to port to UI3 [13/76]
+* Views to port to UI3 [17/78]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit
 ** DONE Admin::ProjectProposals#index
@@ -90,11 +89,13 @@ https://issues.gitorious.org/issues/186
 ** DONE PasswordResets#reset
 ** TODO Passwords#edit
 ** TODO ProjectMemberships#index
-** TODO Projects#edit
+** DONE ProjectOwnerships#edit
+** DONE ProjectCommunity#index
+** DONE Projects#edit
 ** TODO Projects#edit_slug
 ** TODO Projects#index
 ** DONE Projects#new
-** TODO Projects#show
+** DONE Projects#show
 ** TODO Repositories#index
 ** TODO Searches#show
 ** DONE Sessions#new

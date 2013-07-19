@@ -189,21 +189,6 @@ class Project < ActiveRecord::Base
     nil
   end
 
-  def change_owner_to(another_owner)
-    unless owned_by_group?
-      self.owner = another_owner
-      self.wiki_repository.owner = another_owner
-
-      repositories.mainlines.each do |repo|
-        unless(repo.committerships.any?{ |c| c.committer == another_owner})
-          c = repo.committerships.create!(:committer => another_owner,:creator_id => self.owner_id_was)
-          c.build_permissions(:review, :commit, :admin)
-          c.save!
-        end
-      end
-    end
-  end
-
   # TODO: Add tests
   def oauth_consumer
     @oauth_consumer ||= OAuth::Consumer.new(oauth_signoff_key, oauth_signoff_secret, oauth_consumer_options)
