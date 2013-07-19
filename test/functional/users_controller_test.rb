@@ -141,13 +141,13 @@ class UsersControllerTest < ActionController::TestCase
 
     should "GET /users/johan" do
       get :show, :id => users(:johan).to_param
-      assert_redirected_to(root_path)
+      assert_redirected_to(new_session_path)
       assert_match(/Action requires login/, flash[:error])
     end
 
     should "GET /users/new" do
       get :new
-      assert_redirected_to(root_path)
+      assert_redirected_to(new_session_path)
       assert_match(/Action requires login/, flash[:error])
     end
   end
