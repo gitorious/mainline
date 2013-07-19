@@ -42,6 +42,7 @@ Gitorious::Application.routes.draw do
       post "/openid_create" => "open_id_users#create"
       get "/new" => "users#new"
       get "/view_state/repository/:id.:format" => "repository_view_state#show", :as => :repository_view_state
+      get "/view_state/project/:id.:format" => "project_view_state#show", :as => :project_view_state
       get "/view_state.:format" => "user_view_state#show", :as => :view_state
 
       # Used to be we supported things like /users/~zmalltalker/mainline
