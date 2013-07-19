@@ -22,67 +22,11 @@
   #++
   %>
 
-<% @page_title = @project.title -%>
-<%= breadcrumbs_from(@root) -%>
-<div class="content-container w-750" id="project-description">
-  <h1><%=h @project.title -%>
-    <% if @project.private? -%>
-      <%= image_tag("silk/lock.png", :class => "private_access") -%>
-    <% end -%>
-  </h1>
-  <%= paragraphs_with_more(render_markdown(@project.description, :auto_link), @project.id) -%>
-</div>
-<div class="content-container w-750" id="repositories">
-  <% @mainlines[0...(@big_repos)].each do |repo| -%>
-    <%= render :partial => "repositories/overview", :locals => {:repository => repo} -%>
-  <% end -%>
-  <% if @mainlines.length > @big_repos %>
-    <h3>More repositories</h3>
-    <% @mainlines[(@big_repos)..-1].each do |repo| -%>
-      <%= render :partial => "repositories/overview_tight", :locals => {:repository => repo} -%>
-    <% end -%>
-  <% end %>
-</div>
-<div class="content-container w-750" id="activities">
-  <h2><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
-  <%= render :partial => "events/events", :locals => {  :events => @events, :container_css_class => "w-750"  } -%>
-</div>
+<% @title = project.title -%>
 
-<%= content_for :sidebar do -%>
-  <ul class="links navigation">
-    <% if @project.wiki_enabled? -%>
-      <li class="wiki_page"> <!-- Create / Open Wiki -->
-        <%= link_to t("views.layout.pages"), project_page_path(@project, "Home") -%>
-      </li>
-    <% end -%>
-    <% if @project.owned_by_group? -%>
-      <li class="project_members">
-        <%= link_to t("views.projects.project_members"),
-            group_memberships_path(@project.owner) -%>
-      </li>
-    <% end -%>
-    <% if admin?(current_user, @project) -%>
-      <li class="new_repository"><%= link_to t("views.projects.add_repository"), new_project_repository_path(@project) -%></li>
-      <li class="update_project"><%= link_to t("views.projects.edit"), edit_project_path(@project) -%></li>
-    <% end -%>
-    <% if Gitorious.private_repositories? && can_grant_access?(current_user, @project) -%>
-      <li class="update_access"><%= link_to t("views.projects.manage_access"), project_project_memberships_path(@project) -%></li>
-    <% end -%>
-    <%- if logged_in? && site_admin?(current_user) && Gitorious.dot_org? -%>
-      <li>
-        <%= link_to t('views.projects.edit_oauth_settings'), edit_admin_project_oauth_settings_path(@project) %>
-      </li>
-    <%- end -%>
-  </ul>
-  <%= render :partial => "meta" %>
-  <h3>
-    <%= link_to t("views.projects.repository_clones"),
-        project_repositories_path(@project) -%>
-  </h3>
-  <% if show_clone_list_search?(@group_clones, @user_clones) -%>
-    <%= render :partial => "repositories/clone_list_search", :locals => {
-          :path => project_repositories_path(@project, :format => 'json')
-        } -%>
-  <% end -%>
-  <%= render :partial => "repositories" -%>
-<% end -%>
+<%= partial("projects/header", {
+        :project => project,
+        :app => Gitorious,
+        :active => :activities,
+        :header_level => 1
+      }) %>

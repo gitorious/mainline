@@ -20,12 +20,12 @@
 #++
 
 namespaced_atom_feed do |feed|
-  feed.title("Gitorious: #{@project.slug} activity")
-  feed.updated((@events.blank? ? Time.now : @events.first.created_at))
+  feed.title("Gitorious: #{project.slug} activity")
+  feed.updated((events.blank? ? Time.now : events.first.created_at))
 
-  @events.each do |event|
+  events.each do |event|
     action, body, category = action_and_body_for_event(event)
-    feed.entry(event, :url => Gitorious.url(project_path(@project))) do |entry|
+    feed.entry(event, :url => Gitorious.url(project_path(project))) do |entry|
       if event.user
         entry.title("#{h(event.user.login)} #{strip_tags(action)}")
         entry_content = <<-EOS

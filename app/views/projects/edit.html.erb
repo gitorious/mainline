@@ -21,15 +21,14 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<% @page_title = "Update #{project.title}" %>
-<div class="gts-site-header">
-  <div class="container">
-    <div class="row">
-      <h2 class="span"><%= t("views.projects.update_title", :link => link_to( h(project.title), project_path(project))).html_safe %></h2>
-    </div>
-  </div>
-</div>
+<%= partial("projects/header", {
+        :project => project,
+        :app => Gitorious,
+        :active => :admin,
+        :header_level => 2
+      }) %>
 
+<% @page_title = "Edit #{project.title}" %>
 <div class="container">
   <div class="row-fluid">
     <div class="span8">
