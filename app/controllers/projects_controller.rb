@@ -76,11 +76,22 @@ class ProjectsController < ApplicationController
     @user_clones = filter(@project.recently_updated_user_repository_clones)
     @atom_auto_discovery_url = project_path(@project, :format => :atom)
     respond_to do |format|
-      format.html
+      format.html do
+        render(:show, :layout => "ui3", :locals => {
+            :project => @project
+          })
+      end
+
       format.xml do
         render :xml => @project.to_xml({}, @mainlines, @group_clones + @user_clones)
       end
-      format.atom { }
+
+      format.atom do
+        render(:show, :locals => {
+            :project => @project,
+            :events => @events
+          })
+      end
     end
   end
 
