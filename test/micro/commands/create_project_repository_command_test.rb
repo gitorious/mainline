@@ -70,7 +70,7 @@ class CreateProjectRepositoryCommandTest < MiniTest::Spec
     end
 
     it "opts-out of merge requests" do
-      repository = execute(params("merge_requests_enabled" => "0"))
+      repository = execute(params(:merge_requests_enabled => "0"))
 
       refute repository.merge_requests_enabled
     end
@@ -139,8 +139,8 @@ class CreateProjectRepositoryCommandTest < MiniTest::Spec
 
   def params(hash = {})
     NewRepositoryInput.new({
-        "name" => "my_repo",
-        "description" => "A fine repository"
+        :name => "my_repo",
+        :description => "A fine repository"
       }.merge(hash))
   end
 end
