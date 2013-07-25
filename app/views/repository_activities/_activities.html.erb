@@ -17,13 +17,10 @@
   #++
   %>
 <% prev_date = nil %>
-<div class="container gts-body">
-  <% events.each do |event| %>
-    <% if prev_date != event.created_at.strftime("%A, %B %e %Y") %>
-      <p class="gts-date-heading"><span class="gts-date-heading-inner"><%= prev_date = event.created_at.strftime("%A, %B %e %Y") %></span></p>
-    <% end %>
-    <%= render :partial => "event", :locals => { :event => event } %>
+<% events.each do |event| %>
+  <% if prev_date != event.created_at.strftime("%A, %B %e %Y") %>
+    <p class="gts-date-heading"><span class="gts-date-heading-inner"><%= prev_date = event.created_at.strftime("%A, %B %e %Y") %></span></p>
   <% end %>
-
-  <%= raw JustPaginate.page_navigation(page, total_pages) { |page_no| "?page=#{page_no}" } -%>
-</div>
+  <%= render(:partial => "repository_activities/event", :locals => { :event => event }) %>
+<% end %>
+<%= raw JustPaginate.page_navigation(page, total_pages) { |page_no| "?page=#{page_no}" } -%>
