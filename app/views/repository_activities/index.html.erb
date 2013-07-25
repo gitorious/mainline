@@ -27,7 +27,12 @@
 <% elsif !repository.has_commits? && committers(repository).include?(current_user) %>
   <%= render(:partial => "repositories/getting_started", :locals => { :repository => repository }) %>
 <% else %>
-  <%= repo_header repository, :current_user => current_user, :ref => ref, :active => :activities, :header_level => 2 %>
+  <%= repo_header(repository, {
+          :current_user => current_user,
+          :ref => ref,
+          :active => :activities,
+          :header_level => 2
+        }) %>
 
   <%= render(:partial => "activities", :locals => {
           :repository => repository,

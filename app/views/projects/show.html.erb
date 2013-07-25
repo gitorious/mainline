@@ -30,3 +30,11 @@
         :active => :activities,
         :header_level => 1
       }) %>
+
+<div class="container gts-body">
+      <%= render(:partial => "repository_activities/activities", :locals => {
+              :events => events,
+              :page => current_page,
+              :total_pages => total_pages
+            }) %>
+</div>

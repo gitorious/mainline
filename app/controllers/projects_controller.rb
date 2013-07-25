@@ -66,30 +66,31 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @events = paginated_events
-    return if @events.length == 0 && params.key?(:page)
-    @big_repos = 10
-    @owner = @project
-    @root = @project
-    @mainlines = by_push_time(filter(@project.repositories.mainlines))
-    @group_clones = filter(@project.recently_updated_group_repository_clones)
-    @user_clones = filter(@project.recently_updated_user_repository_clones)
-    @atom_auto_discovery_url = project_path(@project, :format => :atom)
+    page = [(params[:page] || 0).to_i, 0].max
+    events, total_pages = paginated_events(@project, page)
+    # @mainlines = filter(by_push_time(@project.repositories.mainlines))
+    # @group_clones = filter(@project.recently_updated_group_repository_clones)
+    # @user_clones = filter(@project.recently_updated_user_repository_clones)
+
     respond_to do |format|
       format.html do
         render(:show, :layout => "ui3", :locals => {
-            :project => @project
+            :project => @project,
+            :events => events,
+            :current_page => page + 1,
+            :total_pages => total_pages,
+            :atom_auto_discovery_url => project_path(@project, :format => :atom)
           })
       end
 
-      format.xml do
-        render :xml => @project.to_xml({}, @mainlines, @group_clones + @user_clones)
-      end
+      # format.xml do
+      #   render(:xml => @project.to_xml({}, @mainlines, @group_clones + @user_clones))
+      # end
 
       format.atom do
         render(:show, :locals => {
             :project => @project,
-            :events => @events
+            :events => events
           })
       end
     end
@@ -202,27 +203,16 @@ class ProjectsController < ApplicationController
     end
   end
 
-  def paginated_events
-    paginate(:action => "show", :id => @project.to_param) do
-      if !Gitorious.private_repositories?
-        id = "paginated-project-events:#{@project.id}:#{params[:page] || 1}"
-        #Rails.cache.fetch(id, :expires_in => 10.minutes) do
-          unfiltered_paginated_events
-        #end
-      else
-        filter_paginated(params[:page], Event.per_page) do |page|
-          unfiltered_paginated_events
-        end
-      end
+  def paginated_events(project, page)
+    JustPaginate.paginate(page, Event.per_page, project.events.count) do |range|
+      events = Event.
+        where("project_id = ?", project.id).
+        where("target_type != ?", "Event").
+        order("created_at desc").
+        joins(:user, :project).
+        offset([range.first, 0].max).
+        limit(range.count)
+      Gitorious.private_repositories? ? filter(events) : events
     end
-  end
-
-  def unfiltered_paginated_events
-    @project.events.paginate({
-      :conditions => ["target_type != ?", Event.name],
-      :include => [:user, :project],
-      :per_page => Event.per_page,
-      :page => params[:page]
-    })
   end
 end

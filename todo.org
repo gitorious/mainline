@@ -31,10 +31,7 @@
     <% end -%>
   <% end %>
 </div>
-<div class="content-container w-750" id="activities">
-  <h2><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
-  <%= render :partial => "events/events", :locals => {  :events => @events, :container_css_class => "w-750"  } -%>
-</div>
+
 
 <%= content_for :sidebar do -%>
   <ul class="links navigation">
