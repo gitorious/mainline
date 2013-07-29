@@ -2,7 +2,7 @@ module Grit
 
   class Commit
     include Comparable
-    
+
     attr_reader :id
     attr_reader :repo
     lazy_reader :parents
@@ -113,28 +113,29 @@ module Grit
     # - it broke when 'encoding' was introduced - not sure what else might show up
     #
     def self.list_from_string(repo, text)
-      lines = text.split("\n")
-      
+      text_gpgless = text.gsub(/gpgsig -----BEGIN PGP SIGNATURE-----[\n\r](.*[\n\r])*? -----END PGP SIGNATURE-----[\n\r]/, "")
+      lines = text_gpgless.split("\n")
+
       commits = []
-      
+
       while !lines.empty?
         id = lines.shift.split.last
         tree = lines.shift.split.last
-        
+
         parents = []
         parents << lines.shift.split.last while lines.first =~ /^parent/
-        
+
         author_line = lines.shift
         author_line << lines.shift if lines[0] !~ /^committer /
         author, authored_date = self.actor(author_line)
-        
+
         committer_line = lines.shift
         committer_line << lines.shift if lines[0] && lines[0] != '' && lines[0] !~ /^encoding/
         committer, committed_date = self.actor(committer_line)
 
         # not doing anything with this yet, but it's sometimes there
         encoding = lines.shift.split.last if lines.first =~ /^encoding/
-        
+
         lines.shift
 
         message_lines = []
@@ -147,7 +148,7 @@ module Grit
 
       commits
     end
-    
+
     # Show diffs between two trees:
     #   +repo+ is the Repo
     #   +a+ is a named commit
@@ -186,11 +187,11 @@ module Grit
         self.class.diff(@repo, parents.first.id, @id)
       end
     end
-    
+
     def stats
       stats = @repo.commit_stats(self.sha, 1)[0][-1]
     end
-    
+
     # Convert this Commit to a String which is just the SHA1 id
     def to_s
       @id
@@ -203,7 +204,7 @@ module Grit
     def date
       @committed_date
     end
-    
+
     def <=>(other)
       sha <=> other.sha
     end
@@ -211,7 +212,7 @@ module Grit
     def to_patch
       @repo.git.format_patch({'1' => true, :stdout => true}, to_s)
     end
-    
+
     # Is this commit a merge commit? Eg does it have more than one parent
     def merge?
       parents.length > 1
