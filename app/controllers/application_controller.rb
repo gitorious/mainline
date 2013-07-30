@@ -376,8 +376,8 @@ class ApplicationController < ActionController::Base
     request.headers["X-PJAX"]
   end
 
-  def redirect_to_ref(ref, repo_view)
-    redirect_to(send(repo_view, @project, @repository, ref))
+  def redirect_to_ref(ref, repo_view, options={:status => 302})
+    redirect_to(send(repo_view, @project, @repository, ref), options)
   end
 
   def get_head(ref)
