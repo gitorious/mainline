@@ -57,7 +57,7 @@ class CommitsController < ApplicationController
         format.html do
           render(:action => :index, :layout => "layouts/ui3", :locals => {
             :repository => RepositoryPresenter.new(@repository),
-            :ref => @repository.head_candidate_name,
+            :ref => head.commit.id,
             :commits => @commits,
             :page => @page,
             :total_pages => @total_pages,
