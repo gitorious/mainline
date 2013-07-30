@@ -38,7 +38,12 @@ class CommitsController < ApplicationController
     @ref, @path = branch_and_path(params[:branch], @git)
 
     head = get_head(@ref)
+
     return handle_unknown_ref(@ref, @git, REF_TYPE) if head.nil?
+
+    if params[:branch].length < 40
+      redirect_to_ref(head.commit.id, REF_TYPE, :status => 307) and return
+    end
 
     if stale_conditional?(head.commit.id, head.commit.committed_date.utc)
       @page = JustPaginate.page_value(params[:page])

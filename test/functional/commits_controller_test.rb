@@ -102,29 +102,28 @@ class CommitsControllerTest < ActionController::TestCase
 
     context "#index" do
       should "GETs page 1 successfully" do
-        get :index, index_params(:page => nil, :branch => ["master"])
+        get :index, index_params(:page => nil, :branch => "3fa4e130fa18c92e3030d4accb5d3e0cadd40157")
         assert_response :success
-        assert_equal @repository.git.commits("master", 30, 0), assigns(:commits)
+        assert_equal @repository.git.commits("3fa4e130fa18c92e3030d4accb5d3e0cadd40157", 30, 0), assigns(:commits)
       end
 
       should "GETs page 3 successfully" do
-        get :index, index_params(:branch => ["master"], :page => 3)
+        get :index, index_params(:branch => "3fa4e130fa18c92e3030d4accb5d3e0cadd40157", :page => 3)
         assert_response :success
-        assert_equal @repository.git.commits("master", 30, 60), assigns(:commits)
+        assert_equal @repository.git.commits("3fa4e130fa18c92e3030d4accb5d3e0cadd40157", 30, 60), assigns(:commits)
       end
 
       should "GETs the commits successfully" do
-        get :index, index_params(:page => nil, :branch => ["master"])
+        get :index, index_params(:page => nil, :branch => "3fa4e130fa18c92e3030d4accb5d3e0cadd40157")
         assert_response :success
         assert_equal @repository.git, assigns(:git)
-        assert_equal @repository.git.commits("master", 30, 0), assigns(:commits)
+        assert_equal @repository.git.commits("3fa4e130fa18c92e3030d4accb5d3e0cadd40157", 30, 0), assigns(:commits)
       end
 
       should "GET the commits of a namedspaced branch successfully" do
         get :index, index_params(:page => nil, :branch => ["test", "master"])
-        assert_response :success
-        assert_equal "test/master", assigns(:ref)
-        assert_equal @repository.git.commits("test/master", 30, 0), assigns(:commits)
+        sha = @repository.git.get_head("test/master").commit.id
+        assert_redirected_to(:branch => sha)
       end
 
       should "deal gracefully if HEAD file refers to a non-existent ref" do
@@ -181,8 +180,7 @@ class CommitsControllerTest < ActionController::TestCase
         @repository.git.expects(:commit).with("ticket-#42") \
           .returns(git_repo.commit("master"))
         get :index, index_params(:branch => ["ticket-%2342"])
-        assert_response :success
-        assert_equal "ticket-#42", assigns(:ref)
+        assert_redirected_to :branch => git_repo.commit("master")
       end
     end
   end
@@ -198,9 +196,9 @@ class CommitsControllerTest < ActionController::TestCase
       assert_response 403
     end
 
-    should "allow authorized access to commits" do
+    should "allow authorized access to commits too" do
       login_as :johan
-      get :index, index_params(:page => nil, :branch => ["master"])
+      get :index, index_params(:page => nil, :branch => "3fa4e130fa18c92e3030d4accb5d3e0cadd40157")
       assert_response 200
     end
 
@@ -240,7 +238,7 @@ class CommitsControllerTest < ActionController::TestCase
 
     should "allow authorized access to commits" do
       login_as :johan
-      get :index, index_params(:page => nil, :branch => ["master"])
+      get :index, index_params(:page => nil, :branch => "3fa4e130fa18c92e3030d4accb5d3e0cadd40157")
       assert_response 200
     end
 
