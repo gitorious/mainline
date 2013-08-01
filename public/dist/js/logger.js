@@ -70,6 +70,7 @@ function uinitLogger(app, level) {
     if (level <= uinitLogger.ERROR) {
         app.on("error", function (feature, err) {
             console.log("Error while loading", feature.name);
+            console.log("  " + err.message);
             console.log("  " + err.stack);
         });
     }
