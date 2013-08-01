@@ -50,9 +50,10 @@ class Project < ActiveRecord::Base
 
   default_scope :conditions => ["projects.suspended_at is null"]
   serialize :merge_request_custom_states, Array
-  attr_accessible(:title, :description, :user, :slug, :license, :home_url,
-                  :mailinglist_url, :bugtracker_url, :owner, :wiki_enabled,
-                  :owner_type, :tag_list, :merge_request_statuses_attributes)
+  attr_accessible(:title, :description, :user, :slug, :license,
+    :home_url, :mailinglist_url, :bugtracker_url, :owner, :wiki_enabled,
+    :owner_type, :tag_list, :merge_request_statuses_attributes,
+    :wiki_permissions, :default_merge_request_status_id, :owner_id)
 
   def self.human_name
     I18n.t("activerecord.models.project")
