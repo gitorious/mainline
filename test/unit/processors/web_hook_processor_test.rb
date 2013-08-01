@@ -101,7 +101,23 @@ class WebHookProcessorTest < ActiveSupport::TestCase
       @url = "http://foo.bar/"
       hook = WebHook.new(:url => @url)
       uri = URI.parse(@url)
-      Net::HTTP.expects(:post_form).with(uri, {"payload" => @payload.to_json})
+
+      socket = mock
+      socket.expects(:use_ssl=).once.with(false)
+      socket.expects(:start).returns(successful_response)
+      Net::HTTP.expects(:new).returns(socket)
+      @processor.post_payload(hook, @payload)
+    end
+
+    should "do a HTTPS POST to the hook url" do
+      @url = "https://foo.bar/"
+      hook = WebHook.new(:url => @url)
+      uri = URI.parse(@url)
+
+      socket = mock
+      socket.expects(:use_ssl=).once.with(true)
+      socket.expects(:start).returns(successful_response)
+      Net::HTTP.expects(:new).returns(socket)
       @processor.post_payload(hook, @payload)
     end
 

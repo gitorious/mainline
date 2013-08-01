@@ -63,9 +63,19 @@ class WebHookProcessor
     end
   end
 
+  require "net/https"
+
   def post_payload(hook, payload)
     log_message("POST #{hook.url}\n#{payload.to_json}")
-    Net::HTTP.post_form(URI.parse(hook.url), {"payload" => payload.to_json})
+    url = URI.parse(hook.url)
+    request = Net::HTTP::Post.new(url.path)
+    request.set_form_data({"payload" => payload.to_json})
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = url.scheme == "https"
+    response = http.start { |http|
+      http.request(request)
+    }
+    response
   end
 
   private
