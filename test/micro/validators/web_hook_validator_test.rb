@@ -41,10 +41,10 @@ class WebHookValidatorTest < MiniTest::Spec
     assert result.valid?
   end
 
-  it "requires valid http (not https) URL" do
+  it "requires valid http (or https) URL" do
     refute WebHookValidator.call(web_hook("http")).valid?
     refute WebHookValidator.call(web_hook("http://")).valid?
-    refute WebHookValidator.call(web_hook("https://somewhere.com")).valid?
+    assert WebHookValidator.call(web_hook("https://somewhere.com")).valid?
     assert WebHookValidator.call(web_hook("http://somewhere.com")).valid?
     assert WebHookValidator.call(web_hook("http://somewhere.com:897/somehere")).valid?
   end

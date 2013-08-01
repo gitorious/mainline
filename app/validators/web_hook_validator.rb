@@ -26,7 +26,6 @@ WebHookValidator = UseCase::Validator.define do
     begin
       uri = URI.parse(url)
       errors.add(:url, "must be a valid URL") and return if uri.host.blank?
-      errors.add(:url, "must be a HTTP URL") and return if uri.scheme != "http"
     rescue URI::InvalidURIError
       errors.add(:url, "must be a valid URL")
     end
