@@ -87,8 +87,8 @@ class CreateProjectRepositoryTest < ActiveSupport::TestCase
   end
 
   def params(hash = {})
-    { "name" => "my_repo",
-      "description" => "A fine repository"
+    { :name => "my_repo",
+      :description => "A fine repository"
     }.merge(hash)
   end
 end
