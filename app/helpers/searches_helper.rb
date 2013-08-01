@@ -60,7 +60,7 @@ module SearchesHelper
     end
 
     def summary
-      "The #{title} project is labeled with #{tag_list}"
+      "The #{h(title)} project is labeled with #{tag_list}".html_safe
     end
   end
 
