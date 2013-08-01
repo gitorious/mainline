@@ -32,7 +32,7 @@ hook_input_lines = ""
 
 while line = gets
   hook_input_lines << line
-  @publisher.post_message({:gitdir => gitdir, :message => line.chomp, :username => ENV["GITORIOUS_USER"]})
+  @publisher.post_message({:gitdir => gitdir.sub(/\.git$/,""), :message => line.chomp, :username => ENV["GITORIOUS_USER"]})
 end
 
 require "gitorious/custom_hook"
