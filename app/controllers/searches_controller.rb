@@ -20,7 +20,6 @@
 #++
 
 class SearchesController < ApplicationController
-  Gitorious::SearchIndex.setup if Rails.env.development?
   PER_PAGE = 30
   helper :all
   renders_in_global_context
