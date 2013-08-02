@@ -19,13 +19,13 @@ require "fast_test_helper"
 require "commands/create_tracking_repository_command"
 require "ostruct"
 
-class App < MessageHub
+class FakeApp < MessageHub
   def admin?(actor, subject); true; end
 end
 
 class CreateTrackingRepositoryCommandTest < MiniTest::Spec
   before do
-    @app = App.new
+    @app = FakeApp.new
     @user = User.new
     @project = Project.new
     @repository = Repository.new({

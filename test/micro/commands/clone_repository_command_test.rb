@@ -18,13 +18,13 @@
 require "fast_test_helper"
 require "commands/clone_repository_command"
 
-class App < MessageHub
+class FakeApp < MessageHub
   def admin?(actor, subject); true; end
 end
 
 class CloneRepositoryCommandTest < MiniTest::Spec
   before do
-    @app = App.new
+    @app = FakeApp.new
     @repo_owner = User.new(:id => 13)
     @user = User.new(:id => 42)
     @project = Project.new

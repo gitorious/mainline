@@ -18,13 +18,13 @@
 require "fast_test_helper"
 require "commands/create_project_repository_command"
 
-class App < MessageHub
+class FakeApp < MessageHub
   def admin?(actor, subject); true; end
 end
 
 class CreateProjectRepositoryCommandTest < MiniTest::Spec
   before do
-    @app = App.new
+    @app = FakeApp.new
     @user = User.new
     @project = Project.new(:owner => @user)
     @command = CreateProjectRepositoryCommand.new(@app, @project, @user)
