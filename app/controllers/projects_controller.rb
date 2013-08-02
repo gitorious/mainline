@@ -161,7 +161,9 @@ class ProjectsController < ApplicationController
       end
     end
 
+    [:owner_id, :owner_type].each {|p| params[:project].delete(p)}
     @project.attributes = params[:project]
+
     changed = @project.changed? # Dirty attr tracking is cleared after #save
     validation = ProjectValidator.call(@project)
     if validation.valid? && @project.save && @project.wiki_repository.save
