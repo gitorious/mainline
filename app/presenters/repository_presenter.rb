@@ -90,6 +90,10 @@ class RepositoryPresenter
     repository.created_at.to_s(:short)
   end
 
+  def long_created_at
+    repository.created_at.to_s(:long)
+  end
+
   def user_committers
     repository.committerships.users
   end
