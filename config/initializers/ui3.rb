@@ -67,6 +67,8 @@ else
       "/ui3/js/src/components/live-markdown-preview.js",
       "/ui3/js/src/components/timeago.js",
       "/ui3/js/src/components/collapse.js",
+      "/ui3/js/src/components/admin-menu.js",
+      "/ui3/js/src/components/project.js",
       "/ui3/js/src/components/repository.js",
       "/ui3/js/src/components/rails-links.js",
       "/ui3/js/src/components/clone-name-suggestion.js",
