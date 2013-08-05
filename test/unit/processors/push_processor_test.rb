@@ -28,6 +28,8 @@ class PushProcessorTest < ActiveSupport::TestCase
   context "Parsing" do
     setup do
       @repository = repositories(:johans)
+      path = (Rails.root + "test/fixtures/push_test_repo").to_s
+      @repository.update_attribute(:hashed_path, path)
       @user = @repository.user
       json = {
         :gitdir => @repository.hashed_path,

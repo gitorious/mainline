@@ -72,6 +72,33 @@ class PushSpecParser
     to_sha.null_sha?
   end
 
+  def first_sha_in_push(repository)
+    @first_sha_in_push ||= calculate_first_sha_in_push(repository)
+  end
+
+  def calculate_first_sha_in_push(repository)
+    begin
+      if from_sha.null_sha?
+        rugged_repo = Rugged::Repository.new(repository.full_repository_path)
+        walker = Rugged::Walker.new(rugged_repo)
+        walker.push(to_sha.sha)
+        candidates = repository.git.heads
+        heads = candidates.reject {|head| head.name == ref_name}
+        heads.each { |head| walker.hide(head.commit.id) }
+        new_shas = walker.map {|c| c}
+        walker.reset
+        return from_sha.sha if new_shas.blank?
+        next_to_last = new_shas.last
+        next_to_last.parents.first.oid
+      else
+        from_sha.sha
+      end
+    rescue Object => e
+      puts "Error: #{e}, #{e.backtrace.join}"
+      from_sha.sha
+    end
+  end
+
   def ref_name
     ref.name
   end

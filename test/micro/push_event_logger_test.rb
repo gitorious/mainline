@@ -30,11 +30,11 @@ class PushEventLoggerTest < MiniTest::Spec
         assert logger.create_meta_event?
       end
 
-      it "does not create push event when creating" do
+      it "creates a push event when creating" do
         spec = PushSpecParser.new(NULL_SHA, SHA, "refs/tags/1.0")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
-        assert !logger.create_push_event?
+        assert logger.create_push_event?
       end
 
       it "does not create meta event when updating" do

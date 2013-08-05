@@ -29,7 +29,7 @@ class PushEventLogger
   end
 
   def create_push_event?
-    @spec.action_update? && @spec.head?
+    (@spec.action_update? || @spec.action_create?) && @spec.head?
   end
 
   def build_meta_event
@@ -57,7 +57,11 @@ class PushEventLogger
   end
 
   def push_event_data
-    [@spec.from_sha.sha, @spec.to_sha.sha, @spec.ref_name, calculate_commit_count.to_s].join(PUSH_EVENT_DATA_SEPARATOR)
+    [calculate_first_commit(@spec), @spec.to_sha.sha, @spec.ref_name, calculate_commit_count.to_s].join(PUSH_EVENT_DATA_SEPARATOR)
+  end
+
+  def calculate_first_commit(spec)
+    spec.first_sha_in_push(@repository)
   end
 
   def self.parse_event_data(data_string)
@@ -73,7 +77,7 @@ class PushEventLogger
   end
 
   def calculate_commit_count
-    count = @repository.git.git.rev_list({:count => true}, [@spec.from_sha.sha, @spec.to_sha.sha].join(".."))
+    count = @repository.git.git.rev_list({:count => true}, [calculate_first_commit(@spec), @spec.to_sha.sha].join(".."))
     count.strip.to_i
   end
 

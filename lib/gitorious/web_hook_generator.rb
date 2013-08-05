@@ -43,7 +43,7 @@ module Gitorious
 
     def payload
       {
-        :before        => @spec.from_sha.sha,
+        :before        => @spec.first_sha_in_push(@repository),
         :after         => @spec.to_sha.sha,
         :pushed_at     => @repository.last_pushed_at.xmlschema,
         :pushed_by     => @user.login,
@@ -64,7 +64,7 @@ module Gitorious
     end
 
     def fetch_commits
-      commits = @repository.git.commits_between(@spec.from_sha.sha, @spec.to_sha.sha)
+      commits = @repository.git.commits_between(@spec.first_sha_in_push(@repository), @spec.to_sha.sha)
       commits.map do |c|
         {
           :author => {
