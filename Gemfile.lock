@@ -223,6 +223,8 @@ GEM
       multi_json (~> 1.0)
       simplecov-html (~> 0.7.1)
     simplecov-html (0.7.1)
+    simplecov-rcov (0.2.3)
+      simplecov (>= 0.4.1)
     sinatra (1.4.3)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -319,6 +321,7 @@ DEPENDENCIES
   shoulda (~> 3.3)
   shoulda-matchers (~> 1.4)
   simplecov
+  simplecov-rcov
   state_machine (~> 1.1)
   thin (~> 1.2)
   thinking-sphinx (~> 3.0)
