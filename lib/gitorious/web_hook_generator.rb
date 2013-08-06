@@ -27,6 +27,14 @@ module Gitorious
       @user = user
     end
 
+    def push_commit_extractor
+      @push_commit_extractor ||= PushCommitExtractor.new(@repository.full_repository_path, @spec)
+    end
+
+    def previous_commit_sha
+      push_commit_extractor.newest_known_commit.oid
+    end
+
     def generate!(hook = nil)
       publish_notification({
           :user => @user.login,
@@ -43,7 +51,7 @@ module Gitorious
 
     def payload
       {
-        :before        => @spec.first_sha_in_push(@repository),
+        :before        => previous_commit_sha,
         :after         => @spec.to_sha.sha,
         :pushed_at     => @repository.last_pushed_at.xmlschema,
         :pushed_by     => @user.login,
@@ -64,7 +72,7 @@ module Gitorious
     end
 
     def fetch_commits
-      commits = @repository.git.commits_between(@spec.first_sha_in_push(@repository), @spec.to_sha.sha)
+      commits = @repository.git.commits_between(previous_commit_sha, @spec.to_sha.sha)
       commits.map do |c|
         {
           :author => {

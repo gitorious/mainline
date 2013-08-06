@@ -26,12 +26,15 @@ class WebHookGeneratorTest < MiniTest::Spec
     @repository.project = Project.new(:slug => "my-project", :description => "Yes, mine")
     @repository.clones = [{}]
     @repository.browse_url = "http://gitorious.test/my-project/name"
+    @repository.full_repository_path = (Rails.root + "test/fixtures/push_test_repo.git").to_s
 
+    @start_sha = "ec433174463a9d0dd32700ffa5bbb35cfe2a4530"
+    @end_sha = "7b5fe553c3c37ffc8b4b7f8c27272a28a39b640f"
     grit = mock
-    grit.stubs(:commits_between).with(SHA, OTHER_SHA).returns([grit_commit])
+    grit.stubs(:commits_between).with(@start_sha, @end_sha).returns([grit_commit])
     @repository.stubs(:git).returns(grit)
 
-    @spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/master")
+    @spec = PushSpecParser.new(@start_sha, @end_sha, "refs/heads/master")
     @user = @repository.owner = User.new(:login => "johan")
 
     @generator = Gitorious::WebHookGenerator.new(@repository, @spec, @user)
@@ -40,12 +43,12 @@ class WebHookGeneratorTest < MiniTest::Spec
   describe "Generating payload" do
     it "contains the start sha" do
       payload = @generator.payload
-      assert_equal SHA, payload[:before]
+      assert_equal @start_sha, payload[:before]
     end
 
     it "contains the end sha" do
       payload = @generator.payload
-      assert_equal OTHER_SHA, payload[:after]
+      assert_equal @end_sha, payload[:after]
     end
 
     it "contains the username of the pusher" do
@@ -89,9 +92,6 @@ class WebHookGeneratorTest < MiniTest::Spec
 
   describe "commits" do
     it "gets commits between start and end sha" do
-      grit = mock
-      grit.expects(:commits_between).with(SHA, OTHER_SHA).returns([])
-      @repository.stubs(:git).returns(grit)
       @generator.fetch_commits
     end
 

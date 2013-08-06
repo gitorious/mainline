@@ -21,6 +21,8 @@ require "test_helper"
 class PushProcessorTest < ActiveSupport::TestCase
   def setup
     @processor = PushProcessor.new
+    @start_sha = "ec433174463a9d0dd32700ffa5bbb35cfe2a4530"
+    @end_sha = "7b5fe553c3c37ffc8b4b7f8c27272a28a39b640f"
   end
 
   should_consume "/queue/GitoriousPush"
@@ -34,7 +36,7 @@ class PushProcessorTest < ActiveSupport::TestCase
       json = {
         :gitdir => @repository.hashed_path,
         :username => @user.login,
-        :message => "#{NULL_SHA} #{SHA} refs/heads/master"
+        :message => "#{NULL_SHA} #{@end_sha} refs/heads/master"
       }.to_json
       @processor.consume(json)
     end
@@ -49,7 +51,7 @@ class PushProcessorTest < ActiveSupport::TestCase
 
     should "recognize the push spec" do
       assert_equal NULL_SHA, @processor.spec.from_sha.sha
-      assert_equal SHA, @processor.spec.to_sha.sha
+      assert_equal @end_sha, @processor.spec.to_sha.sha
       assert_equal "master", @processor.spec.ref_name
     end
   end
@@ -126,11 +128,12 @@ class PushProcessorTest < ActiveSupport::TestCase
   context "Regular push" do
     setup do
       @repository = repositories(:johans)
+      Repository.any_instance.stubs(:full_repository_path).returns(push_test_repo_path)
       @user = @repository.user
       @payload = {
         "gitdir" => @repository.hashed_path,
         "username" => @user.login,
-        "message" => "#{SHA} #{OTHER_SHA} refs/heads/master"
+        "message" => "#{NULL_SHA} #{@end_sha} refs/heads/master"
       }
       PushEventLogger.any_instance.stubs(:calculate_commit_count).returns(2)
     end
@@ -213,12 +216,13 @@ class PushProcessorTest < ActiveSupport::TestCase
   context "Triggering the web hooks" do
     setup do
       @repository = repositories(:johans)
+      Repository.any_instance.stubs(:full_repository_path).returns(push_test_repo_path)
       @user = @repository.user
 
       message = {
         "gitdir" => @repository.hashed_path,
         "username" => @user.login,
-        "message" => "#{SHA} #{OTHER_SHA} refs/heads/master"
+        "message" => "#{NULL_SHA} #{@end_sha} refs/heads/master"
       }
 
       @processor.load_message(message)

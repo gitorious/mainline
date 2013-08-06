@@ -19,6 +19,7 @@ require "fast_test_helper"
 require "app/models/action"
 require "push_spec_parser"
 require "push_event_logger"
+require "push_commit_extractor"
 
 class PushEventLoggerTest < MiniTest::Spec
   describe "deciding what events to create" do
@@ -250,8 +251,9 @@ class PushEventLoggerTest < MiniTest::Spec
   describe "Push event" do
     before do
       @repository = Repository.new #repositories(:johans)
+      @repository.full_repository_path = (Rails.root + "test/fixtures/push_test_repo.git").to_s
       @user = User.new #users(:johan)
-      @spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/master")
+      @spec = PushSpecParser.new("ec433174463a9d0dd32700ffa5bbb35cfe2a4530", "bb17eec3080ed71fa4ea7aba6b500aac9339e159", "refs/heads/master")
       @logger = PushEventLogger.new(@repository, @spec, @user)
       @event = @logger.build_push_event
     end
@@ -273,19 +275,13 @@ class PushEventLoggerTest < MiniTest::Spec
     end
 
     it "knows how many commits were pushed" do
-      git = mock
-      git.expects(:rev_list).with({:count => true}, [SHA,OTHER_SHA].join("..")).returns("6")
-      grit = mock(:git => git)
-      @repository.expects(:git).returns(grit)
-
-      assert_equal(6, @logger.calculate_commit_count)
+      assert_equal(1, @logger.calculate_commit_count)
     end
 
     it "creates a push event with the appropriate data" do
-      @logger.expects(:calculate_commit_count).returns(10)
       event = @logger.create_push_event
 
-      assert_equal([SHA, OTHER_SHA, "master", "10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR), event.data)
+      assert_equal([@spec.from_sha.sha, @spec.to_sha.sha, "master", "1"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR), event.data)
     end
   end
 

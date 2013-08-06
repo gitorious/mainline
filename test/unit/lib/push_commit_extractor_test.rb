@@ -26,7 +26,7 @@ require "push_commit_extractor"
 class PushCommitExtractorTest < ActiveSupport::TestCase
   context "Extract commits" do
     setup do
-      @repo_path = (Rails.root + "test/fixtures/push_test_repo.git").to_s
+      @repo_path = push_test_repo_path
       @first_new_commit = "bb17eec3080ed71fa4ea7aba6b500aac9339e159"
       @second_new_commit = "7b5fe553c3c37ffc8b4b7f8c27272a28a39b640f"
       @master_sha = "ec433174463a9d0dd32700ffa5bbb35cfe2a4530"

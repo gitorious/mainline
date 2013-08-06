@@ -56,12 +56,16 @@ class PushEventLogger
     event
   end
 
+  def push_commit_extractor
+    @push_commit_extractor ||= PushCommitExtractor.new(@repository.full_repository_path, @spec)
+  end
+
   def push_event_data
-    [calculate_first_commit(@spec), @spec.to_sha.sha, @spec.ref_name, calculate_commit_count.to_s].join(PUSH_EVENT_DATA_SEPARATOR)
+    [calculate_first_commit(@spec).oid, @spec.to_sha.sha, @spec.ref_name, calculate_commit_count.to_s].join(PUSH_EVENT_DATA_SEPARATOR)
   end
 
   def calculate_first_commit(spec)
-    spec.first_sha_in_push(@repository)
+    push_commit_extractor.newest_known_commit
   end
 
   def self.parse_event_data(data_string)
@@ -77,8 +81,7 @@ class PushEventLogger
   end
 
   def calculate_commit_count
-    count = @repository.git.git.rev_list({:count => true}, [calculate_first_commit(@spec), @spec.to_sha.sha].join(".."))
-    count.strip.to_i
+    push_commit_extractor.new_commits.count
   end
 
   private

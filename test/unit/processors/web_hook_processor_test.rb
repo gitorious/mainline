@@ -24,10 +24,13 @@ class WebHookProcessorTest < ActiveSupport::TestCase
   def setup
     @processor = WebHookProcessor.new
     @repository = repositories(:johans)
+    @repository.stubs(:full_repository_path).returns(push_test_repo_path)
     @processor.repository = @repository
     @user = users(:mike)
 
-    @spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/master")
+    @first_commit = "ec433174463a9d0dd32700ffa5bbb35cfe2a4530"
+    @last_commit = "bb17eec3080ed71fa4ea7aba6b500aac9339e159"
+    @spec = PushSpecParser.new(@first_commit, @last_commit, "refs/heads/master")
     grit = mock
     committer = Grit::Actor.new("John Committer", "noone@invalid.org")
     author = Grit::Actor.new("Jane Author", "jane@g.org")
@@ -35,7 +38,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
       author, 1.day.ago,
       committer, 2.days.ago,
       ["Awesome sauce"])
-    grit.stubs(:commits_between).with(SHA, OTHER_SHA).returns([grit_commit])
+    grit.stubs(:commits_between).with(@first_commit, @last_commit).returns([grit_commit])
     @repository.stubs(:git).returns(grit)
 
     @generator = Gitorious::WebHookGenerator.new(@repository, @spec, @user)

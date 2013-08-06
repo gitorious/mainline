@@ -37,6 +37,10 @@ class ActiveSupport::TestCase
     "#{Rails.root}/vendor/grit/test/#{name}"
   end
 
+  def push_test_repo_path
+    (Rails.root + "test/fixtures/push_test_repo.git").to_s
+  end
+
   def assert_incremented_by(obj, meth, value)
     value_before = obj.send(meth)
     yield
