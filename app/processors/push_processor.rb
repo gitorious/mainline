@@ -17,6 +17,7 @@
 #++
 require "push_spec_parser"
 require "push_event_logger"
+require "push_commit_extractor"
 require "gitorious/web_hook_generator"
 require "gitorious/wiki/update_event_logger"
 
