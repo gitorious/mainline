@@ -34,21 +34,27 @@ class PushCommitExtractor
   end
 
   def fetch_new_commits
-    if @spec.from_sha.null_sha?
-      walker = Rugged::Walker.new(@rugged_repo)
-      walker.push(@spec.to_sha.sha)
-      candidates = existing_refs
-      heads = candidates.reject {|head| head.name.split("/").last == @spec.ref_name}
+    walker = Rugged::Walker.new(@rugged_repo)
+    walker.push(@spec.to_sha.sha)
+    candidates = existing_refs
+    heads = candidates.reject {|head| head.name.split("/").last == @spec.ref_name}
+
+    if @spec.action_create?
       heads.each { |head| walker.hide(head.target) }
-      new_shas = walker.map {|c| c}
-      walker.reset
-      return new_shas
     else
-      return []
+      walker.hide(@spec.from_sha.sha)
     end
+
+    new_shas = walker.map {|c| c}
+    walker.reset
+    return new_shas
   end
 
   def newest_known_commit
-    new_commits.last.parents.first
+    if new_commits.empty? || new_commits.last.parents.empty?
+      @rugged_repo.lookup(@spec.to_sha.sha)
+    else
+      new_commits.last.parents.first
+    end
   end
 end
