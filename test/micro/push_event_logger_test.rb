@@ -34,7 +34,7 @@ class PushEventLoggerTest < MiniTest::Spec
         spec = PushSpecParser.new(NULL_SHA, SHA, "refs/tags/1.0")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
-        assert logger.create_push_event?
+        refute logger.create_push_event?
       end
 
       it "does not create meta event when updating" do
@@ -48,7 +48,7 @@ class PushEventLoggerTest < MiniTest::Spec
         spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/tags/1.0")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
-        assert !logger.create_push_event?
+        refute logger.create_push_event?
       end
 
       it "creates meta event when deleting" do
@@ -78,7 +78,7 @@ class PushEventLoggerTest < MiniTest::Spec
         spec = PushSpecParser.new(NULL_SHA, SHA, "refs/heads/master")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
-        assert !logger.create_push_event?
+        assert logger.create_push_event?
       end
 
       it "does not create meta event when updating" do
