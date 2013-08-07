@@ -5,6 +5,7 @@
 # .git/info/excludes
 
 .bundle/
+.vagrant/
 coverage/*
 config/authentication.yml
 config/database.yml
