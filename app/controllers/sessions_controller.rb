@@ -28,6 +28,7 @@ require "gitorious"
 require "gitorious/authentication/configuration"
 require "gitorious/authentication/kerberos_authentication"
 require "gitorious/authentication/credentials"
+require 'open_id_authentication'
 
 # This controller handles the login/logout function of the site.
 class SessionsController < ApplicationController
@@ -35,6 +36,8 @@ class SessionsController < ApplicationController
   renders_in_site_specific_context
   layout "ui3"
   before_filter :validate_request_host, :only => :create
+
+  include OpenIdAuthentication::ControllerMethods
 
   def new
   end
