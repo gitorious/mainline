@@ -206,7 +206,12 @@ archive_work_dir: "/var/git/tarballs-work"
 # address only, or Name <address>.
 #email_sender: Gitorious <no-reply@gitorious.local>
 
-# Should LDAP be used for authorization?
+# Should LDAP be used for authorization?  Note that this is different
+# than Authentication.  Authentication is used for the login method
+# and to grant access to gitorious as a whole. Authentication should
+# be configured in config/authentication.yml. Authorization refers to
+# using ldap information to grant access to particular views such as
+# projects, teams or users once a user is already authenticated.
 #enable_ldap_authorization: true
 
 # Gitorious throttles the rate at which users can create database
