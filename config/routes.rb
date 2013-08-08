@@ -262,7 +262,7 @@ Gitorious::Application.routes.draw do
 
       resources :comments
 
-      resources :web_hooks, :only => [:index, :create, :destroy] do
+      resources :services, :only => [:index, :create, :destroy] do
         resources :web_hook_tests, :as => :tests, :only => [:create]
       end
 

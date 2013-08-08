@@ -19,10 +19,22 @@
 class WebHook < ActiveRecord::Base
   belongs_to :repository
   belongs_to :user
-  self.table_name = :hooks
+  self.table_name = :services
+
+  serialize :data
 
   def self.global_hooks
     find(:all, :conditions => {:repository_id => nil})
+  end
+
+  def url
+    return if data.blank?
+    data[:url]
+  end
+
+  def url=(value)
+    self.data = {} if data.blank?
+    data[:url] = value
   end
 
   def successful_connection(message)

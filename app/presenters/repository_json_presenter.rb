@@ -60,7 +60,7 @@ class RepositoryJSONPresenter
         "destroyPath" => app.confirm_delete_project_repository_path(project, repository),
         "ownershipPath" => app.transfer_ownership_project_repository_path(project, repository),
         "committershipsPath" => app.project_repository_committerships_path(project, repository),
-        "webHooksPath" => app.project_repository_web_hooks_path(project, repository)
+        "servicesPath" => app.project_repository_services_path(project, repository)
       }
     }
   end

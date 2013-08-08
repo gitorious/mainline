@@ -17,7 +17,7 @@
 #++
 require "test_helper"
 
-class WebHooksControllerTest < ActionController::TestCase
+class ServicesControllerTest < ActionController::TestCase
   def setup
     @repository = repositories(:johans)
     @project = @repository.project
@@ -33,7 +33,6 @@ class WebHooksControllerTest < ActionController::TestCase
       get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
 
       assert_match "http://somewhere.com", @response.body
-      assert_match "Add web hook", @response.body
     end
 
     should "only be available to repository admin" do

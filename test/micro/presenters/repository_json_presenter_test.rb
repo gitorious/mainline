@@ -29,7 +29,7 @@ class App
   def confirm_delete_project_repository_path(p, r); "/#{p.to_param}/#{r.to_param}/confirm_delete"; end
   def transfer_ownership_project_repository_path(p, r); "/#{p.to_param}/#{r.to_param}/ownership/edit"; end
   def project_repository_committerships_path(p, r); "/#{p.to_param}/#{r.to_param}/committerships"; end
-  def project_repository_web_hooks_path(p, r); "/#{p.to_param}/#{r.to_param}/web_hooks"; end
+  def project_repository_services_path(p, r); "/#{p.to_param}/#{r.to_param}/services"; end
   def favorites_path(h); "/favorites"; end
   def favorite_path(f); "/favorites/#{f.to_param}"; end
   def clone_project_repository_path(p, r); "/#{p.to_param}/#{r.to_param}/clone"; end
@@ -68,7 +68,7 @@ class RepositoryJSONPresenterTest < MiniTest::Spec
       assert_equal "/project/repo/confirm_delete", paths["destroyPath"]
       assert_equal "/project/repo/ownership/edit", paths["ownershipPath"]
       assert_equal "/project/repo/committerships", paths["committershipsPath"]
-      assert_equal "/project/repo/web_hooks", paths["webHooksPath"]
+      assert_equal "/project/repo/services", paths["servicesPath"]
     end
 
     it "indicates that user watches repository" do

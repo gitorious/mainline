@@ -84,7 +84,7 @@ class WebHookProcessor
   end
 
   def hooks(configured)
-    return [repository.web_hooks.find_by_url!(configured)] if !configured.nil?
+    return [repository.web_hooks.detect { |h| h.url == configured }] if !configured.nil?
     default_hooks
   end
 

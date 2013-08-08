@@ -17,7 +17,7 @@
 #++
 require "gitorious/app"
 
-class WebHooksController < ApplicationController
+class ServicesController < ApplicationController
   renders_in_site_specific_context
   layout "ui3"
   before_filter :login_required
@@ -54,7 +54,7 @@ class WebHooksController < ApplicationController
   def destroy
     hook = repository.web_hooks.find(params[:id])
     hook.destroy
-    redirect_to(project_repository_web_hooks_path(repository.project, repository))
+    redirect_to(project_repository_services_path(repository.project, repository))
   end
 
   private

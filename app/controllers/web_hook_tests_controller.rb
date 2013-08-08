@@ -36,7 +36,7 @@ class WebHookTestsController < ApplicationController
   private
   def redirect_back(hook)
     repo = hook.repository
-    redirect_to(project_repository_web_hooks_path(repo.project, repo))
+    redirect_to(project_repository_services_path(repo.project, repo))
   end
 
   def repository
