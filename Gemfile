@@ -42,6 +42,8 @@ group :test do
   gem "rcov", :platforms => :ruby_18
   gem "simplecov", :platforms => [:ruby_19, :ruby_20]
   gem "simplecov-rcov", :platforms => [:ruby_19, :ruby_20]
+  gem "guard-minitest"
+  gem "zeus", "0.13.4.pre2"
 end
 
 group :postgres do

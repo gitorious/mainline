@@ -19,7 +19,7 @@
 
 require "test_helper"
 
-class RoutingTest < ActionController::IntegrationTest
+class RoutingIntegrationTest < ActionController::IntegrationTest
   should "redirect /users/user to /~user" do
     get "/users/zmalltalker"
     assert_redirected_to "/~zmalltalker"
