@@ -35,12 +35,10 @@
           <tr>
             <td><%= hook.url %></td>
             <td>
-              <span class="gts-pos"><%= hook.successful_request_count %></span>/<span class="gts-neg"><%= hook.failed_request_count %></span>
+              <%= hook.runs %>
             </td>
             <td>
-              <%=raw "<strong class=\"gts-pos\">#{hook.last_response}</strong>" if hook.last_response =~ /^2\d\d/ %>
-              <%=raw "<strong class=\"gts-neg\">#{hook.last_response}</strong>" if hook.last_response =~ /^[45]\d\d/ %>
-              <%= hook.last_response if hook.last_response !~ /^[245]\d\d/ %>
+              <%= hook.last_response %>
             </td>
             <td>
               <a href="<%= user_path(hook.user) %>"><%= hook.user.fullname %></a>
