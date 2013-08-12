@@ -55,7 +55,6 @@ class Repository < ActiveRecord::Base
                 :class_name => "MergeRequest", :order => "id desc", :dependent => :destroy
   has_many    :cloners, :dependent => :destroy
   has_many    :events, :as => :target, :dependent => :destroy
-  has_many :web_hooks, :dependent => :destroy
 
   after_destroy :post_repo_deletion_message
 
@@ -622,6 +621,18 @@ class Repository < ActiveRecord::Base
     else
       candidate
     end
+  end
+
+
+  def services
+    _services.map(&:decorated)
+  end
+
+  # the relation is only needed for dependent => :destroy
+  has_many    :_services, :dependent => :destroy
+
+  def web_hooks
+    services.select{ |s| s.service_type == Service::WebHook::TYPE }
   end
 
   # Runs git-gc on this repository, and updates the last_gc_at attribute

@@ -21,10 +21,10 @@ class WebHookTestsControllerTest < ActionController::TestCase
   def setup
     @repository = repositories(:johans)
     @project = @repository.project
-    @web_hook = @repository.web_hooks.create!({
-        :user => users(:johan),
-        :url => "http://somewhere.com"
-      })
+    @web_hook = Service::WebHook.create!(
+      :repository => @repository,
+      :user => users(:johan),
+      :url => "http://somewhere.com")
   end
 
   context "create" do

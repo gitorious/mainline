@@ -32,7 +32,7 @@ class ServicesController < ApplicationController
     render(:index, :locals => {
         :repository => RepositoryPresenter.new(repository),
         :web_hooks => repository.web_hooks,
-        :web_hook => WebHook.new(:repository => repository)
+        :web_hook => Service::WebHook.build(:repository => repository)
       })
   end
 
@@ -52,7 +52,7 @@ class ServicesController < ApplicationController
   end
 
   def destroy
-    hook = repository.web_hooks.find(params[:id])
+    hook = Service.for_repository(repository).find(params[:id])
     hook.destroy
     redirect_to(project_repository_services_path(repository.project, repository))
   end

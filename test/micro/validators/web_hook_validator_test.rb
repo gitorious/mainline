@@ -20,7 +20,7 @@ require "validators/web_hook_validator"
 
 class WebHookValidatorTest < MiniTest::Spec
   it "validates presence of user and url" do
-    result = WebHookValidator.call(WebHook.new)
+    result = WebHookValidator.call(Service::WebHook.build)
 
     refute result.valid?
     assert result.errors[:user]
@@ -28,7 +28,7 @@ class WebHookValidatorTest < MiniTest::Spec
   end
 
   it "requires repository for regular users" do
-    result = WebHookValidator.call(WebHook.new(:user => User.new))
+    result = WebHookValidator.call(Service::WebHook.build(:user => User.new))
 
     refute result.valid?
     assert result.errors[:repository]
@@ -36,7 +36,7 @@ class WebHookValidatorTest < MiniTest::Spec
 
   it "does not require repository for site admins" do
     Gitorious::App.stubs(:site_admin?).returns(true)
-    result = WebHookValidator.call(WebHook.new(:user => User.new, :url => "http://somewhere.com"))
+    result = WebHookValidator.call(Service::WebHook.build(:user => User.new, :url => "http://somewhere.com"))
 
     assert result.valid?
   end
@@ -50,6 +50,6 @@ class WebHookValidatorTest < MiniTest::Spec
   end
 
   def web_hook(url)
-    WebHook.new(:user => User.new, :repository => Repository.new, :url => url)
+    Service::WebHook.build(:user => User.new, :repository => Repository.new, :url => url)
   end
 end

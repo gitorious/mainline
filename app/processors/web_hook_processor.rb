@@ -80,7 +80,7 @@ class WebHookProcessor
 
   private
   def default_hooks
-    [WebHook.global_hooks, repository.web_hooks].flatten
+    [Service.global_hooks, repository.web_hooks].flatten
   end
 
   def hooks(configured)

@@ -20,7 +20,7 @@ class WebHookTestsController < ApplicationController
   before_filter :login_required
 
   def create
-    hook = repository.web_hooks.find(params[:web_hook_id])
+    hook = Service::WebHook.find_for_repository(repository, params[:web_hook_id])
     outcome = TestWebHook.new(Gitorious::App, hook, current_user).execute
     pre_condition_failed(outcome)
     outcome.failure do |validation|

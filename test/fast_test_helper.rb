@@ -220,8 +220,16 @@ if !defined?(Rails)
     CLONE_REPOSITORY = 3
   end
 
-  class WebHook < TestHelper::Model
-    attr_accessor :url, :user, :repository
+  class Service < TestHelper::Model
+    attr_accessor :user, :repository
+
+    class WebHook < TestHelper::Model
+      attr_accessor :url, :user, :repository
+
+      def self.build(params = {})
+        new(params)
+      end
+    end
   end
 end
 

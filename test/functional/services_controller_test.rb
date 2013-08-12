@@ -23,12 +23,17 @@ class ServicesControllerTest < ActionController::TestCase
     @project = @repository.project
   end
 
+  def create_web_hook(params)
+    Service::WebHook.create!(params.merge(:repository => @repository))
+  end
+
   should_render_in_site_specific_context
 
   context "index" do
     should "render web hooks and form" do
       login_as(:johan)
-      @repository.web_hooks.create!(:url => "http://somewhere.com", :user => users(:johan))
+
+      create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
 
       get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
 
@@ -37,7 +42,7 @@ class ServicesControllerTest < ActionController::TestCase
 
     should "only be available to repository admin" do
       login_as(:moe)
-      @repository.web_hooks.create!(:url => "http://somewhere.com", :user => users(:johan))
+      create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
 
       get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
 
@@ -48,7 +53,7 @@ class ServicesControllerTest < ActionController::TestCase
   context "create" do
     should "create web hook for user" do
       login_as(:johan)
-      @repository.web_hooks.create!(:url => "http://somewhere.com", :user => users(:johan))
+      create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
 
       post :create, :project_id => @project.to_param, :repository_id => @repository.to_param, :web_hook => {
         :url => "http://elsewhere.com"
@@ -60,7 +65,7 @@ class ServicesControllerTest < ActionController::TestCase
 
     should "render form and errors if unsuccessful" do
       login_as(:johan)
-      @repository.web_hooks.create!(:url => "http://somewhere.com", :user => users(:johan))
+      create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
 
       post :create, :project_id => @project.to_param, :repository_id => @repository.to_param, :web_hook => {
         :url => "http:/meh"
@@ -72,7 +77,7 @@ class ServicesControllerTest < ActionController::TestCase
 
     should "only be available to repository admin" do
       login_as(:moe)
-      @repository.web_hooks.create!(:url => "http://somewhere.com", :user => users(:johan))
+      create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
 
       post :create, :project_id => @project.to_param, :repository_id => @repository.to_param, :web_hook => {
         :url => "http://elsewhere.com"
@@ -84,7 +89,7 @@ class ServicesControllerTest < ActionController::TestCase
 
   context "delete" do
     setup do
-      @repository.web_hooks.create!(:url => "http://somewhere.com", :user => users(:johan))
+      create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
     end
 
     should "remove web hook" do
@@ -93,7 +98,7 @@ class ServicesControllerTest < ActionController::TestCase
       delete :destroy, :project_id => @project.to_param, :repository_id => @repository.to_param, :id => @repository.web_hooks.first.id
 
       assert_response :redirect
-      assert_equal 0, @repository.web_hooks.count
+      assert_equal 0, @repository.reload.web_hooks.count
     end
 
     should "only be available to repository admin" do

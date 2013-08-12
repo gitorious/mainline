@@ -20,23 +20,23 @@
 
 require "test_helper"
 
-class WebHookTest < ActiveSupport::TestCase
+class ServiceTest < ActiveSupport::TestCase
   should belong_to(:repository)
 
   context "Global hooks" do
     should "find hooks not associated to a repository" do
-      WebHook.new(:url => "http://foo.com", :user => users(:johan)).save!
-      assert_equal 1, WebHook.global_hooks.size
+      Service::WebHook.create!(:url => "http://foo.com", :user => users(:johan))
+      assert_equal 1, Service.global_hooks.size
     end
 
     should "not find hooks associated to a repository" do
-      WebHook.new(:url => "http://foo.com", :user => users(:johan), :repository => repositories(:johans)).save!
-      assert_equal 0, WebHook.global_hooks.size
+      Service::WebHook.create!(:url => "http://foo.com", :user => users(:johan), :repository => repositories(:johans)).save!
+      assert_equal 0, Service.global_hooks.size
     end
 
     should "be global" do
-      assert WebHook.new(:url => "http://foo.com").global?
-      assert !WebHook.new(:url => "http://foo.com", :repository => repositories(:johans)).global?
+      assert Service::WebHook.build(:url => "http://foo.com").global?
+      assert !Service::WebHook.build(:url => "http://foo.com", :repository => repositories(:johans)).global?
     end
   end
 
@@ -44,7 +44,7 @@ class WebHookTest < ActiveSupport::TestCase
     setup {
       @repository = repositories(:johans)
       @user = users(:johan)
-      @hook = @repository.web_hooks.create :url => "http://gitorious.org/web-hooks"
+      @hook = Service::WebHook.create!(repository: @repository, :url => "http://gitorious.org/web-hooks")
     }
 
     should "increment a counter of invalid responses when an error occurs" do
