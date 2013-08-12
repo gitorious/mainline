@@ -19,7 +19,6 @@ require "test_helper"
 
 class WebHookTestsControllerTest < ActionController::TestCase
   def setup
-    pending("TODO: rewrite after finishing service refactor")
     @repository = repositories(:johans)
     @project = @repository.project
     @web_hook = create_web_hook(
@@ -37,7 +36,7 @@ class WebHookTestsControllerTest < ActionController::TestCase
       post(:create, {
           :project_id => @project.to_param,
           :repository_id => @repository.to_param,
-          :web_hook_id => @web_hook.to_param
+          :service_id => @web_hook.to_param
         })
 
       assert_response :redirect
@@ -52,7 +51,7 @@ class WebHookTestsControllerTest < ActionController::TestCase
       post(:create, {
           :project_id => @project.to_param,
           :repository_id => @repository.to_param,
-          :web_hook_id => @web_hook.to_param
+          :service_id => @web_hook.to_param
         })
 
       assert_response :redirect

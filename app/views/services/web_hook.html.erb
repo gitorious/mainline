@@ -44,10 +44,10 @@
               <a href="<%= user_path(hook.user) %>"><%= hook.user.fullname %></a>
             </td>
             <td class="gts-cell-small">
-              <a href="<%= project_repository_service_path(repository.project, repository, hook) %>" data-method="delete"><i class="icon icon-remove"></i> Remove</a>
+              <a href="<%= project_repository_service_path(repository.project, repository, hook.id) %>" data-method="delete"><i class="icon icon-remove"></i> Remove</a>
             </td>
             <td class="gts-cell-small">
-              <a href="<%= project_repository_service_tests_path(repository.project, repository, hook) %>" data-method="post"><i class="icon icon-play-circle"></i> Test</a>
+              <a href="<%= project_repository_service_tests_path(repository.project, repository, hook.id) %>" data-method="post"><i class="icon icon-play-circle"></i> Test</a>
             </td>
           </tr>
         <% end %>

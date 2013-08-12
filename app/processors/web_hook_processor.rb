@@ -20,13 +20,17 @@
 class WebHookProcessor
   include Gitorious::Messaging::Consumer
   consumes "/queue/GitoriousPostReceiveWebHook"
-  attr_accessor :repository, :user
+  attr_accessor :repository, :user, :http_client
+
+  def initialize(http_client = HttpClient.new(logger))
+    @http_client = http_client
+  end
 
   def on_message(message)
     begin
       self.user = User.find_by_login!(message["user"])
       self.repository = Repository.find(message["repository_id"])
-      notify_web_hooks(message["payload"], hooks(message["web_hook"]))
+      notify_web_hooks(message["payload"], hooks(message["web_hook_id"]))
     rescue ActiveRecord::RecordNotFound => e
       logger.error(e.message)
     end
@@ -36,7 +40,7 @@ class WebHookProcessor
     hooks.each do |hook|
       begin
         Timeout.timeout(10) do
-          result = post_payload(hook, payload)
+          result = hook.params.notify(http_client, payload)
           if successful_response?(result)
             hook.successful_connection("#{result.code} #{result.message}")
           else
@@ -63,33 +67,15 @@ class WebHookProcessor
     end
   end
 
-  require "net/https"
-
-  def post_payload(hook, payload)
-    url = hook.params.url
-    log_message("POST #{url}\n#{payload.to_json}")
-    url = URI.parse(url)
-    request = Net::HTTP::Post.new(url.path)
-    request.set_form_data({"payload" => payload.to_json})
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = url.scheme == "https"
-    response = http.start { |http|
-      http.request(request)
-    }
-    response
-  end
-
   private
+
   def default_hooks
     [Service.global_hooks, repository.services].flatten
   end
 
-  def hooks(configured)
-    return [repository.services.detect { |h| h.params.url == configured }] if !configured.nil?
+  def hooks(web_hook_id)
+    return [repository.services.find(web_hook_id)] if web_hook_id
     default_hooks
   end
 
-  def log_message(message)
-    logger.info("#{Time.now.to_s(:short)} #{message}")
-  end
 end

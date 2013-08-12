@@ -22,7 +22,8 @@ require "test_helper"
 class WebHookProcessorTest < ActiveSupport::TestCase
 
   def setup
-    @processor = WebHookProcessor.new
+    @http_client = mock
+    @processor = WebHookProcessor.new(@http_client)
     @repository = repositories(:johans)
     @repository.stubs(:full_repository_path).returns(push_test_repo_path)
     @processor.repository = @repository
@@ -83,51 +84,27 @@ class WebHookProcessorTest < ActiveSupport::TestCase
       add_hook_url(@repository, "http://foo.com/")
       add_hook_url(@repository, "http://bar.com/")
       Service.expects(:global_hooks).returns(build_web_hook(:url => "http://baz.com/"))
-      @processor.expects(:post_payload).times(3).returns(successful_response)
+      @http_client.expects(:post_form).times(3).returns(successful_response)
       @processor.notify_web_hooks(@payload)
     end
 
     should "post the payload only to named web hook" do
       add_hook_url(@repository, "http://foo.com/")
-      add_hook_url(@repository, "http://bar.com/")
-      @processor.expects(:post_payload).times(1).returns(successful_response)
+      bar_hook = add_hook_url(@repository, "http://bar.com/")
+      @http_client.expects(:post_form).times(1).returns(successful_response)
 
       @processor.consume({
           :user => @user.login,
           :repository_id => @repository.id,
           :payload => @payload,
-          :web_hook => "http://bar.com/"
+          :web_hook_id => bar_hook.id
         }.to_json)
-    end
-
-    should "do a HTTP POST to the hook url" do
-      @url = "http://foo.bar/"
-      hook = build_web_hook(:url => @url)
-      uri = URI.parse(@url)
-
-      socket = mock
-      socket.expects(:use_ssl=).once.with(false)
-      socket.expects(:start).returns(successful_response)
-      Net::HTTP.expects(:new).returns(socket)
-      @processor.post_payload(hook, @payload)
-    end
-
-    should "do a HTTPS POST to the hook url" do
-      @url = "https://foo.bar/"
-      hook = build_web_hook(:url => @url)
-      uri = URI.parse(@url)
-
-      socket = mock
-      socket.expects(:use_ssl=).once.with(true)
-      socket.expects(:start).returns(successful_response)
-      Net::HTTP.expects(:new).returns(socket)
-      @processor.post_payload(hook, @payload)
     end
 
     should "update the hook with the response string" do
       @url = "http://example.com/hook"
       add_hook_url(@repository, @url)
-      @processor.expects(:post_payload).returns(successful_response)
+      @http_client.expects(:post_form).returns(successful_response)
       @processor.notify_web_hooks(@payload)
       assert_equal "200 OK", last_hook_response(@repository)
     end
@@ -139,19 +116,19 @@ class WebHookProcessorTest < ActiveSupport::TestCase
     }
 
     should "handle timeouts" do
-      @processor.expects(:post_payload).raises(Timeout::Error, "Connection timed out")
+      @http_client.expects(:post_form).raises(Timeout::Error, "Connection timed out")
       @processor.notify_web_hooks(@payload)
       assert_equal "Connection timed out", last_hook_response(@repository)
     end
 
     should "handle connection refused" do
-      @processor.expects(:post_payload).raises(Errno::ECONNREFUSED, "Connection refused")
+      @http_client.expects(:post_form).raises(Errno::ECONNREFUSED, "Connection refused")
       @processor.notify_web_hooks(@payload)
       assert_equal "Connection refused", last_hook_response(@repository)
     end
 
     should "handle socket errors" do
-      @processor.expects(:post_payload).raises(SocketError)
+      @http_client.expects(:post_form).raises(SocketError)
       @processor.notify_web_hooks(@payload)
       assert_equal "Socket error", last_hook_response(@repository)
     end

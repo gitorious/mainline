@@ -45,6 +45,7 @@ group :test do
   gem "guard-minitest"
   gem "guard-ctags-bundler"
   gem "zeus", "0.13.4.pre2"
+  gem "webmock"
 end
 
 group :postgres do

@@ -41,7 +41,7 @@ module Gitorious
           :repository_id => @repository.id,
           :payload => payload
         }.merge(hook.nil? ? {} : {
-            :web_hook => hook.url
+            :web_hook_id => hook.id
           }))
     end
 

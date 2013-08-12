@@ -8,6 +8,10 @@ class ServiceStatsPresenter
     @service.user
   end
 
+  def id
+    @service.id
+  end
+
   def runs
     span("gts-pos", @service.successful_request_count) + "/" + span("gts-neg", @service.failed_request_count)
   end

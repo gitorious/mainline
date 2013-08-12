@@ -50,23 +50,10 @@ class Service < ActiveRecord::Base
     @params ||= create_params
   end
 
-  class WebHook
-    TYPE = "web_hook"
-
-    def self.service_type
-      TYPE
-    end
-
-    def self.multiple?
-      true
-    end
-
+  class ServiceAdapter
     extend ActiveModel::Naming
     include ActiveModel::Conversion
     include ActiveModel::Validations
-
-    validates_presence_of :url
-    validate :valid_url_format
 
     attr_accessor :data
 
@@ -74,8 +61,29 @@ class Service < ActiveRecord::Base
       @data = data.presence || {}
     end
 
+    def self.service_type
+      name.split(':').last.underscore
+    end
+  end
+
+  class WebHook < ServiceAdapter
+    def self.multiple?
+      true
+    end
+
+    validates_presence_of :url
+    validate :valid_url_format
+
     def url
       data[:url]
+    end
+
+    def notify(http_client, payload)
+      http_client.post_form(url, :payload => payload.to_json)
+    end
+
+    def to_s
+      url
     end
 
     private
