@@ -30,3 +30,8 @@ guard :minitest, zeus: true, include: %w(. app app/presenters lib test),
   watch(%r{^app/models/(.*)\.rb})      { |m| "test/unit/#{m[1]}_test.rb" }
   watch(%r{^app/use_cases/(.*)\.rb})      { |m| "test/unit/use_cases/#{m[1]}_test.rb" }
 end
+
+guard 'ctags-bundler', :src_path => ["app", "lib", "test"] do
+  watch(/^(app|lib|test)\/.*\.rb$/)
+  watch('Gemfile.lock')
+end

@@ -112,6 +112,8 @@ GEM
       lumberjack (>= 1.0.2)
       pry (>= 0.9.10)
       thor (>= 0.14.6)
+    guard-ctags-bundler (0.2.0)
+      guard (>= 1.1)
     guard-minitest (1.0.1)
       guard (>= 1.8)
       minitest (>= 2.1)
@@ -317,6 +319,7 @@ DEPENDENCIES
   foreman (~> 0.41)
   geoip (= 0.8.9)
   gitorious_openid_auth (~> 1.1)
+  guard-ctags-bundler
   guard-minitest
   highline
   httparty (~> 0.9)
