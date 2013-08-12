@@ -46,7 +46,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
   end
 
   def add_hook_url(repository, url)
-    Service::WebHook.build(:repository => repository, :user => users(:johan), :url => url).save!
+    create_web_hook(:repository => repository, :user => users(:johan), :url => url)
   end
 
   context "Extracting the message" do
@@ -75,14 +75,14 @@ class WebHookProcessorTest < ActiveSupport::TestCase
   end
 
   def last_hook_response(repository)
-    repository.web_hooks.first.reload.last_response
+    repository.services.first.reload.last_response
   end
 
   context "Notifying web hooks" do
     should "post the payload once for each hook" do
       add_hook_url(@repository, "http://foo.com/")
       add_hook_url(@repository, "http://bar.com/")
-      Service.expects(:global_hooks).returns(Service::WebHook.build(:url => "http://baz.com/"))
+      Service.expects(:global_hooks).returns(build_web_hook(:url => "http://baz.com/"))
       @processor.expects(:post_payload).times(3).returns(successful_response)
       @processor.notify_web_hooks(@payload)
     end
@@ -102,7 +102,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
 
     should "do a HTTP POST to the hook url" do
       @url = "http://foo.bar/"
-      hook = Service::WebHook.build(:url => @url)
+      hook = build_web_hook(:url => @url)
       uri = URI.parse(@url)
 
       socket = mock
@@ -114,7 +114,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
 
     should "do a HTTPS POST to the hook url" do
       @url = "https://foo.bar/"
-      hook = Service::WebHook.build(:url => @url)
+      hook = build_web_hook(:url => @url)
       uri = URI.parse(@url)
 
       socket = mock

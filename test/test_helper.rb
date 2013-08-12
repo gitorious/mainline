@@ -3,6 +3,7 @@ require File.join(File.dirname(__FILE__), "../config/environment")
 require "rails/test_help"
 require "ssl_requirement_macros"
 require "messaging_test_helper"
+require "data_builder_helpers"
 require "shoulda"
 require "mocha"
 require "fast_test_helper"
@@ -10,6 +11,7 @@ require "fast_test_helper"
 class ActiveSupport::TestCase
   include AuthenticatedTestHelper
   include Gitorious::Authorization
+  include DataBuilderHelpers
 
   # The only drawback to using transactional fixtures is when you actually
   # need to test transactions.  Since your test is bracketed by a transaction,

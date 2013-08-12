@@ -47,27 +47,11 @@ class Service < ActiveRecord::Base
   end
 
   def params
-    decorated
+    @params ||= create_params
   end
 
-  def decorated
-    Service.types.each do |type|
-      return type.new(self) if type::TYPE == service_type
-    end
-
-    raise "Unknown service_type: #{service_type}"
-  end
-
-  def self.for_repository(repository)
-    where(:repository_id => repository.id)
-  end
-
-  class WebHook < SimpleDelegator
+  class WebHook
     TYPE = "web_hook"
-
-    extend ActiveModel::Naming
-    include ActiveModel::Conversion
-    include ActiveModel::Validations
 
     def self.service_type
       TYPE
@@ -77,33 +61,42 @@ class Service < ActiveRecord::Base
       true
     end
 
+    extend ActiveModel::Naming
+    include ActiveModel::Conversion
+    include ActiveModel::Validations
+
+    validates_presence_of :url
+    validate :valid_url_format
+
+    attr_accessor :data
+
+    def initialize(data)
+      @data = data.presence || {}
+    end
+
     def url
-      return if data.blank?
       data[:url]
     end
 
-    def url=(value)
-      self.data = {} if data.blank?
-      data[:url] = value
+    private
+
+    def valid_url_format
+      begin
+        uri = URI.parse(url)
+        errors.add(:url, "must be a valid URL") and return if uri.host.blank?
+      rescue URI::InvalidURIError
+        errors.add(:url, "must be a valid URL")
+      end
+    end
+  end
+
+  private
+
+  def create_params
+    Service.types.each do |type|
+      return type.new(data) if type::service_type == service_type
     end
 
-    def self.build(params = {})
-      service = Service.new(params.slice(:user, :repository))
-      web_hook = new(service)
-      web_hook.url = params[:url]
-      web_hook.service_type = TYPE
-      web_hook
-    end
-
-    def self.create!(params)
-      hook = build(params)
-      hook.save!
-      hook
-    end
-
-    def self.find_for_repository(repository, id)
-      service = Service.for_repository(repository).where(:service_type => TYPE, :id => id).first!
-      service.decorated
-    end
+    raise "Unknown service_type: #{service_type}"
   end
 end

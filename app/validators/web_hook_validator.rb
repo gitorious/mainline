@@ -18,16 +18,11 @@
 require "use_case"
 
 WebHookValidator = UseCase::Validator.define do
-  validates_presence_of :user, :url
+  validates_presence_of :user
   validates_presence_of :repository, :unless => Proc.new { |hook| hook.user && Gitorious::App.site_admin?(hook.user) }, :message => "is required for non admins"
-  validate :valid_url_format
+  validate :params_valid
 
-  def valid_url_format
-    begin
-      uri = URI.parse(url)
-      errors.add(:url, "must be a valid URL") and return if uri.host.blank?
-    rescue URI::InvalidURIError
-      errors.add(:url, "must be a valid URL")
-    end
+  def params_valid
+    errors.add(:params, "must be valid") unless params.valid?
   end
 end

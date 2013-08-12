@@ -40,18 +40,17 @@ class ServicesController < ApplicationController
     outcome = uc.execute(:url => params[:service][:url])
     pre_condition_failed(outcome)
 
-    outcome.failure do |validation|
-      render(:create, :locals => {
-          :repository => RepositoryPresenter.new(repository),
-          :web_hook => validation
-        })
+    outcome.failure do |invalid_service|
+      render(:index, :locals => {
+             :repository => RepositoryPresenter.new(repository),
+             :services => ServicesPresenter.new(repository, view_context, invalid_service)})
     end
 
     outcome.success { |hook| redirect_to(:action => :index) }
   end
 
   def destroy
-    hook = Service.for_repository(repository).find(params[:id])
+    hook = repository.services.find(params[:id])
     hook.destroy
     redirect_to(project_repository_services_path(repository.project, repository))
   end

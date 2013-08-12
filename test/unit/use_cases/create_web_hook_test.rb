@@ -28,7 +28,7 @@ class CreateWebHookTest < ActiveSupport::TestCase
     assert outcome.success?, outcome.failure.inspect
     assert_equal Repository.first, outcome.result.repository
     assert_equal user, outcome.result.user
-    assert_equal "http://example.com", outcome.result.url
+    assert_equal "http://example.com", outcome.result.params.url
   end
 
   should "fail if user is not a repository admin" do

@@ -54,7 +54,7 @@ class PushProcessor
     logger.create_meta_event if logger.create_meta_event?
     repository.register_push
     repository.save
-    trigger_hooks unless (Service.global_hooks.length + repository.web_hooks.length) == 0
+    trigger_hooks unless (Service.global_hooks.length + repository.services.length) == 0
   end
 
   def trigger_hooks

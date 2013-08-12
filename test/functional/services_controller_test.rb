@@ -23,8 +23,8 @@ class ServicesControllerTest < ActionController::TestCase
     @project = @repository.project
   end
 
-  def create_web_hook(params)
-    Service::WebHook.create!(params.merge(:repository => @repository))
+  def web_hook(params)
+    create_web_hook(params.merge(:repository => @repository))
   end
 
   should_render_in_site_specific_context
@@ -33,7 +33,7 @@ class ServicesControllerTest < ActionController::TestCase
     should "render web hooks and form" do
       login_as(:johan)
 
-      create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
+      web_hook(:url => "http://somewhere.com", :user => users(:johan))
 
       get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
 
@@ -42,7 +42,7 @@ class ServicesControllerTest < ActionController::TestCase
 
     should "only be available to repository admin" do
       login_as(:moe)
-      create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
+      web_hook(:url => "http://somewhere.com", :user => users(:johan))
 
       get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
 
@@ -53,18 +53,18 @@ class ServicesControllerTest < ActionController::TestCase
   context "create" do
     should "create web hook for user" do
       login_as(:johan)
-      create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
+      web_hook(:url => "http://somewhere.com", :user => users(:johan))
 
       post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
         :service_type => 'web_hook', :service => { :url => "http://elsewhere.com" }
 
       assert_redirected_to :action => :index
-      assert_equal "http://elsewhere.com", @repository.web_hooks.last.url
+      assert_equal "http://elsewhere.com", @repository.services.last.params.url
     end
 
     should "render form and errors if unsuccessful" do
       login_as(:johan)
-      create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
+      web_hook(:url => "http://somewhere.com", :user => users(:johan))
 
       post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
         :service_type => 'web_hook', :service => { :url => "http:/meh" }
@@ -75,7 +75,7 @@ class ServicesControllerTest < ActionController::TestCase
 
     should "only be available to repository admin" do
       login_as(:moe)
-      create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
+      web_hook(:url => "http://somewhere.com", :user => users(:johan))
 
       post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
         :service_type => 'web_hook', :service => { :url => "http://elsewhere.com" }
@@ -86,24 +86,24 @@ class ServicesControllerTest < ActionController::TestCase
 
   context "delete" do
     setup do
-      create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
+      web_hook(:url => "http://somewhere.com", :user => users(:johan))
     end
 
     should "remove web hook" do
       login_as(:johan)
 
-      delete :destroy, :project_id => @project.to_param, :repository_id => @repository.to_param, :id => @repository.web_hooks.first.id
+      delete :destroy, :project_id => @project.to_param, :repository_id => @repository.to_param, :id => @repository.services.first.id
 
       assert_response :redirect
-      assert_equal 0, @repository.reload.web_hooks.count
+      assert_equal 0, @repository.reload.services.count
     end
 
     should "only be available to repository admin" do
       login_as(:moe)
 
-      delete :destroy, :project_id => @project.to_param, :repository_id => @repository.to_param, :id => @repository.web_hooks.first.id
+      delete :destroy, :project_id => @project.to_param, :repository_id => @repository.to_param, :id => @repository.services.first.id
 
-      assert_equal 1, @repository.web_hooks.count
+      assert_equal 1, @repository.services.count
     end
   end
 end

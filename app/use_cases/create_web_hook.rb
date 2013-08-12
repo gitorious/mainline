@@ -38,10 +38,8 @@ class CreateWebHookCommand
   end
 
   def build(params)
-    Service::WebHook.build(
-      :url => params.url,
-      :repository => params.site_wide ? nil : repository,
-      :user => user)
+    Service.new(:user => user, :repository => params.site_wide ? nil : repository,
+                :service_type => Service::WebHook.service_type, :data => { :url => params.url })
   end
 
   private

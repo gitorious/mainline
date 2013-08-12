@@ -66,8 +66,9 @@ class WebHookProcessor
   require "net/https"
 
   def post_payload(hook, payload)
-    log_message("POST #{hook.url}\n#{payload.to_json}")
-    url = URI.parse(hook.url)
+    url = hook.params.url
+    log_message("POST #{url}\n#{payload.to_json}")
+    url = URI.parse(url)
     request = Net::HTTP::Post.new(url.path)
     request.set_form_data({"payload" => payload.to_json})
     http = Net::HTTP.new(url.host, url.port)
@@ -80,11 +81,11 @@ class WebHookProcessor
 
   private
   def default_hooks
-    [Service.global_hooks, repository.web_hooks].flatten
+    [Service.global_hooks, repository.services].flatten
   end
 
   def hooks(configured)
-    return [repository.web_hooks.detect { |h| h.url == configured }] if !configured.nil?
+    return [repository.services.detect { |h| h.params.url == configured }] if !configured.nil?
     default_hooks
   end
 

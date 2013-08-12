@@ -36,11 +36,11 @@ class WebHookGeneratorTest < ActiveSupport::TestCase
     should "publish a message once only" do
       @generator.stubs(:payload).returns({})
       moe = users(:moe)
-      hook = Service::WebHook.create!(
+      hook = create_web_hook(
         :repository => @repository,
         :user => moe,
         :url  => "http://sandbox.org/web-hooks")
-      second_hook = Service::WebHook.create!(
+      second_hook = create_web_hook(
         :repository => @repository,
         :user => moe,
         :url  => "http://sandbox.org/ciabot.rb")

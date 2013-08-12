@@ -39,7 +39,7 @@ class RepositoryTest < ActiveSupport::TestCase
     clear_message_queue
   end
 
-  should have_many(:_services).dependent(:destroy)
+  should have_many(:services).dependent(:destroy)
 
   context "git urls" do
     setup do

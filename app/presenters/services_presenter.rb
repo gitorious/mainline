@@ -1,10 +1,11 @@
 class ServicesPresenter
-  attr_reader :repository, :services, :view_context
+  attr_reader :repository, :services, :view_context, :invalid_service
 
-  def initialize(repository, view_context)
+  def initialize(repository, view_context, invalid_service = nil)
     @repository = repository
-    @services = repository._services
+    @services = repository.services
     @view_context = view_context
+    @invalid_service = invalid_service
   end
 
   def render
@@ -13,8 +14,10 @@ class ServicesPresenter
     end.join.html_safe
   end
 
+  private
+
   def render_for_type(type)
-    service = Service.new(:service_type => type.service_type)
+    service = service_for_form(type)
     locals = { :repository => repository, :params => service.params, :service_url => service_url(type) }
 
     if type.multiple?
@@ -24,11 +27,37 @@ class ServicesPresenter
     view_context.partial("/services/#{type.service_type}", locals)
   end
 
+  def service_for_form(type)
+    return invalid_service if invalid_service_is_of?(type)
+    Service.new(:service_type => type.service_type)
+  end
+
   def service_url(type)
     view_context.create_project_repository_services_path(repository.project, repository, type.service_type)
   end
 
   def services_of_type(type)
-    services.select{|s| s.service_type == type.service_type }.map(&:decorated)
+    services.select{|s| s.service_type == type.service_type }.map {|s| StatsPresenter.new(s) }
+  end
+
+  def invalid_service_is_of?(type)
+    invalid_service && invalid_service.service_type == type.service_type
+  end
+end
+
+require 'forwardable'
+
+class StatsPresenter
+  extend Forwardable
+
+  def_delegators :@service, :last_response, :successful_request_count, :failed_request_count, :user
+
+  def initialize(service)
+    @service = service
+    @params = service.params
+  end
+
+  def method_missing(name, *args, &block)
+    @params.send(name, *args, &block)
   end
 end

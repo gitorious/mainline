@@ -25,18 +25,18 @@ class ServiceTest < ActiveSupport::TestCase
 
   context "Global hooks" do
     should "find hooks not associated to a repository" do
-      Service::WebHook.create!(:url => "http://foo.com", :user => users(:johan))
+      create_web_hook(:url => "http://foo.com", :user => users(:johan))
       assert_equal 1, Service.global_hooks.size
     end
 
     should "not find hooks associated to a repository" do
-      Service::WebHook.create!(:url => "http://foo.com", :user => users(:johan), :repository => repositories(:johans)).save!
+      create_web_hook(:url => "http://foo.com", :user => users(:johan), :repository => repositories(:johans))
       assert_equal 0, Service.global_hooks.size
     end
 
     should "be global" do
-      assert Service::WebHook.build(:url => "http://foo.com").global?
-      assert !Service::WebHook.build(:url => "http://foo.com", :repository => repositories(:johans)).global?
+      assert build_web_hook(:url => "http://foo.com").global?
+      assert !build_web_hook(:url => "http://foo.com", :repository => repositories(:johans)).global?
     end
   end
 
@@ -44,7 +44,7 @@ class ServiceTest < ActiveSupport::TestCase
     setup {
       @repository = repositories(:johans)
       @user = users(:johan)
-      @hook = Service::WebHook.create!(repository: @repository, :url => "http://gitorious.org/web-hooks")
+      @hook = create_web_hook(:repository => @repository, :url => "http://gitorious.org/web-hooks")
     }
 
     should "increment a counter of invalid responses when an error occurs" do

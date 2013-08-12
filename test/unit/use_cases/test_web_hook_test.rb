@@ -48,7 +48,7 @@ class TestWebHookTest < ActiveSupport::TestCase
   def setup
     @user = users(:johan)
     @repository = @user.repositories.first
-    @hook = Service::WebHook.create!({
+    @hook = create_web_hook({
         :repository => @repository,
         :url => "http://somewhere",
         :user => @user
