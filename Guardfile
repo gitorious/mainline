@@ -28,4 +28,5 @@ guard :minitest, zeus: true, include: %w(. app app/presenters lib test),
   watch(%r{^test/.+_test\.rb})
   watch(%r{^app/controllers/(.*)\.rb}) { |m| "test/functional/#{m[1]}_test.rb" }
   watch(%r{^app/models/(.*)\.rb})      { |m| "test/unit/#{m[1]}_test.rb" }
+  watch(%r{^app/use_cases/(.*)\.rb})      { |m| "test/unit/use_cases/#{m[1]}_test.rb" }
 end
