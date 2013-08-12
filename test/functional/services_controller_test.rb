@@ -55,9 +55,8 @@ class ServicesControllerTest < ActionController::TestCase
       login_as(:johan)
       create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
 
-      post :create, :project_id => @project.to_param, :repository_id => @repository.to_param, :web_hook => {
-        :url => "http://elsewhere.com"
-      }
+      post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
+        :service_type => 'web_hook', :service => { :url => "http://elsewhere.com" }
 
       assert_redirected_to :action => :index
       assert_equal "http://elsewhere.com", @repository.web_hooks.last.url
@@ -67,9 +66,8 @@ class ServicesControllerTest < ActionController::TestCase
       login_as(:johan)
       create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
 
-      post :create, :project_id => @project.to_param, :repository_id => @repository.to_param, :web_hook => {
-        :url => "http:/meh"
-      }
+      post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
+        :service_type => 'web_hook', :service => { :url => "http:/meh" }
 
       assert_response :success
       assert_match "value=\"http:/meh", @response.body
@@ -79,9 +77,8 @@ class ServicesControllerTest < ActionController::TestCase
       login_as(:moe)
       create_web_hook(:url => "http://somewhere.com", :user => users(:johan))
 
-      post :create, :project_id => @project.to_param, :repository_id => @repository.to_param, :web_hook => {
-        :url => "http://elsewhere.com"
-      }
+      post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
+        :service_type => 'web_hook', :service => { :url => "http://elsewhere.com" }
 
       assert_redirected_to project_repository_path(@project, @repository)
     end

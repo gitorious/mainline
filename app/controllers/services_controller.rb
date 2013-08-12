@@ -31,14 +31,13 @@ class ServicesController < ApplicationController
   def index
     render(:index, :locals => {
         :repository => RepositoryPresenter.new(repository),
-        :web_hooks => repository.web_hooks,
-        :web_hook => Service::WebHook.build(:repository => repository)
+        :services => ServicesPresenter.new(repository, view_context)
       })
   end
 
   def create
     uc = CreateWebHook.new(Gitorious::App, repository, current_user)
-    outcome = uc.execute(:url => params[:web_hook][:url])
+    outcome = uc.execute(:url => params[:service][:url])
     pre_condition_failed(outcome)
 
     outcome.failure do |validation|

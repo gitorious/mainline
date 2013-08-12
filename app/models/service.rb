@@ -46,6 +46,10 @@ class Service < ActiveRecord::Base
     repository.nil?
   end
 
+  def params
+    decorated
+  end
+
   def decorated
     Service.types.each do |type|
       return type.new(self) if type::TYPE == service_type
@@ -65,6 +69,14 @@ class Service < ActiveRecord::Base
     include ActiveModel::Conversion
     include ActiveModel::Validations
 
+    def self.service_type
+      TYPE
+    end
+
+    def self.multiple?
+      true
+    end
+
     def url
       return if data.blank?
       data[:url]
@@ -75,7 +87,7 @@ class Service < ActiveRecord::Base
       data[:url] = value
     end
 
-    def self.build(params)
+    def self.build(params = {})
       service = Service.new(params.slice(:user, :repository))
       web_hook = new(service)
       web_hook.url = params[:url]
