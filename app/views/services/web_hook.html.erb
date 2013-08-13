@@ -19,41 +19,7 @@
 
 <div>
   <h2>Web hooks</h2>
-  <% if services.count > 0 %>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <td class="gts-cell-big">URL</td>
-          <td class="gts-cell-small">Runs</td>
-          <td class="gts-cell-small">Last response</td>
-          <td class="gts-cell-small">Created by</td>
-          <td colspan="2"></td>
-        </tr>
-      </thead>
-      <tbody>
-        <% services.each do |hook| %>
-          <tr>
-            <td><%= hook.url %></td>
-            <td>
-              <%= hook.runs %>
-            </td>
-            <td>
-              <%= hook.last_response %>
-            </td>
-            <td>
-              <a href="<%= user_path(hook.user) %>"><%= hook.user.fullname %></a>
-            </td>
-            <td class="gts-cell-small">
-              <a href="<%= project_repository_service_path(repository.project, repository, hook.id) %>" data-method="delete"><i class="icon icon-remove"></i> Remove</a>
-            </td>
-            <td class="gts-cell-small">
-              <a href="<%= project_repository_service_tests_path(repository.project, repository, hook.id) %>" data-method="post"><i class="icon icon-play-circle"></i> Test</a>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  <% end %>
+  <%= partial "services/stats", :services => services, :repository => repository %>
   <%= error_messages(params) -%>
   <%= form_for(params, :as => :service, :url => service_url, :method => "post", :html => { :class => "form-horizontal" }) do |f| -%>
     <fieldset>

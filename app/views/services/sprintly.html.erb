@@ -19,24 +19,7 @@
 
 <div>
   <h2>Sprint.ly</h2>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <td class="gts-cell-small">Runs</td>
-        <td class="gts-cell-small">Last response</td>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>
-          <span class="gts-pos">10</span>/<span class="gts-neg">12</span>
-        </td>
-        <td>
-          <strong class="gts-pos">200 OK</strong>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <%= partial "services/stats", :services => services, :repository => repository %>
 
   <form action="" class="form-horizontal">
     <fieldset>

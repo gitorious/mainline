@@ -23,7 +23,7 @@ class Service < ActiveRecord::Base
   serialize :data
 
   def self.types
-    [WebHook]
+    [WebHook, Sprintly]
   end
 
   def self.global_hooks
@@ -63,6 +63,12 @@ class Service < ActiveRecord::Base
 
     def self.service_type
       name.split(':').last.underscore
+    end
+  end
+
+  class Sprintly < ServiceAdapter
+    def self.multiple?
+      false
     end
   end
 

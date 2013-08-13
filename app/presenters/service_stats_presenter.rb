@@ -8,8 +8,12 @@ class ServiceStatsPresenter
     @service.user
   end
 
-  def id
-    @service.id
+  def to_param
+    @service.to_param
+  end
+
+  def to_s
+    @params.to_s
   end
 
   def runs

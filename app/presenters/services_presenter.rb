@@ -20,9 +20,7 @@ class ServicesPresenter
     service = service_for_form(type)
     locals = { :repository => repository, :params => service.params, :service_url => service_url(type) }
 
-    if type.multiple?
-      locals.merge!(:services => services_of_type(type))
-    end
+    locals.merge!(:services => services_of_type(type))
 
     view_context.partial("/services/#{type.service_type}", locals)
   end

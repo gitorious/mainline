@@ -1,0 +1,53 @@
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<% if services.count > 0 %>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <td class="gts-cell-big">Name</td>
+        <td class="gts-cell-small">Runs</td>
+        <td class="gts-cell-small">Last response</td>
+        <td class="gts-cell-small">Created by</td>
+        <td colspan="2"></td>
+      </tr>
+    </thead>
+    <tbody>
+      <% services.each do |service| %>
+        <tr>
+          <td><%= service %></td>
+          <td>
+            <%= service.runs %>
+          </td>
+          <td>
+            <%= service.last_response %>
+          </td>
+          <td>
+            <a href="<%= user_path(service.user) %>"><%= service.user.fullname %></a>
+          </td>
+          <td class="gts-cell-small">
+            <a href="<%= project_repository_service_path(repository.project, repository, service) %>" data-method="delete"><i class="icon icon-remove"></i> Remove</a>
+          </td>
+          <td class="gts-cell-small">
+            <a href="<%= project_repository_service_tests_path(repository.project, repository, service) %>" data-method="post"><i class="icon icon-play-circle"></i> Test</a>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
