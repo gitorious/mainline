@@ -42,14 +42,6 @@ class ServiceValidatorTest < MiniTest::Spec
     assert result.valid?
   end
 
-  it "requires valid http (or https) URL" do
-    refute ServiceValidator.call(web_hook("http")).valid?
-    refute ServiceValidator.call(web_hook("http://")).valid?
-    assert ServiceValidator.call(web_hook("https://somewhere.com")).valid?
-    assert ServiceValidator.call(web_hook("http://somewhere.com")).valid?
-    assert ServiceValidator.call(web_hook("http://somewhere.com:897/somehere")).valid?
-  end
-
   def web_hook(url)
     build_web_hook(:user => User.new, :repository => Repository.new, :url => url)
   end
