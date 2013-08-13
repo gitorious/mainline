@@ -31,19 +31,19 @@ class ServicesController < ApplicationController
   def index
     render(:index, :locals => {
         :repository => RepositoryPresenter.new(repository),
-        :service_types => ServiceTypePresenter.for_services(repository.services)
+        :service_types => ServiceTypePresenter.for_repository(repository)
       })
   end
 
   def create
     uc = CreateService.new(Gitorious::App, repository, current_user)
-    outcome = uc.execute(:url => params[:service][:url])
+    outcome = uc.execute(:service_type => params[:service_type], :data => params[:service])
     pre_condition_failed(outcome)
 
     outcome.failure do |invalid_service|
       render(:index, :locals => {
              :repository => RepositoryPresenter.new(repository),
-             :service_types => ServiceTypePresenter.for_services(repository.services, invalid_service)})
+             :service_types => ServiceTypePresenter.for_repository(repository, invalid_service)})
     end
 
     outcome.success { |hook| redirect_to(:action => :index) }

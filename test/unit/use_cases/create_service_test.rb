@@ -21,9 +21,9 @@ require "create_service"
 class CreateServiceTest < ActiveSupport::TestCase
   should "create web hook" do
     user = users(:johan)
-    outcome = CreateService.new(Gitorious::App, Repository.first, user).execute({
-        :url => "http://example.com"
-      })
+    outcome = CreateService.new(Gitorious::App, Repository.first, user).execute(
+      :data => { :url => "http://example.com" },
+      :service_type => Service::WebHook.service_type)
 
     assert outcome.success?, outcome.failure.inspect
     assert_equal Repository.first, outcome.result.repository
@@ -33,9 +33,9 @@ class CreateServiceTest < ActiveSupport::TestCase
 
   should "fail if user is not a repository admin" do
     user = users(:johan)
-    outcome = CreateService.new(Gitorious::App, repositories(:moes), user).execute({
-        :url => "http://example.com"
-      })
+    outcome = CreateService.new(Gitorious::App, repositories(:moes), user).execute(
+      :data => { :url => "http://example.com" },
+      :service_type => Service::WebHook.service_type)
 
     refute outcome.success?
     assert outcome.pre_condition_failed?
@@ -43,10 +43,10 @@ class CreateServiceTest < ActiveSupport::TestCase
 
   should "create site-wide web hook" do
     user = users(:johan)
-    outcome = CreateService.new(Gitorious::App, repositories(:johans), user).execute({
-        :url => "http://example.com",
-        :site_wide => true
-      })
+    outcome = CreateService.new(Gitorious::App, repositories(:johans), user).execute(
+      :data => { :url => "http://example.com" },
+      :service_type => Service::WebHook.service_type,
+      :site_wide => true)
 
     assert outcome.success?
     assert outcome.result.global?

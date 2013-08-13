@@ -17,9 +17,13 @@
 #++
 
 class Service::Sprintly < Service::Adapter
-  def self.multiple?
-    false
-  end
+  label "Sprint.ly"
+
+  attributes :email, :product_id, :api_key
+
+  validates :email, :presence => true
+  validates :product_id, :presence => true
+  validates :api_key, :presence => true
 
   def name
     "Sprint.ly"

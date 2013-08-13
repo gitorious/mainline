@@ -21,8 +21,15 @@ require "validators/service_validator"
 
 class ServiceParams
   include Virtus
-  attribute :url, String
+  attribute :data, Hash
+  attribute :service_type, String
   attribute :site_wide, Boolean
+end
+
+class NullRepository
+  def self.services
+    Service.scoped
+  end
 end
 
 class CreateServiceCommand
@@ -38,8 +45,10 @@ class CreateServiceCommand
   end
 
   def build(params)
-    Service.new(:user => user, :repository => params.site_wide ? nil : repository,
-                :service_type => Service::WebHook.service_type, :data => { :url => params.url })
+    service = Service.for_type_and_repository(params.service_type, params.site_wide ? NullRepository : repository)
+    service.user = user
+    service.data = params.data
+    service
   end
 
   private

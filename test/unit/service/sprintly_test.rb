@@ -16,31 +16,29 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class Service::WebHook < Service::Adapter
-  multiple
-  label "Web Hooks"
+require 'test_helper'
 
-  attributes :url
-  validates_presence_of :url
-  validate :valid_url_format
-
-  def notify(http_client, payload)
-    http_client.post_form(url, :payload => payload.to_json)
+class Service::SprintlyTest < ActiveSupport::TestCase
+  def sprintly(attrs = {})
+    Service::Sprintly.new({
+      :email => "foo@bar.com",
+      :product_id => 123,
+      :api_key => "324asfd"
+    }.merge(attrs))
   end
 
-  def name
-    url
+  should "validate presence of email" do
+    assert sprintly(:email => "foo@bar.com").valid?
+    refute sprintly(:email => "").valid?
   end
 
-  private
+  should "validate presence of product_id" do
+    assert sprintly(:product_id => 13).valid?
+    refute sprintly(:product_id => nil).valid?
+  end
 
-  def valid_url_format
-    begin
-      uri = URI.parse(url)
-      errors.add(:url, "must be a valid URL") and return if uri.host.blank?
-    rescue URI::InvalidURIError
-      errors.add(:url, "must be a valid URL")
-    end
+  should "validate presence of api_key" do
+    assert sprintly(:api_key => "3abc12").valid?
+    refute sprintly(:api_key => "").valid?
   end
 end
-

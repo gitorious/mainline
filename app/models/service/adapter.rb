@@ -30,4 +30,25 @@ class Service::Adapter
   def self.service_type
     name.split(':').last.underscore
   end
+
+  def self.multiple?
+    @multiple
+  end
+
+  def self.multiple
+    @multiple = true
+  end
+
+  def self.label(value = nil)
+    @label = value if value
+    @label
+  end
+
+  def self.attributes(*names)
+    names.each do |name|
+      define_method(name) do
+        data[name.to_sym] || data[name.to_s]
+      end
+    end
+  end
 end

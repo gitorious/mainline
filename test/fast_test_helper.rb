@@ -123,7 +123,7 @@ if !defined?(Rails)
     attr_accessor :project, :user, :name, :hooks, :description, :browse_url,
       :clones, :owner, :user_id, :owner_id, :project_id, :parent_id,
       :merge_requests_enabled, :kind, :parent, :content_memberships,
-      :full_repository_path, :gitdir, :open_merge_requests
+      :full_repository_path, :gitdir, :open_merge_requests, :services
 
     def committerships
       return @cs if @cs

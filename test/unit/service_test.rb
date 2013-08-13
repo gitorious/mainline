@@ -60,4 +60,39 @@ class ServiceTest < ActiveSupport::TestCase
       assert_equal "200 OK", @hook.last_response
     end
   end
+
+  context "Building a service for a form" do
+    class Singular < Service::Adapter
+      def self.multiple?; false; end
+    end
+
+    class Multiple < Service::Adapter
+      def self.multiple?; true; end
+    end
+
+    setup do
+      Service.stubs(:types => [Singular, Multiple])
+    end
+
+    context "when a service of a given type exists for the repository" do
+      should "return a new record for multiple types" do
+        Service.create!(:service_type => 'multiple', :repository => repositories(:johans), :user => users(:johan))
+        assert Service.for_type_and_repository('multiple', repositories(:johans)).new_record?
+      end
+
+      should "return an existing record for singular types" do
+        service = Service.create!(:service_type => 'singular',
+                                  :repository => repositories(:johans), :user => users(:johan))
+        assert_equal service, Service.for_type_and_repository('singular', repositories(:johans))
+      end
+    end
+
+    should "return a new record if a service of a given type does not exist" do
+      Service.create!(:service_type => 'singular', :repository => repositories(:moes), :user => users(:johan))
+      Service.create!(:service_type => 'multiple', :repository => repositories(:moes), :user => users(:johan))
+
+      assert Service.for_type_and_repository('singular', repositories(:johans)).new_record?
+      assert Service.for_type_and_repository('multiple', repositories(:johans)).new_record?
+    end
+  end
 end

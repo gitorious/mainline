@@ -17,20 +17,26 @@
 #++
 
 class ServiceTypePresenter
-  def self.for_services(services, invalid_service = nil)
-    Service.types.map{ |type| new(type, services, invalid_service) }
+  def self.for_repository(repository, invalid_service = nil)
+    services = repository.services
+    Service.types.map{ |type| new(type, services, repository, invalid_service) }
   end
 
-  attr_reader :type, :invalid_service
+  attr_reader :type, :invalid_service, :repository
 
-  def initialize(type, services, invalid_service = nil)
+  def initialize(type, services, repository, invalid_service = nil)
     @type = type
     @services = services
+    @repository = repository
     @invalid_service = invalid_service
   end
 
   def service_type
     type.service_type
+  end
+
+  def label
+    type.label
   end
 
   def template_path
@@ -49,7 +55,7 @@ class ServiceTypePresenter
 
   def service_for_form
     return invalid_service if has_invalid_service?
-    Service.new(:service_type => service_type)
+    Service.for_type_and_repository(service_type, repository)
   end
 
   def has_invalid_service?

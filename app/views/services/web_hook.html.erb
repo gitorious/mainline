@@ -17,26 +17,16 @@
   #++
   %>
 
-<div>
-  <h2>Web hooks</h2>
-  <%= partial "services/stats", :services => services, :repository => repository %>
-  <%= error_messages(params) -%>
-  <%= form_for(params, :as => :service, :url => service_url, :method => "post", :html => { :class => "form-horizontal" }) do |f| -%>
-    <fieldset>
-      <div class="control-group">
-        <%= f.label :url, :class => "control-label" -%>
-        <div class="controls">
-          <%= f.text_field :url, :class => "input-xlarge" -%>
-          <p class="help-block">
-          A payload will be <code>POST</code>-ed to this URL everytime someone
-          pushes to this repository.
-          </p>
-        </div>
-      </div>
-      <div class="form-actions">
-        <button class="btn btn-primary" type="submit">Add hook</button>
-      </div>
-    </fieldset>
-  <% end %>
+<div class="control-group">
+  <%= f.label :url, :class => "control-label" -%>
+  <div class="controls">
+    <%= f.text_field :url, :class => "input-xlarge" -%>
+    <p class="help-block">
+    A payload will be <code>POST</code>-ed to this URL everytime someone
+    pushes to this repository.
+    </p>
+  </div>
 </div>
-
+<div class="form-actions">
+  <button class="btn btn-primary" type="submit">Add hook</button>
+</div>

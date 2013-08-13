@@ -25,16 +25,21 @@ class ServiceTypePresenterTest < Minitest::Spec
     def self.service_type
       "foo"
     end
+
+    def self.label
+      "type label"
+    end
   end
 
   class SecondFakeService
   end
 
-  describe ".for_services" do
+  describe ".for_repository" do
     it "returns a presenter for every type" do
       Service.stubs(:types => [FakeServiceType, SecondFakeService])
+      repository =  Repository.new(:services => [:the_services])
 
-      presenters = ServiceTypePresenter.for_services([:the_services], :the_invalid_service)
+      presenters = ServiceTypePresenter.for_repository(repository, :the_invalid_service)
 
       assert_equal [FakeServiceType, SecondFakeService], presenters.map(&:type)
       assert_equal [:the_invalid_service, :the_invalid_service], presenters.map(&:invalid_service)
@@ -42,49 +47,56 @@ class ServiceTypePresenterTest < Minitest::Spec
   end
 
   it "returns template path" do
-    presenter = ServiceTypePresenter.new(FakeServiceType, [])
+    presenter = ServiceTypePresenter.new(FakeServiceType, [], Repository.new)
     assert_equal "/services/foo", presenter.template_path
   end
 
   it "returns service type" do
-    presenter = ServiceTypePresenter.new(FakeServiceType, [])
+    presenter = ServiceTypePresenter.new(FakeServiceType, [], Repository.new)
     assert_equal "foo", presenter.service_type
+  end
+
+  it "returns service type" do
+    presenter = ServiceTypePresenter.new(FakeServiceType, [], Repository.new)
+    assert_equal "type label", presenter.label
   end
 
   it 'returns services of given type wrapped in a StatsPresenter' do
     same_type = Service.new(:service_type => "foo")
     other_type = Service.new(:service_type => "bar")
     services = [same_type, other_type]
-    presenter = ServiceTypePresenter.new(FakeServiceType, services)
+    presenter = ServiceTypePresenter.new(FakeServiceType, services, Repository.new)
 
     assert_equal [same_type], presenter.services.map(&:service)
     assert presenter.services.first.is_a?(ServiceStatsPresenter)
   end
 
   describe "#params_for_form" do
+    let(:new_service) { Service.new(:params => :new_service_params) }
+    let(:repository) { Repository.new }
+
     before do
-      new_service = stub(:params => :new_service_params)
-      Service.stubs(:new).with(:service_type => FakeServiceType.service_type).returns(new_service)
+      Service.stubs(:for_type_and_repository).with(FakeServiceType.service_type, repository).returns(new_service)
     end
 
     it "returns invalid_service when it is of given type" do
-      invalid_service = stub(:service_type => FakeServiceType.service_type,
+      invalid_service = Service.new(:service_type => FakeServiceType.service_type,
                              :params => :service_params)
-      presenter = ServiceTypePresenter.new(FakeServiceType, [], invalid_service)
+      presenter = ServiceTypePresenter.new(FakeServiceType, [], repository, invalid_service)
 
       assert_equal :service_params, presenter.params_for_form
     end
 
     it "does not return invalid service when it is of different type" do
-      invalid_service = stub(:service_type => 'bar',
+      invalid_service = Service.new(:service_type => 'bar',
                              :params => :service_params)
-      presenter = ServiceTypePresenter.new(FakeServiceType, [], invalid_service)
+      presenter = ServiceTypePresenter.new(FakeServiceType, [], repository, invalid_service)
 
       assert_equal :new_service_params, presenter.params_for_form
     end
 
     it "returns a new service" do
-      presenter = ServiceTypePresenter.new(FakeServiceType, [])
+      presenter = ServiceTypePresenter.new(FakeServiceType, [], repository)
 
       assert_equal :new_service_params, presenter.params_for_form
     end

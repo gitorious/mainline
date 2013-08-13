@@ -30,6 +30,12 @@ class Service < ActiveRecord::Base
     find(:all, :conditions => {:repository_id => nil})
   end
 
+  def self.for_type_and_repository(service_type, repository)
+    adapter = service_type_adapter(service_type)
+    scope = repository.services.where(:service_type => service_type)
+    adapter.multiple? ? scope.new : scope.first_or_initialize
+  end
+
   def successful_connection(message)
     self.successful_request_count += 1
     self.last_response = message
@@ -52,11 +58,15 @@ class Service < ActiveRecord::Base
 
   private
 
-  def create_params
+  def self.service_type_adapter(service_type)
     Service.types.each do |type|
-      return type.new(data) if type::service_type == service_type
+      return type if type::service_type == service_type
     end
 
     raise "Unknown service_type: #{service_type}"
+  end
+
+  def create_params
+    Service.service_type_adapter(service_type).new(data)
   end
 end
