@@ -16,12 +16,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "test_helper"
-require "create_web_hook"
+require "create_service"
 
-class CreateWebHookTest < ActiveSupport::TestCase
+class CreateServiceTest < ActiveSupport::TestCase
   should "create web hook" do
     user = users(:johan)
-    outcome = CreateWebHook.new(Gitorious::App, Repository.first, user).execute({
+    outcome = CreateService.new(Gitorious::App, Repository.first, user).execute({
         :url => "http://example.com"
       })
 
@@ -33,7 +33,7 @@ class CreateWebHookTest < ActiveSupport::TestCase
 
   should "fail if user is not a repository admin" do
     user = users(:johan)
-    outcome = CreateWebHook.new(Gitorious::App, repositories(:moes), user).execute({
+    outcome = CreateService.new(Gitorious::App, repositories(:moes), user).execute({
         :url => "http://example.com"
       })
 
@@ -43,7 +43,7 @@ class CreateWebHookTest < ActiveSupport::TestCase
 
   should "create site-wide web hook" do
     user = users(:johan)
-    outcome = CreateWebHook.new(Gitorious::App, repositories(:johans), user).execute({
+    outcome = CreateService.new(Gitorious::App, repositories(:johans), user).execute({
         :url => "http://example.com",
         :site_wide => true
       })

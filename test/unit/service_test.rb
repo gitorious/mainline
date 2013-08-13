@@ -23,15 +23,15 @@ require "test_helper"
 class ServiceTest < ActiveSupport::TestCase
   should belong_to(:repository)
 
-  context "Global hooks" do
-    should "find hooks not associated to a repository" do
+  context "Global services" do
+    should "find services not associated to a repository" do
       create_web_hook(:url => "http://foo.com", :user => users(:johan))
-      assert_equal 1, Service.global_hooks.size
+      assert_equal 1, Service.global_services.size
     end
 
-    should "not find hooks associated to a repository" do
+    should "not find services associated to a repository" do
       create_web_hook(:url => "http://foo.com", :user => users(:johan), :repository => repositories(:johans))
-      assert_equal 0, Service.global_hooks.size
+      assert_equal 0, Service.global_services.size
     end
 
     should "be global" do

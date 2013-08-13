@@ -213,7 +213,7 @@ class PushProcessorTest < ActiveSupport::TestCase
     end
   end
 
-  context "Triggering the web hooks" do
+  context "Triggering the service notifications" do
     setup do
       @repository = repositories(:johans)
       Repository.any_instance.stubs(:full_repository_path).returns(push_test_repo_path)
@@ -229,21 +229,21 @@ class PushProcessorTest < ActiveSupport::TestCase
       PushEventLogger.any_instance.stubs(:calculate_commit_count).returns(2)
     end
 
-    should "not trigger web hooks unless repository has some" do
-      @processor.expects(:trigger_hooks).never
+    should "not trigger service notifications unless repository has some" do
+      @processor.expects(:trigger_services).never
       @processor.process_push
     end
 
-    should "trigger web hooks if repository has hooks" do
+    should "trigger service notifications if repository has services" do
       create_web_hook(:repository => @repository, :user => users(:moe), :url => "http://g.org/hooks")
-      @processor.expects(:trigger_hooks)
+      @processor.expects(:trigger_services)
       @processor.process_push
     end
 
-    should "create a generator and generate for repos with hooks" do
+    should "create a generator and generate for repos with services" do
       create_web_hook(:repository => @repository, :user => users(:moe), :url => "http://g.org/hooks")
-      Gitorious::WebHookGenerator.any_instance.expects(:generate!).once
-      @processor.trigger_hooks
+      Gitorious::ServicePayloadGenerator.any_instance.expects(:generate!).once
+      @processor.trigger_services
     end
   end
 end

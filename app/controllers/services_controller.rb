@@ -36,7 +36,7 @@ class ServicesController < ApplicationController
   end
 
   def create
-    uc = CreateWebHook.new(Gitorious::App, repository, current_user)
+    uc = CreateService.new(Gitorious::App, repository, current_user)
     outcome = uc.execute(:url => params[:service][:url])
     pre_condition_failed(outcome)
 

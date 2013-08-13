@@ -17,7 +17,7 @@
 #++
 require "test_helper"
 
-class WebHookTestsControllerTest < ActionController::TestCase
+class ServiceTestsControllerTest < ActionController::TestCase
   def setup
     @repository = repositories(:johans)
     @project = @repository.project
@@ -31,7 +31,7 @@ class WebHookTestsControllerTest < ActionController::TestCase
     should "test web hook for user" do
       login_as(:johan)
       outcome = UseCase::SuccessfulOutcome.new(@web_hook)
-      TestWebHook.any_instance.stubs(:execute).returns(outcome)
+      TestService.any_instance.stubs(:execute).returns(outcome)
 
       post(:create, {
           :project_id => @project.to_param,
@@ -45,8 +45,8 @@ class WebHookTestsControllerTest < ActionController::TestCase
 
     should "render form and errors if unsuccessful" do
       login_as(:johan)
-      outcome = UseCase::FailedOutcome.new(WebHookTestValidator.call(Repository.new))
-      TestWebHook.any_instance.stubs(:execute).returns(outcome)
+      outcome = UseCase::FailedOutcome.new(ServiceTestValidator.call(Repository.new))
+      TestService.any_instance.stubs(:execute).returns(outcome)
 
       post(:create, {
           :project_id => @project.to_param,

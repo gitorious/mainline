@@ -18,7 +18,7 @@
 require "use_case"
 require "rugged"
 
-WebHookTestValidator = UseCase::Validator.define do
+ServiceTestValidator = UseCase::Validator.define do
   validate :has_commit
 
   def has_commit

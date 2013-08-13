@@ -17,11 +17,11 @@
 #++
 require "test_helper"
 
-class WebHookValidatorTest < MiniTest::Spec
+class ServiceValidatorTest < MiniTest::Spec
   include DataBuilderHelpers
 
   it "validates presence of user and url" do
-    result = WebHookValidator.call(build_web_hook)
+    result = ServiceValidator.call(build_web_hook)
 
     refute result.valid?
     assert result.errors[:user]
@@ -29,7 +29,7 @@ class WebHookValidatorTest < MiniTest::Spec
   end
 
   it "requires repository for regular users" do
-    result = WebHookValidator.call(build_web_hook(:user => User.new))
+    result = ServiceValidator.call(build_web_hook(:user => User.new))
 
     refute result.valid?
     assert result.errors[:repository]
@@ -37,17 +37,17 @@ class WebHookValidatorTest < MiniTest::Spec
 
   it "does not require repository for site admins" do
     Gitorious::App.stubs(:site_admin?).returns(true)
-    result = WebHookValidator.call(build_web_hook(:user => User.new, :url => "http://somewhere.com"))
+    result = ServiceValidator.call(build_web_hook(:user => User.new, :url => "http://somewhere.com"))
 
     assert result.valid?
   end
 
   it "requires valid http (or https) URL" do
-    refute WebHookValidator.call(web_hook("http")).valid?
-    refute WebHookValidator.call(web_hook("http://")).valid?
-    assert WebHookValidator.call(web_hook("https://somewhere.com")).valid?
-    assert WebHookValidator.call(web_hook("http://somewhere.com")).valid?
-    assert WebHookValidator.call(web_hook("http://somewhere.com:897/somehere")).valid?
+    refute ServiceValidator.call(web_hook("http")).valid?
+    refute ServiceValidator.call(web_hook("http://")).valid?
+    assert ServiceValidator.call(web_hook("https://somewhere.com")).valid?
+    assert ServiceValidator.call(web_hook("http://somewhere.com")).valid?
+    assert ServiceValidator.call(web_hook("http://somewhere.com:897/somehere")).valid?
   end
 
   def web_hook(url)

@@ -17,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class WebHookProcessor
+class ServiceProcessor
   include Gitorious::Messaging::Consumer
   consumes "/queue/GitoriousPostReceiveWebHook"
   attr_accessor :repository, :user, :http_client
@@ -30,30 +30,30 @@ class WebHookProcessor
     begin
       self.user = User.find_by_login!(message["user"])
       self.repository = Repository.find(message["repository_id"])
-      notify_web_hooks(message["payload"], hooks(message["web_hook_id"]))
+      notify_services(message["payload"], services(message["service_id"]))
     rescue ActiveRecord::RecordNotFound => e
       logger.error(e.message)
     end
   end
 
-  def notify_web_hooks(payload, hooks = default_hooks)
-    hooks.each do |hook|
+  def notify_services(payload, services = default_services)
+    services.each do |service|
       begin
         Timeout.timeout(10) do
-          result = hook.params.notify(http_client, payload)
+          result = service.params.notify(http_client, payload)
           if successful_response?(result)
-            hook.successful_connection("#{result.code} #{result.message}")
+            service.successful_connection("#{result.code} #{result.message}")
           else
-            hook.failed_connection("#{result.code} #{result.message}")
-            logger.error("Webhook failed:\n#{result.body}")
+            service.failed_connection("#{result.code} #{result.message}")
+            logger.error("Service failed:\n#{result.body}")
           end
         end
       rescue Errno::ECONNREFUSED
-        hook.failed_connection("Connection refused")
+        service.failed_connection("Connection refused")
       rescue Timeout::Error
-        hook.failed_connection("Connection timed out")
+        service.failed_connection("Connection timed out")
       rescue SocketError
-        hook.failed_connection("Socket error")
+        service.failed_connection("Socket error")
       end
     end
   end
@@ -69,13 +69,13 @@ class WebHookProcessor
 
   private
 
-  def default_hooks
-    [Service.global_hooks, repository.services].flatten
+  def default_services
+    [Service.global_services, repository.services].flatten
   end
 
-  def hooks(web_hook_id)
-    return [repository.services.find(web_hook_id)] if web_hook_id
-    default_hooks
+  def services(service_id)
+    return [repository.services.find(service_id)] if service_id
+    default_services
   end
 
 end

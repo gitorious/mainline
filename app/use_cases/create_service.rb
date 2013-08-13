@@ -17,24 +17,24 @@
 #++
 require "use_case"
 require "virtus"
-require "validators/web_hook_validator"
+require "validators/service_validator"
 
-class WebHookParams
+class ServiceParams
   include Virtus
   attribute :url, String
   attribute :site_wide, Boolean
 end
 
-class CreateWebHookCommand
+class CreateServiceCommand
   def initialize(app, repository, user)
     @app = app
     @repository = repository
     @user = user
   end
 
-  def execute(web_hook)
-    web_hook.save!
-    web_hook
+  def execute(service)
+    service.save!
+    service
   end
 
   def build(params)
@@ -46,12 +46,12 @@ class CreateWebHookCommand
   attr_reader :user, :repository
 end
 
-class CreateWebHook
+class CreateService
   include UseCase
 
   def initialize(app, repository, user)
-    input_class(WebHookParams)
+    input_class(ServiceParams)
     add_pre_condition(AdminRequired.new(app, repository, user))
-    step(CreateWebHookCommand.new(app, repository, user), :validator => WebHookValidator)
+    step(CreateServiceCommand.new(app, repository, user), :validator => ServiceValidator)
   end
 end

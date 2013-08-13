@@ -18,7 +18,7 @@
 require "gitorious/messaging"
 
 module Gitorious
-  class WebHookGenerator
+  class ServicePayloadGenerator
     include Gitorious::Messaging::Publisher
 
     def initialize(repository, spec, user)
@@ -35,14 +35,10 @@ module Gitorious
       push_commit_extractor.newest_known_commit.oid
     end
 
-    def generate!(hook = nil)
-      publish_notification({
-          :user => @user.login,
-          :repository_id => @repository.id,
-          :payload => payload
-        }.merge(hook.nil? ? {} : {
-            :web_hook_id => hook.id
-          }))
+    def generate!(service = nil)
+      args = { :user => @user.login, :repository_id => @repository.id, :payload => payload }
+      args.merge!(:service_id => service.id) if service
+      publish_notification(args)
     end
 
     def publish_notification(data)

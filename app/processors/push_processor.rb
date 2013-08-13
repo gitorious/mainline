@@ -18,7 +18,7 @@
 require "push_spec_parser"
 require "push_event_logger"
 require "push_commit_extractor"
-require "gitorious/web_hook_generator"
+require "gitorious/service_payload_generator"
 require "gitorious/wiki/update_event_logger"
 
 class PushProcessor
@@ -54,11 +54,11 @@ class PushProcessor
     logger.create_meta_event if logger.create_meta_event?
     repository.register_push
     repository.save
-    trigger_hooks unless (Service.global_hooks.length + repository.services.length) == 0
+    trigger_services unless (Service.global_services.length + repository.services.length) == 0
   end
 
-  def trigger_hooks
-    generator = Gitorious::WebHookGenerator.new(repository, spec, user)
+  def trigger_services
+    generator = Gitorious::ServicePayloadGenerator.new(repository, spec, user)
     generator.generate!
   end
 

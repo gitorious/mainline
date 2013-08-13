@@ -17,7 +17,7 @@
 #++
 require "test_helper"
 
-class WebHookGeneratorTest < ActiveSupport::TestCase
+class ServicePayloadGeneratorTest < ActiveSupport::TestCase
 
   def setup
     @repository = repositories(:johans)
@@ -29,7 +29,7 @@ class WebHookGeneratorTest < ActiveSupport::TestCase
     @spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/master")
     @user = @repository.user
 
-    @generator = Gitorious::WebHookGenerator.new(@repository, @spec, @user)
+    @generator = Gitorious::ServicePayloadGenerator.new(@repository, @spec, @user)
   end
 
   context "Publishing messages" do

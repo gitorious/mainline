@@ -17,7 +17,7 @@
 #++
 require "use_case"
 
-WebHookValidator = UseCase::Validator.define do
+ServiceValidator = UseCase::Validator.define do
   validates_presence_of :user
   validates_presence_of :repository, :unless => Proc.new { |hook| hook.user && Gitorious::App.site_admin?(hook.user) }, :message => "is required for non admins"
   validate :params_valid

@@ -18,9 +18,9 @@
 require "rugged"
 require "virtus"
 require "push_spec_parser"
-require "gitorious/web_hook_generator"
+require "gitorious/service_payload_generator"
 
-class TestWebHookCommand
+class TestServiceCommand
   def initialize(hook, user)
     @hook = hook
     @repository = hook.repository
@@ -31,7 +31,7 @@ class TestWebHookCommand
     repo = Rugged::Repository.new(repository.full_repository_path)
     parent = repo.lookup(repo.head.target).parent_ids.first
     spec = PushSpecParser.new(parent, repo.head.target, repo.head.name)
-    Gitorious::WebHookGenerator.new(repository, spec, user).generate!(hook)
+    Gitorious::ServicePayloadGenerator.new(repository, spec, user).generate!(hook)
     hook
   end
 
@@ -43,11 +43,11 @@ class TestWebHookCommand
   attr_accessor :repository, :user, :hook
 end
 
-class TestWebHook
+class TestService
   include UseCase
 
   def initialize(app, hook, user)
     add_pre_condition(AdminRequired.new(app, hook.repository, user))
-    step(TestWebHookCommand.new(hook, user), :validator => WebHookTestValidator)
+    step(TestServiceCommand.new(hook, user), :validator => ServiceTestValidator)
   end
 end

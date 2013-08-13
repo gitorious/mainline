@@ -18,9 +18,9 @@
 require "fast_test_helper"
 require "vendor/grit/lib/grit"
 require "push_spec_parser"
-require "gitorious/web_hook_generator"
+require "gitorious/service_payload_generator"
 
-class WebHookGeneratorTest < MiniTest::Spec
+class ServicePayloadGeneratorTest < MiniTest::Spec
   before do
     @repository = Repository.new
     @repository.project = Project.new(:slug => "my-project", :description => "Yes, mine")
@@ -37,7 +37,7 @@ class WebHookGeneratorTest < MiniTest::Spec
     @spec = PushSpecParser.new(@start_sha, @end_sha, "refs/heads/master")
     @user = @repository.owner = User.new(:login => "johan")
 
-    @generator = Gitorious::WebHookGenerator.new(@repository, @spec, @user)
+    @generator = Gitorious::ServicePayloadGenerator.new(@repository, @spec, @user)
   end
 
   describe "Generating payload" do

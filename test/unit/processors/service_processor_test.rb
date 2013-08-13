@@ -19,11 +19,11 @@
 
 require "test_helper"
 
-class WebHookProcessorTest < ActiveSupport::TestCase
+class ServiceProcessorTest < ActiveSupport::TestCase
 
   def setup
     @http_client = mock
-    @processor = WebHookProcessor.new(@http_client)
+    @processor = ServiceProcessor.new(@http_client)
     @repository = repositories(:johans)
     @repository.stubs(:full_repository_path).returns(push_test_repo_path)
     @processor.repository = @repository
@@ -42,7 +42,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
     grit.stubs(:commits_between).with(@first_commit, @last_commit).returns([grit_commit])
     @repository.stubs(:git).returns(grit)
 
-    @generator = Gitorious::WebHookGenerator.new(@repository, @spec, @user)
+    @generator = Gitorious::ServicePayloadGenerator.new(@repository, @spec, @user)
     @payload = @generator.payload.with_indifferent_access
   end
 
@@ -52,7 +52,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
 
   context "Extracting the message" do
     setup do
-      @processor.expects(:notify_web_hooks).with(@payload, [])
+      @processor.expects(:notify_services).with(@payload, [])
       @processor.consume({
           :user => @user.login,
           :repository_id => @repository.id,
@@ -83,9 +83,9 @@ class WebHookProcessorTest < ActiveSupport::TestCase
     should "post the payload once for each hook" do
       add_hook_url(@repository, "http://foo.com/")
       add_hook_url(@repository, "http://bar.com/")
-      Service.expects(:global_hooks).returns(build_web_hook(:url => "http://baz.com/"))
+      Service.expects(:global_services).returns(build_web_hook(:url => "http://baz.com/"))
       @http_client.expects(:post_form).times(3).returns(successful_response)
-      @processor.notify_web_hooks(@payload)
+      @processor.notify_services(@payload)
     end
 
     should "post the payload only to named web hook" do
@@ -97,7 +97,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
           :user => @user.login,
           :repository_id => @repository.id,
           :payload => @payload,
-          :web_hook_id => bar_hook.id
+          :service_id => bar_hook.id
         }.to_json)
     end
 
@@ -105,7 +105,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
       @url = "http://example.com/hook"
       add_hook_url(@repository, @url)
       @http_client.expects(:post_form).returns(successful_response)
-      @processor.notify_web_hooks(@payload)
+      @processor.notify_services(@payload)
       assert_equal "200 OK", last_hook_response(@repository)
     end
   end
@@ -117,26 +117,26 @@ class WebHookProcessorTest < ActiveSupport::TestCase
 
     should "handle timeouts" do
       @http_client.expects(:post_form).raises(Timeout::Error, "Connection timed out")
-      @processor.notify_web_hooks(@payload)
+      @processor.notify_services(@payload)
       assert_equal "Connection timed out", last_hook_response(@repository)
     end
 
     should "handle connection refused" do
       @http_client.expects(:post_form).raises(Errno::ECONNREFUSED, "Connection refused")
-      @processor.notify_web_hooks(@payload)
+      @processor.notify_services(@payload)
       assert_equal "Connection refused", last_hook_response(@repository)
     end
 
     should "handle socket errors" do
       @http_client.expects(:post_form).raises(SocketError)
-      @processor.notify_web_hooks(@payload)
+      @processor.notify_services(@payload)
       assert_equal "Socket error", last_hook_response(@repository)
     end
 
     should "log an error for an unknown repository" do
       assert_nothing_raised {
         @processor.logger.expects(:error)
-        @processor.stubs(:notify_web_hooks)
+        @processor.stubs(:notify_services)
         @processor.consume({:user => @user.login, :repository_id => "invalid repository name"}.to_json)
       }
     end
@@ -144,7 +144,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
     should "log an error for an unknown user" do
       assert_nothing_raised {
         @processor.logger.expects(:error)
-        @processor.stubs(:notify_web_hooks)
+        @processor.stubs(:notify_services)
         @processor.consume({:user => "invalid login", :repository_id => @repository.id}.to_json)
       }
     end

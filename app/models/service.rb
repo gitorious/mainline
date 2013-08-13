@@ -26,7 +26,7 @@ class Service < ActiveRecord::Base
     [WebHook, Sprintly]
   end
 
-  def self.global_hooks
+  def self.global_services
     find(:all, :conditions => {:repository_id => nil})
   end
 
@@ -69,6 +69,10 @@ class Service < ActiveRecord::Base
   class Sprintly < ServiceAdapter
     def self.multiple?
       false
+    end
+
+    def to_s
+      "Sprint.ly Product: #{id}"
     end
   end
 

@@ -34,7 +34,7 @@ module Gitorious::Messaging::ResqueAdapter
       "GitoriousProjectRepositoryCreation" => "ProjectRepositoryCreation",
       "GitoriousTrackingRepositoryCreation" => "TrackingRepositoryCreation",
       "GitoriousRepositoryDeletion" => "RepositoryDeletion",
-      "GitoriousPostReceiveWebHook" => "WebHook",
+      "GitoriousPostReceiveWebHook" => "Service",
       "GitoriousWikiRepositoryCreation" => "WikiRepositoryCreation"
     }
 

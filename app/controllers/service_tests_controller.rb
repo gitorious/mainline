@@ -16,12 +16,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class WebHookTestsController < ApplicationController
+class ServiceTestsController < ApplicationController
   before_filter :login_required
 
   def create
     hook = repository.services.find(params[:service_id])
-    outcome = TestWebHook.new(Gitorious::App, hook, current_user).execute
+    outcome = TestService.new(Gitorious::App, hook, current_user).execute
     pre_condition_failed(outcome)
     outcome.failure do |validation|
       flash[:error] = validation.errors.full_messages.join(", ")

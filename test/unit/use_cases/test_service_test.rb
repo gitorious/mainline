@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "test_helper"
-require "test_web_hook"
+require "test_service"
 
 class FakeHead
   attr_reader :target, :name
@@ -44,7 +44,7 @@ class FakeRepository
   end
 end
 
-class TestWebHookTest < ActiveSupport::TestCase
+class TestServiceTest < ActiveSupport::TestCase
   def setup
     @user = users(:johan)
     @repository = @user.repositories.first
@@ -61,14 +61,14 @@ class TestWebHookTest < ActiveSupport::TestCase
     generator.expects(:generate!)
     spec = Object.new
     PushSpecParser.expects(:new).with("a" * 40, "b" * 40, "refs/heads/master").returns(spec)
-    Gitorious::WebHookGenerator.expects(:new).with(@repository, spec, @user).returns(generator)
-    outcome = TestWebHook.new(Gitorious::App, @hook, @user).execute
+    Gitorious::ServicePayloadGenerator.expects(:new).with(@repository, spec, @user).returns(generator)
+    outcome = TestService.new(Gitorious::App, @hook, @user).execute
 
     assert outcome.success?, outcome.failure.inspect
   end
 
   should "fail if user is not a repository admin" do
-    outcome = TestWebHook.new(Gitorious::App, @hook, users(:moe)).execute
+    outcome = TestService.new(Gitorious::App, @hook, users(:moe)).execute
 
     refute outcome.success?
     assert outcome.pre_condition_failed?

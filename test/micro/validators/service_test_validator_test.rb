@@ -16,21 +16,21 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "fast_test_helper"
-require "validators/web_hook_test_validator"
+require "validators/service_test_validator"
 
-class WebHookTestValidatorTest < MiniTest::Spec
+class ServiceTestValidatorTest < MiniTest::Spec
   it "requires a commit" do
     repository = Object.new
     Rugged::Repository.stubs(:new).returns(repository)
 
     def repository.head; nil; end
-    result = WebHookTestValidator.call(Repository.new)
+    result = ServiceTestValidator.call(Repository.new)
 
     refute result.valid?
     assert result.errors[:repository]
 
     def repository.head; raise Rugged::ReferenceError.new("Oops"); end
-    result = WebHookTestValidator.call(Repository.new)
+    result = ServiceTestValidator.call(Repository.new)
 
     refute result.valid?
     assert result.errors[:repository]
@@ -46,7 +46,7 @@ class WebHookTestValidatorTest < MiniTest::Spec
     end
 
     Rugged::Repository.stubs(:new).returns(repository)
-    result = WebHookTestValidator.call(Repository.new)
+    result = ServiceTestValidator.call(Repository.new)
 
     assert result.valid?
   end
