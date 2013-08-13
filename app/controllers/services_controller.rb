@@ -31,7 +31,7 @@ class ServicesController < ApplicationController
   def index
     render(:index, :locals => {
         :repository => RepositoryPresenter.new(repository),
-        :services => ServicesPresenter.new(repository, view_context)
+        :service_types => ServiceTypePresenter.for_services(repository.services)
       })
   end
 
@@ -43,7 +43,7 @@ class ServicesController < ApplicationController
     outcome.failure do |invalid_service|
       render(:index, :locals => {
              :repository => RepositoryPresenter.new(repository),
-             :services => ServicesPresenter.new(repository, view_context, invalid_service)})
+             :service_types => ServiceTypePresenter.for_services(repository.services, invalid_service)})
     end
 
     outcome.success { |hook| redirect_to(:action => :index) }

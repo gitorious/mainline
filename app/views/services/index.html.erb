@@ -28,7 +28,13 @@
   <div class="row">
     <div class="span8">
       <h1>Services for <a href="<%= project_repository_path(repository.project, repository) %>"><%= repository.slug %></a></h1>
-      <%= services.render %>
+      <% service_types.each do |service_type| %>
+        <%= partial service_type.template_path, 
+          :repository => repository,
+          :params => service_type.params_for_form,
+          :service_url => create_project_repository_services_path(repository.project, repository, service_type.service_type),
+          :services => service_type.services %>
+      <% end %>
     </div>
   </div>
 </div>

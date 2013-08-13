@@ -30,13 +30,9 @@
     <tbody>
       <% services.each do |service| %>
         <tr>
-          <td><%= service %></td>
-          <td>
-            <%= service.runs %>
-          </td>
-          <td>
-            <%= service.last_response %>
-          </td>
+          <td><%= service.name %></td>
+          <td><%= service.runs %></td>
+          <td><%= service.last_response %></td>
           <td>
             <a href="<%= user_path(service.user) %>"><%= service.user.fullname %></a>
           </td>

@@ -221,14 +221,11 @@ if !defined?(Rails)
   end
 
   class Service < TestHelper::Model
-    attr_accessor :user, :repository
+    attr_accessor :user, :repository, :service_type, :params,
+      :successful_request_count, :failed_request_count, :last_response
 
     class WebHook < TestHelper::Model
-      attr_accessor :url, :user, :repository
-
-      def self.build(params = {})
-        new(params)
-      end
+      attr_accessor :url
     end
   end
 end
