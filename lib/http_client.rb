@@ -23,14 +23,32 @@ class HttpClient
     @logger = logger
   end
 
-  def post_form(url, form_data)
-    log_message("POST #{url}\n#{form_data}")
+  def post(url, opts = {})
+    log(url, opts)
     url = URI.parse(url)
+    request = build_request(url, opts)
+    send_request(url, request)
+  end
+
+  private
+
+  def build_request(url, opts)
     request = Net::HTTP::Post.new(url.path)
-    request.set_form_data(form_data)
+    request.set_form_data(opts[:form_data]) if opts[:form_data]
+    request.body = opts[:body] if opts[:body]
+    request['Content-Type'] = opts[:content_type] if opts[:content_type]
+    request.basic_auth opts[:basic_auth][:user], opts[:basic_auth][:password] if opts[:basic_auth]
+    request
+  end
+
+  def send_request(url, request)
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = url.scheme == "https"
     http.start { |http| http.request(request) }
+  end
+
+  def log(url, opts)
+    log_message("POST #{url}\n#{opts[:form_data] || opts[:body]}")
   end
 
   def log_message(message)

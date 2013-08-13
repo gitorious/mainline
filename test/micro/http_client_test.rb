@@ -26,15 +26,15 @@ class HttpClientTest < MiniTest::Spec
     end
   end
 
+  let(:client) { HttpClient.new(FakeLogger) }
+
   it "posts form data using ssl" do
     stub_request(:post, "https://foo.bar").with(
       :body => { :payload => "str" },
       :header => {'Content-Type' => 'application/x-www-form-urlencoded'}
     )
 
-    client = HttpClient.new(FakeLogger)
-
-    client.post_form("https://foo.bar/", :payload => "str")
+    client.post("https://foo.bar/", :form_data => {:payload => "str"})
   end
 
   it "posts form data without ssl" do
@@ -43,8 +43,18 @@ class HttpClientTest < MiniTest::Spec
       :header => {'Content-Type' => 'application/x-www-form-urlencoded'}
     )
 
-    client = HttpClient.new(FakeLogger)
+    client.post("http://foo.bar/", :form_data => {:payload => "str"})
+  end
 
-    client.post_form("http://foo.bar/", :payload => "str")
+  it "posts using basic auth" do
+    stub_request(:post, "https://usr:pwd@foo.bar").with(
+      :body => "str",
+      :header => {'Content-Type' => 'application/json'}
+    )
+
+    client.post("https://foo.bar/",
+               :body => "str",
+               :content_type => "application/json",
+               :basic_auth => { :user => "usr", :password => "pwd"})
   end
 end

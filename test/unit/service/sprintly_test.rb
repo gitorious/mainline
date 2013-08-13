@@ -41,4 +41,16 @@ class Service::SprintlyTest < ActiveSupport::TestCase
     assert sprintly(:api_key => "3abc12").valid?
     refute sprintly(:api_key => "").valid?
   end
+
+  context "#notify" do
+    should "send payload to sprintly" do
+      payload = { "foo" => "bar" }
+      http = mock
+      http.expects(:post).with("https://sprint.ly/integration/github/123/push/",
+                               :body => payload.to_json,
+                               :content_type => 'application/json',
+                               :basic_auth => {:user => "foo@bar.com", :password => "324asfd"})
+      sprintly.notify(http, payload)
+    end
+  end
 end

@@ -84,14 +84,14 @@ class ServiceProcessorTest < ActiveSupport::TestCase
       add_hook_url(@repository, "http://foo.com/")
       add_hook_url(@repository, "http://bar.com/")
       Service.expects(:global_services).returns(build_web_hook(:url => "http://baz.com/"))
-      @http_client.expects(:post_form).times(3).returns(successful_response)
+      @http_client.expects(:post).times(3).returns(successful_response)
       @processor.notify_services(@payload)
     end
 
     should "post the payload only to named web hook" do
       add_hook_url(@repository, "http://foo.com/")
       bar_hook = add_hook_url(@repository, "http://bar.com/")
-      @http_client.expects(:post_form).times(1).returns(successful_response)
+      @http_client.expects(:post).times(1).returns(successful_response)
 
       @processor.consume({
           :user => @user.login,
@@ -104,7 +104,7 @@ class ServiceProcessorTest < ActiveSupport::TestCase
     should "update the hook with the response string" do
       @url = "http://example.com/hook"
       add_hook_url(@repository, @url)
-      @http_client.expects(:post_form).returns(successful_response)
+      @http_client.expects(:post).returns(successful_response)
       @processor.notify_services(@payload)
       assert_equal "200 OK", last_hook_response(@repository)
     end
@@ -116,19 +116,19 @@ class ServiceProcessorTest < ActiveSupport::TestCase
     }
 
     should "handle timeouts" do
-      @http_client.expects(:post_form).raises(Timeout::Error, "Connection timed out")
+      @http_client.expects(:post).raises(Timeout::Error, "Connection timed out")
       @processor.notify_services(@payload)
       assert_equal "Connection timed out", last_hook_response(@repository)
     end
 
     should "handle connection refused" do
-      @http_client.expects(:post_form).raises(Errno::ECONNREFUSED, "Connection refused")
+      @http_client.expects(:post).raises(Errno::ECONNREFUSED, "Connection refused")
       @processor.notify_services(@payload)
       assert_equal "Connection refused", last_hook_response(@repository)
     end
 
     should "handle socket errors" do
-      @http_client.expects(:post_form).raises(SocketError)
+      @http_client.expects(:post).raises(SocketError)
       @processor.notify_services(@payload)
       assert_equal "Socket error", last_hook_response(@repository)
     end

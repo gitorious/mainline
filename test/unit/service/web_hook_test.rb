@@ -39,7 +39,7 @@ class Service::WebHookTest < ActiveSupport::TestCase
     should "send payload to configured url as a form" do
       web_hook = Service::WebHook.new(:url => "http://foo")
       http_client = mock
-      http_client.expects(:post_form).with("http://foo", :payload => '{"foo":123}')
+      http_client.expects(:post).with("http://foo", :form_data => { :payload => '{"foo":123}' })
 
       web_hook.notify(http_client, :foo => 123)
     end

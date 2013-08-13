@@ -25,7 +25,7 @@ class Service::WebHook < Service::Adapter
   validate :valid_url_format
 
   def notify(http_client, payload)
-    http_client.post_form(url, :payload => payload.to_json)
+    http_client.post(url, :form_data => {:payload => payload.to_json})
   end
 
   def name
