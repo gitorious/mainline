@@ -265,6 +265,7 @@ Gitorious::Application.routes.draw do
       resources :services, :only => [:index, :destroy] do
         collection do
           post "/:service_type" => "services#create", :as => :create
+          get "/:service_type" => "services#index"
         end
         resources :service_tests, :as => :tests, :only => [:create]
       end
