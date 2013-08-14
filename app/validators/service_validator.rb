@@ -20,9 +20,9 @@ require "use_case"
 ServiceValidator = UseCase::Validator.define do
   validates_presence_of :user
   validates_presence_of :repository, :unless => Proc.new { |hook| hook.user && Gitorious::App.site_admin?(hook.user) }, :message => "is required for non admins"
-  validate :params_valid
+  validate :adapter_valid
 
-  def params_valid
-    errors.add(:params, "must be valid") unless params.valid?
+  def adapter_valid
+    errors.add(:adapter, "must be valid") unless adapter.valid?
   end
 end

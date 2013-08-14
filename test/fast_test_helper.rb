@@ -221,7 +221,7 @@ if !defined?(Rails)
   end
 
   class Service < TestHelper::Model
-    attr_accessor :user, :repository, :service_type, :params,
+    attr_accessor :user, :repository, :service_type, :adapter,
       :successful_request_count, :failed_request_count, :last_response
 
     class WebHook < TestHelper::Model

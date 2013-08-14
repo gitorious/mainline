@@ -40,7 +40,7 @@ class ServiceProcessor
     services.each do |service|
       begin
         Timeout.timeout(10) do
-          result = service.params.notify(http_client, payload)
+          result = service.adapter.notify(http_client, payload)
           if successful_response?(result)
             service.successful_connection("#{result.code} #{result.message}")
           else

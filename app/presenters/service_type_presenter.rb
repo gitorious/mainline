@@ -43,8 +43,8 @@ class ServiceTypePresenter
     "/services/#{type.service_type}"
   end
 
-  def params_for_form
-    service_for_form.params
+  def adapter
+    service_for_form.adapter
   end
 
   def services

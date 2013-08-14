@@ -52,8 +52,8 @@ class Service < ActiveRecord::Base
     repository.nil?
   end
 
-  def params
-    @params ||= create_params
+  def adapter
+    @adapter ||= create_adapter
   end
 
   private
@@ -66,7 +66,7 @@ class Service < ActiveRecord::Base
     raise "Unknown service_type: #{service_type}"
   end
 
-  def create_params
+  def create_adapter
     Service.service_type_adapter(service_type).new(data)
   end
 end

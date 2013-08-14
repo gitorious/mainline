@@ -59,7 +59,7 @@ class ServicesControllerTest < ActionController::TestCase
         :service_type => 'web_hook', :service => { :url => "http://elsewhere.com" }
 
       assert_redirected_to :action => :index
-      assert_equal "http://elsewhere.com", @repository.services.last.params.url
+      assert_equal "http://elsewhere.com", @repository.services.last.adapter.url
     end
 
     should "render form and errors if unsuccessful" do

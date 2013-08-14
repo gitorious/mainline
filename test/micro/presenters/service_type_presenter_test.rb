@@ -71,8 +71,8 @@ class ServiceTypePresenterTest < Minitest::Spec
     assert presenter.services.first.is_a?(ServiceStatsPresenter)
   end
 
-  describe "#params_for_form" do
-    let(:new_service) { Service.new(:params => :new_service_params) }
+  describe "#adapter" do
+    let(:new_service) { Service.new(:adapter => :new_service_adapter) }
     let(:repository) { Repository.new }
 
     before do
@@ -81,24 +81,24 @@ class ServiceTypePresenterTest < Minitest::Spec
 
     it "returns invalid_service when it is of given type" do
       invalid_service = Service.new(:service_type => FakeServiceType.service_type,
-                             :params => :service_params)
+                             :adapter => :service_adapter)
       presenter = ServiceTypePresenter.new(FakeServiceType, [], repository, invalid_service)
 
-      assert_equal :service_params, presenter.params_for_form
+      assert_equal :service_adapter, presenter.adapter
     end
 
     it "does not return invalid service when it is of different type" do
       invalid_service = Service.new(:service_type => 'bar',
-                             :params => :service_params)
+                             :adapter => :service_adapter)
       presenter = ServiceTypePresenter.new(FakeServiceType, [], repository, invalid_service)
 
-      assert_equal :new_service_params, presenter.params_for_form
+      assert_equal :new_service_adapter, presenter.adapter
     end
 
     it "returns a new service" do
       presenter = ServiceTypePresenter.new(FakeServiceType, [], repository)
 
-      assert_equal :new_service_params, presenter.params_for_form
+      assert_equal :new_service_adapter, presenter.adapter
     end
   end
 end

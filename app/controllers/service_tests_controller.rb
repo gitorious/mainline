@@ -28,7 +28,7 @@ class ServiceTestsController < ApplicationController
       redirect_back(hook)
     end
     outcome.success do |hook|
-      flash[:notice] = "Payload sent to #{hook.params.name}"
+      flash[:notice] = "Payload sent to #{hook.adapter.name}"
       redirect_back(hook)
     end
   end

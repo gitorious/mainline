@@ -68,9 +68,9 @@ class ServiceStatsPresenterTest < Minitest::Spec
     end
   end
 
-  it "delegates everything else to params" do
-    params = stub(:foo => 1, :bar => 2, :baz => 3)
-    service = Service.new(:params => params)
+  it "delegates everything else to adapter" do
+    adapter = stub(:foo => 1, :bar => 2, :baz => 3)
+    service = Service.new(:adapter => adapter)
     presenter = ServiceStatsPresenter.new(service)
 
     assert_equal 1, presenter.foo

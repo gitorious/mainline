@@ -21,7 +21,7 @@ class ServiceStatsPresenter
 
   def initialize(service)
     @service = service
-    @params = service.params
+    @adapter = service.adapter
   end
 
   def user
@@ -30,10 +30,6 @@ class ServiceStatsPresenter
 
   def to_param
     service.to_param
-  end
-
-  def to_s
-    @params.to_s
   end
 
   def runs
@@ -71,6 +67,6 @@ class ServiceStatsPresenter
   end
 
   def method_missing(name, *args, &block)
-    @params.send(name, *args, &block)
+    @adapter.send(name, *args, &block)
   end
 end

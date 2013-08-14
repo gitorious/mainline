@@ -32,8 +32,8 @@
         <div>
           <h2><%= service_type.label %></h2>
           <%= partial "services/stats", :services => service_type.services, :repository => repository %>
-          <%= error_messages(service_type.params_for_form) -%>
-          <%= form_for(service_type.params_for_form, :as => :service, 
+          <%= error_messages(service_type.adapter) -%>
+          <%= form_for(service_type.adapter, :as => :service, 
                        :url => create_project_repository_services_path(repository.project, repository, service_type.service_type),
                        :method => "post",
                        :html => { :class => "form-horizontal" }) do |f| %>
