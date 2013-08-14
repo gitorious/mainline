@@ -1,4 +1,13 @@
 GIT
+  remote: https://github.com/psyho/guard-minitest.git
+  revision: 641c1d21fd313a0a41caa5ef0b747d181564685b
+  branch: include-paths
+  specs:
+    guard-minitest (1.0.1)
+      guard (>= 1.8)
+      minitest (>= 2.1)
+
+GIT
   remote: https://github.com/solnic/virtus.git
   revision: 97a161f19d20a961094112464075c284d68d35e4
   specs:
@@ -117,9 +126,6 @@ GEM
       thor (>= 0.14.6)
     guard-ctags-bundler (0.2.0)
       guard (>= 1.1)
-    guard-minitest (1.0.1)
-      guard (>= 1.8)
-      minitest (>= 2.1)
     highline (1.6.19)
     hike (1.2.3)
     htmlentities (4.3.1)
@@ -327,7 +333,7 @@ DEPENDENCIES
   geoip (= 0.8.9)
   gitorious_openid_auth (~> 1.1)
   guard-ctags-bundler
-  guard-minitest
+  guard-minitest!
   highline
   httparty (~> 0.9)
   jruby-openssl

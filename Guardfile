@@ -1,21 +1,6 @@
 # A sample Guardfile
 # More info at https://github.com/guard/guard#readme
 
-require 'guard/minitest'
-
-unless Minitest::Runner.private_instance_methods.include?(:ruby_command_without_include)
-  class Minitest::Runner
-    alias :ruby_command_without_include :ruby_command
-
-    def ruby_command(paths)
-      command = ruby_command_without_include(paths)
-      include_folders = @options[:include]
-      command[1...1] = include_folders.map{|f| %Q[-I"#{f}"] } 
-      command
-    end
-  end
-end
-
 guard :minitest, include: %w(. app app/presenters lib test), test_folders: %w(test/micro) do
   watch(%r{^test/micro.*\.rb})
   watch(%r{^test/fast_test_helper\.rb}) { "test/micro" }
