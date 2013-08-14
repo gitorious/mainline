@@ -527,7 +527,7 @@ module ApplicationHelper
     return "" if !errors.any?
     result = errors.inject("") { |memo, obj| memo << content_tag(:li, obj) }
     header = content_tag(:h2, pluralize(errors.size, "error"))
-    "<div class=\"errorExplanation\" id=\"errorExplanation\">#{header}<ul>#{result}</ul></div>".html_safe
+    %[<div class="errorExplanation alert alert-block alert-error" id="errorExplanation">#{header}<ul>#{result}</ul></div>].html_safe
   end
 
   def vcs_link_tag(options)
