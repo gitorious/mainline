@@ -16,9 +16,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "repository_json_presenter"
-require "gitorious/view/avatar_helper"
 
 class RepositoryViewStateController < ApplicationController
+  include DoltViewHelpers
+
   def show
     respond_to do |format|
       user = current_user == :false ? nil : current_user

@@ -33,7 +33,7 @@ has_git_backend = repository.ready? && repository.has_commits?
       <% end %>
       <h<%= header_level %> class="span">
         <a href="<%= project_path(project) %>"><%= project.slug %></a> /
-        <a href="<%= project_repository_path(project, repository) %>"><%= repository.name %></a>
+        <a class="gts-repository-name-ph" href="<%= project_repository_path(project, repository) %>"><%= repository.name %></a>
       </h<%= header_level %>>
     </div>
     <div class="row">
@@ -78,7 +78,7 @@ git push</pre>
       </div>
     </div>
     <div class="row gts-description">
-      <div class="span">
+      <div class="span gts-repository-description-ph">
         <%= repository_description(repository) %>
       </div>
     </div>
