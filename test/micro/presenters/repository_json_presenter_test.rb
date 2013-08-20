@@ -34,11 +34,17 @@ class App
   def favorite_path(f); "/favorites/#{f.to_param}"; end
   def clone_project_repository_path(p, r); "/#{p.to_param}/#{r.to_param}/clone"; end
   def new_project_repository_merge_request_path(p, r); "/#{p.to_param}/#{r.to_param}/merge_requests/new"; end
+  def repository_description(repo); repo.description; end
 end
 
 class RepositoryJSONPresenterTest < MiniTest::Spec
   before do
-    @repository = Repository.new(:to_param => "repo", :project => Project.new(:to_param => "project"))
+    @repository = Repository.new({
+        :name => "My repo",
+        :description => "Really, it's my repo",
+        :to_param => "repo",
+        :project => Project.new(:to_param => "project")
+      })
     def @repository.git_cloning?; true; end
     def @repository.http_cloning?; true; end
     def @repository.display_ssh_url?(user); false; end
@@ -69,6 +75,14 @@ class RepositoryJSONPresenterTest < MiniTest::Spec
       assert_equal "/project/repo/ownership/edit", paths["ownershipPath"]
       assert_equal "/project/repo/committerships", paths["committershipsPath"]
       assert_equal "/project/repo/web_hooks", paths["webHooksPath"]
+    end
+
+    it "includes repository name and description" do
+      presenter = RepositoryJSONPresenter.new(App.new, @repository)
+
+      repository = presenter.hash_for(nil)["repository"]
+      assert_equal "My repo", repository["name"]
+      assert_equal "Really, it's my repo", repository["description"]
     end
 
     it "indicates that user watches repository" do
