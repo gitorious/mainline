@@ -54,7 +54,7 @@ module Gitorious::Messaging::SyncAdapter
       "/queue/GitoriousProjectRepositoryCreation" => "project_repository_creation",
       "/queue/GitoriousRepositoryDeletion" => "repository_deletion",
       "/queue/GitoriousTrackingRepositoryCreation" => "tracking_repository_creation",
-      "/queue/GitoriousPostReceiveWebHook" => "web_hook",
+      "/queue/GitoriousPostReceiveWebHook" => "service",
       "/queue/GitoriousWikiRepositoryCreation" => "wiki_repository_creation"
     }
 
