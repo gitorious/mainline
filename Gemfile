@@ -53,7 +53,6 @@ group :postgres do
 end
 
 group :development do
-  gem "better_errors", :platforms => [:ruby_19, :ruby_20]
   gem "binding_of_caller" , :platforms => [:ruby_19, :ruby_20]
   gem "foreman", "~> 0.41"
   gem "thin", "~> 1.2"

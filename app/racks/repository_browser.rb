@@ -32,12 +32,6 @@ module Gitorious
       super()
     end
 
-    if !Rails.env.production? && RUBY_VERSION > "1.9"
-      require "better_errors"
-      use BetterErrors::Middleware
-      BetterErrors.application_root = Rails.root.to_s
-    end
-
     def self.instance; @instance; end
     def self.instance=(instance); @instance = instance; end
 
