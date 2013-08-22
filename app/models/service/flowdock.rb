@@ -17,7 +17,7 @@
 #++
 
 class Service::Flowdock < Service::Adapter
-  URL = "https://api.flowdock.com/v1/git/"
+  URL = "https://api.flowdock.com/v1/github"
 
   label "Flowdock"
 
