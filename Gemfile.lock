@@ -227,6 +227,7 @@ GEM
       ffi (>= 0.5.0)
     rb-kqueue (0.2.0)
       ffi (>= 0.5.0)
+    rcov (1.0.0)
     rdiscount (1.6.8)
     rdoc (3.12.2)
       json (~> 1.4)
@@ -257,6 +258,8 @@ GEM
       multi_json (~> 1.0)
       simplecov-html (~> 0.7.1)
     simplecov-html (0.7.1)
+    simplecov-rcov (0.2.3)
+      simplecov (>= 0.4.1)
     sinatra (1.4.3)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -349,6 +352,7 @@ DEPENDENCIES
   rails (= 3.2.12)
   rails_autolink (~> 1.0)
   rake (~> 10.0)
+  rcov
   rdiscount (~> 1.6)
   rdoc
   redcarpet
@@ -359,6 +363,7 @@ DEPENDENCIES
   shoulda (~> 3.3)
   shoulda-matchers (~> 1.4)
   simplecov
+  simplecov-rcov
   state_machine (~> 1.1)
   thin (~> 1.2)
   thinking-sphinx (~> 3.0)
