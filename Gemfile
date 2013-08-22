@@ -87,8 +87,8 @@ platform :ruby_18 do
 end
 
 group :dolt do
-  gem "libdolt", "~> 0.30"
-  gem "dolt", "~> 0.28"
+  gem "libdolt", "~> 0.31"
+  gem "dolt", "~> 0.29"
   gem "tiltout", "~> 1.4"
 
   # Markup formats
