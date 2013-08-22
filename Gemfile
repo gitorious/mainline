@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem "rails", "3.2.12"
+gem "rails", "3.2.13"
 gem "geoip", "0.8.9"
 gem "daemons", "1.1.0", :require => false
 gem "rdiscount", "~> 1.6"
@@ -33,7 +33,7 @@ group :openid do
 end
 
 group :test do
-  gem "mocha", "0.9.10", :require => false
+  gem "mocha", "0.13.3", :require => false
   gem "factory_girl_rails", "~> 1.7"
   gem "shoulda", "~> 3.3"
   gem "shoulda-matchers", "~> 1.4", :platforms => :ruby_18

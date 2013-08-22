@@ -8,7 +8,7 @@ require "ssl_requirement_macros"
 require "messaging_test_helper"
 require "data_builder_helpers"
 require "shoulda"
-require "mocha"
+require "mocha/setup"
 require "fast_test_helper"
 
 class ActiveSupport::TestCase

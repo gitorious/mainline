@@ -22,7 +22,7 @@ require "minitest/autorun"
 # rake:micros task runs the fast tests through a separate system() call, so
 # ci_reporter never propagates to the MiniTest class in these tests.
 require "ci/reporter/rake/minitest_loader"
-require "mocha"
+require "mocha/setup"
 require "pathname"
 require((defined?(Rails) ? Rails.root : "") + "config/initializers/gitorious_config")
 
