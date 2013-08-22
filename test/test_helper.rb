@@ -1,11 +1,4 @@
-if ENV['COVERAGE'] && RUBY_VERSION > "1.9"
-  require "simplecov"
-
-  SimpleCov.start("rails") do
-    add_filter "/vendor/"
-    add_filter "/test/"
-  end
-end
+require "coverage_helper"
 
 ENV["RAILS_ENV"] = "test"
 
