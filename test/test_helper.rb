@@ -1,4 +1,12 @@
+if ENV['COVERAGE'] && RUBY_VERSION > "1.9"
+  require "simplecov"
+  require "simplecov-rcov"
+  SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
+  SimpleCov.start("rails")
+end
+
 ENV["RAILS_ENV"] = "test"
+
 require File.join(File.dirname(__FILE__), "../config/environment")
 require "rails/test_help"
 require "ssl_requirement_macros"
