@@ -18,83 +18,85 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class Admin::UsersController < AdminController
-  include Gitorious::UserAdministration
+module Admin
+  class UsersController < AdminController
+    include Gitorious::UserAdministration
 
-  def index
-    @users = paginate(:action => "index") do
-      User.paginate(:order => 'suspended_at, login', :page => params[:page])
-    end
-
-    return if @users.length == 0 && params.key?(:page)
-
-    respond_to do |wants|
-      wants.html
-    end
-  end
-
-  def new
-    render :action => "new", :locals => { :user => User.new }
-  end
-
-  def create
-    outcome = CreateActivatedUser.new.execute(params[:user])
-    pre_condition_failed(outcome)
-
-    respond_to do |wants|
-      outcome.success do |result|
-        flash[:notice] = I18n.t("admin.users_controller.create_notice")
-        wants.html { redirect_to(admin_users_path) }
-        wants.xml { render :xml => user, :status => :created, :location => user }
+    def index
+      @users = paginate(:action => "index") do
+        User.paginate(:order => 'suspended_at, login', :page => params[:page])
       end
 
-      outcome.failure do |user|
-        wants.html { render :action => "new", :locals => { :user => user } }
-        wants.xml { render :xml => user.errors, :status => :unprocessable_entity }
+      return if @users.length == 0 && params.key?(:page)
+
+      respond_to do |wants|
+        wants.html
       end
     end
-  end
 
-  def suspend
-    @user = User.find_by_login!(params[:id])
-    suspend_summary = suspend_user(@user)
-
-    if @user.save
-      flash[:notice] = suspend_summary
-    else
-      flash[:error] = I18n.t("admin.users_controller.suspend_error", :user_name => @user.login)
+    def new
+      render :action => "new", :locals => { :user => User.new }
     end
 
-    redirect_to admin_users_url
-  end
+    def create
+      outcome = CreateActivatedUser.new.execute(params[:user])
+      pre_condition_failed(outcome)
 
-  def unsuspend
-    @user = User.find_by_login!(params[:id])
-    @user.unsuspend
-    if @user.save
-      flash[:notice] = I18n.t "admin.users_controller.unsuspend_notice", :user_name => @user.login
-    else
-      flash[:error] = I18n.t "admin.users_controller.unsuspend_error", :user_name => @user.login
+      respond_to do |wants|
+        outcome.success do |result|
+          flash[:notice] = I18n.t("admin.users_controller.create_notice")
+          wants.html { redirect_to(admin_users_path) }
+          wants.xml { render :xml => user, :status => :created, :location => user }
+        end
+
+        outcome.failure do |user|
+          wants.html { render :action => "new", :locals => { :user => user } }
+          wants.xml { render :xml => user.errors, :status => :unprocessable_entity }
+        end
+      end
     end
-    redirect_to admin_users_url()
-  end
 
-  def reset_password
-    if user = User.find_by_login(params[:id])
-      # FIXME: should really be a two-step process: receive link, visiting it resets password
-      generated_password = user.reset_password!
-      Mailer.forgotten_password(user, generated_password).deliver
-      flash[:notice] = I18n.t "users_controller.reset_password_notice"
-    else
-      flash[:error] = I18n.t "users_controller.reset_password_error"
+    def suspend
+      @user = User.find_by_login!(params[:id])
+      suspend_summary = suspend_user(@user)
+
+      if @user.save
+        flash[:notice] = suspend_summary
+      else
+        flash[:error] = I18n.t("admin.users_controller.suspend_error", :user_name => @user.login)
+      end
+
+      redirect_to admin_users_url
     end
-    redirect_to admin_users_url()
-  end
 
-  def flip_admin_status
-    @user = User.find_by_login!(params[:id])
-    @user.is_admin = !@user.is_admin
-    @user.save
-    redirect_to admin_users_url()
+    def unsuspend
+      @user = User.find_by_login!(params[:id])
+      @user.unsuspend
+      if @user.save
+        flash[:notice] = I18n.t "admin.users_controller.unsuspend_notice", :user_name => @user.login
+      else
+        flash[:error] = I18n.t "admin.users_controller.unsuspend_error", :user_name => @user.login
+      end
+      redirect_to admin_users_url()
+    end
+
+    def reset_password
+      if user = User.find_by_login(params[:id])
+        # FIXME: should really be a two-step process: receive link, visiting it resets password
+        generated_password = user.reset_password!
+        Mailer.forgotten_password(user, generated_password).deliver
+        flash[:notice] = I18n.t "users_controller.reset_password_notice"
+      else
+        flash[:error] = I18n.t "users_controller.reset_password_error"
+      end
+      redirect_to admin_users_url()
+    end
+
+    def flip_admin_status
+      @user = User.find_by_login!(params[:id])
+      @user.is_admin = !@user.is_admin
+      @user.save
+      redirect_to admin_users_url()
+    end
   end
 end
