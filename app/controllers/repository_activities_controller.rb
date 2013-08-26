@@ -33,18 +33,22 @@ class RepositoryActivitiesController < ApplicationController
 
     respond_to do |format|
       format.html do
-        render(:action => :index, :locals => {
-            :repository => RepositoryPresenter.new(repository),
-            :ref => repository.head_candidate_name,
-            :events => events,
-            :page => page,
-            :total_pages => total_pages,
-            :atom_auto_discovery_url => activities_project_repository_path(repository.project, repository, :format => :atom),
-            :atom_auto_discovery_title => "#{repository.title} ATOM feed"
-          })
+        render(:action => :index, :locals => locals(repository, events).merge({
+              :ref => repository.head_candidate_name,
+              :page => page,
+              :total_pages => total_pages,
+              :atom_auto_discovery_url => activities_project_repository_path(repository.project, repository, :format => :atom),
+              :atom_auto_discovery_title => "#{repository.title} ATOM feed"
+            }))
       end
       format.xml  { render :xml => repository }
-      format.atom {  }
+      format.atom { render :action => :index, :locals => locals(repository, events) }
     end
+  end
+
+  private
+  def locals(repository, events)
+    { :repository => RepositoryPresenter.new(repository),
+      :events => events }
   end
 end
