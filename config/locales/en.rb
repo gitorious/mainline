@@ -369,7 +369,7 @@
       },
       :sessions => {
         :login => "Login",
-        :label => "Email",
+        :label => "Email or login",
         :passwd => "Password",
         :openid => "OpenID",
         :remember => "Remember me",
