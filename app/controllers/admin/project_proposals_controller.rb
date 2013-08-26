@@ -16,73 +16,75 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class Admin::ProjectProposalsController < AdminController
-  before_filter :require_site_admin, :except => [:new, :create]
+module Admin
+  class ProjectProposalsController < AdminController
+    before_filter :require_site_admin, :except => [:new, :create]
 
-  def index
-    @proposals = ProjectProposal.all
-  end
-
-  def new
-    @proposal = ProjectProposal.new
-  end
-
-  def create
-    @proposal = ProjectProposal.new
-    @proposal.title = params[:project_proposal][:title]
-    @proposal.description = params[:project_proposal][:description]
-    @proposal.creator = current_user
-
-    if @proposal.name_clashes_with_existing_project?
-      flash[:error] = "Project with that title already exists!"
-      render :action => "new" and return
+    def index
+      @proposals = ProjectProposal.all
     end
 
-    if @proposal.save
-      notify_site_admins("A new project has been proposed",
-                         "Proposal for project #{@proposal.title} submitted by #{@proposal.creator.title}", @proposal)
-      flash[:notice] = "Project proposal created, admins have been notified and will review it."
-
-      redirect_to current_user
-    else
-      render :action => "new"
+    def new
+      @proposal = ProjectProposal.new
     end
-  end
 
-  def approve
-    proposal = ProjectProposal.find_by_id(params[:id])
-    project = proposal.approve
-    project.make_private if Gitorious.projects_default_private?
-    notify_creator("Your '#{project.title}' project has been approved!", project.owner,
-                   "Please update your project license, description etc.")
-    flash[:notice] = "Project approved and created, user has been notified"
-    redirect_to :action => :index
-  end
+    def create
+      @proposal = ProjectProposal.new
+      @proposal.title = params[:project_proposal][:title]
+      @proposal.description = params[:project_proposal][:description]
+      @proposal.creator = current_user
 
-  def reject
-    proposal = ProjectProposal.find_by_id(params[:id])
-    notify_creator("Your '#{proposal.title}' project was rejected", proposal.creator,
-                   "Your project proposal was rejected. Please contact a site admin for clarification.")
-    proposal.reject
-    flash[:notice] = "Project rejected and removed, user has been notified"
-    redirect_to :action => :index
-  end
+      if @proposal.name_clashes_with_existing_project?
+        flash[:error] = "Project with that title already exists!"
+        render :action => "new" and return
+      end
 
-  protected
-  def notify_site_admins(subject, body, proposal)
-    User.admins.each do |admin|
+      if @proposal.save
+        notify_site_admins("A new project has been proposed",
+                           "Proposal for project #{@proposal.title} submitted by #{@proposal.creator.title}", @proposal)
+        flash[:notice] = "Project proposal created, admins have been notified and will review it."
+
+        redirect_to current_user
+      else
+        render :action => "new"
+      end
+    end
+
+    def approve
+      proposal = ProjectProposal.find_by_id(params[:id])
+      project = proposal.approve
+      project.make_private if Gitorious.projects_default_private?
+      notify_creator("Your '#{project.title}' project has been approved!", project.owner,
+                     "Please update your project license, description etc.")
+      flash[:notice] = "Project approved and created, user has been notified"
+      redirect_to :action => :index
+    end
+
+    def reject
+      proposal = ProjectProposal.find_by_id(params[:id])
+      notify_creator("Your '#{proposal.title}' project was rejected", proposal.creator,
+                     "Your project proposal was rejected. Please contact a site admin for clarification.")
+      proposal.reject
+      flash[:notice] = "Project rejected and removed, user has been notified"
+      redirect_to :action => :index
+    end
+
+    protected
+    def notify_site_admins(subject, body, proposal)
+      User.admins.each do |admin|
+        Message.new({:sender => current_user,
+                      :recipient => admin,
+                      :subject => subject,
+                      :notifiable => proposal,
+                      :body => body }).save
+      end
+    end
+
+    def notify_creator(subject, recipient, body)
       Message.new({:sender => current_user,
-                    :recipient => admin,
+                    :recipient => recipient,
                     :subject => subject,
-                    :notifiable => proposal,
                     :body => body }).save
     end
-  end
-
-  def notify_creator(subject, recipient, body)
-    Message.new({:sender => current_user,
-                  :recipient => recipient,
-                  :subject => subject,
-                  :body => body }).save
   end
 end

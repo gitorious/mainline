@@ -17,21 +17,23 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class Admin::OauthSettingsController < AdminController
-  before_filter :find_project
+module Admin
+  class OauthSettingsController < AdminController
+    before_filter :find_project
 
-  def show
-    redirect_to :action => "edit", :project_id => @project.to_param
-  end
+    def show
+      redirect_to :action => "edit", :project_id => @project.to_param
+    end
 
-  def edit
-    @root = Breadcrumb::EditOAuthSettings.new(@project)
-  end
+    def edit
+      @root = Breadcrumb::EditOAuthSettings.new(@project)
+    end
 
-  def update
-    @project.oauth_settings = params[:oauth_settings]
-    @project.save
-    flash[:notice] = "OAuth settings were updated"
-    redirect_to :action => "edit", :project_id => @project.to_param
+    def update
+      @project.oauth_settings = params[:oauth_settings]
+      @project.save
+      flash[:notice] = "OAuth settings were updated"
+      redirect_to :action => "edit", :project_id => @project.to_param
+    end
   end
 end

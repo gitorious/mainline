@@ -17,19 +17,21 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class Admin::RepositoriesController < AdminController
-  def index
-    @unready_repositories = paginate(:action => "index") do
-      Repository.paginate(:conditions => "ready = false AND kind != #{Repository::KIND_TRACKING_REPO}",
-                          :per_page => 30,
-                          :page => params[:page])
+module Admin
+  class RepositoriesController < AdminController
+    def index
+      @unready_repositories = paginate(:action => "index") do
+        Repository.paginate(:conditions => "ready = false AND kind != #{Repository::KIND_TRACKING_REPO}",
+                            :per_page => 30,
+                            :page => params[:page])
+      end
     end
-  end
 
-  def recreate
-    @repository = Repository.find(params[:id])
-    CreateProjectRepositoryCommand.new(Gitorious::App).schedule_creation(@repository)
-    flash[:notice] = "Recreation message posted"
-    redirect_to :action => :index
+    def recreate
+      @repository = Repository.find(params[:id])
+      CreateProjectRepositoryCommand.new(Gitorious::App).schedule_creation(@repository)
+      flash[:notice] = "Recreation message posted"
+      redirect_to :action => :index
+    end
   end
 end

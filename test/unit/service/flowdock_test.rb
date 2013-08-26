@@ -24,8 +24,8 @@ class Service::FlowdockTest < ActiveSupport::TestCase
   end
 
   should "validate presence of flow_token" do
-    assert sprintly(:flow_token => "foo").valid?
-    refute sprintly(:flow_token => "").valid?
+    assert flowdock(:flow_token => "foo").valid?
+    refute flowdock(:flow_token => "").valid?
   end
 
   context "#notify" do
@@ -33,11 +33,11 @@ class Service::FlowdockTest < ActiveSupport::TestCase
       payload = { "foo" => "bar" }
       http = mock
       http.expects(:post).with(
-        "#{Service::FlowdockTest::URL}/foobarbaz",
+        "#{Service::Flowdock::URL}/foobarbaz",
         :body => payload.to_json,
         :content_type => 'application/json'
       )
-      sprintly.notify(http, payload)
+      flowdock.notify(http, payload)
     end
   end
 end
