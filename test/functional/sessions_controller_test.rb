@@ -34,6 +34,20 @@ class SessionsControllerTest < ActionController::TestCase
     assert_response :redirect
   end
 
+  should "login and redirect to specified URL" do
+    @controller.stubs(:using_open_id?).returns(false)
+    post :create, :email => "johan@johansorensen.com", :password => "test", :return_to => "/gitorious/mainline"
+    assert_not_nil session[:user_id]
+    assert_redirected_to "/gitorious/mainline"
+  end
+
+  should "not redirect to offsite URLs" do
+    @controller.stubs(:using_open_id?).returns(false)
+    post :create, :email => "johan@johansorensen.com", :password => "test", :return_to => "http://hacker.com/gitorious/mainline"
+    assert_not_nil session[:user_id]
+    assert_redirected_to "/gitorious/mainline"
+  end
+
   should "login with openid and redirect to new user page" do
     identity_url = "http://patcito.myopenid.com"
     @controller.stubs(:using_open_id?).returns(true)
@@ -93,6 +107,11 @@ class SessionsControllerTest < ActionController::TestCase
     login_as :johan
     get :destroy
     assert_nil @response.cookies["auth_token"]
+  end
+
+  should "place custom return_to URL in form" do
+    get :new, :return_to => "/gitorious/das_mainline"
+    assert_match "/gitorious/das_mainline", @response.body
   end
 
   should "login with cookie" do

@@ -18,6 +18,9 @@
   %>
 
 <fieldset>
+  <% if params[:return_to] %>
+    <%= hidden_field_tag "return_to", params[:return_to] %>
+  <% end %>
   <div class="control-group">
     <label class="control-label" for="email"><%= login_field_label %></label>
     <div class="controls">

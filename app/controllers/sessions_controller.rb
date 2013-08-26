@@ -21,7 +21,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
+require "uri"
 require "openid"
 require "yadis"
 require "gitorious"
@@ -153,7 +153,7 @@ class SessionsController < ApplicationController
         :secure => Gitorious.site.ssl?
       }
     end
-    check_state_and_redirect('/')
+    check_state_and_redirect(return_to)
   end
 
   def check_state_and_redirect(redirection_url)
@@ -164,5 +164,10 @@ class SessionsController < ApplicationController
       flash[:notice] = "Logged in successfully"
       redirect_back_or_default(redirection_url)
     end
+  end
+
+  def return_to
+    return URI.parse(params["return_to"]).path if params["return_to"]
+    "/"
   end
 end

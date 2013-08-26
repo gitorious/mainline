@@ -76,6 +76,7 @@ else
       "/ui3/js/src/components/oid-ref-interpolator.js",
       "/ui3/js/src/components/slugify.js",
       "/ui3/js/src/components/select-details.js",
+      "/ui3/js/src/components/login-button.js",
       "/ui3/js/src/gitorious.js",
     ])
     Gitorious::View.stylesheets.concat([
