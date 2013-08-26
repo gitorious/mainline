@@ -33,7 +33,8 @@
   <% end -%>
 </ul>
 
-<%= raw JustPaginate.page_navigation(@page, @total_pages) { |page_no| "/projects/?page=#{page_no}" } -%>
+<!-- Note: use regular pagination when this view is ported to Gitoriou v3-->
+<%= raw JustPaginate.page_navigation_non_bootstrap(@page, @total_pages) { |page_no| "/projects/?page=#{page_no}" } -%>
 
 <%= content_for :sidebar do -%>
   <h2><%= t("views.projects.popular") %></h2>
