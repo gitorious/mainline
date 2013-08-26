@@ -41,7 +41,7 @@ mkdir -p tmp/repositories tmp/tarball-cache tmp/tarball-work tmp/cache
 # NOTE: This guide installs mysql, but Gitorious will also run with Postgresql
 
 #sudo apt-get update
-sudo apt-get install -q -y curl git-core make gcc g++ mysql-client mysql-server-5.5 libmysqlclient-dev libxml2-dev libxslt1-dev libonig2 libreadline6-dev libpq-dev libicu-dev make ruby-dev sphinxsearch redis-server git-daemon-run nginx
+sudo apt-get install -q -y curl git-core make gcc g++ mysql-client mysql-server-5.5 libmysqlclient-dev libxml2-dev libxslt1-dev libonig2 libreadline6-dev libpq-dev libicu-dev make ruby-dev sphinxsearch redis-server git-daemon-sysvinit nginx
 
 which rvm || curl -L https://get.rvm.io | bash -s stable --ruby=1.9.3
 
@@ -191,9 +191,10 @@ server {
     internal;
     alias $GITORIOUS_ROOT/tmp/repositories/;
   }
-}" > /tmp/000-gitorious
+}" > /tmp/nginx-gitorious
 
-sudo mv /tmp/000-gitorious /etc/nginx/conf.d/000-gitorious
+sudo mv /tmp/nginx-gitorious /etc/nginx/sites-available/gitorious
+sudo ln -s /etc/nginx/sites-available/gitorious /etc/nginx/sites-enabled/gitorious
 
 sudo service nginx restart
 
@@ -203,4 +204,3 @@ bin/rake ts:index
 # user should be an admin. If you want to (manually) test certain features for
 # non-admins, just come back and create more users later.
 bin/create-user
-
