@@ -228,7 +228,6 @@ class ProjectsController < ApplicationController
     #marshalable_events(@project.events.paginate({
     @project.events.paginate({
       :conditions => ["target_type != ?", "Event"],
-      :order => "created_at desc",
       :include => [:user, :project],
       :per_page => Event.per_page,
       :page => params[:page]
