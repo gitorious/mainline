@@ -27,7 +27,6 @@ class UserJSONPresenter
   end
 
   def to_hash
-    puts user.inspect
     return {} if user.nil?
     { "user" => {
         "login" => user.login,
