@@ -32,7 +32,7 @@
         <h2 class="subject"><%=h message.subject -%></h2>
       <% end -%>
       <p class="meta">
-        <%= message_title(message) %> <%= distance_of_time_in_words_to_now(message.created_at) %> ago
+        <%= message_title(message).html_safe %> <%= distance_of_time_in_words_to_now(message.created_at) %> ago
       </p>
       <p class="body">
         <%= simple_format h(message.body) %>
