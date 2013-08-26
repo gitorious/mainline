@@ -85,7 +85,7 @@ class RepositoryJSONPresenter
 
   def request_merge_path(user)
     return nil if user.nil? || repository.parent.nil? || !app.admin?(user, repository)
-    app.new_project_repository_merge_request_path(repository.project, repository.parent)
+    app.new_project_repository_merge_request_path(repository.project, repository)
   end
 
   attr_reader :app, :repository

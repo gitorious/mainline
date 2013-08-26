@@ -146,7 +146,7 @@ class RepositoryJSONPresenterTest < MiniTest::Spec
       presenter = RepositoryJSONPresenter.new(App.new(:is_admin => true), @repository)
 
       repository = presenter.hash_for(@user)["repository"]
-      assert_equal "/project/parent/merge_requests/new", repository["requestMergePath"]
+      assert_equal "/project/repo/merge_requests/new", repository["requestMergePath"]
     end
 
     it "does not include request merge path for non-clone" do
