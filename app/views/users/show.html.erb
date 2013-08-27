@@ -29,49 +29,19 @@
   <div id="right" class="w-390">
     <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
     <%= render "users/show/repositories", :user => user, :repositories => repositories %>
-    <%= pull_box("#{h user.title} is watching", :class => "your-favorites favorite pull-box-390") do %>
-      <div class="filters">
-        <ul>
-          <li>
-            <strong>Sort by:</strong>
-          </li><% if is_current_user?(user) %>
-            <li>
-              <a class="foreign" href="#not-mine">Not yours</a>
-            </li>
-            <li>
-              <a class="mine" href="#mine">Yours</a>
-            </li><% end %>
-          <li>
-            <a href="#merge-requests" class="merge-requests">Merge requests</a>
-          </li>
-          <li>
-            <a href="#repos" class="repositories">Repositories</a>
-          </li>
-          <li>
-            <a href="#all" class="all">All</a>
-          </li>
-        </ul>
-      </div>
-      <ul class="with_icons">
-        <% favorites.reject { |favorite| favorite.watchable.nil? }.each do |favorite| %>
-          <li class="<%= css_classes_for(favorite.watchable) %>">
-            <%= link_to_watchable(favorite.watchable) %>
-          </li>
-        <% end %>
-        <% if favorites.blank? %>
-          <li style="list-style: none">
-            <p class="hint">
-              <%= no_watchings_notice_for(user) %>
-            </p>
-          </li>
-        <% end %>
-      </ul><% end %><%= pull_box("Team memberships", :class => "teams pull-box-390") do %>
+    <%= render "users/show/watched_projects", :user => user, :favorites => favorites %>
+    <%= pull_box("Team memberships", :class => "teams pull-box-390") do %>
       <ul>
         <% Team.for_user(user).each do |group| %>
           <li style="clear:left">
-            <span style="float:left; padding: 2px 10px 2px 2px"><%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16") %></span> <%= link_to h(group.name), group_path(group) %>
-          </li><% end %>
-      </ul><% end unless Team.for_user(user).blank? %>
+            <span style="float:left; padding: 2px 10px 2px 2px">
+              <%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16") %>
+            </span>
+            <%= link_to h(group.name), group_path(group) %>
+          </li>
+        <% end %>
+      </ul>
+    <% end unless Team.for_user(user).blank? %>
   </div>
   <div class="clear"></div>
 </div>
