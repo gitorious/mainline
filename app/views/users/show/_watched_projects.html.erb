@@ -1,0 +1,40 @@
+<%= pull_box("#{h user.title} is watching", :class => "your-favorites favorite pull-box-390") do %>
+  <div class="filters">
+    <ul>
+      <li>
+        <strong>Sort by:</strong>
+      </li>
+      <% if is_current_user?(user) %>
+        <li>
+          <a class="foreign" href="#not-mine">Not yours</a>
+        </li>
+        <li>
+          <a class="mine" href="#mine">Yours</a>
+        </li>
+      <% end %>
+      <li>
+        <a href="#merge-requests" class="merge-requests">Merge requests</a>
+      </li>
+      <li>
+        <a href="#repos" class="repositories">Repositories</a>
+      </li>
+      <li>
+        <a href="#all" class="all">All</a>
+      </li>
+    </ul>
+  </div>
+  <ul class="with_icons">
+    <% favorites.reject { |favorite| favorite.watchable.nil? }.each do |favorite| %>
+      <li class="<%= css_classes_for(favorite.watchable) %>">
+        <%= link_to_watchable(favorite.watchable) %>
+      </li>
+    <% end %>
+    <% if favorites.blank? %>
+      <li style="list-style: none">
+        <p class="hint">
+          <%= no_watchings_notice_for(user) %>
+        </p>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
