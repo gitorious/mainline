@@ -20,43 +20,7 @@
 
 <div class="with_divider">
   <div id="left">
-    <div class="user-profile not-dash">
-      <%= link_to(avatar(user, { :size => 64 }), user, {:class => "avatar"}) %>
-      <div class="profile-data">
-        <h1>
-          ~<%= link_to h(user.login), user -%>
-        </h1>
-        <ul class="details">
-          <% unless user.fullname.blank? %>
-            <li>
-              <%= h(user.fullname) -%>
-            </li><% end %><% if user.public_email? -%>
-            <li class="email">
-              <%= mail_to(user.email, mangled_mail(user.email), :encode => "javascript") -%>
-            </li><% end -%><% if user.url %>
-            <li>
-              <a rel="me" href="<%=h user.url -%>"><%=h user.url -%></a>
-            </li><% end -%>
-          <li>
-            <%= t("views.users.member_for") %> <%= time_ago_in_words(user.created_at) %>
-            <% if user.suspended? -%>(suspended)<% end -%>
-          </li>
-        </ul>
-      </div>
-
-      <ul class="buttons">
-        <% if is_current_user?(user) -%>
-          <li class="hint"><strong>This is your public profile. </strong><br />(<%= link_to "Go to your dashboard", root_path -%>)</li>
-        <% end -%>
-        <% if !is_current_user?(user) -%>
-          <li class="new_email">
-            <%= link_button_link_to(t("views.users.send_user_msg", :username=>h(user.login)),
-                                    new_message_path(:to => user.login), :class => "new_email") -%>
-          </li>
-        <% end -%>
-      </ul>
-      <div class="clear"></div>
-    </div>
+    <%= render "users/show/user_profile", :user => user %>
 
     <div class="content-container w-510">
       <h2 class="activities">
