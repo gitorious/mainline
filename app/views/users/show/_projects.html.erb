@@ -1,17 +1,23 @@
 <%= pull_box(t("views.site.dashboard.projects"), :class => "your-projects pull-box-390") do %>
-  <ul class="with_icons">
+  <table class="table">
     <% projects.each do |project| %>
-      <li class="project">
-        <%= link_to h(project.title), project %>
-        <% if favorites.include?(project) %>
-          <%= image_tag("silk/star.png", :title => "favorited") %>
-        <% end %>
-      </li>
+      <tr class="project">
+        <td>
+          <%= link_to h(project.title), project %>
+          <% if favorites.include?(project) %>
+            <%= image_tag("silk/star.png", :title => "favorited") %>
+          <% end %>
+        </td>
+      </tr>
     <% end %>
-  </ul>
+  </table>
   <% if is_current_user?(user) %>
     <div class="pull-box-links">
-      <%= link_button_link_to(t("views.projects.create_new"), new_project_path, :id => "new-project-button") %>
+      <%= link_to(
+        %(<i class="icon-plus-sign icon-white"></i> #{t("views.projects.create_new")}).html_safe,
+        new_project_path,
+        :id => "new-project-button",
+        :class => "btn btn-primary") %>
     </div>
   <% end %>
 <% end %>
