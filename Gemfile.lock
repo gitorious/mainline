@@ -134,7 +134,7 @@ GEM
     innertube (1.1.0)
     journey (1.0.4)
     json (1.7.7)
-    just_paginate (0.1)
+    just_paginate (0.1.1)
     kgio (2.8.0)
     libdolt (0.31.0)
       htmlentities (~> 4.3)
@@ -334,7 +334,7 @@ DEPENDENCIES
   httparty (~> 0.9)
   jruby-openssl
   json (>= 1.7.7, < 1.8)
-  just_paginate (= 0.1)
+  just_paginate (= 0.1.1)
   libdolt (~> 0.31)
   memcache-client (~> 1.8)
   mime-types (~> 1.16)
