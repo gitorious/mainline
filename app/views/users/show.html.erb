@@ -28,16 +28,8 @@
   </div>
   <div id="right" class="w-390">
     <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
-    <%= pull_box(t("views.site.dashboard.repositories"), :class => "your-repositories pull-box-390") do %><% if repositories.blank? %><% if is_current_user?(user) %>You currently do not have any repository clones. You can clone a repository you wish to contribute to by going to a repository overview page and clicking the "Clone repository" button in the repository information box.<% else %>
-          <p class="hint">
-            <%=h user.title %> currently does not have any repository clones.
-          </p><% end %><% else %>
-        <ul class="with_icons">
-          <% repositories.each do |repo| %>
-            <li class="repository">
-              <%= link_to h(repo.url_path), [repo.project, repo] %>
-            </li><% end %>
-        </ul><% end %><% end %><%= pull_box("#{h user.title} is watching", :class => "your-favorites favorite pull-box-390") do %>
+    <%= render "users/show/repositories", :user => user, :repositories => repositories %>
+    <%= pull_box("#{h user.title} is watching", :class => "your-favorites favorite pull-box-390") do %>
       <div class="filters">
         <ul>
           <li>
