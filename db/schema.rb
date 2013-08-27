@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130808143416) do
+ActiveRecord::Schema.define(:version => 20130827094635) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -87,7 +87,7 @@ ActiveRecord::Schema.define(:version => 20130808143416) do
     t.string   "content_type"
   end
 
-  add_index "content_memberships", ["content_id", "member_id", "member_type"], :name => "project_memberships_index"
+  add_index "content_memberships", ["content_id", "member_id", "member_type"], :name => "content_memberships_index"
 
   create_table "emails", :force => true do |t|
     t.integer  "user_id"

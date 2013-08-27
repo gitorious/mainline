@@ -17,6 +17,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 class Role < ActiveRecord::Base
+  ADMIN = 'Administrator'
+  MEMBER = 'Member'
   KIND_ADMIN = 0
   KIND_MEMBER = 1
 

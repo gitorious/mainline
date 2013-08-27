@@ -619,9 +619,11 @@ class MergeRequest < ActiveRecord::Base
   # Comments made on self and all versions
   def cascaded_comments
     Comment.
-      where("(target_type = 'MergeRequest' AND target_id = ?) OR " +
-            "(target_type = 'MergeRequestVersion' AND target_id in (?))",
+      where("(target_type = ? AND target_id = ?) OR " +
+            "(target_type = ? AND target_id in (?))",
+            MergeRequest.name,
             self.id,
+            MergeRequestVersion.name,
             self.version_ids).
       order("comments.created_at").
       includes(:target, :user)

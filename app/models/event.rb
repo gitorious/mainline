@@ -21,6 +21,7 @@
 #++
 
 class Event < ActiveRecord::Base
+  extend IndexHint
 
   MAX_COMMIT_EVENTS = 25
 
@@ -40,7 +41,7 @@ class Event < ActiveRecord::Base
   validates_presence_of :user_id, :unless => :user_email_set?
 
   scope :top, {
-    :conditions => ["target_type != ?", "Event"],
+    :conditions => ["target_type != ?", Event.name],
     :order => "created_at desc",
     :include => [:user, :project]
   }
@@ -49,7 +50,7 @@ class Event < ActiveRecord::Base
   def self.latest(count)
     latest_event_ids = Event.find_by_sql(
                                          ["select id,action,created_at from events " +
-                                          "use index (index_events_on_created_at) where (action != ?) " +
+                                          "#{use_index('index_events_on_created_at')} where (action != ?) " +
                                           "order by created_at desc limit ?", Action::COMMIT, count
                                          ]).map(&:id)
     Event.where(:id => latest_event_ids).
@@ -62,7 +63,7 @@ class Event < ActiveRecord::Base
     where("events.action != ? and events.project_id in (?)",
           Action::COMMIT,
           project_ids).
-      from("#{quoted_table_name} use index (index_events_on_created_at)").
+      from("#{quoted_table_name} #{use_index('index_events_on_created_at')}").
       order("events.created_at desc").
       includes(:user, :project, :events).
       limit(count)
@@ -161,7 +162,7 @@ class Event < ActiveRecord::Base
   end
 
   def self.events_for_archive_in_batches(created_before)
-    find_in_batches(:conditions => ["created_at < ? AND target_type != ?", created_before, "event"]) do |batch|
+    find_in_batches(:conditions => ["created_at < ? AND target_type != ?", created_before, Event.name]) do |batch|
       yield batch if block_given?
       logger.info("Event archiving: archived one batch of events")
     end
