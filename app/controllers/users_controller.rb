@@ -55,7 +55,7 @@ class UsersController < ApplicationController
             :projects => filter(@user.projects.includes(:tags, { :repositories => :project })),
             :repositories => filter(@user.commit_repositories),
             :favorites => filter(@user.favorites.all(:include => :watchable))
-          })
+          }, :layout => 'ui3')
       end
     end
   end
