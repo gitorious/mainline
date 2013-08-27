@@ -27,41 +27,28 @@
     </div>
   </div>
   <div id="right" class="w-390">
-    <%= pull_box(t("views.site.dashboard.projects"), :class => "your-projects pull-box-390") do -%>
-      <ul class="with_icons">
-        <% projects.each do |project| -%>
-          <li class="project">
-            <%= link_to h(project.title), project -%>
-            <% if favorites.include?(project) %>
-              <%= image_tag("silk/star.png", :title => "favorited") %>
-            <% end %>
-          </li>
-        <% end -%>
-      </ul><% if is_current_user?(user) -%>
-        <div class="pull-box-links">
-          <%= link_button_link_to(t("views.projects.create_new"), new_project_path, {
-                                    :id => "new-project-button"}) %>
-        </div><% end -%><% end -%><%= pull_box(t("views.site.dashboard.repositories"), :class => "your-repositories pull-box-390") do -%><% if repositories.blank? -%><% if is_current_user?(user) -%>You currently do not have any repository clones. You can clone a repository you wish to contribute to by going to a repository overview page and clicking the "Clone repository" button in the repository information box.<% else -%>
+    <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
+    <%= pull_box(t("views.site.dashboard.repositories"), :class => "your-repositories pull-box-390") do %><% if repositories.blank? %><% if is_current_user?(user) %>You currently do not have any repository clones. You can clone a repository you wish to contribute to by going to a repository overview page and clicking the "Clone repository" button in the repository information box.<% else %>
           <p class="hint">
-            <%=h user.title -%> currently does not have any repository clones.
-          </p><% end -%><% else -%>
+            <%=h user.title %> currently does not have any repository clones.
+          </p><% end %><% else %>
         <ul class="with_icons">
-          <% repositories.each do |repo| -%>
+          <% repositories.each do |repo| %>
             <li class="repository">
-              <%= link_to h(repo.url_path), [repo.project, repo] -%>
-            </li><% end -%>
-        </ul><% end -%><% end %><%= pull_box("#{h user.title} is watching", :class => "your-favorites favorite pull-box-390") do %>
+              <%= link_to h(repo.url_path), [repo.project, repo] %>
+            </li><% end %>
+        </ul><% end %><% end %><%= pull_box("#{h user.title} is watching", :class => "your-favorites favorite pull-box-390") do %>
       <div class="filters">
         <ul>
           <li>
             <strong>Sort by:</strong>
-          </li><% if is_current_user?(user) -%>
+          </li><% if is_current_user?(user) %>
             <li>
               <a class="foreign" href="#not-mine">Not yours</a>
             </li>
             <li>
               <a class="mine" href="#mine">Yours</a>
-            </li><% end -%>
+            </li><% end %>
           <li>
             <a href="#merge-requests" class="merge-requests">Merge requests</a>
           </li>
@@ -75,24 +62,24 @@
       </div>
       <ul class="with_icons">
         <% favorites.reject { |favorite| favorite.watchable.nil? }.each do |favorite| %>
-          <li class="<%= css_classes_for(favorite.watchable) -%>">
-            <%= link_to_watchable(favorite.watchable) -%>
+          <li class="<%= css_classes_for(favorite.watchable) %>">
+            <%= link_to_watchable(favorite.watchable) %>
           </li>
         <% end %>
-        <% if favorites.blank? -%>
+        <% if favorites.blank? %>
           <li style="list-style: none">
             <p class="hint">
-              <%= no_watchings_notice_for(user) -%>
+              <%= no_watchings_notice_for(user) %>
             </p>
           </li>
-        <% end -%>
-      </ul><% end %><%= pull_box("Team memberships", :class => "teams pull-box-390") do -%>
+        <% end %>
+      </ul><% end %><%= pull_box("Team memberships", :class => "teams pull-box-390") do %>
       <ul>
-        <% Team.for_user(user).each do |group| -%>
+        <% Team.for_user(user).each do |group| %>
           <li style="clear:left">
-            <span style="float:left; padding: 2px 10px 2px 2px"><%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16") %></span> <%= link_to h(group.name), group_path(group) -%>
-          </li><% end -%>
-      </ul><% end unless Team.for_user(user).blank? -%>
+            <span style="float:left; padding: 2px 10px 2px 2px"><%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16") %></span> <%= link_to h(group.name), group_path(group) %>
+          </li><% end %>
+      </ul><% end unless Team.for_user(user).blank? %>
   </div>
   <div class="clear"></div>
 </div>
