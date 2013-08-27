@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+require File.expand_path(File.dirname(__FILE__) + "/setup")
+require "yaml"
+
+Gitorious::CLI.new.run_with_gitorious_environment do
+  require "./config/environment"
+  $verbose = (ARGV[0] == "verbose")
+
+  repos_to_gc = Repository.all_due_for_gc
+  if $verbose
+    puts "Garbage collecting #{repos_to_gc.length} repositories:"
+    puts "=" * 72
+  end
+
+  repos_to_gc.each_with_index do |repo, idx|
+    if $verbose
+      start = Time.now
+      print "#{idx+1}/#{repos_to_gc.length} GC'ing #{repo.url_path} (#{repo.id}) ..."
+    end
+    unless repo.gc!
+      $stderr.puts "GC FAIL: Repository##{repo.id} (#{repo.url_path}"
+    end
+    print " Completed in #{Time.now - start}\n" if $verbose
+  end
+
+end
