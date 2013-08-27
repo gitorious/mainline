@@ -42,7 +42,7 @@ group :test do
   gem "rcov", :platforms => :ruby_18
   gem "simplecov", :platforms => [:ruby_19, :ruby_20], :require => false
   gem "simplecov-rcov", :platforms => [:ruby_19, :ruby_20], :require => false
-  gem "guard-minitest", :git => "https://github.com/psyho/guard-minitest.git", :branch => 'include-paths'
+  gem "guard-minitest"
   gem "guard-ctags-bundler"
   gem "zeus", "0.13.4.pre2"
   gem "webmock"
