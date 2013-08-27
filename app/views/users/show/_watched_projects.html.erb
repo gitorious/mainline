@@ -1,8 +1,8 @@
-<%= pull_box("#{h user.title} is watching", :class => "your-favorites favorite pull-box-390") do %>
-  <div class="filters">
-    <ul>
+<%= pull_box("#{h user.title} is watching", :class => "watched") do %>
+  <div class="filters clearfix">
+    <ul class="unstyled">
       <li>
-        <strong>Sort by:</strong>
+        <strong>Filter by</strong>
       </li>
       <% if is_current_user?(user) %>
         <li>
@@ -23,18 +23,22 @@
       </li>
     </ul>
   </div>
-  <ul class="with_icons">
+  <table class="table">
     <% favorites.reject { |favorite| favorite.watchable.nil? }.each do |favorite| %>
-      <li class="<%= css_classes_for(favorite.watchable) %>">
-        <%= link_to_watchable(favorite.watchable) %>
-      </li>
+      <tr>
+        <td class="<%= css_classes_for(favorite.watchable) %>">
+          <%= link_to_watchable(favorite.watchable) %>
+        </td>
+      </tr>
     <% end %>
     <% if favorites.blank? %>
-      <li style="list-style: none">
-        <p class="hint">
-          <%= no_watchings_notice_for(user) %>
-        </p>
-      </li>
+      <tr style="list-style: none">
+        <td>
+          <p class="hint">
+            <%= no_watchings_notice_for(user) %>
+          </p>
+        </td>
+      </tr>
     <% end %>
-  </ul>
+  </table>
 <% end %>
