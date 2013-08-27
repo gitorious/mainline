@@ -24,6 +24,6 @@ module IndexHint
   private
 
   def mysql_adapter?
-    Rails.configuration.database_configuration[Rails.env.to_s]["adapter"] == "mysql2"
+    Rails.configuration.database_configuration[Rails.env.to_s]["adapter"] =~ /mysql/
   end
 end
