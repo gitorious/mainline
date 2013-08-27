@@ -293,7 +293,7 @@ Makes a user member of a group with a specific role.
 group = Group.find_by_name("gitorians")
 outcome = CreateMembership.new(Gitorious::App, group, group.owner).execute({
   :login => "cjohansen",
-  :role_name => "administrator"
+  :role_name => Role::ADMIN
 })
 ```
 

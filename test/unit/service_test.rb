@@ -23,6 +23,10 @@ require "test_helper"
 class ServiceTest < ActiveSupport::TestCase
   should belong_to(:repository)
 
+  def create_service(opts = {})
+    Service.create!({:data => {}}.merge(opts))
+  end
+
   context "Global services" do
     should "find services not associated to a repository" do
       create_web_hook(:url => "http://foo.com", :user => users(:johan))
@@ -76,20 +80,20 @@ class ServiceTest < ActiveSupport::TestCase
 
     context "when a service of a given type exists for the repository" do
       should "return a new record for multiple types" do
-        Service.create!(:service_type => 'multiple', :repository => repositories(:johans), :user => users(:johan))
+        create_service(:service_type => 'multiple', :repository => repositories(:johans), :user => users(:johan))
         assert Service.for_type_and_repository('multiple', repositories(:johans)).new_record?
       end
 
       should "return an existing record for singular types" do
-        service = Service.create!(:service_type => 'singular',
+        service = create_service(:service_type => 'singular',
                                   :repository => repositories(:johans), :user => users(:johan))
         assert_equal service, Service.for_type_and_repository('singular', repositories(:johans))
       end
     end
 
     should "return a new record if a service of a given type does not exist" do
-      Service.create!(:service_type => 'singular', :repository => repositories(:moes), :user => users(:johan))
-      Service.create!(:service_type => 'multiple', :repository => repositories(:moes), :user => users(:johan))
+      create_service(:service_type => 'singular', :repository => repositories(:moes), :user => users(:johan))
+      create_service(:service_type => 'multiple', :repository => repositories(:moes), :user => users(:johan))
 
       assert Service.for_type_and_repository('singular', repositories(:johans)).new_record?
       assert Service.for_type_and_repository('multiple', repositories(:johans)).new_record?

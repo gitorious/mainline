@@ -1,7 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,8 +16,14 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class ArchivedEvent < ActiveRecord::Base
-  def commits
-    self.class.where("target_id = ? AND target_type = ?", id, Event.name)
+module IndexHint
+  def use_index(index)
+    return "use index (#{index})" if mysql_adapter?
+  end
+
+  private
+
+  def mysql_adapter?
+    Rails.configuration.database_configuration[Rails.env.to_s]["adapter"] =~ /mysql/
   end
 end
