@@ -5,22 +5,27 @@
   <div class="span3">
     <div class="profile-data">
       <h1>
-        ~<%= link_to h(user.login), user -%>
+        ~<%= link_to h(user.login), user %>
       </h1>
-      <ul class="details">
-        <% unless user.fullname.blank? %>
+      <ul class="details unstyled">
+        <% if user.fullname.present? %>
           <li>
-            <%= h(user.fullname) -%>
-          </li><% end %><% if user.public_email? -%>
+            <strong><%= h(user.fullname) %></strong>
+          </li>
+        <% end %>
+        <% if user.public_email? %>
           <li class="email">
-            <%= mail_to(user.email, mangled_mail(user.email), :encode => "javascript") -%>
-          </li><% end -%><% if user.url %>
+            <%= mail_to(user.email, mangled_mail(user.email), :encode => "javascript") %>
+          </li>
+        <% end %>
+        <% if user.url %>
           <li>
-            <a rel="me" href="<%=h user.url -%>"><%=h user.url -%></a>
-          </li><% end -%>
+            <a rel="me" href="<%=h user.url %>"><%=h user.url %></a>
+          </li>
+        <% end %>
         <li>
           <%= t("views.users.member_for") %> <%= time_ago_in_words(user.created_at) %>
-          <% if user.suspended? -%>(suspended)<% end -%>
+          <% if user.suspended? %>(suspended)<% end %>
         </li>
       </ul>
     </div>
