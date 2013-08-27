@@ -21,7 +21,6 @@
 <div class="with_divider">
   <div id="left">
     <%= render "users/show/user_profile", :user => user %>
-
     <div class="content-container w-510">
       <%= render "users/show/activities", :user => user, :events => events %>
     </div>
@@ -30,18 +29,7 @@
     <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
     <%= render "users/show/repositories", :user => user, :repositories => repositories %>
     <%= render "users/show/watched_projects", :user => user, :favorites => favorites %>
-    <%= pull_box("Team memberships", :class => "teams pull-box-390") do %>
-      <ul>
-        <% Team.for_user(user).each do |group| %>
-          <li style="clear:left">
-            <span style="float:left; padding: 2px 10px 2px 2px">
-              <%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16") %>
-            </span>
-            <%= link_to h(group.name), group_path(group) %>
-          </li>
-        <% end %>
-      </ul>
-    <% end unless Team.for_user(user).blank? %>
+    <%= render "users/show/teams", :user => user, :teams => teams unless teams.blank? %>
   </div>
   <div class="clear"></div>
 </div>

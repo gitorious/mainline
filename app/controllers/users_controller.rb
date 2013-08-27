@@ -52,6 +52,7 @@ class UsersController < ApplicationController
         render_template("show", {
             :user => @user,
             :events => events,
+            :teams => Team.for_user(@user),
             :projects => filter(@user.projects.includes(:tags, { :repositories => :project })),
             :repositories => filter(@user.commit_repositories),
             :favorites => filter(@user.favorites.all(:include => :watchable))
