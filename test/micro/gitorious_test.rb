@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "minitest/autorun"
+require "fast_test_helper"
 require "config/initializers/gitorious_config"
 require "gitorious"
 
@@ -89,6 +89,69 @@ class GitoriousTest < MiniTest::Spec
     it "does not recognize localhost when not in specified ips" do
       Gitorious::Configuration.override("remote_ops_ips" => "192.168.122.1") do
         refute Gitorious.ops?("127.0.0.1")
+      end
+    end
+  end
+
+  describe "max tarball size" do
+    it "defaults to 0" do
+      assert_equal 0, Gitorious.max_tarball_size
+    end
+
+    it "uses configured value" do
+      Gitorious::Configuration.override("max_tarball_size" => "156") do
+        assert_equal 156, Gitorious.max_tarball_size
+      end
+    end
+
+    it "groks kilobytes" do
+      Gitorious::Configuration.override("max_tarball_size" => "1K") do
+        assert_equal 1024, Gitorious.max_tarball_size
+      end
+    end
+
+    it "groks megabytes" do
+      Gitorious::Configuration.override("max_tarball_size" => "1M") do
+        assert_equal 1048576, Gitorious.max_tarball_size
+      end
+    end
+
+    it "groks gigabytes" do
+      Gitorious::Configuration.override("max_tarball_size" => "1G") do
+        assert_equal 1073741824, Gitorious.max_tarball_size
+      end
+    end
+
+    it "is tarballable if there's no limit" do
+      repo = Repository.new(:disk_usage => 1024)
+      assert Gitorious.tarballable?(repo)
+    end
+
+    it "is tarballable if there's no disk usage data" do
+      Gitorious::Configuration.override("max_tarball_size" => "1K") do
+        repo = Repository.new
+        assert Gitorious.tarballable?(repo)
+      end
+    end
+
+    it "is tarballable if repo size is within limits" do
+      Gitorious::Configuration.override("max_tarball_size" => "1K") do
+        repo = Repository.new(:disk_usage => 1022)
+        assert Gitorious.tarballable?(repo)
+      end
+    end
+
+    it "is tarballable if repo size is exactly on the limit" do
+      Gitorious::Configuration.override("max_tarball_size" => "1K") do
+        repo = Repository.new(:disk_usage => 1024)
+        assert Gitorious.tarballable?(repo)
+      end
+    end
+
+    it "is not tarballable if repo size exceeds limits" do
+      Gitorious::Configuration.override("max_tarball_size" => "1K") do
+        repo = Repository.new(:disk_usage => 2042)
+        refute Gitorious.tarballable?(repo)
       end
     end
   end

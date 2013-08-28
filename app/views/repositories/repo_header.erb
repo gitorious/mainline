@@ -49,9 +49,11 @@ has_git_backend = repository.ready? && repository.has_commits?
       </div>
       <% if has_git_backend %>
         <div class="pull-right">
-          <a href="<%= archive_url(repository.path_segment, ref, "tar.gz") %>" class="btn gts-download" rel="tooltip" data-original-title="Download <%= refname(ref) %> as .tar.gz">
-            <i class="icon icon-download"></i> Download
-          </a>
+          <% if Gitorious.tarballable?(repository) %>
+            <a href="<%= archive_url(repository.path_segment, ref, "tar.gz") %>" class="btn gts-download" rel="tooltip" data-original-title="Download <%= refname(ref) %> as .tar.gz">
+              <i class="icon icon-download"></i> Download
+            </a>
+          <% end %>
           <div class="gts-watch-repository-ph gts-placeholder"></div>
           <div class="gts-clone-repository-ph gts-placeholder"></div>
         </div>

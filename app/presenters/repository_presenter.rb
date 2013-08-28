@@ -33,6 +33,7 @@ class RepositoryPresenter
   def path_segment; repository.path_segment; end
   def full_repository_path; repository.full_repository_path; end
   def head_candidate_name; repository.head_candidate_name; end
+  def disk_usage; repository.disk_usage; end
   def ready?; repository.ready?; end
   def committerships; repository.committerships; end
   def has_commits?; repository.has_commits?; end

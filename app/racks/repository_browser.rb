@@ -116,7 +116,10 @@ module Gitorious
 
     get %r{/(.*)/archive/(.*)?\.(tar\.gz|tgz|zip)} do
       repo, ref, format = params[:captures]
+
       safe_action(repo, ref) do
+        repository = dolt.resolve_repository(repo)
+        raise RepositoryTooBigError.new if !Gitorious.tarballable?(repository)
         configure_env(repo)
         filename = lookup.archive(repo, ref, format)
         add_sendfile_headers(filename, format)
@@ -142,10 +145,24 @@ module Gitorious
         end
       rescue Rugged::TreeError => err
         render_non_existent_refspec(repo, ref, err)
+      rescue RepositoryTooBigError => err
+        render_too_big_to_tarball(repo, ref)
       rescue StandardError => err
         raise err if !Rails.env.production?
         renderer.render({ :file => (Rails.root + "public/500.html").to_s }, {}, :layout => nil)
       end
+    end
+
+    def render_too_big_to_tarball(repository, ref)
+      pid, rid = repository.split("/")
+      uid = request.session["user_id"]
+      project = Project.find_by_slug!(pid)
+      renderer.render({ :file => (Rails.root + "app/views/repositories/_too_big_to_tarball.html.erb").to_s }, {
+          :repository => RepositoryPresenter.new(project.repositories.find_by_name!(rid)),
+          :current_user => uid && User.find(uid),
+          :session => session,
+          :ref => ref
+        })
     end
 
     def render_empty_repository(repository)
@@ -220,5 +237,8 @@ module Gitorious
     def env_data
       { :env => env, :current_site => current_site, :session => session }
     end
+  end
+
+  class RepositoryTooBigError < StandardError
   end
 end
