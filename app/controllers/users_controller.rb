@@ -75,11 +75,14 @@ class UsersController < ApplicationController
   def update
     outcome = UpdateUser.new(current_user).execute(params[:user])
     pre_condition_failed(outcome)
-    outcome.failure { |user| render_template("edit", :user => user) }
+
+    outcome.failure do |user|
+      render_template("edit", { :user => user }, :layout => 'ui3')
+    end
 
     outcome.success do
       flash[:success] = "Your account details were updated"
-      redirect_to user_path
+      redirect_to :back
     end
   end
 

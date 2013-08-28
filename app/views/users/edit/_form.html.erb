@@ -1,5 +1,3 @@
-<%= error_messages(user) -%>
-
 <%= simple_form_for user, :multipart => true, :html => { :class => 'form-horizontal' } do |f| -%>
   <fieldset>
     <%= f.input :fullname, :label => t("views.users.realname") %>
