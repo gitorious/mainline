@@ -23,6 +23,17 @@
 
 <div class="container">
   <div class="container-fluid gts-container">
-    <%= render "users/edit/form", :user => user %>
+    <div class="tabbable tabs-left">
+      <ul class="nav nav-tabs">
+        <li>
+          <%= link_to 'My details', '#my-details', :date => { :toggle => 'my-details' } %>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active" id="my-details">
+          <%= render "users/edit/form", :user => user %>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
