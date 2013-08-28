@@ -69,7 +69,7 @@ class UsersController < ApplicationController
   end
 
   def edit
-    render_template("edit", :user => current_user)
+    render_template("edit", { :user => current_user }, :layout => 'ui3')
   end
 
   def update
