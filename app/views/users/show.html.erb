@@ -18,19 +18,21 @@
   #++
   %>
 
-<div class="container gts-container">
-  <div class="row">
-    <div class="span5">
-      <%= render "users/show/user_profile", :user => user %>
-      <div class="content-container w-510">
-        <%= render "users/show/activities", :user => user, :events => events %>
+<div class="container">
+  <div class="container-fluid gts-container">
+    <div class="row-fluid">
+      <div class="span7">
+        <%= render "users/show/user_profile", :user => user %>
+        <div class="content-container w-510">
+          <%= render "users/show/activities", :user => user, :events => events %>
+        </div>
       </div>
-    </div>
-    <div class="span4">
-      <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
-      <%= render "users/show/repositories", :user => user, :repositories => repositories %>
-      <%= render "users/show/watched_projects", :user => user, :favorites => favorites %>
-      <%= render "users/show/teams", :user => user, :teams => teams unless teams.blank? %>
+      <div class="span5">
+        <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
+        <%= render "users/show/repositories", :user => user, :repositories => repositories %>
+        <%= render "users/show/watched_projects", :user => user, :favorites => favorites %>
+        <%= render "users/show/teams", :user => user, :teams => teams unless teams.blank? %>
+      </div>
     </div>
   </div>
 </div>

@@ -17,19 +17,17 @@
   #++
   %>
 <% action, body, category = action_and_body_for_event(event) %>
-<div class="gts-event row">
- <p>
-    <span class="span1"><span class="label label-info"><%= category.capitalize %></span></span>
-    <span class="event-time"><%= event.created_at.strftime("%H:%M") %></span>
-    <% if !event.user.nil? %>
-      <a class="event-author" href="<%= user_path(event.user) %>">
-        <%= gravatar(event.user.email, { :size => 24 }, :class => "gts-avatar") %>
-        <%= !event.user.fullname.blank? ? event.user.fullname : event.user.login %>
-      </a>
-    <% else %>
-      <%= event.actor_display %>
+<div class="gts-event">
+  <%= content_tag(:i, '', :class => "event-icon event-#{Action.name(event.action).gsub(' ', '-')}") %>
+  <%= content_tag(:span, event.created_at.strftime('%H:%M'), :class => 'event-time') %>
+  <% if event.user %>
+    <%= link_to(user_path(event.user), :class => 'event-author') do %>
+      <%= gravatar(event.user.email, { :size => 24 }, :class => "gts-avatar") %>
+      <%= !event.user.fullname.blank? ? event.user.fullname : event.user.login %>
     <% end %>
-    <%= action.html_safe if !action.blank? %>
-    <%= body.html_safe if !body.blank? %>
-  </p>
+  <% else %>
+    <%= event.actor_display %>
+  <% end %>
+  <%= content_tag(:span, action.html_safe, :class => 'event-action') if action.present? %>
+  <%= content_tag(:span, body.html_safe, :class => 'event-body muted') if body.present? %>
 </div>

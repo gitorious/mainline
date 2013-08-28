@@ -14,7 +14,17 @@
     <%= personified(user, "You have", "#{user.title} has") %> no news.
   </p>
 <% else %>
-  <div id="user_events" class="w-510">
-    <%= render :partial => "events/events", :locals => { :events => events, :container_css_class => "w-510" } %>
+  <div id="user_events">
+    <% prev_date = nil %>
+    <% events.each do |event| %>
+      <% if prev_date != event.created_at.strftime("%A, %B %e %Y") %>
+        <p class="gts-date-heading">
+          <span class="gts-date-heading-inner">
+            <%= prev_date = event.created_at.strftime("%A, %B %e %Y") %>
+          </span>
+        </p>
+      <% end %>
+      <%= render "repository_activities/event", :event => event %>
+    <% end %>
   </div>
 <% end %>
