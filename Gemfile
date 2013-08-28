@@ -27,6 +27,7 @@ gem "virtus", '~> 1.0.0.beta8'
 gem "rake", "~> 10.0"
 gem "gitlab-grit", :require => "grit", :git => "https://github.com/wrozka/grit.git"
 gem "airbrake", "~> 3.1.14", :require => false
+gem "simple_form", "~> 2.1"
 
 group :openid do
   gem "ruby-yadis", "0.3.4", :require => "yadis"
