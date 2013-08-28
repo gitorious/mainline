@@ -10,7 +10,7 @@
     <h3><%= t('views.keys.add_title') %></h3>
   </div>
   <div class="modal-body">
-    <%= render "keys/form" %>
+    <%= render "keys/form", :ssh_key => current_user.ssh_keys.build %>
   </div>
   <div class="modal-footer">
     <a href="#" class="btn" data-dismiss="modal">Close</a>
