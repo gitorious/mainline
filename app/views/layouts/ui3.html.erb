@@ -25,6 +25,8 @@
       <link href="<%= stylesheet %>" rel="stylesheet" type="text/css">
     <% end %>
     <%= content_for(:head) %>
+    <script type="text/javascript" src="/javascripts/lib/jquery.js"></script>
+    <script type="text/javascript" src="/javascripts/lib/bootstrap.min.js"></script>
     <% if defined?(session) && session[:_csrf_token] %>
       <meta class="csrf-param" content="authenticity_token" name="csrf-param" data-gts-env-csrf-param="authenticity_token">
       <meta class="csrf-token" content="<%= session[:_csrf_token] %>" name="csrf-token" data-gts-env-csrf-token="<%= session[:_csrf_token] %>">
