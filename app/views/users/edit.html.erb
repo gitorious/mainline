@@ -55,3 +55,17 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+$(function() {
+  var hash = document.location.hash;
+  var $nav = $('.nav a[href="'+hash+'"]');
+
+  if (hash && !$nav.parent().hasClass('active')) $nav.tab('show');
+
+  $('.modal-footer a[data-behavior="save"]').on('click', function() {
+    $(this).parents('.modal').find('form').submit();
+    return false;
+  });
+});
+</script>

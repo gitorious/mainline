@@ -1,0 +1,4 @@
+<%= simple_form_for(:ssh_key, :url => [current_user, :keys]) do |f| -%>
+  <small class="hint"><%= t("views.keys.hint").html_safe %></small>
+  <%= f.input :key, :as => :text, :label => false %>
+<% end %>
