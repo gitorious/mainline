@@ -52,6 +52,7 @@ Gitorious::Application.routes.draw do
   end
 
   # `resources :users` can't do the ~<user> ids
+  get "/~:id.keys" => "public_keys#index", :id => /[^\/]+/
   get "/~:id(.:format)" => "users#show", :as => "user", :id => /[^\/]+/
   get "/~:id/edit(.:format)" => "users#edit", :as => "edit_user", :id => /[^\/]+/
   put "/~:id(.:format)" => "users#update", :id => /[^\/]+/
