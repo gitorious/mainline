@@ -20,10 +20,16 @@
 <div class="container gts-body">
   <% events.each do |event| %>
     <% if prev_date != event.created_at.strftime("%A, %B %e %Y") %>
-      <p class="gts-date-heading"><span class="gts-date-heading-inner"><%= prev_date = event.created_at.strftime("%A, %B %e %Y") %></span></p>
+      <p class="gts-date-heading">
+        <span class="gts-date-heading-inner">
+          <%= prev_date = event.created_at.strftime("%A, %B %e %Y") %>
+        </span>
+      </p>
     <% end %>
-    <%= render :partial => "event", :locals => { :event => event } %>
+    <%= render "repository_activities/event", :event => event %>
   <% end %>
 
-  <%= raw JustPaginate.page_navigation(page, total_pages) { |page_no| "?page=#{page_no}" } -%>
+  <% if defined?(page) %>
+    <%= raw JustPaginate.page_navigation(page, total_pages) { |page_no| "?page=#{page_no}" } -%>
+  <% end %>
 </div>
