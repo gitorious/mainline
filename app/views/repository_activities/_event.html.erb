@@ -17,9 +17,10 @@
   #++
   %>
 <% action, body, category = action_and_body_for_event(event) %>
-<div class="gts-event">
-  <%= content_tag(:i, '', :class => "event-icon event-#{Action.name(event.action).gsub(' ', '-')}") %>
-  <%= content_tag(:span, event.created_at.strftime('%H:%M'), :class => 'event-time') %>
+<% type = Action.name(event.action).gsub(' ', '-') %>
+<% timestamp = l(event.created_at, :format => :short) %>
+
+<div class="gts-event" title="<%= timestamp %>">
   <% if event.user %>
     <%= link_to(user_path(event.user), :class => 'event-author') do %>
       <%= gravatar(event.user.email, { :size => 24 }, :class => "gts-avatar") %>
