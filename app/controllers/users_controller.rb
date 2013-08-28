@@ -69,6 +69,7 @@ class UsersController < ApplicationController
   end
 
   def edit
+    @body_class = "sticky-footer"
     render_template("edit", { :user => current_user }, :layout => 'ui3')
   end
 
