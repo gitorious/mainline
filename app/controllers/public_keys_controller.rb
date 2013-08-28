@@ -1,7 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,8 +16,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class ArchivedEvent < ActiveRecord::Base
-  def commits
-    self.class.where("target_id = ? AND target_type = ?", id, Event.name)
+class PublicKeysController < ApplicationController
+  def index
+    user = User.find_by_login!(params[:id])
+    render(:text => user.ssh_keys.map(&:key).join("\n"))
   end
 end

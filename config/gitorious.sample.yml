@@ -254,6 +254,17 @@ archive_work_dir: "/var/git/tarballs-work"
 # activity. Gitorious will also list the Git version in the FAQ.
 #git_binary: /usr/bin/env git
 
+# The maximum size allowed for tarball generation. If a repository's size
+# exceeds this threshold, a warning is issued when trying to download it
+# as a tarball.
+#
+# If this option is not set, or if it is set to 0, no size limit will be
+# enforced. Option can be set to a number (bytes) or a number like
+# 100K (100 kilobytes)
+# 100M (100 megabytes)
+# 100G (100 gigabytes)
+#max_tarball_size: 0
+
 # Available project licenses. This can be configured as an array of
 # licenses:
 #

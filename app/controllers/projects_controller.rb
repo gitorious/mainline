@@ -227,7 +227,7 @@ class ProjectsController < ApplicationController
   def unfiltered_paginated_events
     #marshalable_events(@project.events.paginate({
     @project.events.paginate({
-      :conditions => ["target_type != ?", "Event"],
+      :conditions => ["target_type != ?", Event.name],
       :include => [:user, :project],
       :per_page => Event.per_page,
       :page => params[:page]

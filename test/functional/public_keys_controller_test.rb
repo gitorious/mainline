@@ -1,7 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,9 +15,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "ssh_key_test_helper"
 
-class ArchivedEvent < ActiveRecord::Base
-  def commits
-    self.class.where("target_id = ? AND target_type = ?", id, Event.name)
+class PublicKeysControllerTest < ActionController::TestCase
+  include SshKeyTestHelper
+
+  context "index" do
+    should "list user's public keys" do
+      get :index, :id => users(:johan).to_param
+
+      assert_response :success
+      assert_match "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFz\nc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRi\nZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4\nZm9mcWU= foo@example.com", @response.body
+    end
   end
 end

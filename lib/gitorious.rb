@@ -206,6 +206,20 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
     Gitorious::Configuration.get("enable_registrations", Gitorious.public?)
   end
 
+  def self.max_tarball_size
+    return @max_tarball_size if @max_tarball_size && cache?
+    mts = Gitorious::Configuration.get("max_tarball_size", 0)
+    return mts.to_i * 1024 if mts =~ /k$/i
+    return mts.to_i * 1024 * 1024 if mts =~ /m$/i
+    return mts.to_i * 1024 * 1024 * 1024 if mts =~ /g$/i
+    @max_tarball_size = mts.to_i
+  end
+
+  def self.tarballable?(repository)
+    return true if max_tarball_size == 0 || repository.disk_usage.nil?
+    return repository.disk_usage <= max_tarball_size
+  end
+
   def self.configured?
     @configured
   end

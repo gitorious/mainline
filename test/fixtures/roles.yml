@@ -1,7 +1,7 @@
 admin:
-  name: Administrator
+  name: <%= Role::ADMIN %> 
   kind: <%= Role::KIND_ADMIN %>
   
 member:
-  name: Member
+  name: <%= Role::MEMBER %>
   kind: <%= Role::KIND_MEMBER %>
