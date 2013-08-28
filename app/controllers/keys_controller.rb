@@ -47,7 +47,9 @@ class KeysController < ApplicationController
     respond_to do |format|
       outcome.success do |result|
         flash[:notice] = I18n.t("keys_controller.create_notice")
-        format.html { redirect_to user_keys_index_path }
+        format.html {
+          head :created
+        }
         format.xml do
           key_path = user_key_path(current_user, result)
           render(:xml => result, :status => :created, :location => key_path)
@@ -56,9 +58,7 @@ class KeysController < ApplicationController
 
       outcome.failure do |key|
         format.html do
-          @ssh_key = key
-          @root = Breadcrumb::NewKey.new(current_user)
-          render :action => "new"
+          render :partial => "form", :locals => { :ssh_key => key }, :status => :unprocessable_entity
         end
         format.xml do
           render(:xml => key.errors.full_messages, :status => :unprocessable_entity)
