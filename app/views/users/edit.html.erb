@@ -25,13 +25,31 @@
   <div class="container-fluid gts-container">
     <div class="tabbable tabs-left">
       <ul class="nav nav-tabs">
+        <li class="active">
+          <%= link_to 'My details', '#my-details', :data => { :toggle => 'tab' } %>
+        </li>
         <li>
-          <%= link_to 'My details', '#my-details', :date => { :toggle => 'my-details' } %>
+          <%= link_to 'SSH keys', '#ssh-keys', :data => { :toggle => 'tab' } %>
+        </li>
+        <li>
+          <%= link_to 'Change password', '#change-password', :data => { :toggle => 'tab' } %>
+        </li>
+        <li>
+          <%= link_to 'Manage favorites', '#manage-favorites', :data => { :toggle => 'tab' } %>
         </li>
       </ul>
-      <div class="tab-content">
+      <div class="tab-content user-edit-content">
         <div class="tab-pane active" id="my-details">
           <%= render "users/edit/form", :user => user %>
+        </div>
+        <div class="tab-pane" id="ssh-keys">
+          <%= render "users/edit/ssh_keys", :user => user %>
+        </div>
+        <div class="tab-pane" id="change-password">
+          <%= render "users/edit/password_form", :user => user %>
+        </div>
+        <div class="tab-pane" id="manage-favorites">
+          <%= render "users/edit/manage_favorites", :user => user %>
         </div>
       </div>
     </div>
