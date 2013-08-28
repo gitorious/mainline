@@ -18,7 +18,7 @@
       <span class="hint"> If you do not add an image, Gitorious will try to use your gravatar </span>
     </div>
 
-    <%= f.input :avatar, :label => 'Upload avatar' %>
+    <%= f.input :avatar, :as => :file, :label => 'Upload avatar' %>
 
     <%= f.input :wants_email_notifications, :label => t("views.users.wants_email_notifications") %>
     <span class="hint">
