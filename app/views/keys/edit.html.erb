@@ -26,11 +26,4 @@
 <h2 class="content-header"><%= t("views.keys.edit_title") %></h2>
 
 <%= error_messages(@ssh_key) -%>
-
-<%= form_for @ssh_key, :url => user_key_path(@ssh_key) do |f| -%>
-  <p>
-    <%= f.label :key, t(:key, :scope => "activerecord.attributes.keys") -%><br />
-    <%= f.text_area :key, :class => "text medium" -%>
-  </p>
-  <%= f.submit t("views.common.save") -%>
-<% end -%>
+<%= render "form" %>

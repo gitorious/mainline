@@ -47,7 +47,7 @@ class KeysController < ApplicationController
     respond_to do |format|
       outcome.success do |result|
         flash[:notice] = I18n.t("keys_controller.create_notice")
-        format.html { redirect_to(user_keys_path(current_user)) }
+        format.html { redirect_to user_keys_index_path }
         format.xml do
           key_path = user_key_path(current_user, result)
           render(:xml => result, :status => :created, :location => key_path)
@@ -81,14 +81,19 @@ class KeysController < ApplicationController
 
     outcome.success do
       flash[:notice] = I18n.t("keys_controller.destroy_notice")
-      redirect_to(user_keys_path(current_user)) and return
+      redirect_to user_keys_index_path and return
     end
 
     render(:text => "Bad request", :status => 400)
   end
 
   protected
+
   def find_user
     @user = User.find_by_login!(params[:user_id])
+  end
+
+  def user_keys_index_path
+    edit_user_path(current_user) + '#ssh-keys'
   end
 end
