@@ -55,10 +55,19 @@ class EventsControllerTest < ActionController::TestCase
       @grit = mock
       Repository.any_instance.stubs(:git).returns(@grit)
 
-      Gitorious::Commit.expects(:load_commits_between).with(@grit, @first_sha, @last_sha, @push_event.id).returns([])
+      Gitorious::Commit.expects(:load_commits_between).with(@grit, @first_sha, @last_sha, @push_event.id).returns([fake_commit])
 
       get :commits, :id => @push_event.to_param, :format => "js"
       assert_response :success
+    end
+
+    def fake_commit
+      grit_commit = stub(
+        :id => "sha123",
+        :committer => stub(:email => "foo@bar.com", :name => "Foo"),
+        :committed_date => Time.now,
+        :message => "initial commit")
+      Gitorious::Commit.new(grit_commit)
     end
   end
 
