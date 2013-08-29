@@ -68,9 +68,24 @@ class UsersController < ApplicationController
     outcome.success { |result| redirect_to(pending_activation_users_url) }
   end
 
+  EDIT_VIEWS = {
+    'my-details'       => 'users/edit/my_details',
+    'ssh-keys'         => 'users/edit/ssh_keys',
+    'change-password'  => 'users/edit/change_password',
+    'manage-favorites' => 'users/edit/manage_favorites'
+  }
+
   def edit
     @body_class = "sticky-footer"
-    render_template("edit", { :user => current_user }, :layout => 'ui3')
+
+    if request.headers['X-PJAX']
+      render(
+        :partial => EDIT_VIEWS.fetch(params[:tab]),
+        :locals  => { :user => current_user }
+      )
+    else
+      render_template("edit", { :user => current_user }, :layout => 'ui3')
+    end
   end
 
   def update
