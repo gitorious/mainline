@@ -178,7 +178,7 @@ Gitorious::Application.routes.draw do
 
   ### R10. Events
   resources :events do
-    collection do
+    member do
       get :commits
     end
   end
