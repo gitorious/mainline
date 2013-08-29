@@ -1,29 +1,36 @@
 module TabsHelper
 
   def user_edit_tabbable(options, &block)
-    tabbable(
-      :my_details, :ssh_keys, :change_password, :manage_favorites,
+    tabbable({
+      'my-details'       => user_edit_my_details_path(current_user),
+      'ssh-keys'         => user_edit_ssh_keys_path(current_user),
+      'change-password'  => user_edit_password_path(current_user),
+      'manage-favorites' => user_edit_favorites_path(current_user) },
       options.merge(:position => 'left'), &block
     )
   end
 
-  def tabbable(*args, &block)
-    options  = args.pop
+  def tabbable(tabs, options = {}, &block)
     position = options.fetch(:position, 'left')
-    active   = options[:active].to_s.dasherize
+    active   = tabs.key?(params[:tab]) && params[:tab]
 
     content_tag(:div, :class => "tabbable tabs-#{position}") {
-      nav_tabs(args, active) + tab_content(&block)
+      nav_tabs(tabs, active) + tab_content(&block)
     }.html_safe
   end
 
   def nav_tabs(tabs, active)
     content_tag(:ul, :class => 'nav nav-tabs', :data => { :active => active }) {
-      tabs.map { |name|
-        link = link_to(t("views.tabs.#{name}"), "##{name.to_s.dasherize}", :data => { :toggle => 'tab' })
-        content_tag(:li, link)
+      tabs.map { |name, path|
+
+        content_tag(:li, nav_link(name, path))
       }.join("\n").html_safe
     }
+  end
+
+  def nav_link(name, path)
+    link_to(t("views.tabs.#{name.underscore}"), path,
+      :data => { :toggle => 'tab', :target => "##{name.to_s.dasherize}" })
   end
 
   def tab_content(&block)

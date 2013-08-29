@@ -43,7 +43,7 @@
 <script type="text/javascript">
 $(function() {
   var active = $('.nav[data-active]').data('active');
-  var $nav   = $('a[href="#'+active+'"]');
+  var $nav   = $('a[data-target="#'+active+'"]');
 
   $nav.tab('show');
 
