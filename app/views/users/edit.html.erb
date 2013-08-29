@@ -25,13 +25,13 @@
   <div class="container-fluid gts-container">
     <%= user_edit_tabbable :active => :my_details do %>
       <%= tab_pane(:my_details) do %>
-        <%= render "users/edit/form", :user => user %>
+        <%= render "users/edit/my_details", :user => user %>
       <% end %>
       <%= tab_pane(:ssh_keys) do %>
         <%= render "users/edit/ssh_keys", :user => user %>
       <% end %>
       <%= tab_pane(:change_password) do %>
-        <%= render "users/edit/password_form", :user => user %>
+        <%= render "users/edit/change_password", :user => user %>
       <% end %>
       <%= tab_pane(:manage_favorites) do %>
         <%= render "users/edit/manage_favorites", :user => user %>
@@ -46,6 +46,8 @@ $(function() {
   var $nav   = $('a[data-target="#'+active+'"]');
 
   $nav.tab('show');
+
+  $('.nav').pjax('a', '.tab-content');
 
   $('.modal-footer a[data-behavior="save"]').on('click', function() {
     $(this).parents('.modal').find('form').submit();
