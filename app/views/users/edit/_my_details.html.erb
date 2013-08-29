@@ -1,37 +1,23 @@
 <%= simple_form_for user, :multipart => true, :html => { :class => 'form-horizontal' } do |f| -%>
   <fieldset>
     <%= f.input :fullname, :label => t("views.users.realname") %>
-    <%= f.input :email, :label =>t(:email, :scope => 'views.users') %>
-    <%= f.input :public_email, :label => t(:public_email, :scope => 'activerecord.attributes.user') %>
-    <span class="hint">
-      (The email will be encoded to prevent scraping)
-    </span>
+    <%= f.input :email, :as => :email, :label =>t(:email, :scope => 'views.users') %>
+    <%= f.input :public_email, :hint => 'The email will be encoded to prevent scraping', :label => t(:public_email, :scope => 'activerecord.attributes.user') %>
     <%= f.input :identity_url, :as => :string, :label => t("views.users.openid") %>
-
-    <%= f.label :avatar, t('views.users.avatar') %>
-
-    <div>
-      <%= avatar(user, :version => :thumb, :size => '24') %>
-      <%- if user.avatar? -%>
-        <%= button_to_function("Delete current profile image", "if (confirm('Are you sure you want to delete your profile image?')) $('#delete_avatar').submit()") %>
-      <%- end -%>
-      <span class="hint"> If you do not add an image, Gitorious will try to use your gravatar </span>
+    <div class="control-group user-avatar">
+      <label class="control-label">Current avatar</label>
+      <div class="controls">
+        <%= avatar(user, :version => :thumb, :size => '64', :class => 'pull-left') %>
+        <% if user.avatar? %>
+          <%= link_to "Delete", user_avatar_path, :method => :delete,
+            :data => { :confirm => 'Are you sure?' },
+            :class => 'delete-button' %>
+        <% end %>
+      </div>
     </div>
-
-    <%= f.input :avatar, :as => :file, :label => 'Upload avatar' %>
-
-    <%= f.input :wants_email_notifications, :label => t("views.users.wants_email_notifications") %>
-    <span class="hint">
-      <%= t("views.users.describe_email_notifications") %>
-    </span>
-    <%= f.input :default_favorite_notifications %>
-    <span class="hint">
-      <%= t("views.users.default_favorite_notifications", :url => favorites_path) %>
-    </span>
+    <%= f.input :avatar, :as => :file, :hint => 'If you do not add an image, Gitorious will try to use your gravatar', :label => 'Upload avatar' %>
+    <%= f.input :wants_email_notifications, :hint => t("views.users.describe_email_notifications"), :label => t("views.users.wants_email_notifications") %>
+    <%= f.input :default_favorite_notifications, :hint => t("views.users.default_favorite_notifications", :url => favorites_path) %>
   </fieldset>
-  <%= f.submit t("views.common.save") -%>
+  <%= f.submit t("views.common.save"), :class => 'btn btn-primary pull-right' %>
 <% end -%>
-
-<%= form_for(user, :url => user_avatar_path, :html => {:id => "delete_avatar", :method => :delete}) do |f| -%>
-
-<%- end -%>
