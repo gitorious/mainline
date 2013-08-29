@@ -44,18 +44,18 @@ module FavoritesHelper
   end
 
   def link_to_notification_toggle(favorite)
-    link_classes = %w[toggle round-10]
+    link_classes = %w(toggle round-10)
     link_classes << (favorite.notify_by_email? ? "enabled" : "disabled")
-    link = link_to(favorite.notify_by_email? ? "on" : "off", favorite,
-      :class => link_classes.join(" "))
-    content_tag(:div, link,
-            :class => "white-button round-10 small-button update favorite")
+
+    title = favorite.notify_by_email? ? "on" : "off"
+    value = favorite.notify_by_email? ? 0 : 1
+    url   = favorite_path(favorite)+"?favorite[notify_by_email]=#{value}"
+
+    link_to(title, url, :method => :put)
   end
 
   def link_to_unwatch_favorite(favorite)
-    link = link_to("Unwatch", favorite, :class => "watch-link enabled round-10")
-    content_tag(:div, link,
-      :class => "white-button round-10 small-button favorite")
+    link_to("Unwatch", favorite, :method => :delete)
   end
 
   # Builds a link to the target of a favorite event

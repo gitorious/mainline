@@ -115,6 +115,12 @@ class UsersController < ApplicationController
   end
 
   protected
+
+  def favorites
+    @favorites ||= filter(current_user.favorites.all(:include => :watchable))
+  end
+  helper_method :favorites
+
   def render_form(user)
     render_template(:new, { :user => user }, { :layout => "ui3" })
   end

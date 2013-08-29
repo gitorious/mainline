@@ -30,8 +30,12 @@ class FavoritesController < ApplicationController
     @favorite = authorize_access_to(current_user.favorites.find(params[:id]))
     @favorite.notify_by_email = params[:favorite][:notify_by_email]
     @favorite.save
+
     respond_to do |wants|
-      wants.html { redirect_to favorites_path }
+      wants.html do
+        redirect_to user_edit_favorites_path(current_user)
+      end
+
       wants.js { head :ok }
     end
   end
@@ -39,6 +43,7 @@ class FavoritesController < ApplicationController
   def create
     @favorite = @watchable.watched_by!(current_user)
     @favorite.create_event
+
     respond_to do |wants|
       wants.html {
         flash[:notice] = "You are now watching this #{@watchable.class.name.downcase}"
@@ -56,14 +61,15 @@ class FavoritesController < ApplicationController
     @favorite.destroy
     watchable = @favorite.watchable
     respond_to do |wants|
-      wants.html {
+      wants.html do
         flash[:notice] = "You no longer watch this #{watchable.class.name.downcase}"
-        redirect_to([watchable.project, watchable])
-      }
-      wants.js {
+        redirect_to :back
+      end
+
+      wants.js do
         head :ok, :location => url_for(:action => "create", :watchable_id => watchable.id,
           :watchable_type => watchable.class.name, :only_path => true)
-      }
+      end
     end
   end
 
