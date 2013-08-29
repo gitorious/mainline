@@ -188,6 +188,12 @@
       :unique_key_validation_message => "is already in use - please use/generate a different keypair."
     },
     :views => {
+      :tabs => {
+        :my_details => 'My details',
+        :ssh_keys => 'SSH keys',
+        :change_password => 'Change password',
+        :manage_favorites => 'Manage favorites'
+      },
       :layout => {
         :system_notice => "System notice",
         :home => "Home",
