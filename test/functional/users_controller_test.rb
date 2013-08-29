@@ -90,6 +90,14 @@ class UsersControllerTest < ActionController::TestCase
       assert_match user_feed_path(user, :format => :atom), response.body
     end
 
+    should "redirect to feed for atom format" do
+      user = users(:johan)
+
+      get :show, :id => user.login, :format => :atom
+
+      assert_redirected_to user_feed_path(user, :format => :atom)
+    end
+
     should "not display inactive users" do
       user = users(:johan)
       user.update_attribute(:activation_code, "123")

@@ -43,7 +43,7 @@ class UsersController < ApplicationController
     return if events.count == 0 && params.key?(:page)
 
     respond_to do |format|
-      format.atom { redirect_to(user_feed_path(user, :format => :atom)) }
+      format.atom { redirect_to(user_feed_path(@user, :format => :atom)) }
       format.html do
         # These two are used by the layout
         @atom_auto_discovery_url = user_feed_path(@user, :format => :atom)
