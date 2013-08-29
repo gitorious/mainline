@@ -3,8 +3,8 @@ module TabsHelper
   def user_edit_tabbable(options, &block)
     tabbable({
       'my-details'       => user_edit_my_details_path(current_user),
-      'ssh-keys'         => user_edit_ssh_keys_path(current_user),
       'change-password'  => user_edit_password_path(current_user),
+      'ssh-keys'         => user_edit_ssh_keys_path(current_user),
       'manage-favorites' => user_edit_favorites_path(current_user) },
       options.merge(:position => 'left'), &block
     )

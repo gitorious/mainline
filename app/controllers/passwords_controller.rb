@@ -28,21 +28,28 @@ class PasswordsController < ApplicationController
   def update
     input = params[:user].merge(:actor => requested_user)
     outcome = ChangePassword.new(current_user).execute(input)
-    outcome.failure { |user| render_template("edit", :user => user) }
+
+    outcome.failure do |user|
+      flash[:error] = "Password do not match"
+      redirect_to user_edit_password_path(current_user)
+    end
 
     pre_condition_failed(outcome) do |f|
       f.when(:current_password_required) do
-        flash[:error] = "Your current password does not seem to match the one your supplied"
-        render_template("edit", :user => current_user)
+        flash[:error] = "Your current password does not seem to match the one you supplied"
+        redirect_to user_edit_password_path(current_user)
       end
     end
 
     outcome.success do |user|
       flash[:success] = "Your password has been changed"
-      redirect_to(user_path(user))
+      redirect_to user_edit_password_path(current_user)
     end
   end
 
   private
-  def requested_user; @user ||= User.find_by_login!(params[:id]); end
+
+  def requested_user
+    @user ||= User.find_by_login!(params[:id])
+  end
 end
