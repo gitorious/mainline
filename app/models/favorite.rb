@@ -17,6 +17,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require 'event_rendering/text'
+
 class Favorite < ActiveRecord::Base
   belongs_to :user
   belongs_to :watchable, :polymorphic => true
