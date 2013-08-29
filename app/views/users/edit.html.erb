@@ -27,11 +27,11 @@
       <%= tab_pane(:my_details) do %>
         <%= render "users/edit/my_details", :user => user %>
       <% end %>
-      <%= tab_pane(:ssh_keys) do %>
-        <%= render "users/edit/ssh_keys", :user => user %>
-      <% end %>
       <%= tab_pane(:change_password) do %>
         <%= render "users/edit/change_password", :user => user %>
+      <% end %>
+      <%= tab_pane(:ssh_keys) do %>
+        <%= render "users/edit/ssh_keys", :user => user %>
       <% end %>
       <%= tab_pane(:manage_favorites) do %>
         <%= render "users/edit/manage_favorites", :user => user %>

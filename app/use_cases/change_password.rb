@@ -37,9 +37,10 @@ end
 
 class PasswordChangeParams
   include Virtus
-  attribute :current_password, :String
-  attribute :password, :String
-  attribute :password_confirmation, :String
+
+  attribute :current_password, String
+  attribute :password, String
+  attribute :password_confirmation, String
   attribute :actor, Object
 end
 
