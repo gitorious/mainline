@@ -76,8 +76,6 @@ class UsersController < ApplicationController
   }
 
   def edit
-    @body_class = "sticky-footer"
-
     if request.headers['X-PJAX']
       render(
         :partial => EDIT_VIEWS.fetch(params[:tab]),
