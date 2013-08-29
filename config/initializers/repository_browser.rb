@@ -33,6 +33,23 @@ view = Tiltout.new([Dolt.template_dir, views.realpath.to_s], {
   :layout => { :file => (views + "layouts/ui3.html.erb").realpath.to_s }
 })
 
+module Dolt::View::Urls
+  def submodule_url(repository, ref, submodule)
+    submodule[:url]
+  end
+end
+
+module Dolt::View::Tree
+  def object_path(root, object)
+    return object if object[:type] == :submodule
+    File.join(root, object[:name]).sub(/^\//, "")
+  end
+
+  def object_url(repository, ref, path, object)
+    send(:"#{object[:type]}_url", repository, ref, object_path(path, object))
+  end
+end
+
 module DoltViewHelpers
   include Gitorious::View::DoltUrlHelper
   include ::Dolt::View::MultiRepository
