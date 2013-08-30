@@ -20,6 +20,10 @@ class OwnerRedirectionsController < ApplicationController
   def show
     path = params[:slug].split("/")
 
+    if repository = owner.repositories.find_by_name(path[1])
+      return redirect_to "/#{path.join("/")}"
+    end
+
     if owner.projects.find_by_slug(path[0])
       return redirect_to("/#{path.join('/')}")
     end
