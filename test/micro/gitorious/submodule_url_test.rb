@@ -59,10 +59,6 @@ module Gitorious
       let(:expected_url) { "https://gitorious.org/foo/bar/source/sha123" }
 
       describe "ssh urls" do
-        it "returns nil for other ports" do
-          assert_nil parser.browse_url("git@gitorious.org:8080/foo/bar.git", "sha123")
-        end
-
         it "returns nil for other users" do
           assert_nil parser.browse_url("foo@gitorious.org:foo/bar.git", "sha123")
         end
@@ -101,6 +97,20 @@ module Gitorious
 
         it "returns repository url for matching protocol, port and domain" do
           assert_equal expected_url, parser.browse_url("git://gitorious.org/foo/bar.git", "sha123")
+        end
+      end
+
+      describe "legacy urls" do
+        it "returns repository url for legacy git url" do
+          assert_equal expected_url, parser.browse_url("git://gitorious.org/~baz/foo/bar.git", "sha123")
+        end
+
+        it "returns repository url for legacy http url" do
+          assert_equal expected_url, parser.browse_url("http://git.gitorious.org/~baz/foo/bar.git", "sha123")
+        end
+
+        it "returns repository url for legacy ssh url" do
+          assert_equal expected_url, parser.browse_url("git@gitorious.org:+baz/foo/bar.git", "sha123")
         end
       end
     end

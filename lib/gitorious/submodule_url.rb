@@ -44,8 +44,7 @@ module Gitorious
         base_url = mountpoint.url("")
         return nil unless url.include?(base_url)
         parts = url.gsub(base_url, '').gsub(/\.git$/, '').split("/")
-        return nil unless parts.size == 2
-        parts
+        return parts[-2..-1]
       end
     end
 
