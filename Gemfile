@@ -87,7 +87,7 @@ platform :ruby_18 do
 end
 
 group :dolt do
-  gem "libdolt", :git => "git://gitorious.org/gitorious/wrozkas-libdolt.git", :branch => "features/submodule-support"
+  gem "libdolt", "~> 0.33"
   gem "dolt", "~> 0.29"
   gem "tiltout", "~> 1.4"
 
