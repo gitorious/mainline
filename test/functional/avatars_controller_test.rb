@@ -28,7 +28,7 @@ class AvatarsControllerTest < ActionController::TestCase
 
       delete :destroy, :id => user.to_param
 
-      assert_redirected_to user_path(user)
+      assert_redirected_to edit_user_path(user)
       assert !user.reload.avatar?
     end
   end

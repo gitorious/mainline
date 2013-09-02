@@ -28,6 +28,6 @@ class AvatarsController < ApplicationController
     user.save
     user.expire_avatar_email_caches
     flash[:success] = "You avatar was deleted"
-    redirect_to(user_edit_my_details_path(user))
+    redirect_to(edit_user_path(user))
   end
 end
