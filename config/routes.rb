@@ -309,7 +309,7 @@ Gitorious::Application.routes.draw do
 
       match "/commits/*id/feed(.:format)" => "commits#feed", :as => :formatted_commits_feed
       match "/commits" => "commits#index", :as => :commits
-      match "/commits/*branch" => "commits#index", :as => :commits_in_ref
+      match "/commits/*branch" => "commits#index", :as => :commits_in_ref, :branch => /.+/
 
       match "/commit/:id/comments" => "commit_comments#index", :as => :commit_comments, :id => /[^\/]+/
       match "/commit/:id/diffs" => "commit_diffs#index", :as => :commit_diffs, :id => /[^\/]+/
