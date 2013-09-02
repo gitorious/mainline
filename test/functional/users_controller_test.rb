@@ -173,12 +173,16 @@ class UsersControllerTest < ActionController::TestCase
     end
 
     should "successfully edit user" do
+      user = users(:johan)
+
       login_as :johan
 
-      put :update, :id => users(:johan).to_param, :user => { :fullname => "Zlorg" }
+      request.env['HTTP_REFERER'] = edit_user_path(user)
+
+      put :update, :id => user.to_param, :user => { :fullname => "Zlorg" }
 
       refute flash[:success].nil?
-      assert_redirected_to(user_path(users(:johan)))
+      assert_redirected_to(edit_user_path(user))
     end
 
     should "not update password through edit" do
@@ -258,7 +262,7 @@ class UsersControllerTest < ActionController::TestCase
       create_event(projects(:moes), projects(:moes).repositories.first)
 
       get :show, :id => @user.to_param
-      assert_select ".events li", 1
+      assert_select ".gts-event", 1
     end
   end
 
