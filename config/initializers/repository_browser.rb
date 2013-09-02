@@ -63,6 +63,8 @@ view.helper(DoltViewHelpers)
 view.helper(DoltRailsShims)
 view.helper(:maxdepth => 3, :tab_width => 4)
 
+::Dolt::View::SubmoduleUrl.parsers.unshift(Gitorious::SubmoduleUrlParser.new)
+
 archiver = ::Dolt::Git::Archiver.new(Gitorious.archive_work_dir, Gitorious.archive_cache_dir)
 lookup = ::Dolt::RepositoryLookup.new(Gitorious::Dolt::RepositoryResolver.new, archiver)
 Gitorious::RepositoryBrowser.instance = Gitorious::RepositoryBrowser.new(lookup, view)

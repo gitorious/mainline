@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,33 +16,28 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class OwnerRedirectionsController < ApplicationController
-  def show
-    path = params[:slug].split("/")
+require 'libdolt'
 
-    if repository = owner.repositories.find_by_name(path[1])
-      return redirect_to "/#{path.join("/")}"
+module Gitorious
+  class MountPointAdapter
+    def initialize(mountpoint)
+      @mountpoint = mountpoint
     end
 
-    if owner.projects.find_by_slug(path[0])
-      return redirect_to("/#{path.join('/')}")
+    def base_url
+      @mountpoint.url("")
     end
-
-    if repository = owner.repositories.find_by_name(path[0])
-      return redirect_to("/#{repository.project.to_param}/#{path.join('/')}")
-    end
-
-    render_not_found
   end
 
-  private
-  def owner
-    return @owner if @owner
+  class SubmoduleUrlParser
+    include ::Dolt::View::SubmoduleUrl::Parser
 
-    if params.key?(:user_id)
-      @owner = User.find_by_login!(params[:user_id])
-    else
-      @owner = Group.find_by_name!(params[:group_id])
+    def mountpoints
+      [Gitorious.git_daemon, Gitorious.git_http, Gitorious.ssh_daemon].map{|m| MountPointAdapter.new(m)}
+    end
+
+    def generate_url(project, repository, commit)
+      Gitorious.url("#{project}/#{repository}/source/#{commit}")
     end
   end
 end

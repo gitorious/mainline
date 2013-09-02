@@ -39,6 +39,18 @@ class RepositoryRoot
   end
 
   def self.relative_path(path)
-    Pathname(path).relative_path_from(Pathname(RepositoryRoot.default_base_path))
+    base_path = Pathname(RepositoryRoot.default_base_path)
+    path = Pathname(path)
+
+    # Resolve both the repository base path and the path we're computing the
+    # relative path to. This way we avoid all symlinks, and avoid incorrect
+    # relative paths in the case where either one is a symlink and the other is
+    # not.
+    if !Rails.env.test?
+      base_path = base_path.realpath
+      path = path.realpath
+    end
+
+    path.relative_path_from(base_path)
   end
 end

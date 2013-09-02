@@ -37,6 +37,14 @@ class OwnerRedirectionsControllerTest < ActionController::TestCase
       assert_redirected_to("/#{slug}")
     end
 
+    should "redirect project/repository" do
+      project = @repository.project
+
+      get :show, :user_id => @user.to_param, :slug => "#{project.to_param}/#{@repository.to_param}/refs"
+
+      assert_redirected_to("/#{project.to_param}/#{@repository.to_param}/refs")
+    end
+
     should "redirect repository" do
       slug = "#{@repository.to_param}"
       get :show, :user_id => @user.to_param, :slug => slug

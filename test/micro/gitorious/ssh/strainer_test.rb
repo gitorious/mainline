@@ -186,11 +186,11 @@ class SSHStrainerTest < MiniTest::Spec
 
   it "can parse user-style urls with project name and prefixed with a tilde" do
     cmd = Gitorious::SSH::Strainer.new("git-upload-pack '~foo/bar/baz.git'").parse!
-    assert_equal "~foo/bar/baz.git", cmd.path
+    assert_equal "bar/baz.git", cmd.path
   end
 
   it "can parse team-style urls with project name and prefixed with a plus" do
     cmd = Gitorious::SSH::Strainer.new("git-upload-pack '+foo/bar/baz.git'").parse!
-    assert_equal "+foo/bar/baz.git", cmd.path
+    assert_equal "bar/baz.git", cmd.path
   end
 end

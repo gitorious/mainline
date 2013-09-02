@@ -59,7 +59,9 @@ begin
   ENV["GITORIOUS_BASE_DIR"] = BASE_DIR.to_s
   ENV["GITORIOUS_DENY_FORCE_PUSHES"] = client.force_pushing_denied? ? "true" : "false"
   ENV["GITORIOUS_SSH_CLONE_URL"] = Gitorious.ssh_daemon.url(strainer.path)
-  ENV["GITORIOUS_GIT_CLONE_URL"] = Gitorious.git_daemon.url(strainer.path)
+  if git_daemon = Gitorious.git_daemon
+    ENV["GITORIOUS_GIT_CLONE_URL"] = git_daemon.url(strainer.path)
+  end
 
   logger.info("Accepted #{user.inspect} for #{args.inspect}")
   if client.pre_receive_hook_exists?

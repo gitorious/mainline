@@ -52,14 +52,14 @@ class SSHClientTest < MiniTest::Spec
 
     it "parses the project name from a team namespaced repo" do
       client = Gitorious::SSH::Client.new(@team_strainer, "johan")
-      assert_equal "+foo", client.project_name
-      assert_equal "bar/baz", client.repository_name
+      assert_equal "bar", client.project_name
+      assert_equal "baz", client.repository_name
     end
 
     it "parses the project name from a user namespaced repo" do
       client = Gitorious::SSH::Client.new(@user_strainer, "johan")
-      assert_equal "~foo", client.project_name
-      assert_equal "bar/baz", client.repository_name
+      assert_equal "bar", client.project_name
+      assert_equal "baz", client.repository_name
     end
   end
 
