@@ -88,7 +88,7 @@ class FavoritesControllerTest < ActionController::TestCase
 
     should "create a favorite" do
       do_create_post(@repository.class.name, @repository.id)
-      assert_not_nil(favorite = assigns(:favorite))
+      assert_not_nil assigns(:favorite)
     end
 
     should "redirect to the watchable itself" do
@@ -144,9 +144,12 @@ class FavoritesControllerTest < ActionController::TestCase
 
   context "Deleting a favorite" do
     setup {
+      user = users(:johan)
       login_as :johan
+      @referer = user_edit_favorites_path(user)
+      request.env['HTTP_REFERER'] = @referer
       @repository = repositories(:johans2)
-      @favorite = users(:johan).favorites.create(:watchable => @repository)
+      @favorite = user.favorites.create(:watchable => @repository)
     }
 
     should "assign to favorite" do
@@ -156,7 +159,7 @@ class FavoritesControllerTest < ActionController::TestCase
 
     should "redirect for HTML" do
       delete :destroy, :id => @favorite
-      assert_redirected_to([@repository.project, @repository])
+      assert_redirected_to @referer
     end
 
     should "render :deleted for JS" do
@@ -179,49 +182,6 @@ class FavoritesControllerTest < ActionController::TestCase
     end
   end
 
-  context "listing a users own favorites" do
-    setup do
-      @user = users(:mike)
-      repositories(:johans).watched_by!(@user)
-      login_as :mike
-    end
-
-    should "require login" do
-      logout
-      get :index
-      assert_redirected_to new_sessions_path
-    end
-
-    should "only list the user's favorites" do
-      assert @user.favorites.count > 0, "user has no favs"
-      other_fav = Favorite.create!({:user => users(:johan),
-          :watchable => Repository.last})
-      get :index
-      assert !assigns(:favorites).include?(other_fav)
-      assert_equal @user.favorites, assigns(:favorites)
-      assert_response :success
-    end
-
-    should "only list user's authorized favorites" do
-      len = @user.favorites.length
-      enable_private_repositories(@user.favorites.first.watchable)
-      get :index
-      assert_equal len - 1, assigns(:favorites).length
-    end
-
-    should "have a button to toggle the mail flag" do
-      get :index
-      assert_response :success
-      assert_select "td.notification .favorite a.toggle"
-    end
-
-    should "have a button to delete the favorite" do
-      get :index
-      assert_response :success
-      assert_select "td.unwatch .favorite a.watch-link"
-    end
-  end
-
   context "editing a favorite" do
     setup do
       @user = users(:mike)
@@ -239,8 +199,7 @@ class FavoritesControllerTest < ActionController::TestCase
     should "be able to add the mail flag" do
       assert !@favorite.notify_by_email?
       get :update, :id => @favorite.id, :favorite => {:notify_by_email => true}
-      assert_response :redirect
-      assert_redirected_to favorites_path
+      assert_redirected_to user_edit_favorites_path(@user)
       assert @favorite.reload.notify_by_email?
     end
 
