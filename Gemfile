@@ -49,6 +49,10 @@ group :test do
   gem "guard-ctags-bundler"
   gem "zeus", "0.13.4.pre2"
   gem "webmock"
+  gem "capybara", "~> 2.1"
+  gem "capybara_minitest_spec", "~> 1.0"
+  gem "capybara-screenshot"
+  gem "poltergeist", "~> 1.4"
 end
 
 group :postgres do

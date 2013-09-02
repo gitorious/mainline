@@ -3,6 +3,7 @@ require "coverage_helper"
 ENV["RAILS_ENV"] = "test"
 
 require File.join(File.dirname(__FILE__), "../config/environment")
+
 require "rails/test_help"
 require "ssl_requirement_macros"
 require "messaging_test_helper"
@@ -10,6 +11,23 @@ require "data_builder_helpers"
 require "shoulda"
 require "mocha/setup"
 require "fast_test_helper"
+require "capybara/rails"
+require "capybara/poltergeist"
+require "capybara-screenshot/minitest"
+
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app, {
+    :window_size => [1440, 900]
+  })
+end
+
+Capybara.javascript_driver = :poltergeist
+
+class ActionDispatch::IntegrationTest
+  include Capybara::DSL
+end
+
+WebMock.disable_net_connect!(:allow_localhost => true)
 
 class ActiveSupport::TestCase
   include AuthenticatedTestHelper
