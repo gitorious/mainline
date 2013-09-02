@@ -21,11 +21,6 @@ class FavoritesController < ApplicationController
   before_filter :login_required
   before_filter :find_watchable, :only => [:create]
 
-  def index
-    @favorites = filter(current_user.favorites.all(:include => :watchable))
-    @root = Breadcrumb::Favorites.new(current_user)
-  end
-
   def update
     @favorite = authorize_access_to(current_user.favorites.find(params[:id]))
     @favorite.notify_by_email = params[:favorite][:notify_by_email]
@@ -74,6 +69,7 @@ class FavoritesController < ApplicationController
   end
 
   private
+
   def find_watchable
     watchable_type = params[:watchable_type]
     if allowed_watchables.include?(watchable_type)
