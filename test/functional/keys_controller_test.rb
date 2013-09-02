@@ -87,92 +87,59 @@ class KeysControllerTest < ActionController::TestCase
     end
   end
 
-  context "new" do
-    setup do
-      login_as :johan
-    end
-
-    should "require login" do
-      session[:user_id] = nil
-      get :new, :user_id => "zmalltalker"
-      assert_redirected_to (new_sessions_path)
-    end
-
-    should "require current_user" do
-      login_as :moe
-      get :new, :user_id => @user.to_param
-      assert_response :redirect
-      assert_redirected_to user_path(users(:moe))
-    end
-
-    should "GET account/keys successfully" do
-      get :new, :user_id => @user.to_param
-      assert_response :success
-    end
-
-    should "scope to current user" do
-      get :new, :user_id => @user.to_param
-      assert_equal users(:johan).id, assigns(:ssh_key).user_id
-    end
-  end
-
   context "create" do
-    setup do
-      login_as :johan
-    end
-
     should "require login" do
       session[:user_id] = nil
       post :create, :user_id => "zmalltalker", :ssh_key => {:key => valid_key}
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to new_sessions_path
     end
 
     should "require current_user" do
       login_as :moe
       post :create, :ssh_key => {:key => valid_key}, :user_id => @user.to_param
-      assert_response :redirect
       assert_redirected_to user_path(users(:moe))
     end
 
     should "scope to the current user" do
+      login_as :johan
       assert_difference "@user.ssh_keys.count" do
         post :create, :user_id => @user.to_param, :ssh_key => { :key => valid_key }
       end
     end
 
     should "POST account/keys/create successfully" do
+      login_as :johan
       post :create, :user_id => @user.to_param, :ssh_key => {:key => valid_key}
-      assert_response :redirect
+      assert_response :created
     end
   end
 
   context "create.xml" do
-    setup do
-      authorize_as :johan
-    end
-
     should "require login" do
-      authorize_as(nil)
       post :create, :ssh_key => {:key => valid_key}, :format => "xml", :user_id => @user.to_param
       assert_response 401
     end
 
     should "require current_user" do
       login_as :moe
+
       post :create, :ssh_key => {:key => valid_key}, :user_id => @user.to_param, :format => "xml"
-      assert_response :redirect
       assert_redirected_to user_path(users(:moe))
     end
 
-    should "scope to the current_user" do
+    should "creates a new ssh key for current user" do
+      login_as :johan
+
       assert_difference "@user.ssh_keys.count" do
         post :create, :ssh_key => {:key => valid_key}, :format => "xml", :user_id => @user.to_param
       end
     end
 
     should "POST account/keys/create successfully" do
+      login_as :johan
+
       post :create, :ssh_key => {:key => valid_key}, :format => "xml", :user_id => @user.to_param
-      assert_response 201
+      assert_response :created
     end
   end
 end
