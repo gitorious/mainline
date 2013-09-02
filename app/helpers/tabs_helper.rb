@@ -6,13 +6,13 @@ module TabsHelper
       'change-password'  => user_edit_password_path(current_user),
       'ssh-keys'         => user_edit_ssh_keys_path(current_user),
       'manage-favorites' => user_edit_favorites_path(current_user) },
-      options.merge(:position => 'left'), &block
+      options.merge(:position => 'left', :default => 'my-details'), &block
     )
   end
 
   def tabbable(tabs, options = {}, &block)
     position = options.fetch(:position, 'left')
-    active   = tabs.key?(params[:tab]) && params[:tab]
+    active   = (tabs.key?(params[:tab]) && params[:tab]) || options[:default]
 
     content_tag(:div, :class => "tabbable tabs-#{position}") {
       nav_tabs(tabs, active) + tab_content(&block)
