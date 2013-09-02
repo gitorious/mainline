@@ -21,6 +21,7 @@ module Gitorious
   module View
     module DoltUrlHelper
       include ::Dolt::View::MultiRepository
+      include ::Dolt::View::Urls
 
       def archive_url(repository, ref, format)
         repo_url(repository, "/archive/#{ref}.#{format}")
@@ -32,10 +33,6 @@ module Gitorious
 
       alias_method :tree_url, :tree_entry_url
       alias_method :blob_url, :tree_entry_url
-
-      def submodule_url(repository, ref, submodule)
-        SubmoduleUrl.for(submodule)
-      end
 
       def blame_url(repository, ref, path)
         repo_url(repository, "/blame/#{ref}:#{path}")
