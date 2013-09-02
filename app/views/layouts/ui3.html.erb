@@ -65,12 +65,12 @@
       <%= partial("layouts/footer", :current_site => current_site) %>
     </div>
     <script data-gts-env-analytics-account="UA-52238-3" data-gts-env-analytics-domain-name=".gitorious.org"></script>
+    <script data-gts-env-user-view-state-path="<%= view_state_users_path(:format => "json") %>"></script>
     <% repo = defined?(repository_meta) ? repository_meta : (defined?(repository) ? repository : nil) %>
     <% if repo %>
       <script
         data-gts-env-repository-refs-url="<%= repository_refs_path(:project_id => repo.project, :repository_id => repo) %>"
-        data-gts-env-commit-url-template="<%= project_repository_commit_path(repo.project, repo, "%oid%").sub("%oid%", "\#{oid}") %>"
-        data-gts-env-user-view-state-path="<%= view_state_users_path(:format => "json") %>">
+        data-gts-env-commit-url-template="<%= project_repository_commit_path(repo.project, repo, "%oid%").sub("%oid%", "\#{oid}") %>">
       </script>
     <% end %>
     <% Gitorious::View.theme_javascripts(current_site).each do |javascript| %>
