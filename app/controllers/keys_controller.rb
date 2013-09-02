@@ -22,9 +22,11 @@
 
 class KeysController < ApplicationController
   include Gitorious::Messaging::Publisher
+
   before_filter :login_required
   before_filter :find_user
   before_filter :require_current_user
+
   renders_in_global_context
 
   def index
@@ -36,20 +38,17 @@ class KeysController < ApplicationController
     end
   end
 
-  def new
-    @ssh_key = current_user.ssh_keys.new
-    @root = Breadcrumb::NewKey.new(current_user)
-  end
-
   def create
     outcome = CreateSshKey.new(self, current_user).execute(params[:ssh_key])
 
     respond_to do |format|
       outcome.success do |result|
         flash[:notice] = I18n.t("keys_controller.create_notice")
-        format.html {
+
+        format.html do
           head :created
-        }
+        end
+
         format.xml do
           key_path = user_key_path(current_user, result)
           render(:xml => result, :status => :created, :location => key_path)
@@ -60,6 +59,7 @@ class KeysController < ApplicationController
         format.html do
           render :partial => "form", :locals => { :ssh_key => key }, :status => :unprocessable_entity
         end
+
         format.xml do
           render(:xml => key.errors.full_messages, :status => :unprocessable_entity)
         end
