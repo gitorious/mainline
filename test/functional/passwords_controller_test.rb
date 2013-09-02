@@ -49,22 +49,25 @@ class PasswordsControllerTest < ActionController::TestCase
       login_as :johan
       user = users(:johan)
 
+      request.env['HTTP_REFERER'] = user_edit_password_path(user)
       update(users(:johan).to_param, "test", "fubar")
 
-      assert_redirected_to(user_path(user))
+      assert_redirected_to(user_edit_password_path(user))
       assert_match(/Your password has been changed/i, flash[:success])
       assert_equal user, User.authenticate(user.email, "fubar")
     end
 
     should "not update password if the old one is wrong" do
+      user = users(:johan)
+
       login_as :johan
-      update(users(:johan).to_param, "notthecurrentpassword", "fubar")
+      update(user.to_param, "notthecurrentpassword", "fubar")
 
       assert_nil flash[:notice]
       assert_match(/does not seem to match/, flash[:error])
-      assert_template("passwords/edit")
-      assert_equal users(:johan), User.authenticate(users(:johan).email, "test")
-      assert_nil User.authenticate(users(:johan).email, "fubar")
+      assert_redirected_to(user_edit_password_path(user))
+      assert_equal user, User.authenticate(user.email, "test")
+      assert_nil User.authenticate(user.email, "fubar")
     end
 
     should "update password for openid-enabled user" do
