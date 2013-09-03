@@ -19,5 +19,14 @@
   %>
 
 <div class="container">
-  dashboard
+  <div class="container-fluid gts-container">
+    <div class="row-fluid">
+      <div class="span7">
+        <%= render "users/show/activities", :user => user, :events => events %>
+      </div>
+      <div class="span5">
+        placeholder
+      </div>
+    </div>
+  </div>
 </div>
