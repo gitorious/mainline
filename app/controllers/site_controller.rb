@@ -56,6 +56,7 @@ class SiteController < ApplicationController
   end
 
   protected
+
   # Render a Site-specific index template
   def render_site_index
     all_projects = current_site.projects.order("created_at asc")
@@ -87,7 +88,7 @@ class SiteController < ApplicationController
     @favorites = filter(@user.watched_objects)
     @root = Breadcrumb::Dashboard.new(@user)
     @atom_auto_discovery_url = user_watchlist_path(@user, :format => :atom)
-    render :template => "site/dashboard"
+    render :template => "site/dashboard", :layout => 'ui3'
   end
 
   def render_gitorious_dot_org_in_public
