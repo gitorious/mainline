@@ -88,7 +88,10 @@ class SiteController < ApplicationController
     @favorites = filter(@user.watched_objects)
     @root = Breadcrumb::Dashboard.new(@user)
     @atom_auto_discovery_url = user_watchlist_path(@user, :format => :atom)
-    render :template => "site/dashboard", :layout => 'ui3'
+
+    render :template => "site/dashboard", :layout => 'ui3', :locals => {
+      :user => @user, :events => @events
+    }
   end
 
   def render_gitorious_dot_org_in_public
