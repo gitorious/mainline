@@ -23,18 +23,26 @@
 
 <div class="container">
   <div class="container-fluid gts-container user-edit-container">
-    <%= user_edit_tabbable :active => :my_details do %>
+    <%= user_edit_tabbable :active => active_tab do %>
       <%= tab_pane(:my_details) do %>
-        <%= render "users/edit/my_details", :user => user %>
+        <% if active_tab == 'my-details' %>
+          <%= render "users/edit/my_details", :user => user %>
+        <% end %>
       <% end %>
       <%= tab_pane(:change_password) do %>
-        <%= render "users/edit/change_password", :user => user %>
+        <% if active_tab == 'change-password' %>
+          <%= render "users/edit/change_password", :user => user %>
+        <% end %>
       <% end %>
       <%= tab_pane(:ssh_keys) do %>
-        <%= render "users/edit/ssh_keys", :user => user %>
+        <% if active_tab == 'ssh-keys' %>
+          <%= render "users/edit/ssh_keys", :user => user %>
+        <% end %>
       <% end %>
       <%= tab_pane(:manage_favorites) do %>
-        <%= render "users/edit/manage_favorites", :user => user %>
+        <% if active_tab == 'manage-favorites' %>
+          <%= render "users/edit/manage_favorites", :user => user %>
+        <% end %>
       <% end %>
     <% end %>
   </div>
