@@ -22,7 +22,7 @@
   <div class="container-fluid gts-container">
     <div class="row-fluid">
       <div class="span7">
-        <%= render "users/show/activities", :user => user, :events => events %>
+        <%= render "site/dashboard/activities", :user => user, :events => events, :user_events => user_events %>
       </div>
       <div class="span5">
         <%= render "users/show/repositories", :user => user, :repositories => repositories %>

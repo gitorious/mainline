@@ -19,30 +19,12 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= breadcrumbs_from(Breadcrumb::UserEdit.new(user)) -%>
 
 <div class="container">
   <div class="container-fluid gts-container user-edit-container">
     <%= user_edit_tabbable :active => active_tab do %>
-      <%= tab_pane(:my_details) do %>
-        <% if active_tab == 'my-details' %>
-          <%= render "users/edit/my_details", :user => user %>
-        <% end %>
-      <% end %>
-      <%= tab_pane(:change_password) do %>
-        <% if active_tab == 'change-password' %>
-          <%= render "users/edit/change_password", :user => user %>
-        <% end %>
-      <% end %>
-      <%= tab_pane(:ssh_keys) do %>
-        <% if active_tab == 'ssh-keys' %>
-          <%= render "users/edit/ssh_keys", :user => user %>
-        <% end %>
-      <% end %>
-      <%= tab_pane(:manage_favorites) do %>
-        <% if active_tab == 'manage-favorites' %>
-          <%= render "users/edit/manage_favorites", :user => user %>
-        <% end %>
+      <%= tab_pane(active_tab.underscore.to_sym, :active => true) do %>
+        <%= render "users/edit/#{active_tab.underscore}", :user => user %>
       <% end %>
     <% end %>
   </div>

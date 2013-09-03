@@ -11,8 +11,9 @@ module TabsHelper
   end
 
   def tabbable(tabs, options = {}, &block)
-    position = options.fetch(:position, 'left')
-    active   = (tabs.key?(params[:tab]) && params[:tab]) || options[:active]
+    position = options.fetch(:position, 'top')
+    names    = tabs.is_a?(Hash) ? tabs.keys : tabs
+    active   = (names.include?(params[:tab]) && params[:tab]) || options[:active]
 
     content_tag(:div, :class => "tabbable tabs-#{position}") {
       nav_tabs(tabs, active) + tab_content(&block)
@@ -22,13 +23,16 @@ module TabsHelper
   def nav_tabs(tabs, active)
     content_tag(:ul, :class => 'nav nav-tabs', :data => { :active => active }) {
       tabs.map { |name, path|
-
-        content_tag(:li, nav_link(name, path))
+        class_names = []
+        class_names << 'active' if name == active
+        content_tag(:li, nav_link(name, path), :class => class_names)
       }.join("\n").html_safe
     }
   end
 
   def nav_link(name, path)
+    path ||= "##{name}"
+
     link_to(t("views.tabs.#{name.underscore}"), path,
       :data => { :toggle => 'tab', :target => "##{name.to_s.dasherize}" })
   end
@@ -37,8 +41,15 @@ module TabsHelper
     content_tag(:div, :class => "tab-content") { capture(&block) }.html_safe
   end
 
-  def tab_pane(id, &block)
-    content_tag(:div, :class => 'tab-pane', :id => id.to_s.dasherize) { capture(&block) }
+  def tab_pane(id, options = {}, &block)
+    active = options.fetch(:active, false)
+
+    class_names = 'tab-pane'
+    class_names << 'active' if active
+
+    content_tag(:div, :class => class_names, :id => id.to_s.dasherize) {
+      capture(&block)
+    }
   end
 
 end

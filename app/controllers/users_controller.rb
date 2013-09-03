@@ -144,6 +144,7 @@ class UsersController < ApplicationController
         collection.paginate({
             :page => page,
             :per_page => FeedItem.per_page,
+            :order => "events.created_at desc",
             :include => [:user, :project]
           })
       end

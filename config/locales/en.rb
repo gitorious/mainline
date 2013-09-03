@@ -192,7 +192,9 @@
         :my_details => 'My details',
         :ssh_keys => 'SSH keys',
         :change_password => 'Change password',
-        :manage_favorites => 'Manage favorites'
+        :manage_favorites => 'Manage favorites',
+        :activities => 'News feed',
+        :user_activities => 'Your activities'
       },
       :layout => {
         :system_notice => "System notice",
