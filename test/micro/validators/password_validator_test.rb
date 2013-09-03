@@ -19,14 +19,28 @@ require "fast_test_helper"
 require "validators/password_validator"
 
 class PasswordValidatorTest < MiniTest::Spec
-  it "validates presence of password" do
-    result = PasswordValidator.call(User.new)
+  def assert_invalid(user)
+    result = PasswordValidator.call(user)
     refute_equal [], result.errors[:password]
+  end
+
+  it "is valid when password and confirmation match" do
+    user = User.new(:password => "foo1", :password_confirmation => "foo1")
+
+    assert PasswordValidator.call(user).valid?
+  end
+
+  it "validates presence of password" do
+    assert_invalid(User.new)
   end
 
   it "requires password confirmation" do
     user = User.new(:password => "heythere", :password_confirmation => "")
-    result = PasswordValidator.call(user)
-    refute_equal [], result.errors[:password]
+    assert_invalid(user)
+  end
+
+  it "validates that password is at least 4 characters long" do
+    user = User.new(:password => "hey", :password_confirmation => "hey")
+    assert_invalid(user)
   end
 end

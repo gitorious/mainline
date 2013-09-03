@@ -17,6 +17,7 @@
 #++
 require "use_case"
 require "validators/email_validator"
+require "validators/password_validator"
 
 # TODO: Ideally split this in a base user validator, a DB user
 # validator and an OpenID user validator
@@ -27,7 +28,7 @@ UserValidator = UseCase::Validator.define do
   validates_length_of :login, :within => 1..40, :allow_blank => true
   validates_format_of :email, :with => EmailValidator::EMAIL_FORMAT
   validates_presence_of :password, :if => :password_required?
-  validates_length_of :password, :minimum => 4, :if => :password_required?
+  validates_length_of :password, :minimum => PasswordValidator::MIN_LENGTH, :if => :password_required?
   validate :valid_password_confirmation, :if => :password_required?
   validates_length_of :email, :within => 5..100
   validates_format_of :avatar_file_name, :with => /\.(jpe?g|gif|png|bmp|svg|ico)$/i, :allow_blank => true
