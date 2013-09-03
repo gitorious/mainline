@@ -18,8 +18,10 @@
 require "use_case"
 
 PasswordValidator = UseCase::Validator.define do
+  MIN_LENGTH = 4
   validates_presence_of :password
   validate :valid_password_confirmation
+  validates_length_of :password, :minimum => MIN_LENGTH
 
   # For unknown reasons, `validates_confirmation_of :password` does
   # not work. If you are able to express this validation with the
