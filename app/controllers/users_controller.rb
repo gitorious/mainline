@@ -140,11 +140,11 @@ class UsersController < ApplicationController
   def paginated_events(user)
     paginate(page_free_redirect_options) do
       filter_paginated(params[:page], FeedItem.per_page) do |page|
-        res = user.events.excluding_commits.paginate({
-            :page => page,
-            :order => "events.created_at desc",
-            :include => [:user, :project]
-          })
+        user.events.excluding_commits.paginate(
+          :page => page,
+          :order => "events.created_at desc",
+          :include => [:user, :project]
+        )
       end
     end
   end

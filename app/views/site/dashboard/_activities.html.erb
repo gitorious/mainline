@@ -1,0 +1,8 @@
+<%= tabbable %w(activities user-activities), :active => 'activities' do %>
+  <%= tab_pane :activities, :active => true do %>
+    <%= render "users/events", :events => events %>
+  <% end %>
+  <%= tab_pane :user_activities do %>
+    <%= render "users/events", :events => user_events %>
+  <% end %>
+<% end %>

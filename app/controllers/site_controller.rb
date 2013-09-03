@@ -83,6 +83,7 @@ class SiteController < ApplicationController
     render :template => "site/dashboard", :layout => 'ui3', :locals => {
       :user => current_user,
       :events => events,
+      :user_events => user_events,
       :projects => projects,
       :repositories => repositories,
       :favorites => favorites,
@@ -125,6 +126,22 @@ class SiteController < ApplicationController
   # TODO: extract this into some Dashboard-context object
   def favorites
     @favorites ||= filter(current_user.favorites.all(:include => :watchable))
+  end
+
+  # needed by dashboard
+  #
+  # TODO: extract this into some Dashboard-context object
+  # TODO: this is identical as UsersController#paginated_events
+  def user_events
+    paginate(page_free_redirect_options) do
+      filter_paginated(params[:page], FeedItem.per_page) do |page|
+        current_user.events.excluding_commits.paginate(
+          :page => page,
+          :order => "events.created_at desc",
+          :include => [:user, :project]
+        )
+      end
+    end
   end
 
   def render_gitorious_dot_org_in_public

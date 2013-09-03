@@ -1,0 +1,17 @@
+<% if events.empty? %>
+  <p class="hint">no activities.</p>
+<% else %>
+  <div class="gts-events">
+    <% prev_date = nil %>
+    <% events.each do |event| %>
+      <% if prev_date != event.created_at.strftime("%A, %B %e %Y") %>
+        <p class="gts-date-heading">
+          <span class="gts-date-heading-inner">
+            <%= prev_date = event.created_at.strftime("%A, %B %e %Y") %>
+          </span>
+        </p>
+      <% end %>
+      <%= render "repository_activities/event", :event => event %>
+    <% end %>
+  </div>
+<% end %>
