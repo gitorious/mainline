@@ -66,7 +66,7 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    page = [(params[:page] || 0).to_i, 0].max
+    page = [(params[:page] || 1).to_i, 1].max
     events, total_pages = paginated_events(@project, page)
     # @mainlines = filter(by_push_time(@project.repositories.mainlines))
     # @group_clones = filter(@project.recently_updated_group_repository_clones)
@@ -77,7 +77,7 @@ class ProjectsController < ApplicationController
         render(:show, :layout => "ui3", :locals => {
             :project => @project,
             :events => events,
-            :current_page => page + 1,
+            :current_page => page,
             :total_pages => total_pages,
             :atom_auto_discovery_url => project_path(@project, :format => :atom)
           })
@@ -204,13 +204,12 @@ class ProjectsController < ApplicationController
   end
 
   def paginated_events(project, page)
-    JustPaginate.paginate(page, Event.per_page, project.events.count) do |range|
-      events = Event.
-        where("project_id = ?", project.id).
-        where("target_type != ?", "Event").
+    scope = Event.where("project_id = ?", project.id).where("target_type != ?", "Event")
+    JustPaginate.paginate(page, Event.per_page, scope.count) do |range|
+      events = scope.
         order("created_at desc").
-        joins(:user, :project).
-        offset([range.first, 0].max).
+        includes(:user, :project).
+        offset(range.first).
         limit(range.count)
       Gitorious.private_repositories? ? filter(events) : events
     end
