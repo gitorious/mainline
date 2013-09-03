@@ -1,4 +1,5 @@
-def rm(path)
+def rm_f(path)
+  raise 'aa'
   Dir.glob(Rails.root + path).each do |file|
     puts file if ENV["VERBOSE"]
     `rm -f #{file}`
@@ -8,11 +9,11 @@ end
 namespace :assets do
   desc "Clear cached assets"
   task :clear do
-    rm("public/stylesheets/gts-*.css")
-    rm("public/stylesheets/all.css")
-    rm("public/javascripts/gts-*.js")
-    rm("public/javascripts/all.js")
-    rm("public/**/*/gts-*.*")
+    rm_f("public/stylesheets/gts-*.css")
+    rm_f("public/stylesheets/all.css")
+    rm_f("public/javascripts/gts-*.js")
+    rm_f("public/javascripts/all.js")
+    rm_f("public/**/*/gts-*.*")
     puts "Removed generated stylesheets and javascripts"
   end
 end
