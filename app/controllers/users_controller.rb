@@ -105,7 +105,7 @@ class UsersController < ApplicationController
     user = find_user
     return current_user_only_redirect if user != current_user
 
-    if(user.deletable?)
+    if user.deletable?
       flash[:success] = I18n.t "users_controller.account_deleted"
       user.destroy
       redirect_to(root_path)
