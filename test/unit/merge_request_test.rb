@@ -330,6 +330,19 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert_equal "foo", mr.target_branch
   end
 
+  should "it defaults to target repository head for the target_branch" do
+    mr = MergeRequest.new
+    def mr.target_repository
+      repo = Object.new
+      def repo.head_candidate_name; "dude"; end
+      repo
+    end
+
+    assert_equal "dude", mr.target_branch
+    mr.target_branch = "foo"
+    assert_equal "foo", mr.target_branch
+  end
+
   should "has a source_name" do
     @merge_request.source_branch = "foo"
     assert_equal "#{@merge_request.source_repository.name}:foo", @merge_request.source_name

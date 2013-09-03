@@ -201,11 +201,15 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def source_branch
-    super || "master"
+    super || default_branch
   end
 
   def target_branch
-    super || "master"
+    super || default_branch
+  end
+
+  def default_branch
+    (target_repository && target_repository.head_candidate_name) || "master"
   end
 
   def deliver_status_update(a_user)
