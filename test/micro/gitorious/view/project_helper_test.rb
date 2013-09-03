@@ -21,12 +21,4 @@ require "libdolt/view/markup"
 
 class Gitorious::View::ProjectHelperTest < MiniTest::Spec
   include Gitorious::View::ProjectHelper
-  include Dolt::View::Markup
-
-  describe "#project_description" do
-    it "returns HTML-formatted description" do
-      project = Project.new(:description => "Yo, here")
-      assert_equal "<div class=\"gts-markup\"><p>Yo, here</p>\n</div>", project_description(project)
-    end
-  end
 end
