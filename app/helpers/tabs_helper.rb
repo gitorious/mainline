@@ -44,7 +44,7 @@ module TabsHelper
   def tab_pane(id, options = {}, &block)
     active = options.fetch(:active, false)
 
-    class_names = 'tab-pane'
+    class_names = %w(tab-pane)
     class_names << 'active' if active
 
     content_tag(:div, :class => class_names, :id => id.to_s.dasherize) {
