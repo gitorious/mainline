@@ -776,19 +776,32 @@ body#sessions #wrapper {
     text-align: center;
     font-size: 16px;
     line-height: 16px;
-    color: #ed4029;
+}
+
+.flash_message.error p {
+  background-color: #b94a48;
+  color: #f2dede;
+}
+
+div.flash_message p {
+  padding: 5px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  width: 960px;
+  margin: auto;
 }
 
 div.flash_message {
     width: 100%;
-    display: none;
     float: left;
     text-align: center;
     color: #FFF;
+    background-color: #161616;
     font-size: 10px;
     font-weight: bold;
     letter-spacing: 1px;
-    padding: 5px 0px 10px;
+    padding: 10px 0px 10px;
     margin-bottom: 10px;
 }
 

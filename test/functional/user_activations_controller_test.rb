@@ -37,6 +37,7 @@ class UserActivationsControllerTest < ActionController::TestCase
     assert_redirected_to("/")
     assert_not_nil flash[:notice]
     assert_equal users(:moe), User.authenticate("moe@example.com", "test")
+    assert @controller.send(:logged_in?)
   end
 
   should "flash a message when the activation code is invalid" do
@@ -46,6 +47,7 @@ class UserActivationsControllerTest < ActionController::TestCase
     assert_nil flash[:notice]
     assert_equal "Invalid activation code", flash[:error]
     assert_nil User.authenticate("moe@example.com", "test")
+    refute @controller.send(:logged_in?)
   end
 
 
