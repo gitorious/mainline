@@ -25,7 +25,8 @@
         <%= render "users/show/activities", :user => user, :events => events %>
       </div>
       <div class="span5">
-        placeholder
+        <%= render "users/show/repositories", :user => user, :repositories => repositories %>
+        <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
       </div>
     </div>
   </div>
