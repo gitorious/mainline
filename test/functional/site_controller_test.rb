@@ -52,12 +52,6 @@ class SiteControllerTest < ActionController::TestCase
         get :index
         assert_not_nil assigns(:repositories)
       end
-
-      should "render the dashboard breadcrumb" do
-        login_as :johan
-        get :index
-        assert_instance_of Breadcrumb::Dashboard, assigns(:root)
-      end
     end
 
     context "Anonymous users" do

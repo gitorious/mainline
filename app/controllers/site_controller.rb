@@ -79,19 +79,52 @@ class SiteController < ApplicationController
 
   def render_dashboard
     @user = current_user
-    @projects = filter(@user.projects.includes(:tags, { :repositories => :project }))
-    @repositories = filter(current_user.commit_repositories)
-    @events = filter_paginated(params[:page], Event.per_page) do |page|
-      (@user.paginated_events_in_watchlist(:page => page))
-    end
-    @messages = @user.messages_in_inbox(3)
-    @favorites = filter(@user.watched_objects)
-    @root = Breadcrumb::Dashboard.new(@user)
-    @atom_auto_discovery_url = user_watchlist_path(@user, :format => :atom)
 
     render :template => "site/dashboard", :layout => 'ui3', :locals => {
-      :user => @user, :events => @events
+      :user => current_user,
+      :events => events,
+      :projects => projects,
+      :repositories => repositories,
+      :favorites => favorites,
+      :atom_auto_discovery_url => atom_auto_discovery_url
     }
+  end
+
+  # for dashboard
+  #
+  # TODO: extract this into some Dashboard-context object
+  def events
+    @events ||= filter_paginated(params[:page], Event.per_page) { |page|
+      current_user.paginated_events_in_watchlist(:page => page)
+    }
+  end
+
+  # needed by dashboard
+  #
+  # TODO: extract this into some Dashboard-context object
+  def projects
+    @projects ||= filter(current_user.projects.includes(:tags, { :repositories => :project }))
+  end
+
+  # needed by dashboard
+  #
+  # TODO: extract this into some Dashboard-context object
+  def repositories
+    @repositories ||= filter(current_user.commit_repositories)
+  end
+
+  # needed by dashboard
+  #
+  # TODO: extract this into some Dashboard-context object
+  def atom_auto_discovery_url
+    @atom_auto_discovery_url ||= user_watchlist_path(current_user, :format => :atom)
+  end
+
+  # needed by dashboard
+  #
+  # TODO: extract this into some Dashboard-context object
+  def favorites
+    @favorites ||= filter(current_user.favorites.all(:include => :watchable))
   end
 
   def render_gitorious_dot_org_in_public
