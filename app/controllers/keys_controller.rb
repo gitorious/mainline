@@ -38,6 +38,16 @@ class KeysController < ApplicationController
     end
   end
 
+  def new
+    if pjax_request?
+      render :partial => 'keys/form', :ssh_key => ssh_key
+    else
+      render 'users/edit', :locals => {
+        :user => current_user, :active_tab => 'ssh-keys'
+      }, :layout => 'ui3'
+    end
+  end
+
   def create
     outcome = CreateSshKey.new(self, current_user).execute(params[:ssh_key])
 

@@ -18,8 +18,10 @@
 
 class RepositoryClonesController < ApplicationController
   include Gitorious::Messaging::Publisher
+
   before_filter :login_required
   before_filter :require_user_has_ssh_keys
+
   renders_in_site_specific_context
 
   def new

@@ -76,13 +76,14 @@ class UsersController < ApplicationController
   }
 
   def edit
+    active_tab = params.fetch(:tab, 'my-details')
+    locals     = { :user => current_user, :active_tab => active_tab }
+
     if request.headers['X-PJAX']
-      render(
-        :partial => EDIT_VIEWS.fetch(params[:tab]),
-        :locals  => { :user => current_user }
-      )
+      partial = EDIT_VIEWS.fetch(params[:tab])
+      render :partial => partial, :locals => locals
     else
-      render_template("edit", { :user => current_user }, :layout => 'ui3')
+      render_template("edit", locals, :layout => 'ui3')
     end
   end
 
