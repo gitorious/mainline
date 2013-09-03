@@ -53,8 +53,9 @@ $('#screenshots-container').cycle({
   <!--[if gt IE 7]><%= stylesheet_link_tag "ie8", :cache => true %><![endif]-->
 </head>
 <body id="<%= controller.controller_name -%>">
+  <%= flashes %>
+
   <div id="wrapper">
-    <%= flashes %>
     <div id="top-wrapper">
       <div id="top">
         <div id="logo">
@@ -73,7 +74,6 @@ $('#screenshots-container').cycle({
       <div class="clear"></div>
     </div>
     <div class="content-container">
-      <%= flashes %>
       <%= yield %>
       <div class="clear"></div>
     </div> <!-- end of content-container -->

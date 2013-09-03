@@ -30,7 +30,12 @@ class UserActivationsController < ApplicationController
     outcome = ActivateUser.new.execute(:code => params[:activation_code])
     pre_condition_failed(outcome) { return }
     outcome.failure { |user| flash[:error] = I18n.t("users_controller.activate_error") }
-    outcome.success { |user| flash[:notice] = I18n.t("users_controller.activate_notice") }
+
+    outcome.success do |user|
+      self.current_user = user
+      flash[:notice] = I18n.t("users_controller.activate_notice")
+    end
+
     redirect_back_or_default("/")
   end
 end
