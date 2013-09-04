@@ -22,7 +22,7 @@
   #++
   %>
 <%= partial("projects/header", {
-        :project => project,
+        :project => ProjectPresenter.new(project),
         :app => Gitorious,
         :active => :admin,
         :header_level => 2

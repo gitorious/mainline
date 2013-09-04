@@ -66,16 +66,18 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    page = [(params[:page] || 1).to_i, 1].max
-    events, total_pages = paginated_events(@project, page)
-    # @mainlines = filter(by_push_time(@project.repositories.mainlines))
-    # @group_clones = filter(@project.recently_updated_group_repository_clones)
-    # @user_clones = filter(@project.recently_updated_user_repository_clones)
+    begin
+      page = (params[:page] || 1).to_i
+      events, total_pages = paginated_events(@project, page)
+    rescue RangeError => err
+      flash[:error] = "Page #{page} does not exist"
+      redirect_to(project_path(@project), :status => 307) and return
+    end
 
     respond_to do |format|
       format.html do
         render(:show, :layout => "ui3", :locals => {
-            :project => @project,
+            :project => ProjectPresenter.new(@project),
             :events => events,
             :current_page => page,
             :total_pages => total_pages,
@@ -83,9 +85,7 @@ class ProjectsController < ApplicationController
           })
       end
 
-      # format.xml do
-      #   render(:xml => @project.to_xml({}, @mainlines, @group_clones + @user_clones))
-      # end
+      format.xml { redirect_to(project_repositories_path(@project)) }
 
       format.atom do
         render(:show, :locals => {
@@ -125,7 +125,7 @@ class ProjectsController < ApplicationController
   end
 
   def edit
-    render(:action => "edit", :layout => "ui3", :locals => { :project => @project })
+    render_edit_form(@project)
   end
 
   def edit_slug
@@ -156,7 +156,7 @@ class ProjectsController < ApplicationController
       flash[:success] = "Project details updated"
       redirect_to project_path(@project)
     else
-      render :action => "edit", :locals => { :project => @project }
+      render_edit_form(@project)
     end
   end
 
@@ -176,9 +176,11 @@ class ProjectsController < ApplicationController
 
   protected
   def render_form(project)
-    render(:action => :new, :layout => "ui3", :locals => {
-      :project => project
-    })
+    render(:action => :new, :layout => "ui3", :locals => { :project => project })
+  end
+
+  def render_edit_form(project)
+    render(:action => "edit", :layout => "ui3", :locals => { :project => project })
   end
 
   def pre_condition_failed(outcome)

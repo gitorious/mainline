@@ -161,7 +161,7 @@ if !defined?(Rails)
 
   class Project < TestHelper::Model
     attr_accessor :title, :slug, :description, :events, :user, :owner, :user_id,
-      :home_url, :mailinglist_url, :bugtracker_url, :owner_id
+      :home_url, :mailinglist_url, :bugtracker_url, :owner_id, :wiki_enabled
 
     def create_event(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
       self.events ||= []
@@ -179,6 +179,7 @@ if !defined?(Rails)
       @repositories ||= RepositoryCollection.new(self)
     end
 
+    def wiki_enabled?; self.wiki_enabled; end
     def public?; true end
     def private?; false end
     def create_new_repository_event(repository); end

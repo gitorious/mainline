@@ -426,13 +426,6 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal projects(:johans), assigns(:project)
     end
 
-    should "fetch group and user clones when GET show" do
-      get :show, :id => projects(:johans).slug
-      assert_response :success
-      assert_not_nil assigns(:group_clones)
-      assert_not_nil assigns(:user_clones)
-    end
-
     should "render all the clone repositories" do
       get :clones, :id => projects(:johans).slug, :format => "js"
       assert_response :success

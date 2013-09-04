@@ -50,6 +50,7 @@ class RepositoryPresenter
   def to_key; repository.to_key; end
   def url_path; repository.url_path; end
   def parent; repository.parent && RepositoryPresenter.new(repository.parent); end
+  def is_a?(thing); thing == Repository; end
 
   def show_clone_list_search?
     group_clone_count >= 5 || user_clone_count >= 5

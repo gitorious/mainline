@@ -151,7 +151,7 @@ class RepositoriesController < ApplicationController
   def render_form(repository, project)
     render(:action => :new, :layout => "ui3", :locals => {
         :repository => repository,
-        :project => project
+        :project => ProjectPresenter.new(project)
       })
   end
 

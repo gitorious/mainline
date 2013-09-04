@@ -231,6 +231,7 @@ Gitorious::Application.routes.draw do
 
     resources :project_memberships, :only => [:index, :new, :create, :destroy]
     get "/community", :controller => :project_community, :action => :index
+    get "/merge_requests", :controller => :project_merge_requests, :action => :index
 
     resources :pages do
       collection do

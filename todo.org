@@ -44,6 +44,16 @@
   <% end -%>
   <%= render :partial => "repositories" -%>
 <% end -%>
+** Missing from project repositories listing
+
+      # @mainlines = filter(by_push_time(@project.repositories.mainlines))
+      # @group_clones = filter(@project.recently_updated_group_repository_clones)
+      # @user_clones = filter(@project.recently_updated_user_repository_clones)
+
+      # format.xml do
+      #   render(:xml => @project.to_xml({}, @mainlines, @group_clones + @user_clones))
+      # end
+
 * Views to port to UI3 [17/78]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit

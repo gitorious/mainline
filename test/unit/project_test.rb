@@ -525,6 +525,10 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
+  should "count open merge requests" do
+    assert_equal 2, projects(:johans).merge_requests.open.count
+  end
+
   private
   def create_event(project, target, user)
     e = Event.new({ :target => target,

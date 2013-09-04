@@ -23,13 +23,13 @@ module MergeRequestsHelper
   include MergeRequestVersionsHelper
   include CommentsHelper
 
-  def render_status_tag_list(statuses, repository, active = nil)
+  def render_status_tag_list(statuses, target, active = nil)
     out = "<ul class=\"nav nav-tabs\">"
 
     if active.nil?
       out << "<li class=\"active\"><a>All</a></li>"
     else
-      url = project_repository_merge_requests_path(repository.project, repository)
+      url = merge_request_link(target)
       out << "<li><a href=\"#{url}\">All</li>"
     end
 
@@ -37,33 +37,29 @@ module MergeRequestsHelper
       if active == status.name
         out << "<li class=\"active\"><a>#{status.name}</a></li>"
       else
-        out << "<li>#{link_to_status(repository, status.name)}</li>"
+        out << "<li>#{link_to_status(target, status.name)}</li>"
       end
     end
     out << "</ul>"
     out.html_safe
   end
 
-  def link_to_status(repository, status)
+  def link_to_status(target, status)
     if params[:status].blank? && status == "open"
-      link_to_selected_status(repository, status)
+      link_to_selected_status(target, status)
     elsif params[:status] == status
-      link_to_selected_status(repository, status)
+      link_to_selected_status(target, status)
     else
-      link_to_not_selected_status(repository, status)
+      link_to_not_selected_status(target, status)
     end
   end
 
-  def link_to_not_selected_status(repository, status)
-    link_to(h(status.to_s), project_repository_merge_requests_path(repository.project,
-                                                                   repository,
-                                                                   :status => status))
+  def link_to_not_selected_status(target, status)
+    link_to(h(status.to_s), merge_request_link(target, status))
   end
 
-  def link_to_selected_status(repository, status)
-    url = project_repository_merge_requests_path(repository.project,
-                                                 repository,
-                                                 :status => status)
+  def link_to_selected_status(target, status)
+    url = merge_request_link(target, status)
     link_to(h(status.to_s), url, :class => "selected")
   end
 
@@ -130,5 +126,19 @@ module MergeRequestsHelper
       content_tag(:code, first, :class => 'first') + "-" +
       content_tag(:code, last, :class => 'last')
     content_tag(:div, content_html, options)
+  end
+
+  private
+  def merge_request_link(target, status = nil)
+    args = {}
+    args[:status] = status if !status.nil?
+    if target.is_a?(Repository)
+      return project_repository_merge_requests_path(
+        target.project,
+        target,
+        args)
+    end
+
+    project_merge_requests_path(target, args)
   end
 end

@@ -47,7 +47,7 @@ class MergeRequestsController < ApplicationController
             :repository => RepositoryPresenter.new(@repository),
             :merge_request_statuses => @repository.project.merge_request_statuses,
             :atom_auto_discovery_url => url_for(:overwrite_params => { :format => "atom" }),
-            :open_merge_requests => @open_merge_requests,
+            :merge_requests => @open_merge_requests,
             :status => params[:status]
           })
       end

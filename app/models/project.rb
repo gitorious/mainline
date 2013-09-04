@@ -289,6 +289,10 @@ class Project < ActiveRecord::Base
     project.nil? || project == self
   end
 
+  def merge_requests
+    MergeRequest.where("project_id = ?", id).joins(:target_repository)
+  end
+
   def self.reserved_slugs
     @reserved_slugs ||= []
   end
