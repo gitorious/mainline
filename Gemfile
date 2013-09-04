@@ -16,7 +16,7 @@ gem "net-ldap", "~> 0.3"
 gem "capillary", "~> 1.0.1"
 gem "nokogiri", "~> 1.5", "< 1.6"
 gem "memcache-client", "~> 1.8"
-gem "unicorn", "~> 4.3.1", :platforms => :ruby
+gem "unicorn", "~> 4.6.3", :platforms => :ruby
 gem "exception_notification", :require => "exception_notifier"
 gem "thinking-sphinx", "~> 3.0"
 gem "rails_autolink", "~> 1.0"
