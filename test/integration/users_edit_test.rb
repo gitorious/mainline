@@ -46,6 +46,9 @@ class UserEditTest < ActionDispatch::IntegrationTest
     @user = users(:johan)
     login_as(:johan)
     visit edit_user_path(@user)
+
+    # FIXME: this should not be required in an integration test
+    SshKeyValidator.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
   end
 
   teardown do
@@ -71,7 +74,8 @@ class UserEditTest < ActionDispatch::IntegrationTest
 
   should "delete ssh key" do
     change_tab('SSH keys')
-    pending 'for some reason deleting a key in test mode does not work'
+    # TODO: why on earth does it fail in the test only?
+    pending 'deleting keys fail in the test'
     click_on 'delete'
     page.must_have_content('Key was deleted')
   end
@@ -79,9 +83,8 @@ class UserEditTest < ActionDispatch::IntegrationTest
   should "add new ssh key" do
     change_tab('SSH keys')
     click_on 'Add new'
-    pending 'this is very weird - capy does not see the modal opened here'
-    page.must_have_content('Add a new public SSH key')
-    within('#add-new') do
+    page.must_have_content('Add new public SSH key')
+    within('#new_ssh_key') do
       find('textarea').set(valid_key)
       click_on 'Save'
     end

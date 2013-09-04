@@ -31,32 +31,12 @@
 </div>
 
 <script type="text/javascript">
-$(function() {
-  var active = $('.nav[data-active]').data('active');
-  var $nav   = $('a[data-target="#'+active+'"]');
+  $(function() {
+    var active = $('.nav[data-active]').data('active');
+    var $nav   = $('a[data-target="#'+active+'"]');
 
-  $nav.tab('show');
+    $nav.tab('show');
 
-  $('.nav').pjax('a', '.tab-content');
-
-  $('.modal-footer a[data-behavior="save"]').on('click', function() {
-    $(this).parents('.modal').find('form').submit();
-    return false;
+    $('.nav').pjax('a', '.tab-content');
   });
-
-  $('.modal').on('submit', 'form', function() {
-    $.ajax({
-      url: this.action,
-      type: this.method,
-      data: $(this).serialize(),
-      success: function(response) {
-        document.location.reload();
-      },
-      error: function(xhr) {
-        $('.modal-body').html(xhr.responseText);
-      }
-    });
-    return false;
-  });
-});
 </script>

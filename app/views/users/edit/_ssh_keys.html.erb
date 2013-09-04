@@ -1,19 +1,7 @@
-<%= render "keys/keys", :ssh_keys => current_user.ssh_keys %>
-
-<%= link_to "Add new", '#add-key',
-  :data  => { :toggle => 'modal' },
-  :class => 'btn btn-primary' %>
-
-<div class="modal hide" id="add-key">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal">×</button>
-    <h3><%= t('views.keys.add_title') %></h3>
-  </div>
-  <div class="modal-body">
-    <%= render "keys/form", :ssh_key => current_user.ssh_keys.build %>
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn" data-dismiss="modal">Close</a>
-    <a href="#" class="btn btn-primary" data-behavior="save"><%= t('views.common.save') %></a>
-  </div>
-</div>
+<% if controller_name == 'keys' %>
+  <h2>Add new public SSH key</h2>
+  <%= render "keys/form", :ssh_key => @ssh_key || current_user.ssh_keys.build %>
+<% else %>
+  <%= render "keys/keys", :ssh_keys => current_user.ssh_keys %>
+  <%= link_to "Add new", new_user_key_path(current_user), :class => 'btn btn-primary' %>
+<% end %>

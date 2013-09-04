@@ -42,9 +42,7 @@ class KeysController < ApplicationController
     if pjax_request?
       render :partial => 'keys/form', :ssh_key => ssh_key
     else
-      render 'users/edit', :locals => {
-        :user => current_user, :active_tab => 'ssh-keys'
-      }, :layout => 'ui3'
+      render_form
     end
   end
 
@@ -56,7 +54,7 @@ class KeysController < ApplicationController
         flash[:notice] = I18n.t("keys_controller.create_notice")
 
         format.html do
-          head :created
+          redirect_to user_edit_ssh_keys_path(current_user)
         end
 
         format.xml do
@@ -65,15 +63,14 @@ class KeysController < ApplicationController
         end
       end
 
-      outcome.failure do |key|
-        puts key.errors.inspect
-
+      outcome.failure do |ssh_key|
         format.html do
-          render :partial => "form", :locals => { :ssh_key => key }, :status => :unprocessable_entity
+          @ssh_key = ssh_key
+          render_form
         end
 
         format.xml do
-          render(:xml => key.errors.full_messages, :status => :unprocessable_entity)
+          render(:xml => ssh_key.errors.full_messages, :status => :unprocessable_entity)
         end
       end
     end
@@ -93,7 +90,7 @@ class KeysController < ApplicationController
 
     outcome.success do
       flash[:notice] = I18n.t("keys_controller.destroy_notice")
-      redirect_to user_keys_index_path and return
+      redirect_to user_edit_ssh_keys_path(current_user) and return
     end
 
     render(:text => "Bad request", :status => 400)
@@ -105,7 +102,10 @@ class KeysController < ApplicationController
     @user = User.find_by_login!(params[:user_id])
   end
 
-  def user_keys_index_path
-    edit_user_path(current_user) + '#ssh-keys'
+  def render_form(ssh_key = @ssh_key)
+    render 'users/edit', :locals => {
+      :user => current_user, :active_tab => 'ssh-keys', :ssh_key => ssh_key
+    }, :layout => 'ui3'
   end
+
 end

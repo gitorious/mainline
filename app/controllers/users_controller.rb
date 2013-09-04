@@ -80,7 +80,7 @@ class UsersController < ApplicationController
     active_tab = params.fetch(:tab, 'my-details')
     locals     = { :user => current_user, :active_tab => active_tab }
 
-    if request.headers['X-PJAX']
+    if pjax_request?
       partial = EDIT_VIEWS.fetch(params[:tab])
       render :partial => partial, :locals => locals
     else
