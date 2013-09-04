@@ -66,6 +66,8 @@ class KeysController < ApplicationController
       end
 
       outcome.failure do |key|
+        puts key.errors.inspect
+
         format.html do
           render :partial => "form", :locals => { :ssh_key => key }, :status => :unprocessable_entity
         end
