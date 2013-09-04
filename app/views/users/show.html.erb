@@ -24,7 +24,7 @@
       <div class="span7">
         <%= render "users/show/user_profile", :user => user %>
         <div class="content-container w-510">
-          <%= render "users/show/activities", :user => user, :events => events %>
+          <%= render "users/show/activities", :atom_auto_discovery_url => atom_auto_discovery_url, :events => events %>
         </div>
       </div>
       <div class="span5">

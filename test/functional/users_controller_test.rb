@@ -85,7 +85,6 @@ class UsersControllerTest < ActionController::TestCase
     end
 
     should "set atom feed autodiscovery" do
-      pending 'atom icon is temporarly hidden'
       user = users(:johan)
       get :show, :id => user.login
       assert_match user_feed_path(user, :format => :atom), response.body
