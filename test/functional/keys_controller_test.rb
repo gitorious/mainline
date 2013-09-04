@@ -110,7 +110,7 @@ class KeysControllerTest < ActionController::TestCase
     should "POST account/keys/create successfully" do
       login_as :johan
       post :create, :user_id => @user.to_param, :ssh_key => {:key => valid_key}
-      assert_response :created
+      assert_redirected_to user_edit_ssh_keys_path(@user)
     end
   end
 
