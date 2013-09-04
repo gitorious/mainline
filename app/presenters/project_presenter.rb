@@ -35,12 +35,34 @@ class ProjectPresenter
   def new_record?; project.new_record?; end
   def owner; project.owner; end
   def tag_list; project.tag_list; end
+  def tags; project.tags; end
   def license; project.license; end
   def wiki_enabled; project.wiki_enabled; end
   def home_url; project.home_url; end
   def mailinglist_url; project.mailinglist_url; end
   def bugtracker_url; project.bugtracker_url; end
   def wiki_permissions; project.wiki_permissions; end
+  def user; project.user; end
+
+  def owner_to_param_with_prefix
+    project.owner.to_param_with_prefix
+  end
+
+  def user_to_param_with_prefix
+    project.user.to_param_with_prefix
+  end
+
+  def owned_by_group?
+    project.owned_by_group?
+  end
+
+  def short_created_at
+    project.created_at.to_s(:short)
+  end
+
+  def long_created_at
+    project.created_at.to_s(:long)
+  end
 
   def self.model_name
     Project.model_name

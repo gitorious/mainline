@@ -18,16 +18,17 @@
 
 class ProjectCommunityController < ApplicationController
   renders_in_site_specific_context
+  layout "ui3"
 
   def index
-    project = Project.find_by_slug!(params[:project_id])
+    project = authorize_access_to(Project.find_by_slug!(params[:project_id]))
 
-    respond_to do |format|
-      format.html do
-        render(:action => :index, :layout => "ui3", :locals => {
-            :project => ProjectPresenter.new(project)
-          })
-      end
-    end
+    render(:action => :index, :locals => {
+        :project => ProjectPresenter.new(project),
+        :atom_auto_discovery_url => project_path(project, :format => :atom),
+        :atom_auto_discovery_title => "#{project.title} ATOM feed",
+        :group_clones => filter(project.recently_updated_group_repository_clones),
+        :user_clones => filter(project.recently_updated_user_repository_clones)
+      })
   end
 end
