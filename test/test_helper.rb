@@ -15,6 +15,9 @@ require "capybara/rails"
 require "capybara/poltergeist"
 require "capybara-screenshot/minitest"
 
+cache_dir = "#{Rails.root}/tmp/cache"
+FileUtils.mkdir(cache_dir) unless File.directory?(cache_dir)
+
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app, {
     :window_size => [1440, 900]
