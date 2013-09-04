@@ -9,19 +9,6 @@
 ** TODO Color picker for merge request statuses (projects/edit)
 ** TODO Missing from projects#show
 
-<div class="content-container w-750" id="repositories">
-  <% @mainlines[0...(@big_repos)].each do |repo| -%>
-    <%= render :partial => "repositories/overview", :locals => {:repository => repo} -%>
-  <% end -%>
-  <% if @mainlines.length > @big_repos %>
-    <h3>More repositories</h3>
-    <% @mainlines[(@big_repos)..-1].each do |repo| -%>
-      <%= render :partial => "repositories/overview_tight", :locals => {:repository => repo} -%>
-    <% end -%>
-  <% end %>
-</div>
-
-
 <%= content_for :sidebar do -%>
   <ul class="links navigation">
 
@@ -33,27 +20,8 @@
     <% end -%>
   </ul>
   <%= render :partial => "meta" %>
-  <h3>
-    <%= link_to t("views.projects.repository_clones"),
-        project_repositories_path(@project) -%>
-  </h3>
-  <% if show_clone_list_search?(@group_clones, @user_clones) -%>
-    <%= render :partial => "repositories/clone_list_search", :locals => {
-          :path => project_repositories_path(@project, :format => 'json')
-        } -%>
-  <% end -%>
-  <%= render :partial => "repositories" -%>
+
 <% end -%>
-** Missing from project repositories listing
-
-      # @mainlines = filter(by_push_time(@project.repositories.mainlines))
-      # @group_clones = filter(@project.recently_updated_group_repository_clones)
-      # @user_clones = filter(@project.recently_updated_user_repository_clones)
-
-      # format.xml do
-      #   render(:xml => @project.to_xml({}, @mainlines, @group_clones + @user_clones))
-      # end
-
 * Views to port to UI3 [17/78]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit

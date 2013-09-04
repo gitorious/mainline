@@ -1,21 +1,34 @@
-<%= pull_box(t("views.site.dashboard.repositories"), :class => 'repositories-box') do %>
-  <% if repositories.blank? %>
-    <p class="hint muted">
-      <% if is_current_user?(user) %>
-        You currently do not have any repository clones. You can clone a repository you wish to contribute to by going to a repository overview page and clicking the "Clone repository" button in the repository information box.
-      <% else %>
-          <%=h user.title %> currently does not have any repository clones.
-      <% end %>
-    </p>
-  <% else %>
-    <table class="table">
-      <% repositories.each do |repo| %>
-        <tr>
-          <td class="repository">
-            <%= link_to h(repo.url_path), [repo.project, repo] %>
-          </td>
-        </tr>
-      <% end %>
-    </table>
-  <% end %>
-<% end %>
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<%=
+  hint = if is_current_user?(user)
+           "You currently do not have any repository clones. You can clone a " +
+             "repository you wish to contribute to by going to a repository " +
+             "overview page and clicking the \"Clone repository\" button in " +
+             "the repository information box."
+         else
+           "#{h(user.title)} currently does not have any repository clones."
+         end
+
+   render("repositories/repositories", {
+     :repositories => repositories,
+     :hint => hint,
+     :heading => t("views.site.dashboard.repositories")
+   })
+%>

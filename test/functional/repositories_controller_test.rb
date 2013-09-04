@@ -71,20 +71,15 @@ class RepositoriesControllerTest < ActionController::TestCase
       @project = projects(:johans)
     end
 
-    should "gets all the projects repositories" do
+    should "redirects html requests to project index" do
       get :index, :project_id => @project.slug
-      assert_response :success
-      assert_equal @project.repositories, assigns(:repositories)
+      assert_response :redirect
+      assert_redirected_to(project_path(@project))
     end
 
     should "render xml if requested" do
       get :index, :project_id => @project.slug, :format => "xml"
       assert_response :success
-    end
-
-    context "paginating repositories" do
-      setup { @params = { :project_id => @project.slug } }
-      should_scope_pagination_to(:index, Repository)
     end
   end
 
@@ -96,7 +91,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "render repositories matching a search term" do
       get :index, :project_id => @project.to_param, :filter => "clone", :format => "json"
       assert_response :success
-      assert_equal([repositories(:johans2)], assigns(:repositories))
+      assert_match repositories(:johans2).name, @response.body
     end
   end
 
@@ -378,32 +373,10 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response 403
     end
 
-    should "disallow unauthorized users to get group repositories" do
-      get :index, :group_id => @group.to_param, :project_id => @project.to_param
-      assert_response 403
-    end
-
-    should "disallow unauthorized users to get user repositories" do
-      get :index, :user_id => users(:johan).to_param, :project_id => @project.to_param
-      assert_response 403
-    end
-
     should "allow authorize users to get project repositories" do
       login_as :johan
       get :index, :project_id => @project.to_param
-      assert_response 200
-    end
-
-    should "allow authorize users to get group repositories" do
-      login_as :johan
-      get :index, :group_id => @group.to_param, :project_id => @project.to_param
-      assert_response 200
-    end
-
-    should "allow authorize users to get user repositories" do
-      login_as :johan
-      get :index, :user_id => users(:johan).to_param, :project_id => @project.to_param
-      assert_response 200
+      assert_response :redirect
     end
 
     should "disallow unauthorized users to get new" do
@@ -494,42 +467,19 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "exclude private repositories in project" do
-      get :index, :project_id => @project.to_param
-      assert_equal 1, assigns(:repositories).length
+      get :index, :project_id => @project.to_param, :format => "json"
+      assert_equal 1, JSON.parse(@response.body).length
     end
 
     should "exclude filtered private repositories in project" do
       get :index, :project_id => @project.to_param, :filter => "o", :format => "json"
-      assert_equal 1, assigns(:repositories).length
-    end
-
-    should "exclude private repositories in group" do
-      Repository.all.each { |r| r.make_private }
-      get :index, :group_id => @group.to_param, :project_id => @project.to_param
-      assert_equal 0, assigns(:repositories).length
-    end
-
-    should "exclude private repositories in user" do
-      get :index, :user_id => users(:johan).to_param, :project_id => @project.to_param
-      assert_equal 1, assigns(:repositories).length
+      assert_equal 1, JSON.parse(@response.body).length
     end
 
     should "include authorized private repositories in project" do
       login_as :johan
       get :index, :project_id => @project.to_param
-      assert_equal 2, assigns(:repositories).length
-    end
-
-    should "include authorized private repositories in group" do
-      login_as :johan
-      get :index, :group_id => @group.to_param, :project_id => @project.to_param
-      assert_equal 1, assigns(:repositories).length
-    end
-
-    should "include authorized private repositories in user" do
-      login_as :johan
-      get :index, :user_id => users(:johan).to_param, :project_id => @project.to_param
-      assert_equal 2, assigns(:repositories).length
+      assert_redirected_to(project_path(@project))
     end
 
     should "disallow unauthorized user to edit repository" do

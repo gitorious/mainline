@@ -74,6 +74,10 @@ class ProjectsController < ApplicationController
       redirect_to(project_path(@project), :status => 307) and return
     end
 
+    mainlines = filter(by_push_time(@project.repositories.mainlines))
+    group_clones = filter(@project.recently_updated_group_repository_clones)
+    user_clones = filter(@project.recently_updated_user_repository_clones)
+
     respond_to do |format|
       format.html do
         render(:show, :layout => "ui3", :locals => {
@@ -81,11 +85,16 @@ class ProjectsController < ApplicationController
             :events => events,
             :current_page => page,
             :total_pages => total_pages,
-            :atom_auto_discovery_url => project_path(@project, :format => :atom)
+            :atom_auto_discovery_url => project_path(@project, :format => :atom),
+            :mainlines => mainlines,
+            :group_clones => group_clones,
+            :user_clones => user_clones
           })
       end
 
-      format.xml { redirect_to(project_repositories_path(@project)) }
+      format.xml do
+        render(:xml => @project.to_xml({}, mainlines, group_clones + user_clones))
+      end
 
       format.atom do
         render(:show, :locals => {

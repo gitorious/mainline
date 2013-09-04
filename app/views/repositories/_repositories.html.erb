@@ -16,18 +16,22 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<% prev_date = nil %>
-<% events.each do |event| %>
-  <% if prev_date != event.created_at.strftime("%A, %B %e %Y") %>
-    <p class="gts-date-heading">
-      <span class="gts-date-heading-inner">
-        <%= prev_date = event.created_at.strftime("%A, %B %e %Y") %>
-      </span>
-    </p>
+<% if !repositories.blank? || defined?(hint) %>
+  <%= pull_box(heading, :class => 'repositories-box') do %>
+    <% if repositories.blank? %>
+      <p class="hint muted"><%= hint %></p>
+    <% else %>
+      <table class="table">
+        <% repositories.each do |repo| %>
+          <tr>
+            <td class="repository">
+              <%= link_to h(repo.url_path), [repo.project, repo] %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+      <%= footer.html_safe if defined?(footer) %>
+    <% end %>
   <% end %>
-  <%= render "repository_activities/event", :event => event %>
 <% end %>
 
-<% if defined?(page) %>
-  <%= raw JustPaginate.page_navigation(page, total_pages) { |page_no| "?page=#{page_no}" } -%>
-<% end %>

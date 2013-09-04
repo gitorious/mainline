@@ -54,22 +54,17 @@ class RepositoriesController < ApplicationController
   end
 
   def index
-    if term = params[:filter]
-      @repositories = filter(@project.search_repositories(term))
-    else
-      @repositories = paginate(page_free_redirect_options) do
-        filter_paginated(params[:page], Repository.per_page) do |page|
-          @owner.repositories.regular.paginate(:include => [:user, :events, :project], :page => page)
-        end
+    respond_to do |format|
+      format.html { redirect_to(project_path(@project)) }
+
+      if term = params[:filter]
+        repositories = filter(@project.search_repositories(term))
+      else
+        repositories = filter(@owner.repositories.regular.includes(:project, :user))
       end
-    end
 
-    return if @repositories.count == 0 && params.key?(:page)
-
-    respond_to do |wants|
-      wants.html
-      wants.xml {render :xml => @repositories.to_xml}
-      wants.json {render :json => RepositorySerializer.new(self).to_json(@repositories)}
+      format.xml {render :xml => repositories.to_xml}
+      format.json {render :json => RepositorySerializer.new(self).to_json(repositories)}
     end
   end
 
