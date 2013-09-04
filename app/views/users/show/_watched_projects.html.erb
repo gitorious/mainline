@@ -1,44 +1,41 @@
 <%= pull_box("#{h user.title} is watching", :class => "watched") do %>
-  <div class="filters clearfix">
-    <ul class="unstyled">
-      <li>
-        <strong>Filter by</strong>
-      </li>
-      <% if is_current_user?(user) %>
+  <% if favorites.blank? %>
+    <p class="hint muted">
+      <%= no_watchings_notice_for(user) %>
+    </p>
+  <% else %>
+    <div class="filters clearfix">
+      <ul class="unstyled">
         <li>
-          <a class="foreign" href="#not-mine">Not yours</a>
+          <strong>Filter by</strong>
+        </li>
+        <% if is_current_user?(user) %>
+          <li>
+            <a class="foreign" href="#not-mine">Not yours</a>
+          </li>
+          <li>
+            <a class="mine" href="#mine">Yours</a>
+          </li>
+        <% end %>
+        <li>
+          <a href="#merge-requests" class="merge-requests">Merge requests</a>
         </li>
         <li>
-          <a class="mine" href="#mine">Yours</a>
+          <a href="#repos" class="repositories">Repositories</a>
         </li>
+        <li>
+          <a href="#all" class="all">All</a>
+        </li>
+      </ul>
+    </div>
+    <table class="table">
+      <% favorites.reject { |favorite| favorite.watchable.nil? }.each do |favorite| %>
+        <tr>
+          <td class="<%= css_classes_for(favorite.watchable) %>">
+            <%= link_to_watchable(favorite.watchable) %>
+          </td>
+        </tr>
       <% end %>
-      <li>
-        <a href="#merge-requests" class="merge-requests">Merge requests</a>
-      </li>
-      <li>
-        <a href="#repos" class="repositories">Repositories</a>
-      </li>
-      <li>
-        <a href="#all" class="all">All</a>
-      </li>
-    </ul>
-  </div>
-  <table class="table">
-    <% favorites.reject { |favorite| favorite.watchable.nil? }.each do |favorite| %>
-      <tr>
-        <td class="<%= css_classes_for(favorite.watchable) %>">
-          <%= link_to_watchable(favorite.watchable) %>
-        </td>
-      </tr>
-    <% end %>
-    <% if favorites.blank? %>
-      <tr style="list-style: none">
-        <td>
-          <p class="hint">
-            <%= no_watchings_notice_for(user) %>
-          </p>
-        </td>
-      </tr>
-    <% end %>
-  </table>
+    </table>
+  <% end %>
 <% end %>
