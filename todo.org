@@ -8,7 +8,7 @@
 ** TODO Anonymous users see SSH url
 ** TODO Color picker for merge request statuses (projects/edit)
 ** DONE Missing from projects#show
-* Views to port to UI3 [17/78]
+* Views to port to UI3 [22/77]
 ** TODO Admin::Diagnostics#index
 ** TODO Admin::OauthSettings#edit
 ** DONE Admin::ProjectProposals#index
@@ -33,9 +33,9 @@
 ** TODO Groups#index
 ** TODO Groups#new
 ** TODO Groups#show
-** TODO Keys#index
-** TODO Keys#new
-** TODO Keys#show
+** DONE Keys#index
+** DONE Keys#new
+** DONE Keys#show
 ** TODO Licenses#edit
 ** TODO Licenses#show
 ** TODO Memberships#edit
@@ -69,7 +69,6 @@
 ** TODO Projects#index
 ** DONE Projects#new
 ** DONE Projects#show
-** TODO Repositories#index
 ** TODO Searches#show
 ** DONE Sessions#new
 ** DONE Site#about
@@ -84,6 +83,6 @@
 ** TODO SiteWikiPages#index
 ** TODO SiteWikiPages#show
 ** DONE UserActivations#show
-** TODO Users#edit
+** DONE Users#edit
 ** DONE Users#new
-** TODO Users#show
+** DONE Users#show
