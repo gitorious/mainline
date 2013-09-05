@@ -68,6 +68,7 @@ end
 
 group :resque do
   gem "resque", "~> 1.23"
+  gem "resque-cleaner", "~> 0.2.11"
 end
 
 group :http_utils do
