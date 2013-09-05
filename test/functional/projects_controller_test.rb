@@ -39,13 +39,6 @@ class ProjectsControllerTest < ActionController::TestCase
         Gitorious::Configuration.prune(@settings)
       end
 
-      should "filter private projects in index" do
-        Project.stubs(:most_active_recently).returns(Project.all)
-        get :index
-        assert_equal 2, assigns(:projects).length
-        assert_equal 2, assigns(:active_recently).length
-      end
-
       should "not render show for private repo for unauthorized user" do
         get :show, :id => projects(:johans).to_param
         assert_response 403
@@ -179,7 +172,6 @@ class ProjectsControllerTest < ActionController::TestCase
     should "GET projects/ succesfully" do
       get :index
       assert_response :success
-      assert !assigns(:projects).empty?
       assert_template(("index"))
     end
 

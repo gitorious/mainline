@@ -36,32 +36,30 @@ class ProjectsController < ApplicationController
   renders_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
 
   def index
-    @page = JustPaginate.page_value(params[:page])
-
-    if Gitorious.private_repositories?
-      @project_count = filter(Project.all).count
-      @projects, @total_pages = JustPaginate.paginate(@page, Project.per_page, @project_count) do |index_range|
-        filter(Project.all).slice(index_range)
-      end
-    else
-      @project_count = Project.all.count
-      @projects, @total_pages = JustPaginate.paginate(@page, Project.per_page, @project_count) do |index_range|
-        Project.all( :offset => index_range.first, :limit => index_range.count)
-      end
+    begin
+      projects, total_pages, page = paginated_projects
+    rescue RangeError => err
+      flash[:error] = "Page #{page} does not exist"
+      redirect_to(projects_path, :status => 307) and return
     end
 
-    @atom_auto_discovery_url = projects_path(:format => :atom)
     respond_to do |format|
-      format.html {
-        @active_recently = filter(Project.most_active_recently)
-        @tags = Project.top_tags
-      }
-
-      format.xml do
-        render(:xml => ProjectXMLSerializer.new(self, @projects).render(current_user))
+      format.html do
+        render(:index, :layout => "ui3", :locals => {
+            :atom_auto_discovery_url => projects_path(:format => :atom),
+            :projects => projects,
+            :total_pages => total_pages,
+            :page => page,
+            :active_recently => filter(Project.most_active_recently),
+            :tags => Project.top_tags
+          })
       end
 
-      format.atom { }
+      format.xml do
+        render(:xml => ProjectXMLSerializer.new(self, projects).render(current_user))
+      end
+
+      format.atom { render(:index, :locals => { :projects => projects }) }
     end
   end
 
@@ -206,14 +204,6 @@ class ProjectsController < ApplicationController
     repositories.sort_by { |ml| ml.last_pushed_at || Time.utc(1970) }.reverse
   end
 
-  def paginate_projects(page, per_page)
-    filter_paginated(page, per_page) do |page|
-      Project.paginate(:order => "projects.created_at desc",
-                       :page => page,
-                       :include => [:tags, { :repositories => :project } ])
-    end
-  end
-
   def paginated_events(project, page)
     scope = Event.where("project_id = ?", project.id).where("target_type != ?", "Event")
     JustPaginate.paginate(page, Event.per_page, scope.count) do |range|
@@ -224,5 +214,14 @@ class ProjectsController < ApplicationController
         limit(range.count)
       Gitorious.private_repositories? ? filter(events) : events
     end
+  end
+
+  def paginated_projects
+    page = (params[:page] || 1).to_i
+    projects, pages = JustPaginate.paginate(page, Project.per_page, Project.count) do |range|
+      Project.offset(range.first).limit(range.count).includes(:tags, { :repositories => :project })
+    end
+    projects = filter(projects) if Gitorious.private_repositories?
+    [projects, pages, page]
   end
 end

@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
   #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -21,38 +21,51 @@
   #++
   %>
 
-<% @page_title = t("views.projects.title") -%>
+<% @title = t("views.projects.title") -%>
 
-<h2 class="content-header">Projects</h2>
-
-<ul class="project_list">
-  <% @projects.each do |project| -%>
-    <li class="project_list_item">
-      <%= render :partial => project, :object => project -%>
-    </li>
-  <% end -%>
-</ul>
-
-<!-- Note: use regular pagination when this view is ported to Gitoriou v3-->
-<%= raw JustPaginate.page_navigation_non_bootstrap(@page, @total_pages) { |page_no| "/projects/?page=#{page_no}" } -%>
-
-<%= content_for :sidebar do -%>
-  <h2><%= t("views.projects.popular") %></h2>
-  <ul class="tag_list">
-    <% @tags.each do |tag| %>
-      <li class="tag_size_3"><%= link_to h(tag.name), search_path(:q => "@category:#{h(tag.name)}") -%> </li>
-    <% end %>
-  </ul>
-  <ul class="links navigation">
-    <li class="new_project">
-      <%= link_to t("views.projects.create_new"), new_project_path() -%>
-    </li>
-  </ul>
-  <%= pull_box("Most active recently", :class => "pull-box-sidebar") do -%>
-    <ul class="with_icons">
-      <% @active_recently.each do |project| -%>
-        <li class="project"><%= link_to h(project.title), project -%></li>
-      <% end -%>
-    </ul>
-  <% end -%>
-<% end -%>
+<div class="container gts-body">
+  <div class="gts-container">
+    <div class="row-fluid">
+      <div class="span8">
+        <h1><%= Gitorious.site_name %> Projects</h1>
+        <% projects.each do |project| -%>
+          <%= render :partial => project, :object => project -%>
+        <% end -%>
+        <%= raw JustPaginate.page_navigation(page, total_pages) { |n| projects_path(:page => n) } %>
+      </div>
+      <div class="span4">
+        <p>
+          <a class="btn btn-primary" href="<%= new_project_path %>">
+            <i class="icon-plus-sign icon-white"></i>
+            <%= t("views.projects.create_new") %>
+          </a>
+          <br><br>
+        </p>
+        <% if !tags.blank? %>
+          <%= pull_box(t("views.projects.popular")) do %>
+            <table class="table">
+              <% tags.each do |tag| %>
+                <tr>
+                  <td class="repository">
+                    <%= link_to h(tag.name), search_path(:q => "@category:#{h(tag.name)}") %>
+                  </td>
+                </tr>
+              <% end %>
+            </table>
+          <% end %>
+        <% end %>
+        <% if !active_recently.blank? %>
+          <%= pull_box("Most active recently") do %>
+            <table class="table">
+              <% active_recently.each do |project| %>
+                <tr>
+                  <td><%= link_to h(project.title), project -%></td>
+                </tr>
+              <% end %>
+            </table>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

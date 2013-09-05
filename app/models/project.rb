@@ -59,7 +59,7 @@ class Project < ActiveRecord::Base
     I18n.t("activerecord.models.project")
   end
 
-  def self.per_page() 20 end
+  def self.per_page() 50 end
 
   def self.top_tags(limit = 10)
     tag_counts(:limit => limit, :order => "count desc")
