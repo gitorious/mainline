@@ -133,7 +133,7 @@ $(document).ready(function () {
     });
 
     // Commment editing
-    $(".comment .edit_link a").live("click", function () {
+    $(".comment .edit_link a").on("click", function () {
         var commentContainer = $(this).parents(".comment");
         var formUrl = $(this).attr("gts:url");
         var spinner = $(this).parent().next(".link-spinner").show();
@@ -176,7 +176,7 @@ $(document).ready(function () {
         }
     })
 
-    $(".comment .comment_form .cancel").live("click", function () {
+    $(".comment .comment_form .cancel").on("click", function () {
         var theForm = $(this).parents(".comment_form");
         theForm.remove();
     });

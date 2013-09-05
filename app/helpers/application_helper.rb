@@ -430,14 +430,22 @@ module ApplicationHelper
   # The javascripts to be included in all layouts
   def include_javascripts
     jquery = ["", "/autocomplete", "/cookie", "/color_picker", "/cycle.all.min",
-              "/ui", "/ui/selectable", "/scrollto", "/expander",
-              "/timeago","/pjax"].collect { |f| "lib/jquery#{f}" }
+              "/scrollto", "/expander", "/timeago","/pjax", "-migrate"].
+              collect do |f|
+                "lib/jquery#{f}"
+              end
 
     gitorious = ["", "/observable", "/application", "/resource_toggler", "/jquery",
                  "/merge_requests", "/diff_browser", "/messages", "/live_search",
                  "/repository_search"].collect { |f| "gitorious#{f}" }
 
-    scripts = jquery + ["core_extensions"] + gitorious + ["rails.js", "lib/spin.js/spin.js", "application"]
+    scripts = jquery + ["core_extensions"] + gitorious + ["lib/spin.js/spin.js", "application"]
+
+    %w(core widget mouse selectable).each do |name|
+      scripts << "/ui3/jquery-ui/ui/jquery.ui.#{name}.js"
+    end
+
+    scripts << 'jquery_ujs.js'
 
     javascript_include_tag(scripts, :cache => true)
   end

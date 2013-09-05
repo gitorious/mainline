@@ -37,7 +37,7 @@ jQuery(document).ready(function () {
     });
 
     // toggling of diffs in diff browsers
-    jQuery('.file-diff .header').live("click", function (event) {
+    jQuery('.file-diff .header').on("click", function (event) {
         var hunksContainer = jQuery(this).next();
 
         if (hunksContainer.is(":visible")) {
@@ -50,7 +50,7 @@ jQuery(document).ready(function () {
 
     });
 
-    jQuery(".file-diff-controls a#expand-all").live("click", function (e) {
+    jQuery(".file-diff-controls a#expand-all").on("click", function (e) {
         var container = jQuery(this).parent().parent().parent();
         var cookiePrefix = jQuery(this).attr("gts:cookie-prefix") || 'generic';
         container.find('.file-diff .header').removeClass("closed").addClass("open");
@@ -59,7 +59,7 @@ jQuery(document).ready(function () {
         e.preventDefault();
     });
 
-    jQuery(".file-diff-controls a#collapse-all").live("click", function (e) {
+    jQuery(".file-diff-controls a#collapse-all").on("click", function (e) {
         var container = jQuery(this).parent().parent().parent();
         var cookiePrefix = jQuery(this).attr("gts:cookie-prefix") || 'generic';
         container.find('.file-diff .header').removeClass("open").addClass("closed");
@@ -133,14 +133,14 @@ jQuery(document).ready(function () {
     jQuery("#merge_request_current_version ul.compact li.single_commit").hoverBubble();
 
     // Merge request selection of branches, monster mode
-    jQuery("#large_commit_selector_toggler").live("click", function (event) {
+    jQuery("#large_commit_selector_toggler").on("click", function (event) {
         jQuery("#large_commit_selector").slideToggle();
         event.preventDefault();
     });
 
     // Handle selection of multiple commits in the large merge-request commit diff browser
     var previousSelectedCommitRowIndex;
-    jQuery("#large_commit_selector table#commit_table tr input").live("click", function (event) {
+    jQuery("#large_commit_selector table#commit_table tr input").on("click", function (event) {
         var selectedTr = jQuery(this).parents("tr");
         var commitRows = selectedTr.parents("table").find("tr.commit_row");
 
@@ -182,7 +182,7 @@ jQuery(document).ready(function () {
     });
 
     // Display a range of commits from the large merge-request commit diff browser
-    jQuery("#show-large-diff-range").live("click", function (event) {
+    jQuery("#show-large-diff-range").on("click", function (event) {
         var selected = jQuery("#large_commit_selector table#commit_table tr.commit_row.selected");
         var spec = new Gitorious.ShaSpec();
         var firstSHA = selected.filter(":first").find("input.merge_to").val();
@@ -200,7 +200,7 @@ jQuery(document).ready(function () {
     });
 
     // Show a single commit in the large merge-request commit diff browser
-    jQuery("#large_commit_selector #commit_table a.clickable_commit").live("click", function (e) {
+    jQuery("#large_commit_selector #commit_table a.clickable_commit").on("click", function (e) {
         var spec = new Gitorious.ShaSpec();
         spec.addSha(jQuery(this).attr("data-commit-sha"));
         var diff_browser = new Gitorious.DiffBrowser(spec.shaSpec());
@@ -214,7 +214,7 @@ jQuery(document).ready(function () {
     });
 
     // Diff commenting
-    jQuery("table tr td.inline_comments a.diff-comment-count").live("click", function (e) {
+    jQuery("table tr td.inline_comments a.diff-comment-count").on("click", function (e) {
         var lineOffsets = jQuery(this).parents("tr").attr("data-line-num-tuple");
         var diffPathName = jQuery(this).parents("div.file-diff").attr("data-diff-path");
         jQuery("div.file-diff[data-diff-path=\""+diffPathName+"\"] #diff-inline-comments-for-" + lineOffsets).slideToggle();
@@ -222,7 +222,7 @@ jQuery(document).ready(function () {
     });
 
     // Clicking on a comment relating to an inline commit comment
-    jQuery(".commentable.comments .inline_comment_link a").live("click", function () {
+    jQuery(".commentable.comments .inline_comment_link a").on("click", function () {
         var comment = jQuery(this).parents("div.comment.inline");
         var path = jQuery(comment).attr("data-diff-path");
         var last_line_number = jQuery(comment).attr("data-last-line-in-diff");
@@ -239,7 +239,7 @@ jQuery(document).ready(function () {
     
     // Clicking on a comment relating to a merge request 
     // version displays the comment in context
-    jQuery("#merge_request_comments .comment.inline .inline_comment_link a").live("click", function () {
+    jQuery("#merge_request_comments .comment.inline .inline_comment_link a").on("click", function () {
         var comment = jQuery(this).parents("div.comment.inline");
         var path = jQuery(comment).attr("data-diff-path");
         var last_line = jQuery(comment).attr("data-last-line-in-diff");
@@ -289,7 +289,7 @@ jQuery(document).ready(function () {
         return true;
     });
 
-    jQuery("#toggle_inline_comments").live("change", function () {
+    jQuery("#toggle_inline_comments").on("change", function () {
         if (jQuery(this).is(":checked")) {
             jQuery(".comment.inline").show();
         } else {

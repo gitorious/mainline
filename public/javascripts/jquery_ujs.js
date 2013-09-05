@@ -2,57 +2,17 @@
 
 /**
  * Unobtrusive scripting adapter for jQuery
- *
- * Requires jQuery 1.6.0 or later.
  * https://github.com/rails/jquery-ujs
-
- * Uploading file using rails.js
- * =============================
  *
- * By default, browsers do not allow files to be uploaded via AJAX. As a result, if there are any non-blank file fields
- * in the remote form, this adapter aborts the AJAX submission and allows the form to submit through standard means.
+ * Requires jQuery 1.7.0 or later.
  *
- * The `ajax:aborted:file` event allows you to bind your own handler to process the form submission however you wish.
+ * Released under the MIT license
  *
- * Ex:
- *     $('form').live('ajax:aborted:file', function(event, elements){
- *       // Implement own remote file-transfer handler here for non-blank file inputs passed in `elements`.
- *       // Returning false in this handler tells rails.js to disallow standard form submission
- *       return false;
- *     });
- *
- * The `ajax:aborted:file` event is fired when a file-type input is detected with a non-blank value.
- *
- * Third-party tools can use this hook to detect when an AJAX file upload is attempted, and then use
- * techniques like the iframe method to upload the file instead.
- *
- * Required fields in rails.js
- * ===========================
- *
- * If any blank required inputs (required="required") are detected in the remote form, the whole form submission
- * is canceled. Note that this is unlike file inputs, which still allow standard (non-AJAX) form submission.
- *
- * The `ajax:aborted:required` event allows you to bind your own handler to inform the user of blank required inputs.
- *
- * !! Note that Opera does not fire the form's submit event if there are blank required inputs, so this event may never
- *    get fired in Opera. This event is what causes other browsers to exhibit the same submit-aborting behavior.
- *
- * Ex:
- *     $('form').live('ajax:aborted:required', function(event, elements){
- *       // Returning false in this handler tells rails.js to submit the form anyway.
- *       // The blank required inputs are passed to this function in `elements`.
- *       return ! confirm("Would you like to submit the form with missing info?");
- *     });
  */
 
-  // Cut down on the number if issues from people inadvertently including jquery_ujs twice
+  // Cut down on the number of issues from people inadvertently including jquery_ujs twice
   // by detecting and raising an error when it happens.
-  var alreadyInitialized = function() {
-    var events = $._data(document, 'events');
-    return events && events.click && $.grep(events.click, function(e) { return e.namespace === 'rails'; }).length;
-  }
-
-  if ( alreadyInitialized() ) {
+  if ( $.rails !== undefined ) {
     $.error('jquery-ujs has already been loaded!');
   }
 
@@ -62,6 +22,9 @@
   $.rails = rails = {
     // Link elements bound by jquery-ujs
     linkClickSelector: 'a[data-confirm], a[data-method], a[data-remote], a[data-disable-with]',
+
+    // Button elements boud jquery-ujs
+    buttonClickSelector: 'button[data-remote]',
 
     // Select elements bound by jquery-ujs
     inputChangeSelector: 'select[data-remote], input[data-remote], textarea[data-remote]',
@@ -82,7 +45,7 @@
     requiredInputSelector: 'input[name][required]:not([disabled]),textarea[name][required]:not([disabled])',
 
     // Form file input elements
-    fileInputSelector: 'input:file',
+    fileInputSelector: 'input[type=file]',
 
     // Link onClick disable selector with possible reenable after remote submission
     linkDisableSelector: 'a[data-disable-with]',
@@ -140,6 +103,11 @@
           url = element.data('url');
           data = element.serialize();
           if (element.data('params')) data = data + "&" + element.data('params');
+        } else if (element.is(rails.buttonClickSelector)) {
+          method = element.data('method') || 'get';
+          url = element.data('url');
+          data = element.serialize();
+          if (element.data('params')) data = data + "&" + element.data('params');
         } else {
           method = element.data('method');
           url = rails.href(element);
@@ -164,11 +132,17 @@
           error: function(xhr, status, error) {
             element.trigger('ajax:error', [xhr, status, error]);
           },
-          xhrFields: {
-            withCredentials: withCredentials
-          },
           crossDomain: crossDomain
         };
+
+        // There is no withCredentials for IE6-8 when
+        // "Enable native XMLHTTP support" is disabled
+        if (withCredentials) {
+          options.xhrFields = {
+            withCredentials: withCredentials
+          };
+        }
+
         // Only pass url to `ajax` options if not blank
         if (url) { options.url = url; }
 
@@ -257,12 +231,12 @@
 
       allInputs.each(function() {
         input = $(this);
-        valueToCheck = input.is(':checkbox,:radio') ? input.is(':checked') : input.val();
+        valueToCheck = input.is('input[type=checkbox],input[type=radio]') ? input.is(':checked') : input.val();
         // If nonBlank and valueToCheck are both truthy, or nonBlank and valueToCheck are both falsey
         if (!valueToCheck === !nonBlank) {
 
           // Don't count unchecked required radio if other radio with same name is checked
-          if (input.is(':radio') && allInputs.filter('input:radio:checked[name="' + input.attr('name') + '"]').length) {
+          if (input.is('input[type=radio]') && allInputs.filter('input[type=radio]:checked[name="' + input.attr('name') + '"]').length) {
             return true; // Skip to next input
           }
 
@@ -284,18 +258,6 @@
       return false;
     },
 
-    // find all the submit events directly bound to the form and
-    // manually invoke them. If anyone returns false then stop the loop
-    callFormSubmitBindings: function(form, event) {
-      var events = form.data('events'), continuePropagation = true;
-      if (events !== undefined && events['submit'] !== undefined) {
-        $.each(events['submit'], function(i, obj){
-          if (typeof obj.handler === 'function') return continuePropagation = obj.handler(event);
-        });
-      }
-      return continuePropagation;
-    },
-
     //  replace element's html with the 'data-disable-with' after storing original html
     //  and prevent clicking on it
     disableElement: function(element) {
@@ -310,9 +272,7 @@
     enableElement: function(element) {
       if (element.data('ujs:enable-with') !== undefined) {
         element.html(element.data('ujs:enable-with')); // set to old enabled state
-        // this should be element.removeData('ujs:enable-with')
-        // but, there is currently a bug in jquery which makes hyphenated data attributes not get removed
-        element.data('ujs:enable-with', false); // clean up cache
+        element.removeData('ujs:enable-with'); // clean up cache
       }
       element.unbind('click.railsDisable'); // enable element
     }
@@ -351,6 +311,14 @@
       }
     });
 
+    $(document).delegate(rails.buttonClickSelector, 'click.rails', function(e) {
+      var button = $(this);
+      if (!rails.allowAction(button)) return rails.stopEverything(e);
+
+      rails.handleRemote(button);
+      return false;
+    });
+
     $(document).delegate(rails.inputChangeSelector, 'change.rails', function(e) {
       var link = $(this);
       if (!rails.allowAction(link)) return rails.stopEverything(e);
@@ -385,10 +353,6 @@
           return aborted;
         }
 
-        // If browser does not support submit bubbling, then this live-binding will be called before direct
-        // bindings. Therefore, we should directly call any direct bindings before remotely submitting form.
-        if (!$.support.submitBubbles && $().jquery < '1.7' && rails.callFormSubmitBindings(form, e) === false) return rails.stopEverything(e);
-
         rails.handleRemote(form);
         return false;
 
@@ -420,8 +384,8 @@
 
     $(function(){
       // making sure that all forms have actual up-to-date token(cached forms contain old one)
-      csrf_token = $('meta[name=csrf-token]').attr('content');
-      csrf_param = $('meta[name=csrf-param]').attr('content');
+      var csrf_token = $('meta[name=csrf-token]').attr('content');
+      var csrf_param = $('meta[name=csrf-param]').attr('content');
       $('form input[name="' + csrf_param + '"]').val(csrf_token);
     });
   }
