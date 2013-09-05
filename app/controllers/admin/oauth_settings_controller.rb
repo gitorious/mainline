@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -19,21 +19,28 @@
 
 module Admin
   class OauthSettingsController < AdminController
-    before_filter :find_project
+    layout "ui3"
 
     def show
-      redirect_to :action => "edit", :project_id => @project.to_param
+      redirect_to :action => "edit", :project_id => params[:project_id]
     end
 
     def edit
-      @root = Breadcrumb::EditOAuthSettings.new(@project)
+      render(:action => "edit", :locals => {
+          :project => project
+        })
     end
 
     def update
-      @project.oauth_settings = params[:oauth_settings]
-      @project.save
+      project.oauth_settings = params[:oauth_settings]
+      project.save
       flash[:notice] = "OAuth settings were updated"
-      redirect_to :action => "edit", :project_id => @project.to_param
+      redirect_to(:action => "edit", :project_id => project.to_param)
+    end
+
+    private
+    def project
+      @project ||= authorize_access_to(Project.find_by_slug!(params[:project_id]))
     end
   end
 end

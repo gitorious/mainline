@@ -1,7 +1,7 @@
 <%
   # encoding: utf-8
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -18,41 +18,63 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= breadcrumbs_from(@root) -%>
+<%= partial("projects/header", {
+        :project => ProjectPresenter.new(project),
+        :app => Gitorious,
+        :active => :admin,
+        :header_level => 2
+      }) %>
 
-<h2 class="content-header">Edit contribution settings</h2>
-
-<%= form_for(@project, :url => admin_project_oauth_settings_path(:project_id => @project), :method => :put) do |f| -%>
-  <fieldset>  <%- @project.oauth_settings.each do |k, v| -%>
-
-      <li>
-        <label for="project_oauth_settings_<%= k %>"><%= k.to_s.humanize %></label>
-        <div><input id="project_oauth_settings_<%= k %>" type="text" name="oauth_settings[<%= k %>]" value="<%= v %>"/></div>
-      </li>
-
-    <%- end -%>
-  </fieldset>
-  <fieldset class="submit">
-    <%= f.submit %>
-  </fieldset>
-<%- end -%>
-
-<%= content_for :sidebar do -%>
-  <h2>Information</h2>
+<% @page_title = "Edit contribution settings" %>
+<div class="container">
   <p>
-    This page lets you specify settings for the OAuth site used for signing off merge requests. If you enable this feature, you will need to provide at least the <strong>site</strong>, <strong>signoff key</strong> and <strong>signoff secret</strong> options. For non-standard paths, also supply the <strong>path prefix</strong> option. In the column to the right you will find the current options used.<br/>
-    Leave the site field empty to deactivate the requirement of merge requests to be signed off.
+    OAuth site used for signing off merge requests. If you enable this feature,
+    you must provide at least the <strong>site</strong>, <strong>signoff
+      key</strong> and <strong>signoff secret</strong> options. For non-standard
+    paths, also supply the <strong>path prefix</strong> option. In the column to
+    the right you will find the current options used.<br><br>
   </p>
-  <ul class="options">
-    <h4>Current options</h4>
-    <li>
-      <strong>Signoff required:</strong><%= @project.merge_requests_need_signoff? ? "YES" : "NO" %>
-    </li>
-  </ul>
-  <%- @project.oauth_consumer_options.each do |k, v| -%>
-    <%- unless v.blank? -%>
-      <h5><%= k.to_s.humanize %></h5>
-      <p><%= v %></p>
-    <%- end -%>
-  <%- end -%>
-<% end -%>
+  <div class="row-fluid">
+    <div class="span8">
+      <%= error_messages(project) -%>
+      <%= form_for(project, {
+              :url => admin_project_oauth_settings_path(:project_id => project),
+              :method => :put,
+              :builder => Gitorious::View::FormBuilder,
+              :html => { :class => "form-horizontal" }
+            }) do |form| -%>
+        <fieldset>
+          <%- project.oauth_settings.each do |k, v| -%>
+            <div class="control-group">
+              <div class="controls">
+                <label for="project_oauth_settings_<%= k %>"><%= k.to_s.humanize %></label>
+                <input id="project_oauth_settings_<%= k %>" type="text" name="oauth_settings[<%= k %>]" value="<%= v %>">
+                <% if k == :site %>
+                  <p>
+                    Leave empty to deactivate merge request sign off.
+                  </p>
+                <% end %>
+              </div>
+            </div>
+          <%- end -%>
+        </fieldset>
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit"><%= t("views.projects.edit") %></button>
+        </div>
+      <%- end -%>
+    </div>
+    <div class="span4">
+      <h4>Current options</h4>
+      <dl>
+        <dt>Signoff required</dt>
+        <dd><%= project.merge_requests_need_signoff? ? "Yes" : "No" %></dd>
+      </dl>
+      <%- @project.oauth_consumer_options.each do |k, v| -%>
+        <%- unless v.blank? -%>
+          <h4><%= k.to_s.humanize %></h4>
+          <p><%= v %></p>
+        <%- end -%>
+      <%- end -%>
+    </div>
+  </div>
+</div>

@@ -8,9 +8,9 @@
 ** TODO Anonymous users see SSH url
 ** TODO Color picker for merge request statuses (projects/edit)
 ** DONE Missing from projects#show
-* Views to port to UI3 [22/77]
+* Views to port to UI3 [23/77]
 ** TODO Admin::Diagnostics#index
-** TODO Admin::OauthSettings#edit
+** DONE Admin::OauthSettings#edit
 ** DONE Admin::ProjectProposals#index
 ** DONE Admin::ProjectProposals#new
 ** TODO Admin::Repositories#index
