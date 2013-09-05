@@ -430,7 +430,7 @@ module ApplicationHelper
   # The javascripts to be included in all layouts
   def include_javascripts
     jquery = ["", "/autocomplete", "/cookie", "/color_picker", "/cycle.all.min",
-              "/scrollto", "/expander", "/timeago","/pjax", "-migrate"].
+              "/scrollto", "/expander", "/timeago", "-migrate"].
               collect do |f|
                 "lib/jquery#{f}"
               end
@@ -445,7 +445,7 @@ module ApplicationHelper
       scripts << "/ui3/jquery-ui/ui/jquery.ui.#{name}.js"
     end
 
-    scripts << 'jquery_ujs.js'
+    scripts << 'jquery_ujs.js' << 'lib/jquery.pjax.js'
 
     javascript_include_tag(scripts, :cache => true)
   end
