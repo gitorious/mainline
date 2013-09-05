@@ -46,9 +46,6 @@ class UserEditTest < ActionDispatch::IntegrationTest
     @user = users(:johan)
     login_as(:johan)
     visit edit_user_path(@user)
-
-    # FIXME: this should not be required in an integration test
-    SshKeyValidator.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
   end
 
   teardown do
@@ -73,14 +70,24 @@ class UserEditTest < ActionDispatch::IntegrationTest
   end
 
   should "delete ssh key" do
-    change_tab('SSH keys')
-    # TODO: why on earth does it fail in the test only?
-    pending 'deleting keys fail in the test'
-    click_on 'delete'
-    page.must_have_content('Key was deleted')
+    ssh_key = @user.ssh_keys.first
+
+    # for some reason changing tab doesn't work so we visit the page
+    visit(user_edit_ssh_keys_path(@user))
+
+    # FIXME: this should not be required in an integration test
+    SshKeyValidator.any_instance.stubs(:valid_ssh_key).returns(true)
+
+    find("a[data-method='delete'][href='#{user_key_path(@user, ssh_key)}']").click
+
+    refute page.has_content?('foo@example.com')
+    assert page.has_content?(I18n.t("keys_controller.destroy_notice"))
   end
 
   should "add new ssh key" do
+    # FIXME: this should not be required in an integration test
+    SshKeyValidator.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
+
     change_tab('SSH keys')
     click_on 'Add new'
     page.must_have_content('Add new public SSH key')
