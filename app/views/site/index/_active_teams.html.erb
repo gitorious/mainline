@@ -1,12 +1,12 @@
-<%= cache_in_private([:site_index, :active_teams], :expires_in => 15.minutes) do -%>
-  <%= pull_box("Active teams", :class => "pull-box-510") do -%>
+<%= cache_in_private([:site_index, :active_teams], :expires_in => 15.minutes) do %>
+  <%= pull_box("Active teams", :class => "pull-box-510") do %>
     <ul class="with_icons inline_icons">
-      <% @active_groups.each do |group| -%>
+      <% @active_groups.each do |group| %>
         <li class="group">
           <%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16") %>
-          <%= link_to h(group.title), group -%>
+          <%= link_to h(group.title), group %>
         </li>
-      <% end -%>
+      <% end %>
     </ul>
-  <% end -%>
-<% end -%>
+  <% end %>
+<% end %>
