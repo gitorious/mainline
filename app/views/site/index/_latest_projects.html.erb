@@ -1,0 +1,20 @@
+<%= cache_in_private([:site_index, :newest_projects], :expires_in => 5.minutes) do -%>
+  <%= pull_box(t("views.site.newest_projects"), :class => "pull-box-510") do -%>
+    <ul class="with_icons">
+      <% @projects.each do |project| -%>
+        <li class="project">
+          <%= link_to h(project.title), project -%>
+          <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
+        </li>
+      <% end -%>
+      <li><%= link_to t("views.site.view_more"), projects_path -%></li>
+    </ul>
+    <% if logged_in? -%>
+      <div class="pull-box-links">
+        <%= link_button_link_to(t("views.projects.create_new"), new_project_path, {
+                                  :id => "new-project-button"}) %>
+      </div>
+      <div class="clear"></div>
+    <% end -%>
+  <% end -%>
+<% end -%>

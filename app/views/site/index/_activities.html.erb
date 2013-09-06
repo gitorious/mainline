@@ -1,0 +1,9 @@
+<%= cache_in_private([:site_index, :recent_activities], :expires_in => 10.minutes) do -%>
+  <%= pull_box("Recent activities") do -%>
+    <ul class="events inline">
+      <% @latest_events.each do |event| -%>
+        <%= render :partial => event, :locals => { :relative_time => true } -%>
+      <% end -%>
+    </ul>
+  <% end -%>
+<% end -%>
