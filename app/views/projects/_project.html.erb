@@ -26,7 +26,9 @@
   <% if project.private? -%><i class="icon icon-lock"></i><% end -%>
 </h2>
 <p><%= truncate h(project.stripped_description), :length => 250 -%></p>
-<p class="muted">
-  <strong><%= t("views.projects.categories") %>:</strong>
-  <%= project.tag_list.blank? ? t("views.common.none") : linked_tag_list_as_sentence(project.tags).html_safe -%>
-</p>
+<% if !project.tag_list.blank? %>
+  <p class="muted">
+    <strong><%= t("views.projects.categories") %>:</strong>
+    <%= linked_tag_list_as_sentence(project.tags).html_safe -%>
+  </p>
+<% end %>
