@@ -20,12 +20,16 @@
   #++
   %>
 
+<div class="gts-site-header">
+  <div class="container">
+    <%= user_edit_tabbable :active => active_tab %>
+  </div>
+</div>
+
 <div class="container">
   <div class="container-fluid gts-container user-edit-container">
-    <%= user_edit_tabbable :active => active_tab do %>
-      <%= tab_pane(active_tab.underscore.to_sym, :active => true) do %>
-        <%= render "users/edit/#{active_tab.underscore}", :user => user %>
-      <% end %>
+    <%= tab_pane(active_tab.underscore.to_sym, :active => true) do %>
+      <%= render "users/edit/#{active_tab.underscore}", :user => user %>
     <% end %>
   </div>
 </div>
@@ -37,6 +41,6 @@
 
     $nav.tab('show');
 
-    $('.nav').pjax('a', '.tab-content > .tab-pane');
+    $('.nav').pjax('a', '.tab-pane');
   });
 </script>

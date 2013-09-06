@@ -16,7 +16,9 @@ module TabsHelper
     active   = (names.include?(params[:tab]) && params[:tab]) || options[:active]
 
     content_tag(:div, :class => "tabbable tabs-#{position}") {
-      nav_tabs(tabs, active) + tab_content(&block)
+      html =  nav_tabs(tabs, active)
+      html << tab_content(&block) if block
+      html
     }.html_safe
   end
 
@@ -38,7 +40,9 @@ module TabsHelper
   end
 
   def tab_content(&block)
-    content_tag(:div, :class => "tab-content") { capture(&block) }.html_safe
+    content_tag(:div, :class => "tab-content") {
+      capture(&block) if block
+    }.html_safe
   end
 
   def tab_pane(id, options = {}, &block)
@@ -48,7 +52,7 @@ module TabsHelper
     class_names << 'active' if active
 
     content_tag(:div, :class => class_names, :id => id.to_s.dasherize) {
-      capture(&block)
+      capture(&block) if block
     }
   end
 
