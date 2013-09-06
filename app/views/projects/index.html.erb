@@ -22,13 +22,15 @@
   %>
 
 <% @title = t("views.projects.title") -%>
-
 <div class="container gts-body">
   <div class="gts-container">
     <div class="row-fluid">
       <div class="span8">
         <h1><%= Gitorious.site_name %> Projects</h1>
+        <% first = true %>
         <% projects.each do |project| -%>
+          <%= "<hr>".html_safe unless first %>
+          <% first = false %>
           <%= render :partial => project, :object => project -%>
         <% end -%>
         <%= raw JustPaginate.page_navigation(page, total_pages) { |n| projects_path(:page => n) } %>

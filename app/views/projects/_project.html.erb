@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2008, 2009 Johan Sørensen <johan@johansorensen.com>
   #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
   #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -21,14 +21,12 @@
   #++
   %>
 
-<h3><%= link_to h(project.title), project_path(project) -%>
-  <% if project.private? -%>
-    <%= image_tag("silk/lock.png", :class => "private_access") -%>
-  <% end -%>
-</h3>
-
+<h2>
+  <%= link_to h(project.title), project_path(project) -%>
+  <% if project.private? -%><i class="icon icon-lock"></i><% end -%>
+</h2>
 <p><%= truncate h(project.stripped_description), :length => 250 -%></p>
-<p class="hint">
+<p class="muted">
   <strong><%= t("views.projects.categories") %>:</strong>
   <%= project.tag_list.blank? ? t("views.common.none") : linked_tag_list_as_sentence(project.tags).html_safe -%>
 </p>
