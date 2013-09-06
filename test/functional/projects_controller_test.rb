@@ -120,8 +120,15 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_response 403
       end
 
+      should "refuse to delete projects with repo clones in it" do
+        login_as :johan
+        get :confirm_delete, :id => projects(:johans).to_param
+        assert_response :redirect
+      end
+
       should "render private repo delete confirmation for owner" do
         login_as :johan
+        projects(:johans).repositories.clones.destroy_all
         get :confirm_delete, :id => projects(:johans).to_param
         assert_response 200
       end

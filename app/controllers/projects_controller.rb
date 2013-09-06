@@ -168,15 +168,27 @@ class ProjectsController < ApplicationController
   end
 
   def confirm_delete
-    @project = Project.find_by_slug!(params[:id])
+    project = authorize_access_to(Project.find_by_slug!(params[:id]))
+    unless admin?(current_user, project)
+      flash[:error] = I18n.t("repositories_controller.adminship_error")
+      redirect_to(root_path) and return
+    end
+    unless can_delete?(current_user, project)
+      flash[:error] = "Project cannot be deleted as long as there are repository clones under it"
+      redirect_to(project_path) and return
+    end
+    render("confirm_delete", :layout => "ui3", :locals => {
+        :project => ProjectPresenter.new(project)
+      })
   end
 
   def destroy
     if can_delete?(current_user, @project)
       project_title = @project.title
       @project.destroy
+      flash[:notice] = "The project and its repositories were deleted."
     else
-      flash[:error] = I18n.t "projects_controller.destroy_error"
+      flash[:error] = I18n.t("projects_controller.destroy_error")
     end
     redirect_to projects_path
   end

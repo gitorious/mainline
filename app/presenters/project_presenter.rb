@@ -43,6 +43,7 @@ class ProjectPresenter
   def bugtracker_url; project.bugtracker_url; end
   def wiki_permissions; project.wiki_permissions; end
   def user; project.user; end
+  def to_key; project.to_key; end
 
   def owner_to_param_with_prefix
     project.owner.to_param_with_prefix
