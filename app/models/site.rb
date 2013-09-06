@@ -20,8 +20,7 @@ class Site < ActiveRecord::Base
   has_many :projects
 
   validates_presence_of :title
-  HTTP_CLONING_SUBDOMAIN = 'git'
-  validates_exclusion_of :subdomain, :in => [HTTP_CLONING_SUBDOMAIN]
+  HTTP_CLONING_DOMAIN = GitoriousConfig["http_cloning_domain"]
 
   attr_accessible :title
 

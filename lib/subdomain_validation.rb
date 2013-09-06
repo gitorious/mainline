@@ -26,7 +26,7 @@ module SubdomainValidation
   end
 
   def using_reserved_hostname?
-    gitorious_host.split(".").first == Site::HTTP_CLONING_SUBDOMAIN
+    gitorious_host == Site::HTTP_CLONING_DOMAIN
   end
 
   def valid_request_host?(host)

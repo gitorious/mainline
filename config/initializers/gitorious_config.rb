@@ -33,6 +33,9 @@ unless defined? GitoriousConfig
   default_messaging_adapter = Rails.env.test? ? "test" : "stomp"
   GitoriousConfig["messaging_adapter"] ||= default_messaging_adapter
 
+  # If no http_cloning_url is specified we use a default of git.hostname
+  GitoriousConfig["http_cloning_domain"] = "git.#{GitoriousConfig['gitorious_host']}" if GitoriousConfig["http_cloning_domain"].nil?
+
   if !GitoriousConfig.valid_subdomain?
     Rails.logger.warn "Invalid subdomain name #{GitoriousConfig['gitorious_host']}. Session cookies will not work!\n" +
       "See http://gitorious.org/gitorious/pages/ErrorMessages for further explanation"

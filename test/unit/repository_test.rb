@@ -102,12 +102,12 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     should "use the real http cloning URL" do
-      old_value = Site::HTTP_CLONING_SUBDOMAIN
+      old_value = Site::HTTP_CLONING_DOMAIN
       silence_warnings do
-        Site::HTTP_CLONING_SUBDOMAIN = "whatever"
+        Site::HTTP_CLONING_DOMAIN = "whatever.#{@host}"
       end
       assert_equal "#{GitoriousConfig['scheme']}://whatever.#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
-      silence_warnings {Site::HTTP_CLONING_SUBDOMAIN = old_value}
+      silence_warnings {Site::HTTP_CLONING_DOMAIN = old_value}
     end
 
     should "has a clone url with the project name, if it is a mainline" do

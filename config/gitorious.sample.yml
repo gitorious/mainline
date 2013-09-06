@@ -331,6 +331,12 @@ production:
 
   # Site name. Default is "Gitorious"
   #site_name: Gitorious
+  #
+  # Gitorious cloning domain name
+  # Allows you to use an arbitrary DNS/hostname for git http(s) cloning
+  # requests, note that you will have to add the DNS/hostname to your
+  # nginx/apache configuration as an alias.
+  # http_cloning_domain: "clone-gitorious.test"
 
   # Additional stylesheets for most pages. "Most pages" is everything except for
   # the frontpage/public index, login page and the register page.

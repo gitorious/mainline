@@ -38,7 +38,7 @@ class GitHttpCloner
   NOT_ALLOWED_RESPONSE = [403, {"Content-Type" => "text/html"}, []]
 
   def self.call(env)
-    perform_http_cloning = env["HTTP_HOST"] =~ /^#{Site::HTTP_CLONING_SUBDOMAIN}\..*/
+    perform_http_cloning = env["HTTP_HOST"] =~ /^#{Site::HTTP_CLONING_DOMAIN}.*/
     if perform_http_cloning && !GitoriousConfig["hide_http_clone_urls"]
       if env["PATH_INFO"] =~ /^\/robots.txt$/
         body = ["User-Agent: *\nDisallow: /\n"]

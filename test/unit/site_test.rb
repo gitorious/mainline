@@ -22,17 +22,17 @@ class SiteTest < ActiveSupport::TestCase
   should_have_many :projects
   should_validate_presence_of :title
   
-  should "have a default site with a nil subdomain" do
+  should "have a default site with a nil cloning domain" do
     default_site = Site.default
     assert_equal "Gitorious", default_site.title
-    assert_nil default_site.subdomain
+    assert_nil default_site.cloning_domain
   end
   
-  should 'not allow sites with http as subdomain' do
+  should 'not allow sites with http as subdomain in cloning domain' do
     site = Site.new
-    site.subdomain = Site::HTTP_CLONING_SUBDOMAIN
+    site.cloning_domain = Site::HTTP_CLONING_DOMAIN
     assert !site.save
-    assert_not_nil site.errors.on(:subdomain)
+    assert_not_nil site.errors.on(:cloning_domain)
   end
 
   should "derive grit location from site title and id" do
