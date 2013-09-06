@@ -34,7 +34,7 @@ class App
   def favorite_path(f); "/favorites/#{f.to_param}"; end
   def clone_project_repository_path(p, r); "/#{p.to_param}/#{r.to_param}/clone"; end
   def new_project_repository_merge_request_path(p, r); "/#{p.to_param}/#{r.to_param}/merge_requests/new"; end
-  def repository_description(repo); repo.description; end
+  def description(repo); repo.description; end
 end
 
 class RepositoryJSONPresenterTest < MiniTest::Spec
