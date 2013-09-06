@@ -19,5 +19,7 @@
     <%= f.input :wants_email_notifications, :as => :boolean, :hint => t("views.users.describe_email_notifications"), :label => t("views.users.wants_email_notifications") %>
     <%= f.input :default_favorite_notifications, :as => :boolean, :hint => t("views.users.default_favorite_notifications", :url => favorites_path) %>
   </fieldset>
-  <%= f.submit t("views.common.save"), :class => 'btn btn-primary pull-right' %>
+  <div class="form-actions">
+    <%= button_tag t("views.common.save"), :type => 'submit', :class => 'btn btn-primary' %>
+  </div>
 <% end -%>

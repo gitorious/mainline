@@ -1,12 +1,12 @@
-<div class="span5">
-  <%= simple_form_for user, :url => user_update_password_path, :html => { :class => 'form-horizontal change-password' } do |f| -%>
-    <fieldset>
-      <% unless user.is_openid_only? %>
-        <%= f.input :current_password, :label => t(:current_password, :scope => 'activerecord.attributes.user') %>
-      <% end %>
-      <%= f.input :password, :label => t("views.users.new_passwd") %>
-      <%= f.input :password_confirmation, :label => t("views.users.new_passwd_conf") %>
-    </fieldset>
-    <%= f.submit t("views.users.chg_passwd_action"), :class => 'btn btn-primary pull-right' %>
-  <% end %>
-</div>
+<%= simple_form_for user, :url => user_update_password_path, :html => { :class => 'form-horizontal change-password' } do |f| -%>
+  <fieldset>
+    <% unless user.is_openid_only? %>
+      <%= f.input :current_password, :label => t(:current_password, :scope => 'activerecord.attributes.user') %>
+    <% end %>
+    <%= f.input :password, :label => t("views.users.new_passwd") %>
+    <%= f.input :password_confirmation, :label => t("views.users.new_passwd_conf") %>
+  </fieldset>
+  <div class="form-actions">
+    <%= button_tag t("views.users.chg_passwd_action"), :type => 'submit', :class => 'btn btn-primary' %>
+  </div>
+<% end %>

@@ -1,5 +1,7 @@
 <%= simple_form_for(ssh_key, :html => { :class => 'ssh_key' }, :url => [current_user, :keys]) do |f| -%>
   <small class="hint"><%= t("views.keys.hint").html_safe %></small>
   <%= f.input :key, :as => :text, :label => false %>
-  <%= f.submit t('views.common.save'), :class => 'btn btn-primary pull-right' %>
+  <div class="form-actions">
+    <%= button_tag t("views.common.save"), :type => 'submit', :class => 'btn btn-primary' %>
+  </div>
 <% end %>
