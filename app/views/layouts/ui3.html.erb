@@ -43,7 +43,18 @@
     <div class="gts-masthead navbar">
       <div class="navbar-inner">
         <div class="container">
-          <a class="gts-logo" href="<%= root_path %>"><%= site_logo(current_site).html_safe %></a>
+          <%= link_to(site_logo(current_site).html_safe, root_path, :class => 'gts-logo') %>
+          <ul class="nav">
+            <li>
+              <%= link_to('Activities', activity_path) %>
+            </li>
+            <li>
+              <%= link_to('Projects', projects_path) %>
+            </li>
+            <li>
+              <%= link_to('About', about_path) %>
+            </li>
+          </ul>
           <div class="pull-right">
             <form action="<%= search_path %>" class="navbar-search pull-left" method="get">
               <input type="search" placeholder="Search" class="search-query span2" name="q">
