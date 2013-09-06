@@ -40,30 +40,49 @@
     <% end %>
   </head>
   <body<%= " class=\"#{@body_class}\"".html_safe if @body_class %>>
-    <div class="gts-masthead navbar">
-      <div class="navbar-inner">
-        <div class="container">
-          <a href="<%= root_path %>" class="gts-logo"><%= site_logo(current_site).html_safe %></a>
-          <ul class="nav">
-            <li>
-              <a href="<%= activity_path %>">Activities</a>
-            </li>
-            <li>
-              <a href="<%= projects_path %>">Projects</a>
-            </li>
-            <li>
-              <a href="<%= about_path %>">About</a>
-            </li>
-          </ul>
-          <div class="pull-right">
-            <form action="<%= search_path %>" class="navbar-search pull-left" method="get">
-              <input type="search" placeholder="Search" class="search-query span2" name="q">
-            </form>
-            <div class="pull-right btn-group login_button">
-              <a href="<%= login_path %>" class="btn btn-inverse"><i class="icon-user icon-white"></i> Log in</a>
+    <div class="page-wrapper">
+      <div class="page-content">
+        <div class="gts-masthead navbar">
+          <div class="navbar-inner">
+            <div class="container">
+              <a href="<%= root_path %>" class="gts-logo"><%= site_logo(current_site).html_safe %></a>
+              <ul class="nav">
+                <li>
+                  <a href="<%= activity_path %>">Activities</a>
+                </li>
+                <li>
+                  <a href="<%= projects_path %>">Projects</a>
+                </li>
+                <li>
+                  <a href="<%= about_path %>">About</a>
+                </li>
+              </ul>
+              <div class="pull-right">
+                <form action="<%= search_path %>" class="navbar-search pull-left" method="get">
+                  <input type="search" placeholder="Search" class="search-query span2" name="q">
+                </form>
+                <div class="pull-right btn-group login_button">
+                  <a href="<%= login_path %>" class="btn btn-inverse"><i class="icon-user icon-white"></i> Log in</a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+        <% unless (system_message = Gitorious::Configuration.get("system_message")).blank? -%>
+          <%= alerts({ :notice => "<strong>#{t('views.layout.system_notice')}:</strong> #{system_message}" }).html_safe %>
+        <% end -%>
+        <%= alerts(defined?(flash) ? flash : {}).html_safe %>
+        <% if defined?(repository_meta) %>
+          <%= partial("repositories/repo_header", {
+                  :repository => repository_meta,
+                  :project => repository_meta.project,
+                  :ref => ref,
+                  :app => Gitorious,
+                  :active => :source,
+                  :header_level => 2
+                }) %>
+        <% end %>
+        <%= yield %>
       </div>
     </div>
     <% unless (system_message = Gitorious::Configuration.get("system_message")).blank? -%>
