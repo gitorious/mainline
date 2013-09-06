@@ -6,7 +6,7 @@ module TabsHelper
       'change-password'  => user_edit_password_path(current_user),
       'ssh-keys'         => user_edit_ssh_keys_path(current_user),
       'manage-favorites' => user_edit_favorites_path(current_user) },
-      options.reverse_merge(:position => 'left', :active => 'my-details'), &block
+      options.reverse_merge(:active => 'my-details'), &block
     )
   end
 
