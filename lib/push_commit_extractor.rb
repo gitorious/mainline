@@ -37,7 +37,10 @@ class PushCommitExtractor
     walker = Rugged::Walker.new(@rugged_repo)
     walker.push(@spec.to_sha.sha)
     candidates = existing_refs
-    heads = candidates.reject {|head| head.name.split("/").last == @spec.ref_name}
+
+    heads = candidates.reject do |head|
+      head.name.split("/").last == @spec.ref_name || /^refs\/tags/.match(head.name)
+    end
 
     if @spec.action_create?
       heads.each { |head| walker.hide(head.target) }

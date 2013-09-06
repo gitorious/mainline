@@ -18,11 +18,12 @@
 # Commit log
 # 7b5fe553c3c37ffc8b4b7f8c27272a28a39b640f (not in any head)
 # bb17eec3080ed71fa4ea7aba6b500aac9339e159 (not in any head)
+# 7a9e44673884f28a309bf6f904431d2b6b4fc09f (annotated tag v0.1.0 => ec43317)
 # ec433174463a9d0dd32700ffa5bbb35cfe2a4530 (master)
-
 require "test_helper"
 require "push_spec_parser"
 require "push_commit_extractor"
+
 class PushCommitExtractorTest < ActiveSupport::TestCase
   context "Extract commits" do
     setup do
@@ -36,7 +37,7 @@ class PushCommitExtractorTest < ActiveSupport::TestCase
       should "find heads excluding current" do
         spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/topic")
         extractor = PushCommitExtractor.new(@repo_path, spec)
-        assert_equal ["master"], extractor.existing_ref_names
+        assert_equal ["master", "v0.1.0"], extractor.existing_ref_names
       end
 
       should "count new commits in push" do
