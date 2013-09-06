@@ -24,11 +24,7 @@
 
 <div class="container gts-container">
   <div class="container-fluid">
-    <% if logged_in? %>
-      <h2 class="content-header">
-        <%= random_greeting %> <%=link_to h(current_user.login), current_user %>!
-      </h2>
-    <% else %>
+    <% unless logged_in? %>
       <div id="site_intro">
         <p><%= t("views.site.description").html_safe %></p>
       </div>
