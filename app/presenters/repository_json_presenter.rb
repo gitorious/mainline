@@ -31,7 +31,7 @@ class RepositoryJSONPresenter
     is_admin = !!app.admin?(user, repository)
     { "repository" => {
         "name" => repository.name,
-        "description" => app.repository_description(repository),
+        "description" => app.description(repository),
         "administrator" => is_admin,
         "watch" => user && watch(user),
         "cloneProtocols" => clone_protocols(user),
