@@ -74,7 +74,7 @@ class SiteController < ApplicationController
     @active_users = User.most_active
     @active_groups = Group.most_active
     @latest_events = filter(Event.latest(25))
-    render :template => "site/index"
+    render :template => "site/index", :layout => 'ui3'
   end
 
   def render_dashboard
