@@ -60,6 +60,18 @@ class UserEditTest < ActionDispatch::IntegrationTest
     page.must_have_selector('input[value="Johan Johanson"]')
   end
 
+  should "show errors when trying to save invalid user details" do
+    email = find('#user_email')
+    email.set('')
+    click_on 'Save'
+    page.must_have_content 'Failed to save your details'
+    page.must_have_content('E-mail is invalid')
+    email.set('new_email@gitorious.test')
+    click_on 'Save'
+    page.must_have_content('Your account details were updated')
+    page.must_have_selector('input[value="new_email@gitorious.test"]')
+  end
+
   should "update user password" do
     change_tab('Change password')
     fill_in 'Current Password', :with => 'test'

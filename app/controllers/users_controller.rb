@@ -93,12 +93,13 @@ class UsersController < ApplicationController
     pre_condition_failed(outcome)
 
     outcome.failure do |user|
-      render_template("edit", { :user => user }, :layout => 'ui3')
+      flash[:error] = 'Failed to save your details'
+      render_template("edit", { :user => user, :active_tab => 'my-details' }, :layout => 'ui3')
     end
 
     outcome.success do
       flash[:success] = "Your account details were updated"
-      redirect_to :back
+      redirect_to user_edit_my_details_path(current_user)
     end
   end
 
