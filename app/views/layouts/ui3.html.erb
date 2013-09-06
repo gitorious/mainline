@@ -43,16 +43,16 @@
     <div class="gts-masthead navbar">
       <div class="navbar-inner">
         <div class="container">
-          <%= link_to(site_logo(current_site).html_safe, root_path, :class => 'gts-logo') %>
+          <a href="<%= root_path %>" class="gts-logo"><%= site_logo(current_site).html_safe %></a>
           <ul class="nav">
             <li>
-              <%= link_to('Activities', activity_path) %>
+              <a href="<%= activity_path %>">Activities</a>
             </li>
             <li>
-              <%= link_to('Projects', projects_path) %>
+              <a href="<%= projects_path %>">Projects</a>
             </li>
             <li>
-              <%= link_to('About', about_path) %>
+              <a href="<%= about_path %>">About</a>
             </li>
           </ul>
           <div class="pull-right">
