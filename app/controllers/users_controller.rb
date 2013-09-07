@@ -23,6 +23,7 @@
 
 class UsersController < ApplicationController
   renders_in_global_context
+
   before_filter :login_required, :only => [:edit, :update]
   before_filter :find_user, :only => [:show, :edit, :update]
   before_filter :require_current_user, :only => [:edit, :update]
@@ -71,6 +72,7 @@ class UsersController < ApplicationController
 
   EDIT_VIEWS = {
     'my-details'       => 'users/edit/my_details',
+    'email-aliases'    => 'users/edit/email_aliases',
     'ssh-keys'         => 'users/edit/ssh_keys',
     'change-password'  => 'users/edit/change_password',
     'manage-favorites' => 'users/edit/manage_favorites'
@@ -123,6 +125,11 @@ class UsersController < ApplicationController
     @favorites ||= filter(current_user.favorites.all(:include => :watchable))
   end
   helper_method :favorites
+
+  def emails
+    @emails ||= current_user.email_aliases
+  end
+  helper_method :emails
 
   def render_form(user)
     render_template(:new, { :user => user }, { :layout => "ui3" })

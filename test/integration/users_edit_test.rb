@@ -72,6 +72,35 @@ class UserEditTest < ActionDispatch::IntegrationTest
     page.must_have_selector('input[value="new_email@gitorious.test"]')
   end
 
+  should "show user email aliases" do
+    change_tab('Email aliases')
+    page.must_have_content(@user.email_aliases.first.address)
+  end
+
+  should "allow adding new email aliases" do
+    change_tab('Email aliases')
+    click_on 'Add new'
+    find('#email_address').set('new_alias@gitorious.test')
+    click_on 'Add alias'
+    page.must_have_content('You will receive an email asking you to confirm ownership of new_alias@gitorious.test')
+  end
+
+  should "show error messages when trying to add an invalid email alias" do
+    change_tab('Email aliases')
+    click_on 'Add new'
+    find('#email_address').set('')
+    click_on 'Add alias'
+    page.must_have_content("Address can't be blank")
+  end
+
+  should "allow deleting email aliases" do
+    email = @user.email_aliases.first
+    change_tab('Email aliases')
+    find("a[data-method='delete'][href='#{user_alias_path(@user, email)}']").click
+    assert page.has_content?('Email alias deleted')
+    refute page.has_content?(email)
+  end
+
   should "update user password" do
     change_tab('Change password')
     fill_in 'Current Password', :with => 'test'

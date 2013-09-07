@@ -190,6 +190,7 @@
     :views => {
       :tabs => {
         :my_details => 'My details',
+        :email_aliases => 'Email aliases',
         :ssh_keys => 'SSH keys',
         :change_password => 'Change password',
         :manage_favorites => 'Manage favorites',

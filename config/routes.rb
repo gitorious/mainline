@@ -70,6 +70,7 @@ Gitorious::Application.routes.draw do
     put "/update_password" => "passwords#update", :as => :update_password
 
     get "/edit/my-details" => "users#edit", :defaults => { :tab => 'my-details' }, :as => :edit_my_details
+    get "/edit/email-aliases" => "users#edit", :defaults => { :tab => 'email-aliases' }, :as => :edit_email_aliases
     get "/edit/ssh-keys" => "users#edit", :defaults => { :tab => 'ssh-keys' }, :as => :edit_ssh_keys
     get "/edit/change-password" => "users#edit", :defaults => { :tab => 'change-password' }, :as => :edit_password
     get "/edit/manage-favorites" => "users#edit", :defaults => { :tab => 'manage-favorites' }, :as => :edit_favorites

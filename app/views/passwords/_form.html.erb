@@ -7,6 +7,6 @@
     <%= f.input :password_confirmation, :label => t("views.users.new_passwd_conf") %>
   </fieldset>
   <div class="form-actions">
-    <%= button_tag t("views.users.chg_passwd_action"), :type => 'submit', :class => 'btn btn-primary' %>
+    <%= f.submit t("views.users.chg_passwd_action"), :class => 'btn btn-primary' %>
   </div>
 <% end %>

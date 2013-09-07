@@ -1,0 +1,8 @@
+<%= simple_form_for(email, :url => user_aliases_path(user), :html => { :class => 'form-horizontal' }) do |f| %>
+  <fieldset>
+    <%= f.input :address, :as => :email %>
+  </fieldset>
+  <div class="form-actions">
+    <%= f.submit("Add alias", :class => 'btn btn-primary') %>
+  </div>
+<% end %>

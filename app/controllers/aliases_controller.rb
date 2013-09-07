@@ -19,51 +19,63 @@ class AliasesController < ApplicationController
   before_filter :login_required
   before_filter :find_user
   before_filter :require_current_user
+
   renders_in_global_context
-  
-  def index
-    @emails = @user.email_aliases
-    @root = Breadcrumb::Aliases.new(current_user)
-  end
-  
+
   def new
     @email = @user.email_aliases.new
-    @root = Breadcrumb::NewAlias.new(current_user)
-  end
-  
-  def create
-    @email = @user.email_aliases.new(params[:email])
-    
-    if @email.save
-      flash[:success] = "You will receive an email asking you to confirm ownership of #{@email.address}"
-      redirect_to user_aliases_path(@user)
+
+    if pjax_request?
+      render "aliases/form", :locals => {
+        :user => @user, :email => @email
+      }, :layout => false
     else
-      render "new"
+      render_form
     end
   end
-  
+
+  def create
+    @email = @user.email_aliases.new(params[:email])
+
+    if @email.save
+      flash[:success] = "You will receive an email asking you to confirm ownership of #{@email.address}"
+      redirect_to user_edit_email_aliases_path(@user)
+    else
+      render_form
+    end
+  end
+
   def confirm
-    email = current_user.email_aliases.with_aasm_state(:pending).first(:conditions => {:confirmation_code => params[:id]})
+    email = current_user.email_aliases.with_aasm_state(:pending).
+      where(:confirmation_code => params[:id]).first
+
     if email
       email.confirm!
       flash[:success] = "#{email.address} is now confirmed as belonging to you"
-      redirect_to user_aliases_path(@user) and return
+      redirect_to user_edit_email_aliases_path(@user) and return
     else
       flash[:error] = "The confirmation is incorrect"
       redirect_to user_path(@user)
     end
   end
-  
+
   def destroy
     @email = @user.email_aliases.find_by_id(params[:id])
     if @email.destroy
       flash[:success] = "Email alias deleted"
     end
-    redirect_to user_aliases_path(@user)
+    redirect_to user_edit_email_aliases_path(@user)
   end
-  
+
   protected
-    def find_user
-      @user = User.find_by_login!(params[:user_id])
-    end
+
+  def render_form
+    render "users/edit", :locals => {
+      :user => @user, :active_tab => 'email-aliases', :email => @email
+    }, :layout => 'ui3'
+  end
+
+  def find_user
+    @user = User.find_by_login!(params[:user_id])
+  end
 end
