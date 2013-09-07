@@ -7,3 +7,14 @@
 ** TODO (A RemoteRepository class for repositories hosted elsewhere?)
 ** TODO Auto-remove cloned repositories that havent been committed to after 7 days?
 ** TODO Detect renames etc when showing a commit
+
+* Non-v3 views:
+
+** merge_requests/new
+** wiki/pages
+** wiki/pages/new
+** project/repo/commit/sha (diff page)
+** /tos
+** /privacy_policy
+** all messages views
+** all teams views
