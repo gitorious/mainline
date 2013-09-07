@@ -1,12 +1,12 @@
-<%= pull_box("Team memberships", :class => "teams pull-box-390") do %>
-  <ul>
+<%= pull_box("Team memberships") do %>
+  <table class="table">
     <% teams.each do |team| %>
-      <li style="clear:left">
-        <span style="float:left; padding: 2px 10px 2px 2px">
+      <tr>
+        <td>
           <%= image_tag(team.avatar.url(:thumb), :alt => "Avatar", :width => "16") %>
-        </span>
-        <%= link_to h(team.name), group_path(team) %>
-      </li>
+          <%= link_to h(team.name), group_path(team) %>
+        </td>
+      </tr>
     <% end %>
-  </ul>
+  </table>
 <% end %>
