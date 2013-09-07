@@ -1,13 +1,17 @@
 <%= cache_in_private([:site_index, :active_clones], :expires_in => 25.minutes) do %>
   <%= pull_box("Most active repository clones", :class => "pull-box-510") do %>
-    <ul class="with_icons">
+    <table class="table">
       <% @top_repository_clones.each do |repo| %>
-        <li class="repository">
-          <%= link_to h(repo.title), project_repository_path(repo.project, repo) %>
-          <span class="hint">(<%= link_to h(repo.project.title), repo.project %>)</span>
-          <small class="hint"><%= truncate(h(strip_tags(repo.description)), :length => 65) %></small>
-        </li>
+        <% project = repo.project %>
+        <tr class="repository">
+          <td>
+            <%= link_to(project.slug, project, :title => project.title) %>
+            /
+            <%= link_to(h(repo.title), project_repository_path(project, repo),
+                        :title => h(strip_tags(repo.description))) %>
+          </td>
+        </tr>
       <% end %>
-    </ul>
+    </table>
   <% end %>
 <% end %>
