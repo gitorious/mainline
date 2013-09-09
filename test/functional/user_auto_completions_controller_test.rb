@@ -30,20 +30,19 @@ class UserAutoCompletionsControllerTest < ActionController::TestCase
     should "find user by login" do
       get :index, :q => "joha", :format => "js"
 
-      assert_equal [@user], assigns(:users)
+      assert_equal @user.login, @response.body
     end
 
     should "find a user by email" do
       get :index, :q => "dr_aw", :format => "js"
 
-      assert_equal [@user], assigns(:users)
+      assert_equal @user.login, @response.body
     end
 
     should "not render emails if user has opted not to have it displayed" do
       @user.update_attribute(:public_email, false)
       get :index, :q => "dr_aw", :format => "js"
 
-      assert_equal [@user], assigns(:users)
       assert_no_match(/email/, @response.body)
     end
   end

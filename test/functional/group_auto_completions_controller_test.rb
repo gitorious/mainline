@@ -27,7 +27,7 @@ class GroupAutoCompletionsControllerTest < ActionController::TestCase
   context "index" do
     should "find a group by name" do
       get :index, :q => "thunder", :format => "js"
-      assert_equal [groups(:team_thunderbird)], assigns(:groups)
+      assert_equal "team-thunderbird", @response.body
     end
   end
 end

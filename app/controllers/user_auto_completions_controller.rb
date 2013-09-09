@@ -19,7 +19,9 @@
 
 class UserAutoCompletionsController < ApplicationController
   def index
-    @users = User.find_fuzzy(params[:q])
-    render :text => @users.map{|u| u.login }.join("\n"), :content_type => Mime::TEXT
+    render({
+        :text => User.find_fuzzy(params[:q]).map(&:login).join("\n"),
+        :content_type => Mime::TEXT
+      })
   end
 end
