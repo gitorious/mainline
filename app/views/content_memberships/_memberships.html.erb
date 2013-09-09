@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #
   #   This program is free software: you can redistribute it and/or modify
   #   it under the terms of the GNU Affero General Public License as published by
@@ -16,13 +16,46 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-
-<table class="listing">
-  <thead>
-    <th><%= t(:created_at, :scope => "activerecord.attributes.committerships").humanize %></th>
-    <th><%= t(:committer_type, :scope => "activerecord.attributes.committerships").humanize %></th>
-    <th><%= text(:collaborator) %></th>
-    <th></th>
-  </thead>
-  <%= render @memberships %>
-</table>
+<div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #d5d5d5;">
+  <% if memberships.length == 0 %>
+    <p>
+      <strong><%= text(:is_public) %></strong>
+      <%= text(:is_public_description, {
+               :site_name => Gitorious.site_name,
+               :project => project.title
+             }) %>
+    </p>
+    <p>
+      <%= link_to text(:make_private), memberships_path(content), :method => :post %>
+    </p>
+  <% else %>
+    <p>
+      <strong><%= text(:is_private) %></strong>
+      <%= text(:is_private_description, {
+              :site_name => Gitorious.site_name,
+              :project => project.title
+            }) %>
+    </p>
+    <p>
+      <%= link_to("Remove all collaborators", {
+              :action => "destroy",
+              :id => "all"
+            },
+            :method => :delete,
+            :confirm => "Are you sure? This will delete all #{memberships.count} members") %>
+      to <%= text(:make_public) %>
+    </p>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th><%= text(:collaborator) %></th>
+          <th><%= t(:created_at, :scope => "activerecord.attributes.committerships").humanize %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render(memberships) %>
+      </tbody>
+    </table>
+    <%= render(:partial => "content_memberships/form", :locals => { :membership => membership }) %>
+  <% end %>
+</div>

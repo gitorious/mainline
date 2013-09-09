@@ -56,12 +56,12 @@
     <%= link_to(t("views.collaborators.add_new"),
     [:new, repository.project, repository, :committership], :class => "btn btn-primary") -%>
   </p>
-
-  <%= render("committerships/memberships", {
-          :repository => repository,
-          :memberships => memberships
-        }) if Gitorious.private_repositories? %>
-
   <%= render("committerships/permission_explanation") %>
-
+  <% if Gitorious.private_repositories? %>
+    <%= render(:partial => "content_memberships/memberships", :locals => {
+            :project => repository.project,
+            :memberships => memberships,
+            :membership => defined?(membership) ? membership : repository.content_memberships.new
+          }) %>
+  <% end %>
 </div>

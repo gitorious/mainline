@@ -16,13 +16,17 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<% if !content_membership.nil? && !content_membership.created_at.nil? %>
-  <tr class="<%= cycle('even', 'odd') -%>">
+<% if !content_membership.member.nil? %>
+  <tr>
+    <td>
+      <%= link_to(h(content_membership.member.title), content_membership.member) -%>
+      (<%= content_membership.member.class.human_name -%>)
+    </td>
     <td><%= l(content_membership.created_at, :format => :short) -%></td>
-    <td><%= content_membership.member.class.human_name -%></td>
-    <td><%= link_to h(content_membership.member.title), content_membership.member -%></td>
-    <td class="committer-buttons">
-      <%= button_to(t("views.common.remove"), membership_path(@content, content_membership), :method => :delete) -%>
+    <td class="member-buttons">
+      <%= link_to(t("views.common.remove"),
+            membership_path(content_membership.content, content_membership),
+            :method => :delete, :class => "btn btn-danger") -%>
     </td>
   </tr>
 <% end %>

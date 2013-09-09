@@ -1,6 +1,6 @@
 <%
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -18,44 +18,28 @@
 #++
 %>
 
-<%= content_for :extra_head do -%>
-  <script type="text/javascript" charset="utf-8">
-    $(document).ready(function(){
-        $("#add_group_link").click(function(event){
-            $('#add_user').hide();
-            $('#add_group').show();
-            $("#add_user_tab").removeClass("selected");
-            $("#add_group_tab").addClass("selected");
-            event.preventDefault();
-        });
-        $("#add_user_link").click(function(event) {
-            $('#add_group').hide();
-            $('#add_user').show();
-            $("#add_group_tab").removeClass("selected");
-            $("#add_user_tab").addClass("selected");
-            event.preventDefault();
-        });
-        options = {matchSubset: false}
-        $("input#user_login_autocomplete").autocomplete("<%= url_for(:controller => 'user_auto_completions') -%>", options);
-        $("input#group_name_autocomplete").autocomplete("<%= url_for(:controller => 'group_auto_completions') -%>", options);
-    });
-  </script>
-<% end -%>
-
-<ul class="tab_menu inline_tabs">
-  <li class="selected" id="add_user_tab">
-    <a href="#add_user" id="add_user_link"><%= t("views.collaborators.add_user") -%></a>
-  </li>
-  <li id="add_group_tab">
-    <a href="#add_group" id="add_group_link"><%= t("views.collaborators.add_team") -%></a>
-  </li>
-</ul>
-<p class="tab-content" id="add_user">
-  <label for="user_login_autocomplete"><%= t("views.collaborators.user_login") -%></label><br />
-  <%= text_field :user, :login, :id => "user_login_autocomplete" -%>
-</p>
-<p class="tab-content" id="add_group" style="display:none;">
-  <label for="group_name_autocomplete"><%= t("views.collaborators.group_name") -%></label><br />
-  <%= text_field :group, :name, :id => "group_name_autocomplete" -%><br />
-  <span class="hint"><%= t("views.collaborators.add_team_note").html_safe -%></span>
-</p>
+<div class="tabbable">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#add-user" data-toggle="tab"><%= t("views.collaborators.add_user") -%></a></li>
+    <li><a href="#add-group" data-toggle="tab"><%= t("views.collaborators.add_team") -%></a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="add-user">
+      <%= text_field(:user, :login, {
+              :id => "user_login_autocomplete",
+              :class => "input-small",
+              :placeholder => t("views.collaborators.user_login")
+            }) -%>
+      <%= submit_tag(t("views.private_content_read_access.btn_add_read_rights"), :class => "btn btn-primary") -%>
+    </div>
+    <div class="tab-pane" id="add-group">
+      <%= text_field(:group, :name, {
+              :id => "group_name_autocomplete",
+              :class => "input-small",
+              :placeholder => t("views.collaborators.group_name")
+            }) -%>
+      <%= submit_tag(t("views.private_content_read_access.btn_add_read_rights"), :class => "btn btn-primary") -%>
+      <p class="muted"><br><%= t("views.collaborators.add_team_note").html_safe -%></p>
+    </div>
+  </div>
+</div>

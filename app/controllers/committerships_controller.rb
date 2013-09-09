@@ -18,6 +18,7 @@
 #++
 
 class CommittershipsController < ApplicationController
+  include RepositoryMembershipsUtils
   before_filter :find_repository_owner
   before_filter :find_repository
   before_filter :require_adminship
@@ -116,4 +117,11 @@ class CommittershipsController < ApplicationController
     authorize_access_to(@repository)
     authorize_access_to(@repository.project)
   end
+
+  # For memberships
+  helper_method :memberships_path
+  helper_method :membership_path
+  helper_method :new_membership_path
+  helper_method :content_path
+  helper_method :content
 end

@@ -18,16 +18,18 @@
 
 class RepositoryMembershipsController < ContentMembershipsController
   include RepositoryFilters
+  include RepositoryMembershipsUtils
   before_filter :find_project_and_repository
   before_filter :find_repository_owner
   before_filter :require_admin
 
   protected
-  def create_error
+  def create_error(membership)
     render("committerships/index", :layout => "ui3", :locals => {
         :repository => RepositoryPresenter.new(@repository),
         :committerships => @repository.committerships,
-        :memberships => @repository.content_memberships
+        :memberships => @repository.content_memberships,
+        :membership => membership
       })
   end
 
@@ -40,25 +42,5 @@ class RepositoryMembershipsController < ContentMembershipsController
       find_project_and_repository if @repository.nil?
       redirect_to project_repository_path(@repository.project, @repository)
     end
-  end
-
-  def content
-    @repository
-  end
-
-  def memberships_path(content)
-    project_repository_repository_memberships_path(content.project, content)
-  end
-
-  def membership_path(content, membership)
-    project_repository_repository_membership_path(content.project, content, membership)
-  end
-
-  def new_membership_path(content)
-    new_project_repository_repository_membership_path(content.project, content)
-  end
-
-  def content_path(content)
-    project_repository_path(content.project, content)
   end
 end

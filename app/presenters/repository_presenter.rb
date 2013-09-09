@@ -49,6 +49,7 @@ class RepositoryPresenter
   def owner_id; repository.owner_id; end
   def to_key; repository.to_key; end
   def url_path; repository.url_path; end
+  def content_memberships; repository.content_memberships; end
   def parent; repository.parent && RepositoryPresenter.new(repository.parent); end
   def is_a?(thing); thing == Repository; end
 

@@ -519,8 +519,10 @@
       :project_memberships => {
         :collaborator => "Collaborator",
         :back_to_project => "Back to project",
-        :is_public => "Project is public",
-        :is_public_description => "Anyone with access to %{site_name} can access this project and its public repositories.",
+        :is_public => "This project is public.",
+        :is_public_description => "Anyone with access to %{site_name} can browse this project and its public repositories.",
+        :is_private => "This project is private.",
+        :is_private_description => "To be able to browse this project and its repositories, users must be granted read access.",
         :make_private => "Make private",
         :make_public => "open project to the public."
       },
@@ -528,8 +530,10 @@
         :title => "Manage user &amp; team read access to %{repo_name}",
         :collaborator => "Repository member",
         :back_to_repository => "Back to repository",
-        :is_public => "Repository is open",
+        :is_public => "Repository is public.",
         :is_public_description => "Anyone with access to the %{project} project can browse this repository.",
+        :is_private => "Repository is private.",
+        :is_private_description => "To be able to browse and clone this repository, users must be granted read access in addition to their committerships.",
         :make_private => "Make private",
         :make_public => "open access to the repository. If the project is also private, this will only open access to project collaborators."
       },

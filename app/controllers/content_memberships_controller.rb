@@ -29,7 +29,7 @@ class ContentMembershipsController < ApplicationController
   rescue ActiveRecord::RecordNotFound => err
     m = err.message.match(/([^\s]+) with [^\s]+ = (.*)/)
     flash[:error] = "No such #{m[1].downcase} '#{m[2]}'"
-    create_error
+    create_error(membership)
   end
 
   def destroy
@@ -45,6 +45,7 @@ class ContentMembershipsController < ApplicationController
   helper_method :membership_path
   helper_method :new_membership_path
   helper_method :content_path
+  helper_method :content
 
   protected
   def redirect_options
