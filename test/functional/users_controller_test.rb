@@ -182,7 +182,7 @@ class UsersControllerTest < ActionController::TestCase
       put :update, :id => user.to_param, :user => { :fullname => "Zlorg" }
 
       refute flash[:success].nil?
-      assert_redirected_to(edit_user_path(user))
+      assert_redirected_to(user_edit_my_details_path(user))
     end
 
     should "not update password through edit" do

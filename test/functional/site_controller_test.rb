@@ -192,10 +192,7 @@ class SiteControllerTest < ActionController::TestCase
 
       assert_response 200
       assert_no_match(/Newest projects/, @response.body)
-      assert_no_match(/action\=\"\/search"/, @response.body)
       assert_no_match(/Creating a user account/, @response.body)
-      assert_no_match(/\/projects/, @response.body)
-      assert_no_match(/\/search/, @response.body)
     end
   end
 end

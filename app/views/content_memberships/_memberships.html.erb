@@ -17,7 +17,7 @@
   #++
   %>
 <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #d5d5d5;">
-  <% if memberships.length == 0 %>
+  <% if content.reload.public? %>
     <p>
       <strong><%= text(:is_public) %></strong>
       <%= text(:is_public_description, {

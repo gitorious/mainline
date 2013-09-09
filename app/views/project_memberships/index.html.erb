@@ -26,6 +26,7 @@
 <div class="container">
   <h1><%= @title = "User & team access to #{project.slug}" %></h1>
   <%= render("content_memberships/memberships", {
+          :public => project.public?,
           :project => project,
           :memberships => memberships,
           :membership => defined?(membership) ? membership : project.content_memberships.new

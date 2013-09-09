@@ -48,7 +48,7 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
         get :index, :project_id => projects(:moes).to_param
 
         assert_response 200
-        assert_match /Project is public/, @response.body
+        assert_match /This project is public/, @response.body
         assert_match /Make private/, @response.body
       end
     end
