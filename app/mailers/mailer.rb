@@ -28,7 +28,10 @@ class Mailer < ActionMailer::Base
   include ActionView::Helpers::SanitizeHelper
   extend ActionView::Helpers::SanitizeHelper::ClassMethods
   include Rails.application.routes.url_helpers
-  default(:from => lambda { Gitorious.email_sender })
+  default({
+      :from => lambda { Gitorious.email_sender },
+      "Auto-Submitted" => "auto-generated"
+    })
 
   def signup_notification(user)
     @user = user

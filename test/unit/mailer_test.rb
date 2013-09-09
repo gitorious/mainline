@@ -37,6 +37,7 @@ class MailerTest < ActiveSupport::TestCase
     assert_equal "[Gitorious] Please activate your new account", mail.subject
     assert_match(/username is #{user.login}$/, mail.body.decoded)
     assert mail.body.include?(url)
+    assert_equal "auto-generated", mail["Auto-Submitted"].to_s
 
     mail.deliver
     assert_equal [mail], Mailer.deliveries
