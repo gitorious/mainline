@@ -37,7 +37,7 @@ class PushCommitExtractorTest < ActiveSupport::TestCase
       should "find heads excluding current" do
         spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/topic")
         extractor = PushCommitExtractor.new(@repo_path, spec)
-        assert_equal ["master", "v0.1.0"], extractor.existing_ref_names
+        assert_equal Set.new(["master", "v0.1.0"]), Set.new(extractor.existing_ref_names)
       end
 
       should "count new commits in push" do
