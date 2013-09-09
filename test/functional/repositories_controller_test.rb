@@ -36,14 +36,17 @@ class RepositoriesControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
 
   context "#show" do
-    should "temporarily redirect to the repository browser" do
+    def ready_repository
       head = Object.new
       def head.commit; "abcdef"; end
       Repository.any_instance.stubs(:head).returns(head)
       @repo.update_attribute(:ready, true)
       @repo.save
+      @repo
+    end
 
-      get :show, :project_id => @project.to_param, :id => @repo.to_param
+    should "temporarily redirect to the repository browser" do
+      get :show, :project_id => @project.to_param, :id => ready_repository.to_param
 
       assert_response 307
       assert_redirected_to "/johans-project/johansprojectrepos/source/abcdef:"
@@ -55,6 +58,11 @@ class RepositoriesControllerTest < ActionController::TestCase
       get :show, :project_id => @project.to_param, :id => @repo.to_param
       assert_response :success
       assert_not_nil @response.headers["Refresh"]
+    end
+
+    should "render repository as XML" do
+      get :show, :project_id => @project.to_param, :id => ready_repository.to_param, :format => "xml"
+      assert_response :success
     end
   end
 

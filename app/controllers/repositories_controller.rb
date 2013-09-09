@@ -41,8 +41,16 @@ class RepositoriesController < ApplicationController
         }) and return
     end
 
-    repo = RepositoryPresenter.new(repository).slug
-    redirect_to(tree_entry_url(repo, repository.head.commit, ""), :status => 307)
+    respond_to do |format|
+      format.html do
+        repo = RepositoryPresenter.new(repository).slug
+        redirect_to(tree_entry_url(repo, repository.head.commit, ""), :status => 307)
+      end
+
+      format.xml do
+        render :xml => repository.to_xml
+      end
+    end
   end
 
   def index
