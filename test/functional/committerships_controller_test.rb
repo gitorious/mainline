@@ -78,42 +78,16 @@ class CommittershipsControllerTest < ActionController::TestCase
     end
   end
 
-  context "GET new" do
-    should "is successful" do
-      get :new, params
-      assert_response :success
-      assert_not_equal nil, assigns(:committership)
-      assert_equal @repository, assigns(:committership).repository
-      assert assigns(:committership).new_record?
-    end
-
-    should "scope to the correct repository" do
-      repo = repositories(:johans2)
-      repo.committerships.create_with_permissions!({
-          :committer => users(:mike)
-        }, Committership::CAN_ADMIN)
-      login_as :mike
-      get :new, :project_id => repo.project.to_param,
-        :project_id => repo.project.to_param,
-      :repository_id => repositories(:johans2).to_param
-      assert_response :success
-      assert_not_equal nil, assigns(:committership)
-      assert_equal repo, assigns(:committership).repository
-      assert assigns(:committership).new_record?
-    end
-  end
-
   context "POST create" do
     should "add a Group as having committership" do
       assert_difference("@repository.committerships.count") do
         post :create, params(:group => {:name => @group.name}, :user => {}, :permissions => ["review"])
       end
       assert_response :redirect
-      assert !assigns(:committership).new_record?, 'new_record? should be false'
-      assert_equal @group, assigns(:committership).committer
-      assert_equal @user, assigns(:committership).creator
+      assert_equal @group, Committership.last.committer
+      assert_equal @user, Committership.last.creator
       assert_equal "Team added as committers", flash[:success]
-      assert_equal [:review], assigns(:committership).permission_list
+      assert_equal [:review], Committership.last.permission_list
     end
 
     should "add a User as having committership" do
@@ -127,13 +101,12 @@ class CommittershipsControllerTest < ActionController::TestCase
         assert_nil flash[:error]
         assert_response :redirect
       end
-      assert !assigns(:committership).new_record?, 'new_record? should be false'
-      assert_equal users(:moe), assigns(:committership).committer
-      assert_equal @user, assigns(:committership).creator
+      assert_equal users(:moe), Committership.last.committer
+      assert_equal @user, Committership.last.creator
       assert_equal "User added as committer", flash[:success]
-      assert assigns(:committership).reviewer?
-      assert assigns(:committership).committer?
-      assert !assigns(:committership).admin?
+      assert Committership.last.reviewer?
+      assert Committership.last.committer?
+      assert !Committership.last.admin?
     end
   end
 
@@ -146,7 +119,7 @@ class CommittershipsControllerTest < ActionController::TestCase
     get :edit, params(:id => @committership.to_param)
 
     assert_response :success
-    assert_equal @committership, assigns(:committership)
+    assert_match "mike", @response.body
     assert_template("committerships/edit")
   end
 
@@ -159,7 +132,6 @@ class CommittershipsControllerTest < ActionController::TestCase
     get :update, params(:id => @committership.to_param, :permissions => ["review"])
 
     assert_response :redirect
-    assert_equal @committership, assigns(:committership)
     assert_equal [:review], @committership.reload.permission_list
   end
 
@@ -203,11 +175,6 @@ class CommittershipsControllerTest < ActionController::TestCase
         assert_response 403
       end
 
-      should "require project access to new" do
-        get :new, params(:project_id => @repository.project.to_param)
-        assert_response 403
-      end
-
       should "require project access to create" do
         post :create, params(:group => { :name => @group.name }, :user => {}, :permissions => ["review"])
         assert_response 403
@@ -237,11 +204,6 @@ class CommittershipsControllerTest < ActionController::TestCase
 
       should "require project access to index" do
         get :index, params
-        assert_response 403
-      end
-
-      should "require project access to new" do
-        get :new, params(:project_id => @project.to_param)
         assert_response 403
       end
 

@@ -22,40 +22,14 @@
 
 <div class="container">
   <h1><%= @title = "Users & teams collaborating on #{repository.slug}" %></h1>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Collaborator</th>
-        <th>Permissions</th>
-        <th>Added by</th>
-        <th>Since</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% committerships.each do |committership| %>
-      <tr>
-        <td>
-          <%= link_to(h(committership.committer.title), committership.committer) -%>
-          (<%= committership.committer.class.human_name -%>)
-        </td>
-        <td><%=h committership.permission_list.join(', ') -%></td>
-        <td><%= link_to(h(committership.creator.login), committership.creator) if committership.creator -%></td>
-        <td><%= l(committership.created_at, :format => :short) -%></td>
-        <td class="committer-buttons">
-          <%= link_to(t("views.common.edit"),
-          [:edit, repository.project, repository, committership], :method => :get, :class => "btn") -%>
-          <%= link_to(t("views.common.remove"),
-          [repository.project, repository, committership], :method => :delete, :class => "btn btn-danger", :confirm => confirmation_if_sole_admin(repository, committership)) -%>
-        </td>
-      </tr>
-      <% end %>
-    </tbody>
-  </table>
-  <p>
-    <%= link_to(t("views.collaborators.add_new"),
-    [:new, repository.project, repository, :committership], :class => "btn btn-primary") -%>
-  </p>
+  <%= render(:partial => "committerships/committerships", :locals => {
+          :committerships => committerships,
+          :repository => repository
+        }) %>
+  <%= render(:partial => "committerships/form", :locals => {
+          :committership => defined?(committership) ? committership : repository.committerships.new,
+          :repository => repository
+        }) %>
   <%= render("committerships/permission_explanation") %>
   <% if Gitorious.private_repositories? %>
     <%= render(:partial => "content_memberships/memberships", :locals => {

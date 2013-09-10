@@ -1,6 +1,7 @@
 <%
   #--
   #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
   #   it under the terms of the GNU Affero General Public License as published by
@@ -16,33 +17,35 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= error_messages(content) -%>
-<%= form_for(membership, :url => memberships_path(content),
-      :html => { :class => "form-inline" }) do |f| -%>
-
-  <div class="tabbable">
-    <ul class="nav nav-tabs">
-      <li class="active"><a href="#add-user" data-toggle="tab"><%= t("views.collaborators.add_user") -%></a></li>
-      <li><a href="#add-group" data-toggle="tab"><%= t("views.collaborators.add_team") -%></a></li>
-    </ul>
-    <div class="tab-content">
-      <div class="tab-pane active" id="add-user">
+<%= error_messages(committership) -%>
+<div class="tabbable">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#add-user" data-toggle="tab"><%= t("views.collaborators.add_user") -%></a></li>
+    <li><a href="#add-group" data-toggle="tab"><%= t("views.collaborators.add_team") -%></a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="add-user">
+      <%= form_for [repository.project, repository, committership], :html => { :class => "form-inline" } do |f| -%>
         <%= text_field(:user, :login, {
                 :id => "user_login_autocomplete",
                 :class => "input-small",
                 :placeholder => t("views.collaborators.user_login")
-              }) -%><br><br>
-        <%= defined?(button) ? button : "" -%>
-      </div>
-      <div class="tab-pane" id="add-group">
+              }) -%>
+        <%= checkboxes(f) -%>
+        <%= f.submit(t("views.collaborators.btn_add_as_collaborator"), :class => "btn btn-primary") %>
+      <% end %>
+    </div>
+    <div class="tab-pane" id="add-group">
+      <%= form_for [repository.project, repository, committership], :html => { :class => "form-inline" } do |f| -%>
         <%= text_field(:group, :name, {
                 :id => "group_name_autocomplete",
                 :class => "input-small",
                 :placeholder => t("views.collaborators.group_name")
               }) -%>
-        <%= submit_tag(t("views.private_content_read_access.btn_add_read_rights"), :class => "btn btn-primary") -%>
+        <%= checkboxes(f) -%>
+        <%= f.submit(t("views.collaborators.btn_add_as_collaborator"), :class => "btn btn-primary") %>
         <p class="muted"><br><%= t("views.collaborators.add_team_note").html_safe -%></p>
-      </div>
+      <% end %>
     </div>
   </div>
-<% end %>
+</div>

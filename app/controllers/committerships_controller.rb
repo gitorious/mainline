@@ -23,59 +23,49 @@ class CommittershipsController < ApplicationController
   before_filter :find_repository
   before_filter :require_adminship
   renders_in_site_specific_context
+  layout "ui3"
 
   def index
-    render(:index, :layout => "ui3", :locals => {
-        :repository => RepositoryPresenter.new(@repository),
-        :committerships => @repository.committerships,
-        :memberships => @repository.content_memberships
-      })
-  end
-
-  def new
-    @committership = @repository.committerships.new
+    render_index(@repository, @repository.committerships.new)
   end
 
   def create
-    @committership = @repository.committerships.new
-    if params[:group][:name].blank? && !params[:user][:login].blank?
-      @committership.committer = User.find_by_login(params[:user][:login])
-    else
-      @committership.committer = Team.find_by_name!(params[:group][:name])
-    end
-    @committership.creator = current_user
-    @committership.build_permissions(params[:permissions])
+    committership = @repository.committerships.new
+    committership.committer = committer
+    committership.creator = current_user
+    committership.build_permissions(params[:permissions])
 
-    if @committership.save
-      if @committership.committer.is_a?(User)
+    if committership.save
+      if committership.committer.is_a?(User)
         flash[:success] = "User added as committer"
       else
         flash[:success] = "Team added as committers"
       end
       redirect_to([@repository.project, @repository, :committerships])
     else
-      render :action => "new"
+      render_index(@repository, committership)
     end
   end
 
   def edit
-    @committership = @repository.committerships.find(params[:id])
+    render_edit(@repository, @repository.committerships.find(params[:id]))
   end
 
   def update
-    @committership = @repository.committerships.find(params[:id])
+    committership = @repository.committerships.find(params[:id])
+
     if !params[:permissions].blank?
-      @committership.build_permissions(params[:permissions])
+      committership.build_permissions(params[:permissions])
     else
       flash[:error] = "No permissions selected"
-      render("edit") and return
+      render_edit(@repository, committership) and return
     end
 
-    if @committership.save
+    if committership.save
       flash[:success] = "Permissions updated"
       redirect_to([@repository.project, @repository, :committerships])
     else
-      render "edit"
+      render_edit(@repository, committership)
     end
   end
 
@@ -116,6 +106,29 @@ class CommittershipsController < ApplicationController
                                                                @containing_project)
     authorize_access_to(@repository)
     authorize_access_to(@repository.project)
+  end
+
+  def committer
+    if params.key?(:user) && params[:user][:login]
+      return User.find_by_login(params[:user][:login])
+    end
+    Team.find_by_name!(params[:group][:name])
+  end
+
+  def render_index(repository, committership)
+    render(:index, :locals => {
+        :repository => RepositoryPresenter.new(repository),
+        :committership => committership,
+        :committerships => repository.committerships,
+        :memberships => repository.content_memberships
+      })
+  end
+
+  def render_edit(repository, committership)
+    render("edit", :locals => {
+        :repository => repository,
+        :committership => committership
+      })
   end
 
   # For memberships

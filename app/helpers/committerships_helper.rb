@@ -27,4 +27,14 @@ module CommittershipsHelper
     admins = repo.committerships.select { |c| c.admin? }
     (admins.size == 1 && admins.first == to_be_removed)
   end
+
+  def checkboxes(f)
+    cs = f.object
+    <<HTML.html_safe
+&nbsp;&nbsp;<label class="checkbox">#{check_box_tag("permissions[]", "review", cs.reviewer?)} #{f.label("Review")}</label>
+&nbsp;&nbsp;<label class="checkbox">#{check_box_tag("permissions[]", "commit", cs.committer?)} #{f.label("Commit")}</label>
+&nbsp;&nbsp;<label class="checkbox">#{check_box_tag("permissions[]", "admin", cs.admin?)} #{f.label("Administer")}</label>
+&nbsp;&nbsp;
+HTML
+  end
 end
