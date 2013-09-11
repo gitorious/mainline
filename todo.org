@@ -50,7 +50,7 @@
 ** TODO Messages#show
 ** TODO OpenIdUsers#new
 ** TODO Pages#edit
-** TODO Pages#git_access
+** DONE Pages#git_access
 ** TODO Pages#history
 ** TODO Pages#index
 ** TODO Pages#no_page

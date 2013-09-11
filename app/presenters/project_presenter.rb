@@ -42,6 +42,7 @@ class ProjectPresenter
   def mailinglist_url; project.mailinglist_url; end
   def bugtracker_url; project.bugtracker_url; end
   def wiki_permissions; project.wiki_permissions; end
+  def wiki_repository_name; project.wiki_repository.name; end
   def user; project.user; end
   def to_key; project.to_key; end
 

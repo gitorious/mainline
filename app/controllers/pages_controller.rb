@@ -98,7 +98,10 @@ class PagesController < ApplicationController
   end
 
   def git_access
-    @root = Breadcrumb::Wiki.new(@project)
+    render("git_access", :layout => "ui3", :locals => {
+        :project => ProjectPresenter.new(@project),
+        :wiki_repository => @project.wiki_repository
+      })
   end
 
   protected
