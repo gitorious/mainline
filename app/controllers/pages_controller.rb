@@ -16,6 +16,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious/view/form_builder"
 
 class PagesController < ApplicationController
   before_filter :login_required, :except => [:index, :show, :git_access]
