@@ -150,6 +150,8 @@ Gitorious::Application.routes.draw do
 
   ### R8. Administration
   namespace :admin do
+    get "/" => redirect { |params, request| "/admin/repositories" }
+
     resources :users, :only => [:index, :new, :create] do
       member do
         put :suspend
