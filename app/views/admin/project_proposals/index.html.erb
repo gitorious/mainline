@@ -16,29 +16,44 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<br><br>
+<%= partial("admin/shared/header", {
+        :app => Gitorious,
+        :active => :project_proposals,
+        :title => @title = "Pending project proposals",
+        :description => "Project proposals that have yet to be approved."
+      }) %>
+
 <div class="container">
-  <h1>Pending project proposals</h1>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Creator</th>
-        <th>Description</th>
-        <th></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% proposals.each do |p| %>
+  <% if ProjectProposal.enabled? %>
+    <table class="table table-striped">
+      <thead>
         <tr>
-          <td><%= p.title %></td>
-          <td>~<%= link_to h(p.creator.login), p.creator -%></td>
-          <td><%= p.description %></td>
-          <td><%= button_to "Approve", :action => "approve", :id => p.to_param %></td>
-          <td><%= button_to "Reject", :action => "reject", :id => p.to_param %></td>
+          <th>Title</th>
+          <th>Creator</th>
+          <th>Description</th>
+          <th></th>
+          <th></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% proposals.each do |p| %>
+          <tr>
+            <td><%= p.title %></td>
+            <td>~<%= link_to h(p.creator.login), p.creator -%></td>
+            <td><%= p.description %></td>
+            <td><%= button_to "Approve", :action => "approve", :id => p.to_param %></td>
+            <td><%= button_to "Reject", :action => "reject", :id => p.to_param %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>
+      Project proposals are not enabled for <%= Gitorious.site_name %>. To
+      enable, set <code>enable_project_approvals</code> to <code>true</code> in
+      config/gitorious.yml. When project proposals are enabled, users can not
+      create projects on their own, only proposals. An admin must then approve
+      the proposal in order for the project to be created.
+    </p>
+  <% end %>
 </div>
