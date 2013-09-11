@@ -31,7 +31,6 @@
           :page => page,
           :active => :show
         }) %>
-  <h1><%= h(page.title) -%></h1>
   <% toc, content = wikize(page.content) -%>
   <div class="pull-right" style="margin: 0 0 20px 20px;">
     <%= format_toc(toc) %>
