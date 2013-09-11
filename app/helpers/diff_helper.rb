@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,9 @@
 require "gitorious/diff/base_callback"
 require "gitorious/diff/comment_callback"
 require "gitorious/diff/inline_table_callback"
+require "gitorious/diff/ui3_inline_table_callback"
 require "gitorious/diff/sidebyside_table_callback"
+
 module DiffHelper
   # Takes a unified diff as input and renders it as html
   def render_diff(udiff, display_mode = "inline")
