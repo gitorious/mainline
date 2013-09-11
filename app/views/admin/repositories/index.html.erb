@@ -45,5 +45,5 @@
       <% end -%>
     </tbody>
   </table>
+  <%= raw JustPaginate.page_navigation(page, total_pages) { |n| admin_repositories_path(:page => n) } -%>
 </div>
-<%= raw JustPaginate.page_navigation(page, total_pages) { |n| admin_repositories_path(:page => n) } -%>

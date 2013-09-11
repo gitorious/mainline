@@ -17,8 +17,17 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<h2 class="content-header">Create a new user </h2>
-<%= error_messages(user) %>
-<%= form_for user, :as => user, :url => admin_users_path do |f| -%>
-  <%= render :partial => 'admin/users/form', :locals => { :f => f } %>
-<% end -%>
+<%= partial("admin/shared/header", {
+        :app => Gitorious,
+        :active => :users,
+        :title => @title = "User administration",
+        :description => "Manage users."
+      }) %>
+
+<div class="container">
+  <h2>Create a new user </h2>
+  <%= error_messages(user) %>
+  <%= form_for user, :as => user, :url => admin_users_path do |f| -%>
+    <%= render :partial => "admin/users/form", :locals => { :form => f } %>
+  <% end -%>
+</div>

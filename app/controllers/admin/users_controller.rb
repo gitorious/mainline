@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
@@ -21,17 +21,22 @@
 module Admin
   class UsersController < AdminController
     include Gitorious::UserAdministration
+    layout "ui3"
 
     def index
-      @users = paginate(:action => "index") do
-        User.paginate(:order => 'suspended_at, login', :page => params[:page])
+      scope = User.order("suspended_at, login")
+      page = (params[:page] || 1).to_i
+
+      begin
+        users, pages = JustPaginate.paginate(page, User.per_page, scope.count) do |range|
+          scope.offset(range.first).limit(range.count)
+        end
+      rescue RangeError => err
+        flash[:error] = "Page #{page} does not exist"
+        redirect_to(admin_users_path, :status => 307) and return
       end
 
-      return if @users.length == 0 && params.key?(:page)
-
-      respond_to do |wants|
-        wants.html
-      end
+      render("index", :locals => { :users => users, :page => page, :total_pages => pages })
     end
 
     def new
