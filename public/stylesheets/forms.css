@@ -305,3 +305,13 @@ form.button-to {
 #merge_request_statuses {
         width: 640px;
 }
+
+.field_with_errors {
+  display: inline;
+  width: auto;
+  float: none;
+}
+
+.field_with_errors label {
+  color: red;
+}
