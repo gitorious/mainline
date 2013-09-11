@@ -19,19 +19,38 @@
 
 module Admin
   class RepositoriesController < AdminController
+    layout "ui3"
+
     def index
-      @unready_repositories = paginate(:action => "index") do
-        Repository.paginate(:conditions => "ready = false AND kind != #{Repository::KIND_TRACKING_REPO}",
-                            :per_page => 30,
-                            :page => params[:page])
+      begin
+        repositories, total_pages, page = paginated_repositories
+      rescue RangeError => err
+        flash[:error] = "Page #{page} does not exist"
+        redirect_to(admin_repositories_path, :status => 307) and return
       end
+
+      render("index", :locals => {
+          :repositories => repositories,
+          :total_pages => total_pages,
+          :page => page
+        })
     end
 
     def recreate
-      @repository = Repository.find(params[:id])
-      CreateProjectRepositoryCommand.new(Gitorious::App).schedule_creation(@repository)
+      repository = Repository.find(params[:id])
+      CreateProjectRepositoryCommand.new(Gitorious::App).schedule_creation(repository)
       flash[:notice] = "Recreation message posted"
-      redirect_to :action => :index
+      redirect_to(:action => :index)
+    end
+
+    private
+    def paginated_repositories
+      scope = Repository.where("ready = false AND kind != #{Repository::KIND_TRACKING_REPO}")
+      page = (params[:page] || 1).to_i
+      repositories, pages = JustPaginate.paginate(page, Repository.per_page, scope.count) do |range|
+        scope.offset(range.first).limit(range.count).includes(:project)
+      end
+      [repositories, pages, page]
     end
   end
 end

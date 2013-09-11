@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -17,32 +17,33 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= content_for(:sidebar) do %>
-  <ul class="links navigation">
-  </ul>
-<% end %>
+<%= partial("admin/shared/header", {
+        :app => Gitorious,
+        :active => :repositories,
+        :title => @title = "Pending repositories",
+        :description => "Occasionally, repositories will be 'stuck' while Gitorious " +
+        "is creating it on disk. Use this page to re-send repository creation messages " +
+        "to retry timed out or otherwise failed messages."
+      }) %>
 
-<h2 class="content-header" id="project_title"><%= link_to t("views.layout.admin"), '' %></h2>
-<p>
-  Use this page to re-send repository creation messages in the rare cases when a message has been dropped
-  or a Git timeout has occured. Another message will be posted to the message queue, which should cause
-  the repository to be created on disk.
-</p>
-<table class="listing tree">
-  <tr>
-    <th>Name</th>
-    <th>Ready?</th>
-    <th>Last update</th>
-    <th>Action</th>
-  </tr>
-  <% @unready_repositories.each do |repo| -%>
-    <tr class="<%= cycle("odd", "even") -%>">
-      <td><%= repo.name -%></td>
-      <td><%= repo.ready? -%></td>
-      <td><%= repo.updated_at -%></th>
-      <td><%= link_to("Re-post creation message", recreate_admin_repository_path(repo.id), :method => :put) -%></td>
-    </tr>
-  <% end -%>
-</table>
-
-<%= render_pagination_links @unready_repositories -%>
+<div class="container">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Last update</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% repositories.each do |repo| -%>
+        <tr>
+          <td><%= repo.name -%></td>
+          <td><%= repo.updated_at -%></td>
+          <td><%= link_to("Re-post creation message", recreate_admin_repository_path(repo.id), :method => :put) -%></td>
+        </tr>
+      <% end -%>
+    </tbody>
+  </table>
+</div>
+<%= raw JustPaginate.page_navigation(page, total_pages) { |n| admin_repositories_path(:page => n) } -%>
