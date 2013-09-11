@@ -22,6 +22,14 @@ module PagesHelper
   include CommitsHelper
   include Gitorious::Wiki::Content
 
+  def format_toc(toc)
+    return "" if toc.strip.blank?
+    header = "<li class=\"nav-header\">Table of contents</li>"
+    ul = toc.sub("<div class=\"toc\">", "").strip[0...-6].strip
+    ul = ul.sub(/^<ul>/, "<ul class=\"nav nav-list well gts-toc\">#{header}")
+    ul.sub("<ul>", "<ul class=\"nav nav-list\">").html_safe
+  end
+
   def wiki_link(content)
     content.gsub(BRACKETED_WIKI_WORD) do |page_link|
       if bracketed_name = Regexp.last_match.captures.first

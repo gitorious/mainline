@@ -57,20 +57,10 @@ class PagesControllerTest < ActionController::TestCase
       get :index, :project_id => @project.to_param
       assert_redirected_to(project_path(@project))
     end
-
-    # should "render the history atom feed" do
-    #   grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
-    #   Repository.any_instance.stubs(:git).returns(grit)
-    #   get :index, :project_id => @project.to_param, :format => "atom"
-    #   assert_response :success
-    #   assert_equal grit.commits("master", 30), assigns(:commits)
-    #   assert_template "index.atom.builder"
-    #   assert_equal "max-age=1800, private", @response.headers["Cache-Control"]
-    # end
   end
 
   context "show" do
-    should "redirects to edit if the page is new, and user is logged in" do
+    should "render error page if the page is new, and no user is logged in" do
       logout
       page_stub = mock("page stub")
       page_stub.expects(:new?).returns(true)
@@ -79,8 +69,9 @@ class PagesControllerTest < ActionController::TestCase
       Page.expects(:find).returns(page_stub)
 
       get :show, :project_id => @project.to_param, :id => "Home"
+
       assert_response :success
-      assert_select ".help-box p", /page "Home" does not exist yet/
+      assert_template "no_page"
     end
 
     should "redirects to the project if wiki is disabled for this projcet" do

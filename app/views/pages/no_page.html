@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
   #   Copyright (C) 2009 Marius Mathiesen <marius.mathiesen@gmail.com>
   #   Copyright (C) 2009 Tor Arne Vestbø <torarnv@gmail.com>
@@ -19,15 +19,20 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+<%= partial("projects/header", {
+        :project => project,
+        :app => Gitorious,
+        :active => :wiki,
+        :header_level => 2
+      }) %>
 
-<%= breadcrumbs_from(@root) -%>
-
-<h1>
-  <%= link_to h(@page.title), project_page_path(@project, @page.title) -%>
-  does not exist
-</h1>
-
-<%= help_box(:middle, :error) do -%>
-  <p>The page "<%=h params[:id] -%>" does not exist yet. If you would like to create
-    it you must <%= link_to "log in", new_sessions_path -%> first.</p>
-<% end -%>
+<div class="container">
+  <h1>
+    <%= link_to h(page.title), project_page_path(project, page.title) -%>
+    does not exist
+  </h1>
+  <p>
+    The page "<%=h page.title -%>" does not exist yet. If you would like to create
+    it you must <%= link_to("log in", new_sessions_path) -%> first.
+  </p>
+</div>

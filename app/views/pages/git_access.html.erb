@@ -24,6 +24,10 @@
       }) %>
 
 <div class="container">
+  <%= render(:partial => "actions", :locals => {
+          :project => project,
+          :active => :git
+        }) %>
   <h1><%= @title = "Git access to the wiki" %></h1>
   <p>
     The project wiki is a Git repository containing Markdown formatted

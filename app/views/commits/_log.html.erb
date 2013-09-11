@@ -26,13 +26,25 @@
     <% user = users_by_email[commit.author.email] %>
     <div class="gts-commit <%= commit.merge? ? 'merge_commit' : 'commit' -%>">
       <p class="gts-log-message">
-        <%= link_to h(commit.id_abbrev), project_repository_commit_path(@project, @repository, commit.id) -%>: <%= force_utf8(commit.short_message) -%>
+        <% if repository.project_repo? %>
+          <%= link_to h(commit.id_abbrev), project_repository_commit_path(repository.project, repository, commit.id) -%>:
+        <% else %>
+          <strong><%= h(commit.id_abbrev) -%></strong>:
+        <% end %>
+        <%= commit.short_message.force_encoding("utf-8") -%>
       </p>
       <p>
         <%= avatar_from_email(commit.author.email, :size => 16)  %>
         <%= user ? link_to(user.fullname || user.login, user_path(user)) : h(force_utf8(commit.author.name)) -%>
         <span class="event-time"><%= l(commit.committed_date, :format => :short_time) %></span>
       </p>
+      <% if defined?(display_diffs) && display_diffs %>
+        <div class="diff">
+          <% commit.diffs.each do |file| -%>
+            <%= render_inline_diff2(file.diff) -%>
+          <% end -%>
+        </div>
+      <% end %>
     </div>
   <% end -%>
 <% end -%>

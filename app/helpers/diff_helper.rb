@@ -118,6 +118,24 @@ module DiffHelper
     out.html_safe
   end
 
+  def render_inline_diff2(udiff)
+    differ ||= Diff::Display::Unified.new(udiff)
+
+    <<-HTML.html_safe
+<div class="gts-file">
+  <ul class="breadcrumb">
+    <li class="gts-diff-summary">
+      <a href="/files"><i class="icon icon-file"></i> app/models/repository.rb</a>
+      (<span class="gts-diff-add">+45</span>/<span class="gts-diff-rm">-22</span>)
+    </li>
+  </ul>
+  <table class="gts-code-listing">
+#{differ.render(Gitorious::Diff::UI3InlineTableCallback.new)}
+  </table>
+</div>
+    HTML
+  end
+
   def render_sidebyside_diff(udiff)
     differ = Diff::Display::Unified.new(udiff)
     out = %Q{<table class="codediff sidebyside">\n}

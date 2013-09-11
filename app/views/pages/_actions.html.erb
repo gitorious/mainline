@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -17,11 +17,24 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<ul class="links navigation">
-  <li class="wiki_page">
-    <%= link_to(t("views.pages.index"), project_pages_path(@project)) -%>
-  </li>
-  <li class="wiki_via_git">
-    <%= link_to(t("views.pages.git"), git_access_project_pages_path(@project)) -%>
-  </li>
-</ul>
+<% if defined?(page) %>
+  <p class="pull-right" style="margin-bottom: -1px;">
+    <a class="btn btn-primary" href="<%= edit_project_page_path(project, page.title) %>">
+      <i class="icon icon-pencil"></i>
+      <%= t("views.common.edit") + " " + t("views.pages.page") %>
+    </a>
+  </p>
+  <ul class="nav nav-tabs">
+    <%= options = [[:show, project_page_path(project, page.title), page.title]]
+        options << [:history, history_project_page_path(project, page.title), t("views.pages.history")]
+        options << [:git, git_access_project_pages_path(project), t("views.pages.git")]
+        options << [:index, project_pages_path(project), "Wiki index"]
+        header_navigation(options, :active => defined?(active) ? active : nil) %>
+  </ul>
+<% else %>
+  <ul class="nav nav-tabs">
+    <%= options = [[:git, git_access_project_pages_path(project), t("views.pages.git")]]
+        options << [:index, project_pages_path(project), "Wiki index"]
+        header_navigation(options, :active => defined?(active) ? active : nil) %>
+  </ul>
+<% end %>

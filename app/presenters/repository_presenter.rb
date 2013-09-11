@@ -52,6 +52,7 @@ class RepositoryPresenter
   def content_memberships; repository.content_memberships; end
   def parent; repository.parent && RepositoryPresenter.new(repository.parent); end
   def is_a?(thing); thing == Repository; end
+  def project_repo?; repository.project_repo?; end
 
   def show_clone_list_search?
     group_clone_count >= 5 || user_clone_count >= 5

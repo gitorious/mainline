@@ -24,39 +24,51 @@ class PagesController < ApplicationController
   before_filter :assert_readyness
   before_filter :require_write_permissions, :only => [:edit, :update]
   renders_in_site_specific_context
+  layout "ui3"
 
   def index
     respond_to do |format|
       format.html do
-        @tree_nodes = @project.wiki_repository.git.tree.contents.select{|n|
-          n.name =~ /\.#{Page::DEFAULT_FORMAT}$/
-        }
-        @root = Breadcrumb::Wiki.new(@project)
-        @atom_auto_discovery_url = project_pages_path(:format => :atom)
+        render("index", :locals => {
+            :project => ProjectPresenter.new(@project),
+            :atom_auto_discovery_url => project_pages_path(:format => :atom),
+            :tree_nodes => @project.wiki_repository.git.tree.contents.select do |n|
+              n.name =~ /\.#{Page::DEFAULT_FORMAT}$/
+            end
+          })
       end
       format.atom do
-        @commits = @project.wiki_repository.git.commits("master", 30)
         expires_in 30.minutes
+        render("index", :locals => {
+            :commits => @project.wiki_repository.git.commits("master", 30),
+            :project => @project
+          })
       end
     end
   end
 
   def show
-    @atom_auto_discovery_url = project_pages_path(:format => :atom)
-    @page, @root = page_and_root
-    if @page.new?
-      if logged_in?
-        redirect_to edit_project_page_path(@project, params[:id]) and return
-      else
-        render "no_page" and return
-      end
+    page = Page.find(params[:id], @project.wiki_repository.git)
+
+    if page.new?
+      redirect_to(edit_project_page_path(project, params[:id])) and return if logged_in?
+      render("no_page", :locals => {
+          :project => ProjectPresenter.new(@project),
+          :page => page
+        }) and return
     end
+
+    render("show", :locals => {
+        :atom_auto_discovery_url => project_pages_path(:format => :atom),
+        :page => Page.find(params[:id], @project.wiki_repository.git),
+        :project => ProjectPresenter.new(@project)
+      })
   end
 
   def edit
     page = Page.find(params[:id], @project.wiki_repository.git)
     page.user = current_user
-    render("edit", :layout => "ui3", :locals => {
+    render("edit", :locals => {
         :page => page,
         :project => ProjectPresenter.new(@project)
       })
@@ -92,17 +104,21 @@ class PagesController < ApplicationController
   end
 
   def history
-    @page, @root = page_and_root
-    if @page.new?
-      redirect_to edit_project_page_path(@project, @page) and return
-    end
+    page = Page.find(params[:id], @project.wiki_repository.git)
+    redirect_to(edit_project_page_path(project, page)) if page.new? and return
+    commits = page.history(30)
 
-    @commits = @page.history(30)
-    @user_and_email_map = Repository.users_by_commits(@commits)
+    render("history", :locals => {
+        :page => page,
+        :project => ProjectPresenter.new(@project),
+        :wiki_repository => @project.wiki_repository,
+        :commits => commits,
+        :user_and_email_map => Repository.users_by_commits(commits)
+      })
   end
 
   def git_access
-    render("git_access", :layout => "ui3", :locals => {
+    render("git_access", :locals => {
         :project => ProjectPresenter.new(@project),
         :wiki_repository => @project.wiki_repository
       })

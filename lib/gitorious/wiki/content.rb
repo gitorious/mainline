@@ -35,7 +35,7 @@ module Gitorious
         else
           toc = ""
         end
-        content_tag(:div, toc.html_safe + sanitize_wiki_content(content), :class => "page wiki-page")
+        [toc.html_safe, sanitize_wiki_content(content)]
       end
 
       def sanitize_wiki_content(html)

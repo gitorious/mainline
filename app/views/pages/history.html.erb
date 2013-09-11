@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -17,33 +17,31 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+<%= partial("projects/header", {
+        :project => project,
+        :app => Gitorious,
+        :active => :wiki,
+        :header_level => 2
+      }) %>
 
-<%= breadcrumbs_from(@root) -%>
-
-<h1>
-  <%= t("views.pages.last_n_edits", {
-          :n => 30,
-          :title => link_to(@page.title, project_page_path(@project, @page.title))
+<% @title = t("views.pages.last_n_edits", { :n => 30, :title => page.title }) %>
+<div class="container">
+  <%= render(:partial => "actions", :locals => {
+          :project => project,
+          :page => page,
+          :active => :history
+        }) %>
+  <h1>
+    <%= t("views.pages.last_n_edits", {
+            :n => 30,
+            :title => link_to(page.title, project_page_path(project, page.title))
+          }).html_safe -%>
+  </h1>
+  <%= render(:partial => "commits/log", :locals => {
+          :repository => wiki_repository,
+          :ref => "master",
+          :commits => commits,
+          :no_pagination => true,
+          :display_diffs => true
         }) -%>
-</h1>
-
-<% @commits.each do |commit| -%>
-  <div class="page-meta page-history">
-    <p>
-      <%= avatar_from_email(commit.committer.email, :size => 20) %>
-      <%- if user = @user_and_email_map[commit.committer.email] -%>
-        <%= link_to(h(commit.committer.name), user) -%>
-      <%- else -%>
-        <%= h(commit.committer.name) -%>
-      <%- end -%>
-      <%= l(commit.date, :format => :short) -%>
-    </p>
-    <p><em><%= h(commit.message) -%></em></p>
-
-    <div class="diff" style="//display:none">
-      <% commit.diffs.each do |file| -%>
-        <%= render_inline_diff(file.diff) -%>
-      <% end -%>
-    </div>
-  </div>
-<% end -%>
+</div>

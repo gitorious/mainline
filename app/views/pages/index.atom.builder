@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2013 Gitorious
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,16 +18,16 @@
 #++
 
 namespaced_atom_feed do |feed|
-  feed.title("#{h(@project.title)} Wiki changes")
-  feed.updated((@commits.blank? ? nil : @commits.first.committed_date))
-	
-  @commits.each do |commit|
+  feed.title("#{h(project.title)} Wiki changes")
+  feed.updated((commits.blank? ? nil : commits.first.committed_date))
+
+  commits.each do |commit|
     # TODO: we only find the first page changed for now:
     first_page = commit.diffs.first.a_path.split(".").first
-    item_url = history_project_page_path(@project, first_page, :html) rescue project_pages_path(@project, :html)
+    item_url = history_project_page_path(project, first_page, :html) rescue project_pages_path(project, :html)
     feed.entry(commit, {
-      :url => item_url, 
-      :updated => commit.committed_date.utc, 
+      :url => item_url,
+      :updated => commit.committed_date.utc,
       :published => commit.committed_date.utc
     }) do |entry|
       entry.title(truncate(commit.message, :length => 100))
