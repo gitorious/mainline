@@ -43,9 +43,26 @@ mkdir -p tmp/repositories tmp/tarball-cache tmp/tarball-work tmp/cache
 #sudo apt-get update
 sudo apt-get install -q -y curl git-core make gcc g++ mysql-client mysql-server-5.5 libmysqlclient-dev libxml2-dev libxslt1-dev libonig2 libreadline6-dev libpq-dev libicu-dev make ruby-dev sphinxsearch redis-server git-daemon-sysvinit nginx
 
-which rvm || curl -L https://get.rvm.io | bash -s stable --ruby=1.9.3
+# Install Ruby. Skip if you've already done this.
+wget -O ruby-install-0.2.1.tar.gz https://github.com/postmodern/ruby-install/archive/v0.2.1.tar.gz
+tar -xzvf ruby-install-0.2.1.tar.gz
+cd ruby-install-0.2.1/
+sudo make install
+ruby-install ruby 1.9.3-p429
+cd ..
+rm -fr ruby-install-*
 
-rvm use 1.9.3
+wget -O chruby-0.3.6.tar.gz https://github.com/postmodern/chruby/archive/v0.3.6.tar.gz
+tar -xzvf chruby-0.3.6.tar.gz
+cd chruby-0.3.6/
+sudo make install
+
+echo "source /usr/local/share/chruby/chruby.sh" | sudo tee /etc/profile.d/chruby.sh
+source /etc/profile.d/chruby.sh
+
+chruby 1.9.3
+
+echo "source /etc/profile.d/chruby.sh && chruby 1.9.3" >> ~/.bash_profile
 
 # Bundler is the tool used to manage Gitorious' Ruby dependencies.
 # http://gembundler.com/
