@@ -18,6 +18,8 @@
 
 module Admin
   class DiagnosticsController < ApplicationController
+    layout "ui3"
+
     if Rails.env.test?
       include Gitorious::Diagnostics::Test
     else
@@ -27,32 +29,34 @@ module Admin
     before_filter :require_site_admin, :except => :summary
 
     def index
-      @everything_healthy = markup(everything_healthy?)
+      render("index", :locals => {
+          :everything_healthy => markup(everything_healthy?),
 
-      # @git_operations_work = markup(git_operations_work?)
-      @git_user_ok = markup(git_user_ok?)
-      @rails_process_owned_by_git_user = markup(rails_process_owned_by_git_user?)
-      @atleast_one_gitorious_account_present = markup(atleast_one_gitorious_account_present?)
-      @repo_dir_ok = markup(repo_dir_ok?)
-      @tarball_dirs_ok = markup(tarball_dirs_ok?)
-      @authorized_keys_ok = markup(authorized_keys_ok?)
+          # :git_operations_work => markup(git_operations_work?),
+          :git_user_ok => markup(git_user_ok?),
+          :rails_process_owned_by_git_user => markup(rails_process_owned_by_git_user?),
+          :atleast_one_gitorious_account_present => markup(atleast_one_gitorious_account_present?),
+          :repo_dir_ok => markup(repo_dir_ok?),
+          :tarball_dirs_ok => markup(tarball_dirs_ok?),
+          :authorized_keys_ok => markup(authorized_keys_ok?),
 
-      @ssh_deamon_up = markup(ssh_deamon_up?)
-      @git_daemon_up = markup(git_daemon_up?)
-      @poller_up = markup(poller_up?)
-      @mysql_up = markup(mysql_up?)
-      @ultrasphinx_up = markup(ultrasphinx_up?)
-      @queue_service_up = markup(queue_service_up?)
-      @memcached_up = markup(memcached_up?)
+          :ssh_deamon_up => markup(ssh_deamon_up?),
+          :git_daemon_up => markup(git_daemon_up?),
+          :poller_up => markup(poller_up?),
+          :mysql_up => markup(mysql_up?),
+          :ultrasphinx_up => markup(ultrasphinx_up?),
+          :queue_service_up => markup(queue_service_up?),
+          :memcached_up => markup(memcached_up?),
 
-      @enough_disk_free = markup(enough_disk_free?)
-      @enough_RAM_free = markup(enough_RAM_free?)
-      @healthy_cpu_load_average = markup(healthy_cpu_load_average?)
+          :enough_disk_free => markup(enough_disk_free?),
+          :enough_RAM_free => markup(enough_RAM_free?),
+          :healthy_cpu_load_average => markup(healthy_cpu_load_average?),
 
-      @uptime_output = `uptime`
-      @free_output = `free -m`
-      @vmstat_output = `vmstat`
-      @df_output = `df -h`
+          :uptime_output => `uptime`,
+          :free_output => `free -m`,
+          :vmstat_output => `vmstat`,
+          :df_output => `df -h`
+        })
     end
 
     def summary
@@ -75,9 +79,9 @@ module Admin
     private
     def markup(status)
       if status == true
-        "<span class='diagnostic-true-indicator'>true</span>".html_safe
+        "<span class=\"label label-success\">OK</span>".html_safe
       else
-        "<span class='diagnostic-false-indicator'>false</span>".html_safe
+        "<span class=\"label label-important\">Not OK</span>".html_safe
       end
     end
 

@@ -1,0 +1,37 @@
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+%>
+<div class="gts-site-header">
+  <div class="container">
+    <div class="row">
+      <h1 class="span"><%= title %></h1>
+    </div>
+    <div class="row gts-description">
+      <div class="span">
+        <%= description %>
+      </div>
+    </div>
+    <ul class="nav nav-tabs gts-header-nav">
+      <%= options = [[:diagnostics, admin_diagnostics_path, "Diagnostics"]]
+          options << [:project_proposals, admin_project_proposals_path, "Project proposals"]
+          options << [:repositories, admin_repositories_path, "Repositories"]
+          options << [:users, admin_users_path, "Users"]
+          header_navigation(options, :active => defined?(active) ? active : nil) %>
+    </ul>
+  </div>
+</div>

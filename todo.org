@@ -8,16 +8,14 @@
 ** TODO Color picker for merge request statuses (projects/edit)
 ** TODO Auto-complete for users/teams in collaborator/committership form
 ** TODO Repository browser needs to check authorization
-* Views to port to UI3 [29/78]
-** TODO Admin::Diagnostics#index
+* Views to port to UI3 [32/73]
+** DONE Admin::Diagnostics#index
 ** DONE Admin::OauthSettings#edit
 ** DONE Admin::ProjectProposals#index
 ** DONE Admin::ProjectProposals#new
 ** TODO Admin::Repositories#index
-** TODO Admin::Users#index
-** TODO Admin::Users#new
-** TODO Aliases#index
-** TODO Aliases#new
+** DONE Aliases#index
+** DONE Aliases#new
 ** TODO Comments#index
 ** TODO Comments#new
 ** TODO CommitComments#index
@@ -25,24 +23,21 @@
 ** TODO CommitDiffs#compare
 ** DONE Commits#index
 ** TODO Commits#show
-** TODO Committerships#new
-** TODO ContentMemberships#index
-** TODO Events#index
-** TODO Favorites#index
 ** DONE Graphs#index
 ** TODO Groups#index
-** TODO Groups#new
 ** TODO Groups#show
-** DONE Keys#index
+** TODO Groups#new
+** TODO Groups#edit
+** TODO Keys#index
 ** DONE Keys#new
-** DONE Keys#show
+** TODO Keys#show
 ** TODO Licenses#edit
 ** TODO Licenses#show
 ** TODO Memberships#edit
 ** TODO Memberships#index
 ** TODO Memberships#new
 ** TODO MergeRequests#edit
-** TODO MergeRequests#index
+** DONE MergeRequests#index
 ** TODO MergeRequests#legacy
 ** TODO MergeRequests#new
 ** TODO MergeRequests#show
@@ -61,7 +56,7 @@
 ** DONE PasswordResets#new
 ** DONE PasswordResets#reset
 ** DONE Passwords#edit
-** TODO ProjectMemberships#index
+** DONE ProjectMemberships#index
 ** DONE ProjectOwnerships#edit
 ** DONE ProjectCommunity#index
 ** DONE Projects#confirm_delete
