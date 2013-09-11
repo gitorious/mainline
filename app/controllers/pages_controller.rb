@@ -51,7 +51,7 @@ class PagesController < ApplicationController
     page = Page.find(params[:id], @project.wiki_repository.git)
 
     if page.new?
-      redirect_to(edit_project_page_path(project, params[:id])) and return if logged_in?
+      redirect_to(edit_project_page_path(@project, params[:id])) and return if logged_in?
       render("no_page", :locals => {
           :project => ProjectPresenter.new(@project),
           :page => page
