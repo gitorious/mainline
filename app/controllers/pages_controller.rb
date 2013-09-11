@@ -54,8 +54,12 @@ class PagesController < ApplicationController
   end
 
   def edit
-    @page, @root = page_and_root
-    @page.user = current_user
+    page = Page.find(params[:id], @project.wiki_repository.git)
+    page.user = current_user
+    render("edit", :layout => "ui3", :locals => {
+        :page => page,
+        :project => ProjectPresenter.new(@project)
+      })
   end
 
   def preview

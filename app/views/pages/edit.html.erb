@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
   #   Copyright (C) 2009 Marius Mathiesen <marius.mathiesen@gmail.com>
   #   Copyright (C) 2009 Tor Arne Vestbø <torarnv@gmail.com>
@@ -19,40 +19,49 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+<%= partial("projects/header", {
+        :project => project,
+        :app => Gitorious,
+        :active => :wiki,
+        :header_level => 2
+      }) %>
 
-<%= breadcrumbs_from(@root) -%>
+<% action = page.new? ? t("views.common.creating") : t("views.common.editing") + " #{t("views.pages.page")}" -%>
 
-<h1>
-  <%= @page.new? ? t("views.common.creating") : t("views.common.editing") -%>
-  <%= t("views.pages.page") -%> <%= link_to h(@page.title), project_page_path(@project, @page.title) -%>
-</h1>
-
-<% if @page.new? -%>
-  <%= help_box(:middle, :error) do -%>
-    <p>The page "<%=h params[:id] -%>" does not exist yet. You can create it below if
-      you like.</p>
+<% @title = "#{action} #{page.title}" %>
+<div class="container">
+  <h1><%= action %> <%= link_to(h(page.title), project_page_path(project, page.title)) -%></h1>
+  <% if page.new? -%>
+    <div class="alert">
+      <p>
+        The page "<%=h page.title -%>" does not exist yet. You can create it
+        below if you like.
+      </p>
+    </div>
   <% end -%>
-<% end -%>
 
-
-<%= form_for [@project, @page] do |f| -%>
-<p class="hint">
-  <%= t("views.common.markdown_format_with_help").html_safe -%>
-  <%= t("views.pages.wikiwords_syntax") -%>
-</p>
-
-<p>
-  <%= render_markdown_help -%>
-</p>
-
-<div id="page_preview" style="display:none">
+  <%= form_for([project, page], :builder => Gitorious::View::FormBuilder) do |f| -%>
+    <div class="row-fluid">
+      <div class="span6">
+        <div class="control-group">
+          <div class="controls">
+            <%= f.text_area(:content, {
+                    :class => "gts-live-markdown-preview",
+                    :"data-gts-preview-target" => "markdown-preview-content",
+                    :rows => 25,
+                    :style => "width: 100%"
+                  }) %>
+            <p class="help-block">
+              Use <a data-toggle="collapse" data-target="#markdown-help-content" class="dropdown-toggle" href="#markdown-help-content">Markdown</a> for formatting
+            </p>
+            <%= f.markdown_help(:content) %>
+            <%= f.submit(:class => "btn btn-primary") -%>
+          </div>
+        </div>
+      </div>
+      <div class="span6" id="markdown-preview-content" class="gts-markdown-preview help-block">
+        <div></div>
+      </div>
+    </div>
+  <% end -%>
 </div>
-
-<%= f.text_area :content, :class => "text fill taller" -%><br />
-<%= f.submit -%>
-<%= button_to_function("Show preview", "toggle_wiki_preview('#{preview_project_page_path(@project,@page)}')", :id => "wiki_preview_toggler", :class => "preview") %>
-
-
-<%= t("views.pages.or_back_to_page",
-      :page_link => link_to(@page.title, project_page_path(@project, @page.title))).html_safe -%>
-<% end -%>

@@ -8,7 +8,7 @@
 ** TODO Color picker for merge request statuses (projects/edit)
 ** TODO Auto-complete for users/teams in collaborator/committership form
 ** TODO Repository browser needs to check authorization
-* Views to port to UI3 [35/75]
+* Views to port to UI3 [37/75]
 ** DONE Admin::Diagnostics#index
 ** DONE Admin::OauthSettings#edit
 ** DONE Admin::ProjectProposals#index
@@ -49,7 +49,7 @@
 ** TODO Messages#sent
 ** TODO Messages#show
 ** TODO OpenIdUsers#new
-** TODO Pages#edit
+** DONE Pages#edit
 ** DONE Pages#git_access
 ** TODO Pages#history
 ** TODO Pages#index
