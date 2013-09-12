@@ -17,10 +17,9 @@
   #++
   %>
 <% if services.count > 0 %>
-  <table class="table table-striped">
+  <table class="table table-striped service-stats">
     <thead>
       <tr>
-        <td class="gts-cell-big">Name</td>
         <td class="gts-cell-small">Runs</td>
         <td class="gts-cell-small">Last response</td>
         <td class="gts-cell-small">Created by</td>
@@ -30,7 +29,6 @@
     <tbody>
       <% services.each do |service| %>
         <tr>
-          <td><%= service.name %></td>
           <td><%= service.runs %></td>
           <td><%= service.last_response %></td>
           <td>

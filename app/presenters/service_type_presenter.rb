@@ -34,6 +34,7 @@ class ServiceTypePresenter
   def service_type
     type.service_type
   end
+  alias_method :name, :service_type
 
   def label
     type.label

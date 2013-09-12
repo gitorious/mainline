@@ -30,9 +30,9 @@ class ServicesController < ApplicationController
 
   def index
     render(:index, :locals => {
-        :repository => RepositoryPresenter.new(repository),
-        :service_types => ServiceTypePresenter.for_repository(repository)
-      })
+      :repository => RepositoryPresenter.new(repository),
+      :service_types => ServiceTypePresenter.for_repository(repository)
+    })
   end
 
   def create
@@ -56,6 +56,12 @@ class ServicesController < ApplicationController
   end
 
   private
+
+  def active_tab
+    params.fetch(:service_type, 'web_hook')
+  end
+  helper_method :active_tab
+
   def repository
     return @repository if @repository
     project = authorize_access_to(Project.find_by_slug!(params[:project_id]))

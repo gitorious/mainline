@@ -1,0 +1,27 @@
+<%
+  #--
+#   Copyright (C) 2013 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+  %>
+
+<%= f.input :email, :as => 'email', :input_html => { :class => "input-xlarge" },
+  :hint => %(Email of your account on sprint.ly. You can check which email address you have registered <a href="https://sprint.ly/account/profile/">on your profile page</a>).html_safe %>
+
+<%= f.input :api_key, :label => "API key", :input_html => { :class => "input-xlarge" },
+  :hint => %(API key associated with your account on sprint.ly. You can find it <a href="https://sprint.ly/account/profile/">on your profile page</a>).html_safe %>
+
+<%= f.input :product_id, :label => "Product ID", :input_html => { :class => "input-xlarge" },
+  :hint => %(If your product URL looks like this: <code>https://sprint.ly/product/12345/#!/</code>, then your product id is <code>12345</code>).html_safe %>

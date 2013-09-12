@@ -18,9 +18,11 @@
 
 class Service::WebHook < Service::Adapter
   multiple
+
   label "Web Hooks"
 
   attributes :url
+
   validates_presence_of :url
   validate :valid_url_format
 

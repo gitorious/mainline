@@ -17,16 +17,5 @@
   #++
   %>
 
-<div class="control-group">
-  <%= f.label :url, :class => "control-label" -%>
-  <div class="controls">
-    <%= f.text_field :url, :class => "input-xlarge" -%>
-    <p class="help-block">
-    A payload will be <code>POST</code>-ed to this URL everytime someone
-    pushes to this repository.
-    </p>
-  </div>
-</div>
-<div class="form-actions">
-  <button class="btn btn-primary" type="submit">Add hook</button>
-</div>
+<%= f.input :url, :label => 'URL', :input_html => { :class => 'input-xlarge' },
+  :hint => %(A payload will be <code>POST</code>-ed to this URL everytime someone pushes to this repository).html_safe %>

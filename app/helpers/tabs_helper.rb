@@ -17,14 +17,22 @@ module TabsHelper
     active   = (names.include?(params[:tab]) && params[:tab]) || options[:active]
 
     content_tag(:div, :class => "tabbable tabs-#{position}") {
-      html =  nav_tabs(tabs, active)
+      opts = {
+        :active => active,
+        :class  => options.fetch(:nav, %w(nav nav-tabs))
+      }
+
+      html =  nav_tabs(tabs, opts)
       html << tab_content(&block) if block
       html
     }.html_safe
   end
 
-  def nav_tabs(tabs, active)
-    content_tag(:ul, :class => 'nav nav-tabs', :data => { :active => active }) {
+  def nav_tabs(tabs, opts = {})
+    active  = opts.fetch(:active, false)
+    classes = opts.fetch(:class)
+
+    content_tag(:ul, :class => classes, :data => { :active => active }) {
       tabs.map { |name, path|
         class_names = []
         class_names << 'active' if name == active

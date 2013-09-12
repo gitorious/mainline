@@ -195,7 +195,9 @@
         :change_password => 'Change password',
         :manage_favorites => 'Manage favorites',
         :activities => 'News feed',
-        :user_activities => 'Your activities'
+        :user_activities => 'Your activities',
+        :sprintly => 'Sprint.ly',
+        :web_hook => 'Web hooks'
       },
       :layout => {
         :system_notice => "System notice",

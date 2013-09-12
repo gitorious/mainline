@@ -16,28 +16,35 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-  <%= repo_header repository, :current_user => current_user, :active => :admin, :header_level => 2 %>
+<%= repo_header(repository, {
+        :current_user => current_user,
+        :active => :admin,
+        :header_level => 2
+    }) %>
 
 <% @title = "Services for #{repository.slug}" %>
+
 <div class="container">
-  <div class="row">
-    <div class="span8">
-      <h1>Services for <a href="<%= project_repository_path(repository.project, repository) %>"><%= repository.slug %></a></h1>
-      <% service_types.each do |service_type| %>
-        <div>
-          <h2><%= service_type.label %></h2>
-          <%= partial "services/stats", :services => service_type.services, :repository => repository %>
-          <%= error_messages(service_type.adapter) -%>
-          <%= form_for(service_type.adapter, :as => :service, 
-                       :url => create_project_repository_services_path(repository.project, repository, service_type.service_type),
-                       :method => "post",
-                       :html => { :class => "form-horizontal" }) do |f| %>
-            <fieldset>
-              <%= partial service_type.template_path, :f => f %>
-            </fieldset>
+  <div class="services-admin">
+    <%= tabbable({ 'services' => project_repository_services_path(repository.project, repository) },
+      { :active => 'services' }) %>
+
+    <%= tab_pane :services, :active => true do %>
+      <%= tabbable service_types.map(&:name), :nav => 'nav nav-pills nav-stacked span2', :active => active_tab do %>
+        <% service_types.each do |service_type| %>
+          <%= tab_pane service_type.name, :active => active_tab == service_type.name do %>
+            <%= render("form", :service_type => service_type, :repository => repository) %>
           <% end %>
-        </div>
+        <% end %>
       <% end %>
-    </div>
+    <% end %>
   </div>
 </div>
+
+<script type="text/javascripts">
+  $(function() {
+    $(document).on('submit', '.service-admin form', function(event) {
+      $.pjax.submit(event, $(this).parents('.tab-content'));
+    });
+  });
+</script>

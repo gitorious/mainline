@@ -1,0 +1,16 @@
+<%= simple_form_for(service_type.adapter, :as => :service,
+             :url => create_project_repository_services_path(repository.project, repository, service_type.service_type),
+             :method => "post",
+             :html => { :id => "new_#{service_type.name}_service", :class => "form-horizontal" }) do |f| %>
+  <fieldset>
+    <legend>
+      <%= t("views.tabs.#{service_type.name}") %>
+    </legend>
+    <%= render("stats", :services => service_type.services, :repository => repository) %>
+    <%= render(service_type.template_path, :f => f) %>
+  </fieldset>
+
+  <div class="form-actions">
+    <%= f.submit t('views.common.save'), :class => 'btn btn-primary' %>
+  </div>
+<% end %>
