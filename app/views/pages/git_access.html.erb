@@ -16,8 +16,9 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= partial("projects/header", {
-        :project => project,
+<% type = owner.class.model_name.underscore %>
+<%= partial("#{type.pluralize}/header", {
+        type.to_sym => owner,
         :app => Gitorious,
         :active => :wiki,
         :header_level => 2
@@ -25,19 +26,19 @@
 
 <div class="container">
   <%= render(:partial => "actions", :locals => {
-          :project => project,
+          :owner => owner,
           :active => :git
         }) %>
   <h1><%= @title = "Git access to the wiki" %></h1>
   <p>
-    The project wiki is a Git repository containing Markdown formatted
-    files/pages. You can clone the repository, and if you have access to it, you
-    may even make local changes and push them to Gitorious.
+    The wiki is a Git repository containing Markdown formatted files/pages. You
+    can clone the repository, and if you have access to it, you may even make
+    local changes and push them to Gitorious.
   </p>
   <h3>To clone this wiki:</h3>
   <% if logged_in? && can_push?(current_user, wiki_repository) -%>
-    <p><pre>git clone <%= writable_wiki_url(project) -%></pre></p>
+    <p><pre>git clone <%= writable_wiki_url(owner) -%></pre></p>
   <% else -%>
-    <p><pre>git clone <%= regular_wiki_url(project) -%></pre></p>
+    <p><pre>git clone <%= regular_wiki_url(owner) -%></pre></p>
   <% end -%>
 </div>

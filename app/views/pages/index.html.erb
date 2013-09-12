@@ -17,8 +17,9 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= partial("projects/header", {
-        :project => project,
+<% type = owner.class.model_name.underscore %>
+<%= partial("#{type.pluralize}/header", {
+        type.to_sym => owner,
         :app => Gitorious,
         :active => :wiki,
         :header_level => 2
@@ -26,15 +27,15 @@
 
 <div class="container">
   <%= render(:partial => "actions", :locals => {
-          :project => project,
+          :owner => owner,
           :active => :index
         }) %>
-  <h1><%= @title = "#{project.title} Wiki pages" %></h1>
+  <h1><%= @title = "#{owner.title} Wiki pages" %></h1>
   <ul>
     <% tree_nodes.each do |node| -%>
       <li><%= link_to(
                 page_node_name(node),
-                project_page_path(project, page_node_name(node))
+                wiki_page_path(owner, page_node_name(node))
               )-%></li>
     <% end -%>
   </ul>

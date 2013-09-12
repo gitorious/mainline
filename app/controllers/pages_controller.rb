@@ -17,62 +17,32 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "gitorious/view/form_builder"
+require "wiki_controller"
 
-class PagesController < ApplicationController
+class PagesController < WikiController
   before_filter :login_required, :except => [:index, :show, :git_access]
   before_filter :find_project
   before_filter :check_if_wiki_enabled
   before_filter :assert_readyness
   before_filter :require_write_permissions, :only => [:edit, :update]
   renders_in_site_specific_context
-  layout "ui3"
 
   def index
-    respond_to do |format|
-      format.html do
-        render("index", :locals => {
-            :project => ProjectPresenter.new(@project),
-            :atom_auto_discovery_url => project_pages_path(:format => :atom),
-            :tree_nodes => @project.wiki_repository.git.tree.contents.select do |n|
-              n.name =~ /\.#{Page::DEFAULT_FORMAT}$/
-            end
-          })
-      end
-      format.atom do
-        expires_in 30.minutes
-        render("index", :locals => {
-            :commits => @project.wiki_repository.git.commits("master", 30),
-            :project => @project
-          })
-      end
-    end
+    render_index(
+      ProjectPresenter.new(@project),
+      @project.wiki_repository.git,
+      project_pages_path(:format => :atom))
   end
 
   def show
     page = Page.find(params[:id], @project.wiki_repository.git)
-
-    if page.new?
-      redirect_to(edit_project_page_path(@project, params[:id])) and return if logged_in?
-      render("no_page", :locals => {
-          :project => ProjectPresenter.new(@project),
-          :page => page
-        }) and return
-    end
-
-    render("show", :locals => {
-        :atom_auto_discovery_url => project_pages_path(:format => :atom),
-        :page => Page.find(params[:id], @project.wiki_repository.git),
-        :project => ProjectPresenter.new(@project)
-      })
+    render_show(ProjectPresenter.new(@project), page)
   end
 
   def edit
     page = Page.find(params[:id], @project.wiki_repository.git)
     page.user = current_user
-    render("edit", :locals => {
-        :page => page,
-        :project => ProjectPresenter.new(@project)
-      })
+    render_edit(ProjectPresenter.new(@project), page)
   end
 
   def preview
@@ -106,23 +76,11 @@ class PagesController < ApplicationController
 
   def history
     page = Page.find(params[:id], @project.wiki_repository.git)
-    redirect_to(edit_project_page_path(project, page)) if page.new? and return
-    commits = page.history(30)
-
-    render("history", :locals => {
-        :page => page,
-        :project => ProjectPresenter.new(@project),
-        :wiki_repository => @project.wiki_repository,
-        :commits => commits,
-        :user_and_email_map => Repository.users_by_commits(commits)
-      })
+    render_page_history(ProjectPresenter.new(@project), @project.wiki_repository, page)
   end
 
   def git_access
-    render("git_access", :locals => {
-        :project => ProjectPresenter.new(@project),
-        :wiki_repository => @project.wiki_repository
-      })
+    render_git_access(ProjectPresenter.new(@project), @project.wiki_repository)
   end
 
   protected
@@ -150,5 +108,32 @@ class PagesController < ApplicationController
       flash[:error] = "This project has restricted wiki editing to project members"
       redirect_to project_pages_path(@project)
     end
+  end
+
+  helper_method :page_history_path
+  helper_method :wiki_index_path
+  helper_method :wiki_page_path
+  helper_method :wiki_git_access_path
+  helper_method :edit_wiki_page_path
+
+  # Helpers
+  def wiki_index_path(project, format = nil)
+    project_pages_path(project, format)
+  end
+
+  def wiki_page_path(project, page)
+    project_page_path(project, page)
+  end
+
+  def wiki_git_access_path(project)
+    git_access_project_pages_path(project)
+  end
+
+  def edit_wiki_page_path(project, page)
+    edit_project_page_path(project, page)
+  end
+
+  def page_history_path(project, page, format = nil)
+    history_project_page_path(project, page, format)
   end
 end

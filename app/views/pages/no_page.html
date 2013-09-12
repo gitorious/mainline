@@ -19,8 +19,9 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= partial("projects/header", {
-        :project => project,
+<% type = owner.class.model_name.underscore %>
+<%= partial("#{type.pluralize}/header", {
+        type.to_sym => owner,
         :app => Gitorious,
         :active => :wiki,
         :header_level => 2
@@ -28,7 +29,7 @@
 
 <div class="container">
   <h1>
-    <%= link_to h(page.title), project_page_path(project, page.title) -%>
+    <%= link_to h(page.title), wiki_page_path(owner, page.title) -%>
     does not exist
   </h1>
   <p>

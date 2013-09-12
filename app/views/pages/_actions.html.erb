@@ -19,22 +19,22 @@
   %>
 <% if defined?(page) %>
   <p class="pull-right" style="margin-bottom: -1px;">
-    <a class="btn btn-primary" href="<%= edit_project_page_path(project, page.title) %>">
+    <a class="btn btn-primary" href="<%= edit_wiki_page_path(owner, page.title) %>">
       <i class="icon icon-pencil"></i>
       <%= t("views.common.edit") + " " + t("views.pages.page") %>
     </a>
   </p>
   <ul class="nav nav-tabs">
-    <%= options = [[:show, project_page_path(project, page.title), page.title]]
-        options << [:history, history_project_page_path(project, page.title), t("views.pages.history")]
-        options << [:git, git_access_project_pages_path(project), t("views.pages.git")]
-        options << [:index, project_pages_path(project), "Wiki index"]
+    <%= options = [[:show, wiki_page_path(owner, page.title), page.title]]
+        options << [:history, page_history_path(owner, page.title), t("views.pages.history")]
+        options << [:git, wiki_git_access_path(owner), t("views.pages.git")]
+        options << [:index, wiki_index_path(owner), "Wiki index"]
         header_navigation(options, :active => defined?(active) ? active : nil) %>
   </ul>
 <% else %>
   <ul class="nav nav-tabs">
-    <%= options = [[:git, git_access_project_pages_path(project), t("views.pages.git")]]
-        options << [:index, project_pages_path(project), "Wiki index"]
+    <%= options = [[:git, wiki_git_access_path(owner), t("views.pages.git")]]
+        options << [:index, wiki_index_path(owner), "Wiki index"]
         header_navigation(options, :active => defined?(active) ? active : nil) %>
   </ul>
 <% end %>

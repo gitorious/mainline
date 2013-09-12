@@ -19,8 +19,9 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= partial("projects/header", {
-        :project => project,
+<% type = owner.class.model_name.underscore %>
+<%= partial("#{type.pluralize}/header", {
+        type.to_sym => owner,
         :app => Gitorious,
         :active => :wiki,
         :header_level => 2
@@ -30,7 +31,7 @@
 
 <% @title = "#{action} #{page.title}" %>
 <div class="container">
-  <h1><%= action %> <%= link_to(h(page.title), project_page_path(project, page.title)) -%></h1>
+  <h1><%= action %> <%= link_to(h(page.title), wiki_page_path(owner, page.title)) -%></h1>
   <% if page.new? -%>
     <div class="alert">
       <p>
@@ -40,7 +41,7 @@
     </div>
   <% end -%>
 
-  <%= form_for([project, page], :builder => Gitorious::View::FormBuilder) do |f| -%>
+  <%= form_for([owner, page], :builder => Gitorious::View::FormBuilder) do |f| -%>
     <div class="row-fluid">
       <div class="span6">
         <div class="control-group">

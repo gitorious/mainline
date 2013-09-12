@@ -18,13 +18,13 @@
 #++
 
 namespaced_atom_feed do |feed|
-  feed.title("#{h(project.title)} Wiki changes")
+  feed.title("#{h(owner.title)} Wiki changes")
   feed.updated((commits.blank? ? nil : commits.first.committed_date))
 
   commits.each do |commit|
     # TODO: we only find the first page changed for now:
     first_page = commit.diffs.first.a_path.split(".").first
-    item_url = history_project_page_path(project, first_page, :html) rescue project_pages_path(project, :html)
+    item_url = page_history_path(owner, first_page, :html) rescue wiki_index_path(owner, :html)
     feed.entry(commit, {
       :url => item_url,
       :updated => commit.committed_date.utc,
