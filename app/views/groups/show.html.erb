@@ -17,19 +17,10 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%
-  description = ""
-  description << "<p>" if group.avatar? || !group.description.empty?
-  description << image_tag(group.avatar.url(:thumb)) if group.avatar?
-  description << render_markdown(group.description) if !group.description.empty?
-  description << "</p>" if group.avatar? || !group.description.empty?
-%>
-
 <%= render(:partial => "header", :locals => {
         :active => true,
         :title => @title = group.name,
-        :group => group,
-        :group_description => description
+        :group => group
       }) %>
 
 <div class="container gts-body">

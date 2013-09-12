@@ -17,12 +17,17 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+<%
+  description = ""
+  description << image_tag(group.avatar.url(:thumb)) if group.avatar?
+  description << render_markdown(group.description) if !group.description.empty?
+%>
 <div class="gts-site-header">
   <div class="container">
     <div class="row">
       <h1 class="span"><%= title %></h1>
     </div>
-    <%= group_description.html_safe if defined?(group_description) %>
+    <%= description.html_safe %>
     <% if group_admin?(group, current_user) %>
       <ul class="nav nav-tabs gts-header-nav">
         <li class="pull-right dropdown<%= ' active' if active %>">

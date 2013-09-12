@@ -32,7 +32,6 @@ class MembershipsControllerTest < ActionController::TestCase
     should "get memberships successfully" do
       get :index, :group_id => @group.to_param
       assert_response :success
-      assert_equal @group.memberships, assigns(:memberships)
     end
 
     should "not require admin for index" do
@@ -62,8 +61,9 @@ class MembershipsControllerTest < ActionController::TestCase
     should "requires group adminship on create" do
       login_as :moe
       assert_no_difference("@group.memberships.count") do
-        post :create, :group_id => @group.to_param, :membership => {:role_id => Role.admin.id},
-          :user => {:login => users(:mike).login }
+        post :create, :group_id => @group.to_param, :membership => {
+          :role_id => Role.admin.id, :login => users(:mike).login
+        }
       end
       assert_redirected_to(new_sessions_path)
     end
@@ -72,17 +72,20 @@ class MembershipsControllerTest < ActionController::TestCase
       user = users(:moe)
       assert !@group.members.include?(user)
       assert_difference("@group.memberships.count") do
-        post :create, :group_id => @group.to_param, :membership => {:role_id => Role.admin.id},
-          :user => {:login => user.login }
+        post :create, :group_id => @group.to_param, :membership => {
+          :role_id => Role.admin.id,
+          :login => user.login
+        }
       end
       assert_redirected_to(group_memberships_path(@group))
     end
 
     should "handle validation errors" do
       assert_no_difference("@group.memberships.count") do
-        post :create, :group_id => @group.to_param,
-        :membership => {:role_id => Role.admin.id},
-        :user => {:login => "no-such-user" }
+        post :create, :group_id => @group.to_param, :membership => {
+          :role_id => Role.admin.id,
+          :login => "no-such-user"
+        }
       end
       assert_response :success
       assert_template "new"
@@ -101,7 +104,6 @@ class MembershipsControllerTest < ActionController::TestCase
       membership = @group.memberships.first
       get :edit, :group_id => @group.to_param, :id => membership.to_param
       assert_response :success
-      assert_equal membership, assigns(:membership)
     end
 
     should "requires adminship on update" do

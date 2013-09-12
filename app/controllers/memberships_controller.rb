@@ -21,17 +21,25 @@ class MembershipsController < ApplicationController
   before_filter :find_group
   before_filter :ensure_group_adminship, :except => [:index, :show, :create]
   renders_in_global_context
+  layout "ui3"
 
   def index
-    @memberships = paginate(page_free_redirect_options) do
+    memberships = paginate(page_free_redirect_options) do
       @group.memberships.paginate(:page => params[:page])
     end
 
-    @root = Breadcrumb::Memberships.new(@group)
+    return if memberships.length == 0 && params.key?(:page)
+
+    render("index", :locals => {
+        :memberships => memberships,
+        :group => @group,
+        :total_pages => memberships.respond_to?(:total_pages) ? memberships.total_pages : 1,
+        :page => memberships.respond_to?(:current_page) ? memberships.current_page : 1
+      })
   end
 
   def show
-    redirect_to group_memberships_path(@group)
+    redirect_to(group_memberships_path(@group))
   end
 
   def new
@@ -39,7 +47,7 @@ class MembershipsController < ApplicationController
   end
 
   def create
-    input = { :login => params[:user][:login], :role => params[:membership][:role_id] }
+    input = { :login => params[:membership][:login], :role => params[:membership][:role_id] }
     outcome = CreateMembership.new(self, @group, current_user).execute(input)
 
     pre_condition_failed(outcome) do |f|
@@ -55,7 +63,10 @@ class MembershipsController < ApplicationController
   end
 
   def edit
-    @membership = @group.memberships.find(params[:id])
+    render("edit", :locals => {
+        :membership => @group.memberships.find(params[:id]),
+        :group => @group
+      })
   end
 
   def update
