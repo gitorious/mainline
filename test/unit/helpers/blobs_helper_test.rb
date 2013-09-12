@@ -69,7 +69,6 @@ class BlobsHelperTest < ActionView::TestCase
       assert !textual?(blob_with_name("foo.png", File.read(Rails.root + "public/images/rails.png")))
       assert !textual?(blob_with_name("foo.gif", "GIF89a\v\x00\r\x00\xD5!\x00\xBD"))
       assert !textual?(blob_with_name("foo.exe", "rabuf\06si\000ezodniw"))
-      assert !textual?(blob_with_name("foo", "a"*1024 + "\000"))
 
       assert image?(blob_with_name("foo.png"))
       assert image?(blob_with_name("foo.gif"))

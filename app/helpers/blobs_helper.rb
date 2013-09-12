@@ -22,6 +22,7 @@
 module BlobsHelper
   include RepositoriesHelper
   include TreesHelper
+  include Dolt::View::Blob
 
   HIGHLIGHTER_TO_EXT = {
     "apollo"=> /\.(apollo|agc|aea)$/,
@@ -46,7 +47,7 @@ module BlobsHelper
   end
 
   def binary?(blob)
-    blob.binary?
+    super(blob.data)
   end
 
   def image?(blob)
