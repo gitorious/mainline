@@ -29,13 +29,24 @@ class CommentsController < ApplicationController
   renders_in_site_specific_context
 
   def index
-    @comments = @target.comments.includes(:user)
-    @merge_request_count = @repository.merge_requests.count_open
-    @atom_auto_discovery_url = project_repository_comments_path(@project, @repository,
-      :format => :atom)
+    locals = {
+      :repository => RepositoryPresenter.new(@repository),
+      :project => @project,
+      :comments => @target.comments.includes(:user)
+    }
+
     respond_to do |format|
-      format.html { }
-      format.atom { }
+      format.html do
+        render("index", :layout => "ui3", :locals => locals.merge({
+              :merge_request_count => @repository.merge_requests.count_open,
+              :atom_auto_discovery_url => project_repository_comments_path(
+                @project,
+                @repository,
+                :format => :atom
+                )
+            }))
+      end
+      format.atom { render("index", :locals => locals) }
     end
   end
 

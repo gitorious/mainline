@@ -33,7 +33,6 @@ class CommentsControllerTest < ActionController::TestCase
     should "scopes to project.repositories" do
       get :index, repo_params
       assert_response :success
-      assert !assigns(:comments).include?(comments(:moes_repos))
     end
   end
 
