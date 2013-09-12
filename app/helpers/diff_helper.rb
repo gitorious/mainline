@@ -127,8 +127,6 @@ module DiffHelper
 <div class="gts-file">
   <ul class="breadcrumb">
     <li class="gts-diff-summary">
-      <a href="/files"><i class="icon icon-file"></i> app/models/repository.rb</a>
-      (<span class="gts-diff-add">+45</span>/<span class="gts-diff-rm">-22</span>)
     </li>
   </ul>
   <table class="gts-code-listing">
