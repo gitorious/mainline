@@ -41,6 +41,13 @@ class MergeRequestTest < ActiveSupport::TestCase
     clear_message_queue
   end
 
+  def equal_refs(refs, other_refs)
+    refs = refs.map { |ref| [ref.name, ref.commit.id] }
+    other_refs = other_refs.map { |ref| [ref.name, ref.commit.id] }
+
+    refs == other_refs
+  end
+
   should validate_presence_of(:user)
   should validate_presence_of(:source_repository)
   should validate_presence_of(:target_repository)
@@ -363,7 +370,8 @@ class MergeRequestTest < ActiveSupport::TestCase
     @merge_request.target_repository = repo
     grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
     repo.stubs(:git).returns(grit)
-    assert_equal grit.heads, @merge_request.target_branches_for_selection
+
+    assert equal_refs(grit.heads, @merge_request.target_branches_for_selection)
   end
 
   context "with specific starting and ending commits" do
