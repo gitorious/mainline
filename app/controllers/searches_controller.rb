@@ -25,7 +25,7 @@ class SearchesController < ApplicationController
   renders_in_global_context
 
   def show
-    unless params[:q].blank?
+    if params[:q].present?
       @all_results = nil  # The unfiltered search result from TS
       @results = filter_paginated(params[:page], PER_PAGE) do |page|
         begin
@@ -49,6 +49,8 @@ class SearchesController < ApplicationController
       filtered_results_length = @results.length
       @total_entries = @all_results.total_entries - (unfiltered_results_length - filtered_results_length)
     end
+
+    render :layout => 'ui3'
   end
 
   private

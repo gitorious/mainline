@@ -22,58 +22,75 @@
   %>
 
 <% @page_title = @search.blank? ? t("views.searches.search") : t("views.searches.page_title", :term => h(params[:q])) -%>
-<h1><%= @page_title -%></h1>
 
-<% if @results -%>
-  <p class="hint search_time">
-    <small><%= t("views.searches.found", :count => @total_entries, :time => @all_results.query_time) %></small>
-  </p>
-<% end -%>
-
-<%= render :partial => "search_box", :locals => {:hide_tips => false} -%>
-
-<div class="search_results">
-  <% if @results -%>
-    <% if @results.empty? -%>
-      <p><%= t("views.searches.no_results", :term => h(force_utf8(params[:q]))) %></p>
-    <% else -%>
-      <% @results.each do |result| -%>
-        <div class="item">
-          <%= render :partial => "result", :object => presenter(result) -%>
-        </div>
-      <% end -%>
-      <%= render_pagination_links (@results) -%>
+<div class="gts-site-header">
+  <div class="container">
+    <h1><%= @page_title -%></h1>
+    <% if @results -%>
+      <p class="hint search_time">
+        <small><%= t("views.searches.found", :count => @total_entries, :time => @all_results.query_time) %></small>
+      </p>
     <% end -%>
-  <% end -%>
+    <%= render "search_box", :hide_tips => false %>
+  </div>
 </div>
 
-<%= content_for :sidebar do -%>
-  <h2>Tips for searching</h2>
-  <p>
-    Any combination of the following keys can be used to narrow down
-    the search results, simply type <code>key:text</code> into the search field
-    to search for <em>text</em> within the scope of the <em>key</em> described below:
-  </p>
-
-  <ul class="search-tips">
-    <h4>Projects</h4>
-    <li><code>@title</code> Project title</li>
-    <li><code>@description</code> Project description</li>
-    <li><code>@slug</code> Project slug</li>
-    <li><code>@category</code> Project label</li>
-    <li><code>@user</code> Project creator username</li>
-  </ul>
-
-  <ul class="search-tips">
-    <h4>Repositories</h4>
-    <li><code>@name</code> Repository name</li>
-    <li><code>@description</code> Repository description</li>
-  </ul>
-
-  <ul class="search-tips">
-    <h4>Merge Requests</h4>
-    <li><code>@proposal</code> Merge request proposal body</li>
-    <li><code>@proposed_by</code> Merge request creator username</li>
-    <li><code>@status </code> Merge request status</li>
-  </ul>
-<% end %>
+<div class="container">
+  <div class="row-fluid">
+    <div class="span7">
+      <% if @results -%>
+        <% if @results.empty? -%>
+          <p class="well no-results-box">
+            <%= t("views.searches.no_results", :term => h(force_utf8(params[:q]))) %>
+          </p>
+        <% else -%>
+          <dl class="search-results">
+            <% @results.each do |result| -%>
+              <%= render "result", :result => presenter(result) %>
+            <% end -%>
+          </dl>
+          <%= render_pagination_links (@results) -%>
+        <% end -%>
+      <% end -%>
+    </div>
+    <% if @results.empty? %>
+      <div class="span5">
+        <div class="well search-tips">
+          <h2>Tips for searching</h2>
+          <p>
+            Any combination of the following keys can be used to narrow down
+            the search results, simply type <code>key:text</code> into the search field
+            to search for <em>text</em> within the scope of the <em>key</em> described below:
+          </p>
+          <dl>
+            <dt>Projects</dt>
+            <dd>
+              <ul class="unstyled">
+                <li><code>@title</code> Project title</li>
+                <li><code>@description</code> Project description</li>
+                <li><code>@slug</code> Project slug</li>
+                <li><code>@category</code> Project label</li>
+                <li><code>@user</code> Project creator username</li>
+              </ul>
+            </dd>
+            <dt>Repositories</dt>
+            <dd>
+              <ul class="unstyled">
+                <li><code>@name</code> Repository name</li>
+                <li><code>@description</code> Repository description</li>
+              </ul>
+            </dd>
+            <dt>Merge Requests</dt>
+            <dd>
+              <ul class="unstyled">
+                <li><code>@proposal</code> Merge request proposal body</li>
+                <li><code>@proposed_by</code> Merge request creator username</li>
+                <li><code>@status </code> Merge request status</li>
+              </ul>
+            </dd>
+          </dl>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

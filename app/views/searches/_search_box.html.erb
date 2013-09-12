@@ -24,10 +24,10 @@
 <% hide_tips ||= false -%>
 
 <div class="search_bar_results">
-  <%= form_for :search, :url => search_path, :html => { :method => "get" } do |f| -%>
+  <%= form_for :search, :url => search_path, :html => { :method => "get", :class => 'form-search' } do |f| -%>
   <p>
-    <%= text_field_tag :q, params[:q], :class => "text search-field round-5" -%>
-    <input type="submit" value="<%= t("views.searches.search") %>" class="search-submit round-5" />
+    <%= text_field_tag :q, params[:q], :class => "input-xxlarge search-query" -%>
+    <input type="submit" value="<%= t("views.searches.search") %>" class="btn" />
   </p>
   <p class="hint search-hint" style="display: none;">
     <%= t("views.searches.hint") %>

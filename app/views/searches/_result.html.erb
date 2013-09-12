@@ -16,11 +16,15 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<h3><%= link_to(truncate(h(result.title), :length => 40), result.url) %></h3>
-<p>
-  <%= truncate(h(result.body), :length => 250) %>
-</p>
 
-<p class="hint">
-  <%= result.summary %>
-</p>
+<dt>
+  <%= link_to(truncate(h(result.title), :length => 40), result.url) %>
+</dt>
+<dd>
+  <div class="muted">
+    <%= truncate(h(result.body), :length => 250) %>
+  </div>
+  <div class="hint">
+    <%= result.summary %>
+  </div>
+</dd>
