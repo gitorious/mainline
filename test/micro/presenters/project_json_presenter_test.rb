@@ -27,6 +27,7 @@ class App
   def admin?(user, project); @is_admin; end
   def site_admin?(user); @is_admin; end
   def edit_project_path(p); "/#{p.to_param}/edit"; end
+  def edit_slug_project_path(p); "/#{p.to_param}/edit_slug"; end
   def confirm_delete_project_path(p); "/#{p.to_param}/confirm_delete"; end
   def transfer_ownership_project_path(p); "/#{p.to_param}/ownership/edit"; end
   def new_project_repository_path(p); "/#{p.to_param}/repositories/new"; end
@@ -58,6 +59,7 @@ class ProjectJSONPresenterTest < MiniTest::Spec
 
       paths = presenter.hash_for(@user)["project"]["admin"]
       assert_equal "/project/edit", paths["editPath"]
+      assert_equal "/project/edit_slug", paths["editSlugPath"]
       assert_equal "/project/confirm_delete", paths["destroyPath"]
       assert_equal "/project/ownership/edit", paths["ownershipPath"]
       assert_equal "/project/repositories/new", paths["newRepositoryPath"]

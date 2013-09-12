@@ -136,19 +136,19 @@ class ProjectsController < ApplicationController
   end
 
   def edit_slug
-    @root = Breadcrumb::EditProject.new(@project)
     if request.put?
       @project.slug = params[:project][:slug]
       begin
         @project.save
         @project.create_event(Action::UPDATE_PROJECT, @project, current_user)
         flash[:success] = "Project slug updated"
-        redirect_to :action => :show, :id => @project.slug and return
+        redirect_to(:action => :show, :id => @project.slug) and return
       rescue ActiveRecord::RecordNotUnique
         @project.reload
         flash[:error] = "The slug isn't unique"
       end
     end
+    render("edit_slug", :layout => "ui3", :locals => { :project => @project })
   end
 
   def update

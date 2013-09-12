@@ -39,6 +39,7 @@ class ProjectJSONPresenter
   def project_admin_hash(user)
     hash = { "admin" => {
         "editPath" => app.edit_project_path(project),
+        "editSlugPath" => app.edit_slug_project_path(project),
         "destroyPath" => app.confirm_delete_project_path(project),
         "ownershipPath" => app.transfer_ownership_project_path(project),
         "newRepositoryPath" => app.new_project_repository_path(project)

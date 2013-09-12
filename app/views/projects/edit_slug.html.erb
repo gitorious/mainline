@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -17,22 +17,35 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+<%= partial("projects/header", {
+        :project => ProjectPresenter.new(project),
+        :app => Gitorious,
+        :active => :admin,
+        :header_level => 2
+      }) %>
 
-<%= breadcrumbs_from(@root) -%>
-
-<h1><%= t("views.projects.edit_slug_title", :link => link_to( h(@project.title), project_path(@project))) -%></h1>
-
-<%= error_messages(@project) -%>
-<%= form_for(@project, :url => edit_slug_project_path(@project), :method => "put") do |f| -%>
-
-  <div class="info_hint">
-    <%= t('views.projects.edit_slug_disclaimer').html_safe %>
+<% @title = "Edit #{project.title} URL string" %>
+<div class="container">
+  <h1><%= t("views.projects.edit_slug_title", :link => link_to(h(project.title), project_path(project))) -%></h1>
+  <div class="row-fluid">
+    <div class="span8">
+      <%= error_messages(project) -%>
+      <%= simple_form_for(project, {
+              :as => :project,
+              :url => edit_slug_project_path(project),
+              :method => "put",
+              :html => { :class => "form-horizontal" }
+            }) do |form| -%>
+        <fieldset>
+          <%= form.input(:slug, {
+                  :label => t(:slug, :scope => "activerecord.attributes.project"),
+                  :hint => t('views.projects.edit_slug_disclaimer').html_safe
+                }) %>
+          <div class="form-actions">
+            <%= form.submit(t("views.projects.update_slug"), :class => "btn btn-primary") -%>
+          </div>
+        </fieldset>
+      <% end -%>
+    </div>
   </div>
-
-  <p>
-    <%= f.label :slug, t(:slug, :scope => 'activerecord.attributes.project') -%><br />
-    <%= f.text_field :slug -%>
-  </p>
-
-  <%= f.submit t("views.projects.update_slug") -%>
-<% end -%>
+</div>
