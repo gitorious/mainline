@@ -72,7 +72,7 @@ class Site < ActiveRecord::Base
   # special case. Only need the bare minimum: no hooks, only empty executable
   # pre-receive so that we can push.
   def setup_minimal_hooks
-    FileUtils.rm(wiki_git_path+"/hooks");
+    FileUtils.rm(wiki_git_path+"/hooks", :force => true);
     FileUtils.mkdir(wiki_git_path+"/hooks");
     FileUtils.touch(wiki_git_path+"/hooks/pre-receive");
     FileUtils.chmod(0755, wiki_git_path+"/hooks/pre-receive");
