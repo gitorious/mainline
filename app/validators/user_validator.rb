@@ -63,6 +63,7 @@ UserValidator = UseCase::Validator.define do
   end
 
   protected
+
   def password_required?
     !openid? && (crypted_password.blank? || !password.blank?)
   end

@@ -280,7 +280,7 @@
         :forgot_title => "Forgot your password?",
         :send_new_passwd => 'Send me a new password',
         :openid_build_title => 'Complete your registration',
-        :openid_build_description => 'You need enter the following details:',
+        :openid_build_description => 'You need to enter the following details:',
         :create_title => "Create new user or <a href=\"%{path}\">login directly with your OpenID</a>",
         :create_description => "Creating a user account allows you to create your own project or participate in the development of any project.",
         :wants_email_notifications => 'Send email notifications?',

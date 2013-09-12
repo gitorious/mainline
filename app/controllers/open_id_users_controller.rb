@@ -23,18 +23,19 @@ class OpenIdUsersController < ApplicationController
   before_filter :require_openid_enabled
 
   def new
-    render_template("new", :user => User.new({
-          :identity_url => session[:openid_url],
-          :email => session[:openid_email],
-          :fullname => session[:openid_fullname],
-          :login => session[:openid_nickname]
-        }))
+    user = User.new(
+      :identity_url => session[:openid_url],
+      :email => session[:openid_email],
+      :fullname => session[:openid_fullname],
+      :login => session[:openid_nickname]
+    )
+    render_new(user)
   end
 
   def create
     outcome = CreateOpenIdUser.new.execute(params[:user].merge(:identity_url => session[:openid_url]))
     pre_condition_failed(outcome)
-    outcome.failure { |user| render_template("new", :user => user) }
+    outcome.failure { |user| render_new(user) }
 
     outcome.success do |user|
       [:openid_url, :openid_email, :openid_nickname, :openid_fullname].each do |k|
@@ -47,11 +48,19 @@ class OpenIdUsersController < ApplicationController
   end
 
   protected
+
   def require_identity_url_in_session
-    redirect_to :action => "new" if session[:openid_url].blank?
+    if session[:openid_url].blank?
+      flash[:error] = 'OpenID URL must be provided'
+      redirect_to login_path(:method => 'openid')
+    end
   end
 
   def require_openid_enabled
-    render_unauthorized if !Gitorious::OpenID.enabled?
+    render_unauthorized unless Gitorious::OpenID.enabled?
+  end
+
+  def render_new(user)
+    render_template("new", { :user => user }, { :layout => 'ui3' })
   end
 end

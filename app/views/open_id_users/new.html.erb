@@ -17,29 +17,31 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<h1><%= t("views.users.openid_build_title") %></h1>
-<p><%= t("views.users.openid_build_description") %></p>
 
-<%= error_messages(user) %>
-<%= form_for(user, :as => :user, :url => { :action => "create" }) do |f| -%>
-  <p>
-    <%= f.label :login, t(:login, :scope => "activerecord.attributes.user") -%><br/>
-    <%= f.text_field :login -%>
-  </p>
-  <p>
-    <%= f.label :email, t(:email, :scope => "activerecord.attributes.user") -%><br/>
-    <%= f.text_field :email -%>
-  </p>
-  <p>
-    <%= f.label :fullname, t(:fullname, :scope => 'activerecord.attributes.user') -%><br/>
-    <%= f.text_field :fullname -%>
-  </p>
-  <div class="eula">
-    <a href="<%= Gitorious::View.terms_of_service_url %>" target="_blank">Terms of Service</a>
+<div class="gts-site-header">
+  <div class="container">
+    <h1><%= t("views.users.openid_build_title") %></h1>
   </div>
-  <p>
-    <%= f.check_box :terms_of_use  -%>
-    <label for="user_terms_of_use">I accept the Terms of Use</label>
-  </p>
-  <p><%= f.submit t("views.common.signup") %></p>
-<%- end -%>
+</div>
+
+<div class="container">
+  <div class="row-fluid">
+    <div class="openid-signup">
+      <%= simple_form_for(user, :as => :user, :url => { :action => "create" }, :html => { :class => 'form-horizontal form-large-labels' }) do |f| %>
+        <fieldset>
+          <legend>
+            <p><%= t("views.users.openid_build_description") %></p>
+          </legend>
+          <%= f.input :email, :as => :email, :required => true, :label => t(:email, :scope => "activerecord.attributes.user") %>
+          <%= f.input :login, :label => t(:login, :scope => "activerecord.attributes.user") %>
+          <%= f.input :fullname, :label => t(:fullname, :scope => "activerecord.attributes.user") %>
+          <%= f.input :terms_of_use, :as => :boolean,
+            :label => %(I accept the #{link_to('Terms of Service', Gitorious::View.terms_of_service_url)}).html_safe %>
+          <div class="form-actions">
+            <%= f.submit t("views.common.signup"), :class => 'btn btn-primary' %>
+          </div>
+        </fieldset>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -18,16 +18,18 @@
   #++
   %>
 
+<div class="gts-site-header">
+  <div class="container">
+    <h1><%= t("views.license.show_title") %></h1>
+  </div>
+</div>
+
 <div class="container">
-  <br><br>
-  <h1><%= t("views.license.show_title") %></h1>
-  <p><strong>You need to accept the <%= render(:partial => "tos_link") -%></strong></p>
-  <%= form_for(user, {
-          :url => user_license_path(user),
-          :method => :put,
-          :builder => Gitorious::View::FormBuilder
-        }) do |f| %>
-    <%= f.checkbox_block(:terms_of_use, "I accept the Terms of Use") -%>
+  <p>
+    <strong>You need to accept the <%= render(:partial => "tos_link") -%></strong>
+  </p>
+  <%= simple_form_for(user, :url => user_license_path(user), :method => :put, :html => { :class => 'form-horizontal form-large-labels' }) do |f| %>
+    <%= f.input(:terms_of_use, :as => :boolean, :label => "I accept the Terms of Use") %>
     <%= f.submit("Accept", :class => "btn btn-primary") %>
   <% end %>
 </div>
