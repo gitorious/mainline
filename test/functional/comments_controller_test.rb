@@ -47,7 +47,6 @@ class CommentsControllerTest < ActionController::TestCase
       login_as :johan
       get :new, repo_params
       assert_response :success
-      assert_equal @repository, assigns(:comment).target
     end
   end
 
@@ -87,33 +86,9 @@ class CommentsControllerTest < ActionController::TestCase
     end
   end
 
-  context "preview" do
-    should "render a preview of the comment" do
-      login_as :johan
-      post :preview, comment_params(nil, :format => "js")
-      assert_response :success
-      assert_template("comments/preview")
-    end
-  end
-
   context "polymorphic creation" do
     setup do
       login_as :johan
-    end
-
-    should "find set the repository as the polymorphic parent by default" do
-      get :new, repo_params
-      assert_response :success
-      assert_equal @repository, assigns(:target)
-      assert_equal @repository, assigns(:comment).target
-    end
-
-    should "find set the polymorphic parent by default, for merge requests" do
-      get :new, :project_id => @project.slug, :repository_id => @repository.to_param,
-        :merge_request_id => @merge_request.to_param
-      assert_response :success
-      assert_equal @merge_request, assigns(:target)
-      assert_equal @merge_request, assigns(:comment).target
     end
 
     context "Inline commenting on commits" do
@@ -354,17 +329,6 @@ class CommentsControllerTest < ActionController::TestCase
       assert_response 200
     end
 
-    should "disallow unauthorized user to preview comment" do
-      get :preview, comment_params
-      assert_response 403
-    end
-
-    should "allow project owner to preview comment" do
-      login_as :johan
-      get :preview, comment_params(nil, :format => "js")
-      assert_response 200
-    end
-
     should "disallow unauthorized user to write new comment" do
       login_as :mike
       get :new, repo_params
@@ -431,17 +395,6 @@ class CommentsControllerTest < ActionController::TestCase
     should "allow project owner to list comments" do
       login_as :johan
       get :index, repo_params
-      assert_response 200
-    end
-
-    should "disallow unauthorized user to preview comment" do
-      get :preview, comment_params
-      assert_response 403
-    end
-
-    should "allow project owner to preview comment" do
-      login_as :johan
-      get :preview, comment_params(nil, :format => "js")
       assert_response 200
     end
 

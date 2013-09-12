@@ -50,15 +50,8 @@ class CommentsController < ApplicationController
     end
   end
 
-  def preview
-    @comment = Comment.new(params[:comment])
-    respond_to do |wants|
-      wants.js
-    end
-  end
-
   def new
-    @comment = @target.comments.new
+    render_form(@target.comments.new)
   end
 
   def create
@@ -83,9 +76,12 @@ class CommentsController < ApplicationController
   protected
   def render_or_redirect
     if @comment.save
-      comment_was_created
-    else
-      comment_was_invalid
+      comment_was_created and return
+    end
+
+    respond_to do |wants|
+      wants.html { render_form(@comment) }
+      wants.js { render :nothing => true, :status => :not_acceptable }
     end
   end
 
@@ -130,13 +126,6 @@ class CommentsController < ApplicationController
 
   def favorite_target
     @target.is_a?(MergeRequest) ? @target : @target.merge_request
-  end
-
-  def comment_was_invalid
-    respond_to { |wants|
-      wants.html { render :action => "new" }
-      wants.js   { render :nothing => true, :status => :not_acceptable }
-    }
   end
 
   def applies_to_merge_request_version?
@@ -196,5 +185,12 @@ class CommentsController < ApplicationController
     if !can_edit?(current_user, @comment)
       render :status => :unauthorized, :text => "Sorry mate"
     end
+  end
+
+  def render_form(comment)
+    render("new", :layout => "ui3", :locals => {
+        :comment => comment,
+        :user => current_user
+      })
   end
 end
