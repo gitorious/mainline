@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -19,19 +20,21 @@
 class LicensesController < ApplicationController
   before_filter :login_required
   skip_before_filter :require_current_eula
+  layout "ui3"
 
   def show
     if !current_user.terms_accepted?
       flash[:notice] = t("views.license.terms_not_accepted")
-      redirect_to :action => 'edit' and return
+      redirect_to(:action => "edit") and return
     end
   end
 
   def edit
     if current_user.terms_accepted?
       flash[:notice] = t("views.license.terms_already_accepted")
-      redirect_to :action => :show and return
+      redirect_to(:action => :show) and return
     end
+    render("edit", :locals => { :user => current_user })
   end
 
   def update
