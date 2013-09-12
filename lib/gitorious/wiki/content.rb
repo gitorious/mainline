@@ -29,6 +29,7 @@ module Gitorious
         rd = MarkupRenderer.new(content, :markdown => [:smart, :generate_toc])
         content = content_tag(:div, rd.to_html.html_safe, :class => "page-content")
         toc_content = rd.markdown.toc_content.html_safe
+        toc_content.force_encoding('utf-8') if toc_content.respond_to?(:force_encoding)
         if !toc_content.blank?
           toc = content_tag(:div, toc_content, :class => "toc")
         else
