@@ -50,23 +50,11 @@ module Gitorious
       end
     end
 
-    get "/*/source/*" do
-      safe_action(params[:splat].first) do
-        force_ref(params[:splat][0], params[:splat][1], "source")
-      end
-    end
-
     get "/*/raw/*:*" do
       repo, ref, path = params[:splat]
       safe_action(repo, ref) do
         configure_env(repo)
         dolt.raw(repo, ref, path, env_data)
-      end
-    end
-
-    get "/*/raw/*" do
-      safe_action(params[:splat].first) do
-        force_ref(params[:splat][0], params[:splat][1], "raw")
       end
     end
 
@@ -78,17 +66,37 @@ module Gitorious
       end
     end
 
-    get "/*/blame/*" do
-      safe_action(params[:splat].first) do
-        force_ref(params[:splat][0], params[:splat][1], "blame")
-      end
-    end
-
     get "/*/history/*:*" do
       repo, ref, path = params[:splat]
       safe_action(repo, ref) do
         configure_env(repo)
         dolt.history(repo, ref, path, (params[:commit_count] || 20).to_i, env_data)
+      end
+    end
+
+    get "/*/tree_history/*:*" do
+      repo, ref, path = params[:splat]
+      safe_action(repo, ref) do
+        configure_env(repo)
+        dolt.tree_history(repo, ref, path, 1, env_data)
+      end
+    end
+
+    get "/*/source/*" do
+      safe_action(params[:splat].first) do
+        force_ref(params[:splat][0], params[:splat][1], "source")
+      end
+    end
+
+    get "/*/raw/*" do
+      safe_action(params[:splat].first) do
+        force_ref(params[:splat][0], params[:splat][1], "raw")
+      end
+    end
+
+    get "/*/blame/*" do
+      safe_action(params[:splat].first) do
+        force_ref(params[:splat][0], params[:splat][1], "blame")
       end
     end
 
@@ -103,14 +111,6 @@ module Gitorious
       safe_action(repo) do
         configure_env(repo)
         dolt.refs(repo, env_data)
-      end
-    end
-
-    get "/*/tree_history/*:*" do
-      repo, ref, path = params[:splat]
-      safe_action(repo, ref) do
-        configure_env(repo)
-        dolt.tree_history(repo, ref, path, 1, env_data)
       end
     end
 
