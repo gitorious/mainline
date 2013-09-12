@@ -31,7 +31,7 @@ class Comment < ActiveRecord::Base
   after_create :update_state_in_target
   serialize :state_change, Array
   attr_accessible(:sha1, :body, :path, :user, :project, :state_change, :lines,
-                  :target, :target_id, :target_type)
+                  :target, :target_id, :target_type, :context)
   validates_presence_of :user_id, :target, :project_id
   validates_presence_of :body, :if =>  Proc.new {|mr| mr.body_required?}
 
