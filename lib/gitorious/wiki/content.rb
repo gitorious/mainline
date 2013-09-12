@@ -24,7 +24,7 @@ module Gitorious
       BRACKETED_WIKI_WORD = /\[\[([A-Za-z0-9_\-]+)\]\]/
 
       def wikize(content)
-        content.force_encoding('utf-8') if RUBY_VERSION >= '1.9'
+        content.force_encoding('utf-8') if content.respond_to?(:force_encoding)
         content = wiki_link(content)
         rd = MarkupRenderer.new(content, :markdown => [:smart, :generate_toc])
         content = content_tag(:div, rd.to_html.html_safe, :class => "page-content")
