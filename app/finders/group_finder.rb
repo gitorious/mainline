@@ -16,8 +16,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 class GroupFinder
-  def paginate(current_page=nil)
-    Group.paginate(:page => current_page)
+  def count
+    Group.count
+  end
+
+  def offset(num)
+    Group.offset(num)
   end
 
   def find_by_name!(name)

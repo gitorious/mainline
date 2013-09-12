@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2013 Gitorious AS
   #
   #   This program is free software: you can redistribute it and/or modify
   #   it under the terms of the GNU Affero General Public License as published by
@@ -16,19 +16,22 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= pull_box("Members") do %>
-  <% if memberships.blank? %>
-      <p class="hint muted">Team has no members</p>
-  <% else %>
-    <table class="table">
-      <% memberships.each do |membership| %>
-        <tr>
-          <td>
-            <%= avatar(membership.user, :size => 16, :style => "tiny") %>
-            <%= link_to h(membership.user.title) + " (#{membership.role.name})", user_path(membership.user) -%>
-          </td>
-        </tr>
-      <% end %>
-    </table>
+<% if !projects.blank? || defined?(hint) %>
+  <%= pull_box(heading) do %>
+    <% if projects.blank? %>
+      <p class="hint muted"><%= hint %></p>
+    <% else %>
+      <table class="table">
+        <% projects.each do |project| %>
+          <tr>
+            <td>
+              <%= link_to(h(project.title), project) %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+      <%= footer.html_safe if defined?(footer) %>
+    <% end %>
   <% end %>
 <% end %>
+

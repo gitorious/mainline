@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ class GroupsControllerTest < ActionController::TestCase
     should "find the requested group" do
       get :show, :id => @group.to_param
       assert_response :success
-      assert_equal @group, assigns(:group)
+      assert_match @group.name, @response.body
     end
 
     context "pagination" do
@@ -55,7 +55,7 @@ class GroupsControllerTest < ActionController::TestCase
     login_as :mike
     get :edit, :id => @group.to_param
 
-    assert_not_nil assigns(:group)
+    assert_match @group.name, @response.body
     assert_response :success
   end
 
@@ -102,9 +102,9 @@ class GroupsControllerTest < ActionController::TestCase
       end
 
       assert_not_equal nil, flash[:success]
-      assert !assigns(:group).new_record?, "assigns(:group).new_record? should be false"
-      assert_equal "foo-hackers", assigns(:group).name
-      assert_equal [users(:mike)], assigns(:group).members
+      group = Group.last
+      assert_equal "foo-hackers", group.name
+      assert_equal [users(:mike)], group.members
     end
 
     should "validate on create" do
@@ -170,6 +170,7 @@ class GroupsControllerTest < ActionController::TestCase
       assert !@group.reload.avatar?
     end
   end
+
   context "when only admins are allowed to create new teams" do
     setup do
       users(:johan).update_attribute(:is_admin, true)
@@ -198,7 +199,7 @@ class GroupsControllerTest < ActionController::TestCase
         login_as :johan
         get :index
         assert_response :success
-        assert_select "li.team_new"
+        assert_select ".btn-primary .icon-plus-sign"
       end
     end
 
@@ -206,7 +207,7 @@ class GroupsControllerTest < ActionController::TestCase
       Gitorious::Configuration.override("only_site_admins_can_create_teams" => true) do
         login_as :moe
         get :index
-        assert_select "li.team_new", false
+        assert_select ".btn-primary .icon-plus-sign", false
       end
     end
   end

@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -18,26 +18,34 @@
   #++
   %>
 
-<h1><%= t("views.groups.teams") -%></h1>
-<ul>
-  <% @groups.each do |group| -%>
-    <li>
-      <%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16", :style => "float: left; margin-right: 4px; ") %>
-      <p>
-        <strong><%= link_to h(group.name), group_path(group.to_param) -%></strong>
-        (<%= pluralize group.members.count, t("views.groups.member_singular"), t("views.groups.member_plural") -%>,
-        <%= pluralize group.repositories.count, t("views.groups.repo_singular"), t("views.groups.repo_plural") -%>)
-      </p>
-    </li>
-  <% end -%>
-</ul>
-
-<%= render_pagination_links @groups -%>
-
-<%= content_for :sidebar do -%>
-  <ul class="links navigation">
-    <% restrict_team_creation_to_site_admins do %>
-    <li class="team_new"><%= link_to t("views.groups.create_team"), new_group_path -%></li>
-    <% end %>
-  </ul>
-<% end -%>
+<% @title = t("views.groups.teams") -%>
+<div class="container gts-body">
+  <div class="gts-container">
+    <div class="row-fluid">
+      <div class="span8">
+        <% first = true %>
+        <% groups.each do |group| -%>
+          <%= "<hr>".html_safe unless first %>
+          <% first = false %>
+          <h2><%= link_to h(group.name), group_path(group.to_param) -%></h2>
+          <p>
+            <%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16") %>
+            <%= pluralize group.members.count, t("views.groups.member_singular"), t("views.groups.member_plural") -%>,
+            <%= pluralize group.repositories.count, t("views.groups.repo_singular"), t("views.groups.repo_plural") -%>
+          </p>
+        <% end -%>
+        <%= raw JustPaginate.page_navigation(page, total_pages) { |n| groups_path(:page => n) } %>
+      </div>
+      <div class="span4">
+        <% if current_user && (!Gitorious.restrict_team_creation_to_site_admins? || site_admin?(current_user)) %>
+          <p>
+            <a class="btn btn-primary" href="<%= new_group_path %>">
+              <i class="icon-plus-sign icon-white"></i>
+              <%= t("views.groups.create_team") %>
+            </a>
+          </p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

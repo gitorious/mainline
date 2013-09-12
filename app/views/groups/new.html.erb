@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -17,45 +17,26 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+<div class="gts-site-header">
+  <div class="container">
+    <div class="row">
+      <h1 class="span"><%= @title = t("views.groups.create_team") %></h1>
+    </div>
+  </div>
+</div>
 
-<h2 class="content-header"><%= t("views.groups.create_team") -%></h2>
-
-<%= error_messages(@group) -%>
-<%= form_for @group, :html => {:multipart => true} do |f| -%>
-<fieldset>
-  <li>
-    <%= f.label :name, t("views.groups.team_name") -%>
-    <div><%= f.text_field :name -%></div>
-  </li>
-
-  <li>
-    <%= f.label :description, t('views.groups.description') -%>
-    <div><%= f.text_area :description, :class => "text wide tall" -%></div>
-  </li>
-
-  <li>
-    <%= f.label :avatar, t('views.groups.avatar') -%>
-    <div><%= f.file_field :avatar %></div>
-  </li>
-
-  <% if @group.is_a?(LdapGroup) %>
-    <li>
-      <%= f.label :ldap_group_names %>
-      <div>
-        Enter LDAP group DNs, one per line<br />
-        <strong>Note:</strong> entries should be relative to the LDAP
-        base DN<br /> <%= f.text_area :ldap_group_names %>
+<div class="container">
+  <%= error_messages(group) -%>
+  <%= simple_form_for(group, {
+          :as => :group,
+          :url => groups_path,
+          :html => { :class => "form-horizontal", :multipart => true }
+        }) do |f| -%>
+    <fieldset>
+      <%= render(:partial => "form", :locals => { :form => f, :group => group }) -%>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit"><%= t("views.groups.create_team_submit") %></button>
       </div>
-    </li>
+    </fieldset>
   <% end %>
-
-  <% # TODO: be able to add a bunch of members right away -%>
-</fieldset>
-<fieldset class="submit">
-  <%= f.submit t("views.groups.create_team_submit") -%>
-</fieldset>
-<% end -%>
-<%= content_for :sidebar do -%>
-  <h2>Information</h2>
-  <p><%= t("views.groups.new_team_after_create_hint") -%></p>
-<% end -%>
+</div>

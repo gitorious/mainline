@@ -19,6 +19,10 @@ require "group_finder"
 require "ldap_group_finder"
 
 class Team
+  def self.count
+    group_finder.count
+  end
+
   def self.group_implementation
     @group_implementation
   end

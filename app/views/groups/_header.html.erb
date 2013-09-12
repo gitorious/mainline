@@ -1,0 +1,43 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<div class="gts-site-header">
+  <div class="container">
+    <div class="row">
+      <h1 class="span"><%= title %></h1>
+    </div>
+    <%= group_description.html_safe if defined?(group_description) %>
+    <% if group_admin?(group, current_user) %>
+      <ul class="nav nav-tabs gts-header-nav">
+        <li class="pull-right dropdown<%= ' active' if active %>">
+          <a href="#" class="dropdown-toggle"><i class="icon-cog"></i> Admin</a>
+          <ul class="dropdown-menu">
+            <li><a href="<%= edit_group_path(group) %>"><i class="icon-pencil"></i> Edit team</a></li>
+            <li><a href="<%= group_path(group) %>" data-method="delete"><i class="icon-trash"></i> Delete team</a></li>
+            <% if Team.can_have_members?(group) -%>
+              <li><%= link_to t("views.groups.edit_memberships"), [group, :memberships] -%></li>
+              <li><%= link_to t("views.memberships.add_new_member"),
+                      new_group_membership_path(group) -%></li>
+            <% end -%>
+          </ul>
+        </li>
+      </ul>
+    <% end %>
+  </div>
+</div>

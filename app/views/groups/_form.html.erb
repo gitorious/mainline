@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2013 Gitorious AS
   #
   #   This program is free software: you can redistribute it and/or modify
   #   it under the terms of the GNU Affero General Public License as published by
@@ -16,19 +16,15 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= pull_box("Members") do %>
-  <% if memberships.blank? %>
-      <p class="hint muted">Team has no members</p>
-  <% else %>
-    <table class="table">
-      <% memberships.each do |membership| %>
-        <tr>
-          <td>
-            <%= avatar(membership.user, :size => 16, :style => "tiny") %>
-            <%= link_to h(membership.user.title) + " (#{membership.role.name})", user_path(membership.user) -%>
-          </td>
-        </tr>
-      <% end %>
-    </table>
-  <% end %>
+<%= form.input(:name, :label => t("views.groups.team_name")) %>
+<%= form.input(:description, :label => t("views.groups.description"), :input_html => { :rows => 5 }) %>
+
+<%= form.input(:avatar, {
+        :label => t("views.groups.avatar"),
+        :hint => !group.avatar? ? "" : image_tag(group.avatar.url(:thumb))
+      }) %>
+
+<% if group.is_a?(LdapGroup) %>
+  <%= form.input(:ldap_group_names, :hint => "Enter LDAP group DNs, one per line "+
+        "<strong>Note:</strong> entries should be relative to the LDAP base DN") %>
 <% end %>

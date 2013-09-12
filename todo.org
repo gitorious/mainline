@@ -1,14 +1,7 @@
-* Gitorious 3 [0/9]
+* Gitorious 3 [0/3]
 ** TODO Add tests for repository browser
-** TODO JS solution to link up authors in commit logs etc
-** TODO Links to "Diff <current branch>..<branch>" for each branch. But: Where?
-** TODO if @blob.size > 500.kilobytes; flash[:error] = I18n.t "blobs_controller.raw_error", :size => @blob.size
-** TODO Google Analytics account is hardcoded in layout
-** TODO Anonymous users see SSH url
-** TODO Color picker for merge request statuses (projects/edit)
 ** TODO Auto-complete for users/teams in collaborator/committership form
-** TODO Repository browser needs to check authorization
-* Views to port to UI3 [41/75]
+* Views to port to UI3 [44/73]
 ** DONE Admin::Diagnostics#index
 ** DONE Admin::OauthSettings#edit
 ** DONE Admin::ProjectProposals#index
@@ -26,11 +19,10 @@
 ** DONE Commits#index
 ** TODO Commits#show
 ** DONE Graphs#index
-** TODO Groups#index
-** TODO Groups#show
-** TODO Groups#new
-** TODO Groups#edit
-** TODO Keys#index
+** DONE Groups#index
+** DONE Groups#show
+** DONE Groups#new
+** DONE Groups#edit
 ** DONE Keys#new
 ** TODO Keys#show
 ** TODO Licenses#edit
@@ -57,7 +49,6 @@
 ** DONE Pages#show
 ** DONE PasswordResets#new
 ** DONE PasswordResets#reset
-** DONE Passwords#edit
 ** DONE ProjectMemberships#index
 ** DONE ProjectOwnerships#edit
 ** DONE ProjectCommunity#index

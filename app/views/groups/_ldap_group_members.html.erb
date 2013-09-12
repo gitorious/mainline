@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #
   #   This program is free software: you can redistribute it and/or modify
   #   it under the terms of the GNU Affero General Public License as published by
@@ -16,14 +16,17 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-
-<ul>
-  <li><strong>LDAP groups</strong></li>
-  <% for group in @group.ldap_group_names do %>
-    <li><%= group -%></li>
-  <% end %>
-  <li><strong>Users</strong></li>
-  <% for member in @group.members do %>
-    <li><%= link_to(member.login, member) -%></li>
-  <% end %>
-</ul>
+<%= pull_box("LDAP Groups", :class => "repositories-box") do %>
+  <table class="table">
+    <% for group_name in group.ldap_group_names %>
+      <tr><td><%= group_name %></td></tr>
+    <% end %>
+  </table>
+<% end %>
+<%= pull_box("Users", :class => "repositories-box") do %>
+  <table class="table">
+    <% for member in group.members %>
+      <tr><td><%= link_to(member.login, member) %></td></tr>
+    <% end %>
+  </table>
+<% end %>

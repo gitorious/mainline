@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -17,96 +17,62 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+<%
+  description = ""
+  description << "<p>" if group.avatar? || !group.description.empty?
+  description << image_tag(group.avatar.url(:thumb)) if group.avatar?
+  description << render_markdown(group.description) if !group.description.empty?
+  description << "</p>" if group.avatar? || !group.description.empty?
+%>
 
-<%= breadcrumbs_from(@group) -%>
+<%= render(:partial => "header", :locals => {
+        :active => true,
+        :title => @title = group.name,
+        :group => group,
+        :group_description => description
+      }) %>
 
-<div class="with_divider">
-  <div id="left" class="w-365">
-    <%= pull_box("Members", :class => "pull-box-365") do -%>
-      <%= render :partial => "#{@group.class.name.underscore}_members" %>
-    <% end -%>
-
-    <%= pull_box("Team repositories", :class => "pull-box-365") do -%>
-      <ul class="with_icons">
-        <% if @mainlines.empty? -%>
-          <li><em>None</em></li>
-        <% end -%>
-        <% @mainlines.each do |repository| -%>
-          <li class="repository">
-            <%= link_to "#{h(repository.project.title)}/#{h(repository.name)}",
-                project_repository_path(repository.project, repository) -%>
-            <span class="hint">
-              <%= paragraphs_with_more render_markdown(repository.description), repository.id -%>
-            </span>
-          </li>
-        <% end -%>
-      </ul>
-    <% end -%>
+<div class="container gts-body">
+  <div class="gts-container">
+    <div class="row-fluid">
+      <div class="span8">
+        <%= render(:partial => "repository_activities/activities", :locals => {
+                :events => events,
+                :page => events.current_page.to_i,
+                :total_pages => events.total_pages
+              }) %>
+      </div>
+      <div class="span4">
+        <%= meta = "<p class=\"muted\">Created #{l(group.created_at, :format => :long)}"
+            meta << " by #{link_to(h(group.creator.title), group.creator)}" if group.creator
+            meta << "</p>"
+            meta.html_safe %>
+        <%= render(:partial => "#{group.class.name.underscore}_members", :locals => {
+                :memberships => memberships
+              }) %>
+        <p>
+          <a class="btn btn-primary" href="<%= new_group_membership_path(group) %>">
+            <i class="icon-plus-sign icon-white"></i>
+            Add member
+          </a>
+          <br><br>
+        </p>
+        <%= render("projects/projects", {
+              :projects => projects,
+              :hint => "This team does not yet have any projects.",
+              :heading => "Team projects"
+            }) %>
+        <%= render("repositories/repositories", {
+              :repositories => mainlines,
+              :hint => "This team does not yet have any repositories.",
+              :heading => "Team repositories"
+            }) %>
+        <%= render("repositories/repositories", {
+              :repositories => clones,
+              :hint => "This team does not yet have any repository clones.",
+              :heading => "Repository clones"
+            }) %>
+      </div>
+    </div>
   </div>
-  <div id="right" class="w-365">
-    <%= pull_box("Projects", :class => "pull-box-365") do -%>
-      <ul class="with_icons">
-        <% if @projects.empty? -%>
-          <li><em>None</em></li>
-        <% end -%>
-        <% @projects.each do |project| -%>
-          <li class="project"><%= link_to h(project.title), project -%></li>
-        <% end -%>
-      </ul>
-    <% end -%>
-
-    <%= pull_box("Repository clones", :class => "pull-box-365") do -%>
-      <ul class="with_icons">
-        <% if @clones.empty? -%>
-          <li><em>None</em></li>
-        <% end -%>
-        <% @clones.each do |repository| -%>
-          <li class="clone">
-            <%= link_to "#{h(repository.project.title)}/#{h(repository.name)}",
-                project_repository_path(repository.project, repository) -%>
-            <div class="hint">
-              <%= paragraphs_with_more render_markdown(repository.description), repository.id -%>
-            </div>
-          </li>
-        <% end -%>
-      </ul>
-    <% end -%>
-  </div>
-  <div class="clear"></div>
 </div>
-
-<h3>Team activity</h3>
-<%= render :partial => "events/events", :locals => { :events => @events, :container_css_class => "w-750" } -%>
-
-<%= content_for :sidebar do -%>
-
-  <h1><%=h @group.name -%></h1>
-  <%= render_markdown(@group.description) %>
-  <ul id="project-meta">
-    <li>
-      <%= image_tag @group.avatar.url(:thumb) %>
-    </li>
-    <% if @group.creator -%>
-      <li>
-        <strong>Started by:</strong>
-        <%= link_to h(@group.creator.title), @group.creator -%>
-      </li>
-    <% end -%>
-    <li>
-      <strong>Created:</strong>
-      <%= l(@group.created_at, :format => :short) -%>
-    </li>
-  </ul>
-  <ul class="links navigation">
-    <% if group_admin?(@group, current_user) -%>
-
-      <% if Team.can_have_members?(@group) -%>
-        <li><%= link_to t("views.groups.edit_memberships"), [@group, :memberships] -%></li>
-        <li><%= link_to t("views.memberships.add_new_member"),
-                new_group_membership_path(@group) -%></li>
-      <% end -%>
-
-      <li><%= link_to t('views.groups.edit_team'), edit_group_path(@group) %></li>
-    <% end -%>
-  </ul>
-<% end -%>

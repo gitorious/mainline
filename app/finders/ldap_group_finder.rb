@@ -16,8 +16,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 class LdapGroupFinder
-  def paginate(current_page = nil)
-    LdapGroup.paginate(:page => current_page)
+  def count
+    LdapGroup.count
+  end
+
+  def offset(num)
+    LdapGroup.offset(num)
   end
 
   def find_by_name!(name)
