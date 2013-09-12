@@ -27,7 +27,7 @@
 
 <% @title = h(owner.title) + " - " + h(page.title) + " - " + t("views.layout.pages") %>
 <div class="container">
-  <%= render(:partial => "actions", :locals => {
+  <%= render(:partial => "pages/actions", :locals => {
           :owner => owner,
           :page => page,
           :active => :show

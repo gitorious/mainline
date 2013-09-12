@@ -41,7 +41,6 @@ class PagesController < WikiController
 
   def edit
     page = Page.find(params[:id], @project.wiki_repository.git)
-    page.user = current_user
     render_edit(ProjectPresenter.new(@project), page)
   end
 
@@ -110,13 +109,11 @@ class PagesController < WikiController
     end
   end
 
-  helper_method :page_history_path
-  helper_method :wiki_index_path
-  helper_method :wiki_page_path
-  helper_method :wiki_git_access_path
-  helper_method :edit_wiki_page_path
-
   # Helpers
+  def show_writable_wiki_url?(wiki, user)
+    !user.nil? && can_push?(user, wiki)
+  end
+
   def wiki_index_path(project, format = nil)
     project_pages_path(project, format)
   end

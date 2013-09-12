@@ -74,6 +74,7 @@ class WikiController < ApplicationController
   end
 
   def render_edit(owner, page)
+    page.user = current_user
     render("pages/edit", :locals => { :page => page, :owner => owner })
   end
 
@@ -82,4 +83,11 @@ class WikiController < ApplicationController
       n.name =~ /\.#{Page::DEFAULT_FORMAT}$/
     end
   end
+
+  helper_method :page_history_path
+  helper_method :wiki_index_path
+  helper_method :wiki_page_path
+  helper_method :wiki_git_access_path
+  helper_method :edit_wiki_page_path
+  helper_method :show_writable_wiki_url?
 end

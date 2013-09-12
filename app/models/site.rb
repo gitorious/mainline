@@ -56,6 +56,18 @@ class Site < ActiveRecord::Base
     Grit::Repo.new(wiki_git_path)
   end
 
+  def ready?
+    !wiki.nil?
+  end
+
+  def wiki?
+    true
+  end
+
+  def wiki_permissions
+    []
+  end
+
   # Cutting out post push events etc for site wiki since it's a
   # special case. Only need the bare minimum: no hooks, only empty executable
   # pre-receive so that we can push.

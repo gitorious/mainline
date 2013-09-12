@@ -25,7 +25,7 @@
       }) %>
 
 <div class="container">
-  <%= render(:partial => "actions", :locals => {
+  <%= render(:partial => "pages/actions", :locals => {
           :owner => owner,
           :active => :git
         }) %>
@@ -36,7 +36,7 @@
     local changes and push them to Gitorious.
   </p>
   <h3>To clone this wiki:</h3>
-  <% if logged_in? && can_push?(current_user, wiki_repository) -%>
+  <% if show_writable_wiki_url?(wiki_repository, current_user) -%>
     <p><pre>git clone <%= writable_wiki_url(owner) -%></pre></p>
   <% else -%>
     <p><pre>git clone <%= regular_wiki_url(owner) -%></pre></p>

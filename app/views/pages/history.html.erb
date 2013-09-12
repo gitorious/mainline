@@ -27,7 +27,7 @@
 
 <% @title = t("views.pages.last_n_edits", { :n => 30, :title => page.title }) %>
 <div class="container">
-  <%= render(:partial => "actions", :locals => {
+  <%= render(:partial => "pages/actions", :locals => {
           :owner => owner,
           :page => page,
           :active => :history

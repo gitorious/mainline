@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2013 Gitorious AS
   #
   #   This program is free software: you can redistribute it and/or modify
   #   it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,13 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
-
-<h3>Wiki preview</h3>
-<div><%= wikize(@page.content) -%></div>
+%>
+<div class="gts-site-header">
+  <div class="container">
+    <div class="row">
+      <h1 class="span">
+        <a href="<%= site_wiki_pages_path %>"><%= site.title %> Wiki</a>
+      </h1>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,10 @@
 * Gitorious 3 [0/3]
 ** TODO Add tests for repository browser
 ** TODO Auto-complete for users/teams in collaborator/committership form
-* Views to port to UI3 [47/72]
+** TODO Add in diff stats to new diffs
+      <a href="/files"><i class="icon icon-file"></i> app/models/repository.rb</a>
+      (<span class="gts-diff-add">+45</span>/<span class="gts-diff-rm">-22</span>)
+* Views to port to UI3 [52/72]
 ** DONE Admin::Diagnostics#index
 ** DONE Admin::OauthSettings#edit
 ** DONE Admin::ProjectProposals#index
@@ -65,11 +68,11 @@
 ** DONE Site#faq
 ** DONE Site#index
 ** DONE Site#public_index
-** TODO SiteWikiPages#edit
-** TODO SiteWikiPages#git_access
-** TODO SiteWikiPages#history
-** TODO SiteWikiPages#index
-** TODO SiteWikiPages#show
+** DONE SiteWikiPages#edit
+** DONE SiteWikiPages#git_access
+** DONE SiteWikiPages#history
+** DONE SiteWikiPages#index
+** DONE SiteWikiPages#show
 ** DONE UserActivations#show
 ** DONE Users#edit
 ** DONE Users#new

@@ -26,7 +26,7 @@
     <% user = users_by_email[commit.author.email] %>
     <div class="gts-commit <%= commit.merge? ? 'merge_commit' : 'commit' -%>">
       <p class="gts-log-message">
-        <% if repository.project_repo? %>
+        <% if repository.respond_to?(:project_repo?) && repository.project_repo? %>
           <%= link_to h(commit.id_abbrev), project_repository_commit_path(repository.project, repository, commit.id) -%>:
         <% else %>
           <strong><%= h(commit.id_abbrev) -%></strong>:

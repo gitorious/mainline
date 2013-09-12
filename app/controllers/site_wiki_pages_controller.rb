@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,63 +15,34 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "wiki_controller"
 
-class SiteWikiPagesController < ApplicationController
+class SiteWikiPagesController < WikiController
   before_filter :login_required, :except => [:index, :show, :git_access, :repository_config, :writable_by]
   before_filter :require_site_admin, :only => [:edit, :update]
-  helper PagesHelper, SiteWikiPagesHelper
   renders_in_site_specific_context
+  helper PagesHelper, SiteWikiPagesHelper
 
   def index
-    @site = current_site
-    respond_to do |format|
-      format.html do
-        @root = Breadcrumb::SiteWiki.new(@site.title)
-        @tree_nodes = @site.wiki.tree.contents.select{|n|
-          n.name =~ /\.#{Page::DEFAULT_FORMAT}$/
-        }
-        # @root = Breadcrumb::Wiki.new(@project)
-        @atom_auto_discovery_url = site_wiki_pages_path(:format => :atom)
-      end
-      format.atom do
-        @commits = @site.wiki.commits("master", 30)
-        expires_in 30.minutes
-      end
-    end
+    site = current_site
+    nodes = tree_nodes(site.wiki)
+    redirect_to(:action => "edit", :id => "Home") and return if nodes.count == 0
+    render_index(site, site.wiki, site_wiki_pages_path(:format => :atom))
   end
 
   def show
-    @site = current_site
-    @atom_auto_discovery_url = site_wiki_pages_path(:format => :atom)
-    @page, @root = page_and_root
-    if @page.new?
-      if logged_in?
-        redirect_to edit_site_wiki_page_path(params[:id]) and return
-      else
-        render "no_page" and return
-      end
-    end
+    site = current_site
+    render_show(site, page(site))
   end
 
   def edit
-    @site = current_site
-    @atom_auto_discovery_url = site_wiki_pages_path(:format => :atom)
-    @page, @root = page_and_root
-    @page.user = current_user
-  end
-
-  def preview
-    @site = current_site
-    @page, @root = page_and_root
-    @page.content = params[:page][:content]
-    respond_to do |wants|
-      wants.js
-    end
+    site = current_site
+    render_edit(site, page(site))
   end
 
   def update
     @site = current_site
-    @page = Page.find(params[:id], @site.wiki)
+    @page = page(@site)
     @page.user = current_user
 
     if @page.content == params[:page][:content]
@@ -89,19 +60,13 @@ class SiteWikiPagesController < ApplicationController
   end
 
   def history
-    @site = current_site
-    @page, @root = page_and_root
-    if @page.new?
-      redirect_to edit_site_wiki_page_path(@page) and return
-    end
-
-    @commits = @page.history(30)
-    @user_and_email_map = Repository.users_by_commits(@commits)
+    site = current_site
+    render_page_history(site, site.wiki, page(site))
   end
 
   def git_access
-    @site = current_site
-    # @root = Breadcrumb::Wiki.new(@project)
+    site = current_site
+    render_git_access(site, site)
   end
 
   # Used internally by Gitorious
@@ -121,24 +86,52 @@ class SiteWikiPagesController < ApplicationController
   end
 
   protected
-    def assert_readyness
-      unless current_site.repository.ready?
-        flash[:notice] = I18n.t("pages_controller.repository_not_ready")
-        redirect_to "/" and return
-      end
+  def assert_readyness
+    unless current_site.ready?
+      flash[:notice] = I18n.t("pages_controller.repository_not_ready")
+      redirect_to "/" and return
     end
-
-  def page_and_root
-    page = Page.find(params[:id], @site.wiki)
-    root = Breadcrumb::SiteWikiPage.new(page, @site.title)
-    return page, root
   end
 
   def require_site_admin
-    unless current_user.site_admin?
+    unless site_admin?(current_user)
       flash[:error] = I18n.t "admin.users_controller.check_admin"
       redirect_to site_wiki_pages_path
     end
   end
 
+  def page(site)
+    @page ||= Page.find(params[:id], site.wiki)
+  end
+
+  # Helpers
+  helper_method :site_page_path
+
+  def site_page_path(*args)
+    site_wiki_page_path(*args[1..-1])
+  end
+
+  def show_writable_wiki_url?(wiki, user)
+    !user.nil?
+  end
+
+  def wiki_index_path(site, format = nil)
+    site_wiki_pages_path(format)
+  end
+
+  def wiki_page_path(site, page)
+    site_wiki_page_path(page)
+  end
+
+  def wiki_git_access_path(site)
+    git_access_site_wiki_pages_path
+  end
+
+  def edit_wiki_page_path(site, page)
+    edit_site_wiki_page_path(page)
+  end
+
+  def page_history_path(site, page, format = nil)
+    history_site_wiki_page_path(page, format)
+  end
 end
