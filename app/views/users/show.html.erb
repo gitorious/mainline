@@ -18,6 +18,9 @@
   #++
   %>
 
+<% content_for(:head) do %>
+  <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url, :title => atom_auto_discovery_title) -%>
+<% end %>
 <div class="container">
   <div class="container-fluid gts-container">
     <div class="row-fluid">

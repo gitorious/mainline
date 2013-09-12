@@ -53,7 +53,7 @@ class UsersController < ApplicationController
             :projects => filter(@user.projects.includes(:tags, { :repositories => :project })),
             :repositories => filter(@user.commit_repositories),
             :favorites => filter(@user.favorites.all(:include => :watchable)),
-            :atom_auto_discovery_url => atom_auto_discovery_url,
+            :atom_auto_discovery_url => user_feed_path(@user, :format => :atom),
             :atom_auto_discovery_title => "Public activity feed"
           }, :layout => "ui3")
       end
@@ -159,9 +159,5 @@ class UsersController < ApplicationController
 
   def require_registration_enabled
     render_unauthorized if !Gitorious.registrations_enabled?
-  end
-
-  def atom_auto_discovery_url
-    @atom_auto_discovery_url ||= user_feed_path(current_user, :format => :atom)
   end
 end
