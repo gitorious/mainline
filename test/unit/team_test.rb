@@ -32,11 +32,6 @@ class TeamTest < ActiveSupport::TestCase
     teardown do
       Team.group_implementation = @old_klass
     end
-    
-    should "supply pagination" do
-      LdapGroup.expects(:paginate)
-      Team.paginate
-    end
 
     should "find by name" do
       assert_not_nil(Team.find_by_name!("FirstLdapGroup"))
