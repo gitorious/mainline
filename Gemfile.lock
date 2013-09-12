@@ -1,4 +1,14 @@
 GIT
+  remote: https://github.com/gitlabhq/grit.git
+  revision: b0df6a7cdaa23f84fb518e802c04927a07285848
+  specs:
+    gitlab-grit (2.6.0)
+      charlock_holmes (~> 0.6.9)
+      diff-lcs (~> 1.1)
+      mime-types (~> 1.15)
+      posix-spawn (~> 0.3.6)
+
+GIT
   remote: https://github.com/solnic/virtus.git
   revision: 97a161f19d20a961094112464075c284d68d35e4
   specs:
@@ -323,6 +333,7 @@ DEPENDENCIES
   factory_girl_rails (~> 1.7)
   foreman (~> 0.41)
   geoip (= 0.8.9)
+  gitlab-grit!
   gitorious_openid_auth (~> 1.1)
   guard-ctags-bundler
   guard-minitest

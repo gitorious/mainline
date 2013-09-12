@@ -25,6 +25,7 @@ gem "highline"
 gem "use_case", "~> 0.13"
 gem "virtus", :git => "https://github.com/solnic/virtus.git"
 gem "rake", "~> 10.0"
+gem 'gitlab-grit', :git => 'https://github.com/gitlabhq/grit.git', :require => 'grit'
 
 group :openid do
   gem "ruby-yadis", "0.3.4", :require => "yadis"
