@@ -20,11 +20,6 @@ class PasswordsController < ApplicationController
   renders_in_global_context
   before_filter :login_required
 
-  def edit
-    return current_user_only_redirect if requested_user != current_user
-    render_template("edit", :user => requested_user)
-  end
-
   def update
     input = params[:user].merge(:actor => requested_user)
     outcome = ChangePassword.new(current_user).execute(input)

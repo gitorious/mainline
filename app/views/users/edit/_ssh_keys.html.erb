@@ -1,7 +1,8 @@
 <% if controller_name == 'keys' %>
-  <h2>Add new public SSH key</h2>
+  <h2><%= @title = "Add new public SSH key" %></h2>
   <%= render "keys/form", :ssh_key => @ssh_key || current_user.ssh_keys.build %>
 <% else %>
+  <% @title = "SSH Keys" %>
   <%= render "keys/keys", :ssh_keys => current_user.ssh_keys %>
   <%= link_to "Add new", new_user_key_path(current_user), :class => 'btn btn-primary' %>
 <% end %>

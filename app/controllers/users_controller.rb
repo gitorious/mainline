@@ -46,10 +46,6 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.atom { redirect_to(user_feed_path(@user, :format => :atom)) }
       format.html do
-        # These two are used by the layout
-        @atom_auto_discovery_url = user_feed_path(@user, :format => :atom)
-        @atom_auto_discovery_title = "Public activity feed"
-
         render_template("show", {
             :user => @user,
             :events => events,
@@ -57,8 +53,9 @@ class UsersController < ApplicationController
             :projects => filter(@user.projects.includes(:tags, { :repositories => :project })),
             :repositories => filter(@user.commit_repositories),
             :favorites => filter(@user.favorites.all(:include => :watchable)),
-            :atom_auto_discovery_url => atom_auto_discovery_url
-          }, :layout => 'ui3')
+            :atom_auto_discovery_url => atom_auto_discovery_url,
+            :atom_auto_discovery_title => "Public activity feed"
+          }, :layout => "ui3")
       end
     end
   end
@@ -101,7 +98,7 @@ class UsersController < ApplicationController
 
     outcome.success do
       flash[:success] = "Your account details were updated"
-      redirect_to user_edit_my_details_path(current_user)
+      redirect_to edit_user_path(current_user)
     end
   end
 

@@ -30,11 +30,9 @@ class KeysController < ApplicationController
   renders_in_global_context
 
   def index
-    @ssh_keys = current_user.ssh_keys
-    @root = Breadcrumb::Keys.new(current_user)
     respond_to do |format|
-      format.html
-      format.xml { render :xml => @ssh_keys }
+      format.xml { render(:xml => current_user.ssh_keys) }
+      format.html { redirect_to(user_edit_ssh_keys_path(current_user)) }
     end
   end
 
@@ -73,15 +71,6 @@ class KeysController < ApplicationController
           render(:xml => ssh_key.errors.full_messages, :status => :unprocessable_entity)
         end
       end
-    end
-  end
-
-  def show
-    @ssh_key = current_user.ssh_keys.find(params[:id])
-
-    respond_to do |format|
-      format.html
-      format.xml { render :xml => @ssh_key }
     end
   end
 

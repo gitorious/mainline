@@ -66,21 +66,19 @@ Gitorious::Application.routes.draw do
     delete "/avatar" => "avatars#destroy"
     get "/watchlist" => "user_watchlists#show", :as => :watchlist
     get "/feed" => "user_feeds#show", :as => :feed
-    get "/password" => "passwords#edit", :as => :password
     put "/update_password" => "passwords#update", :as => :update_password
 
-    get "/edit/my-details" => "users#edit", :defaults => { :tab => 'my-details' }, :as => :edit_my_details
-    get "/edit/email-aliases" => "users#edit", :defaults => { :tab => 'email-aliases' }, :as => :edit_email_aliases
-    get "/edit/ssh-keys" => "users#edit", :defaults => { :tab => 'ssh-keys' }, :as => :edit_ssh_keys
-    get "/edit/change-password" => "users#edit", :defaults => { :tab => 'change-password' }, :as => :edit_password
-    get "/edit/manage-favorites" => "users#edit", :defaults => { :tab => 'manage-favorites' }, :as => :edit_favorites
+    get "/aliases" => "users#edit", :defaults => { :tab => "email-aliases" }, :as => :edit_email_aliases
+    get "/ssh-keys" => "users#edit", :defaults => { :tab => "ssh-keys" }, :as => :edit_ssh_keys
+    get "/password" => "users#edit", :defaults => { :tab => "change-password" }, :as => :edit_password
+    get "/favorites" => "users#edit", :defaults => { :tab => "manage-favorites" }, :as => :edit_favorites
   end
 
   # Nested user resources. This is in a separate scope because the
   # controllers expect params[:user_id] to contain the user, not
   # params[:id] as in the scope above
   scope "/~:user_id", :user_id => /[^\/]+/, :as => :user do
-    resources :keys
+    resources :keys, :only => [:new, :create, :destroy, :index]
 
     resources :aliases do
       member do

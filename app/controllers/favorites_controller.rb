@@ -21,6 +21,10 @@ class FavoritesController < ApplicationController
   before_filter :login_required
   before_filter :find_watchable, :only => [:create]
 
+  def index
+    redirect_to(user_edit_favorites_path(current_user))
+  end
+
   def update
     @favorite = authorize_access_to(current_user.favorites.find(params[:id]))
     @favorite.notify_by_email = params[:favorite][:notify_by_email]

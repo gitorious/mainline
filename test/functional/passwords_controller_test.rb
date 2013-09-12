@@ -23,20 +23,6 @@ require "test_helper"
 class PasswordsControllerTest < ActionController::TestCase
   should_render_in_global_context
 
-  context "edit" do
-    should "require current user" do
-      login_as :moe
-      get :edit, :id => users(:johan).to_param
-      assert_redirected_to user_path(users(:moe))
-    end
-
-    should "render form for current user" do
-      login_as :johan
-      get :edit, :id => users(:johan).to_param
-      assert_response :success
-    end
-  end
-
   context "update" do
     should "require current user" do
       login_as :moe

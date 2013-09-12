@@ -2,7 +2,7 @@ module TabsHelper
 
   def user_edit_tabbable(options, &block)
     tabbable({
-      'my-details'       => user_edit_my_details_path(current_user),
+      'my-details'       => edit_user_path(current_user),
       'email-aliases'    => user_edit_email_aliases_path(current_user),
       'change-password'  => user_edit_password_path(current_user),
       'ssh-keys'         => user_edit_ssh_keys_path(current_user),

@@ -47,14 +47,10 @@ class KeysControllerTest < ActionController::TestCase
       assert_redirected_to user_path(users(:moe))
     end
 
-    should "GET account/keys successfully" do
+    should "redirect from account/keys to new user edit page" do
       get :index, :user_id => @user.to_param
-      assert_response :success
-    end
-
-    should "scope to the current user's keys" do
-      get :index, :user_id => @user.to_param
-      assert_equal users(:johan).ssh_keys, assigns(:ssh_keys)
+      assert_response :redirect
+      assert_redirected_to user_edit_ssh_keys_path(@user)
     end
   end
 
