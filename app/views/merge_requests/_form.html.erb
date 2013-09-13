@@ -36,8 +36,10 @@
   <%= render "target_branches" %>
 </div>
 
-<%= form.input :source_branch, :as => :select, :label => t(:source_branch, :scope => 'activerecord.attributes.merge_request'),
-  :hint => t("views.merges.info.target_repos"), :collection => @source_branches.map(&:name) %>
+<%= form.input :source_branch, :as => :select, :collection => @source_branches.map(&:name),
+  :include_blank => false,
+  :label => t(:source_branch, :scope => 'activerecord.attributes.merge_request'),
+  :hint => t("views.merges.info.target_repos") %>
 
 <div id="commit_selection">
   <%= render "commit_list" %>
