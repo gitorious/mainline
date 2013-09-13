@@ -33,9 +33,7 @@
 <span id="spinner" style="display:none;"><%= image_tag("spinner.gif") %></span>
 
 <div id="target_branch_selection">
-  <%= form.input :target_branch, :as => :select, :collection => @target_branches.map(&:name),
-    :label => t(:target_branch, :scope => 'activerecord.attributes.merge_request'),
-    :hint => t('views.merges.info.target_branch') %>
+  <%= render "target_branches" %>
 </div>
 
 <%= form.input :source_branch, :as => :select, :label => t(:source_branch, :scope => 'activerecord.attributes.merge_request'),

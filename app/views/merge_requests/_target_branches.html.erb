@@ -18,6 +18,8 @@
   #++
   %>
 
-<%= form.input :target_branch, :as => :select, :collection => @target_branches.map(&:name),
-  :label => t(:target_branch, :scope => 'activerecord.attributes.merge_request'),
-  :hint => t('views.merges.info.target_branch') %>
+<%= simple_fields_for @merge_request do |f| %>
+  <%= f.input :target_branch, :as => :select, :collection => @target_branches.map(&:name),
+    :label => t(:target_branch, :scope => 'activerecord.attributes.merge_request'),
+    :hint => t('views.merges.info.target_branch') %>
+<% end %>
