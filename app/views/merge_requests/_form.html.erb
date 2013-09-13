@@ -21,11 +21,15 @@
   #++
   %>
 
-<%= form.input :summary, :label => t(:summary, :scope => 'activerecord.attributes.merge_request'),
-  :hint => t("views.merges.info.summary") %>
+<%= form.input :summary,
+  :label => t(:summary, :scope => 'activerecord.attributes.merge_request'),
+  :hint => t("views.merges.info.summary"),
+  :input_html => { :class => 'input-xxlarge' } %>
 
-<%= form.input :proposal, :label => t(:proposal, :scope => 'activerecord.attributes.merge_request'),
-  :hint => t("views.merges.info.proposal"), :input_html => { :size => '5x10' } %>
+<%= form.input :proposal,
+  :label => t(:proposal, :scope => 'activerecord.attributes.merge_request'),
+  :hint => t("views.merges.info.proposal"),
+  :input_html => { :rows => 8, :class => 'input-xxlarge' } %>
 
 <%= form.input :target_repository_id, :as => :select, :label => t(:target_repository_id, :scope => 'activerecord.attributes.merge_request'),
   :hint => t("views.merges.info.target_repos"), :collection => @repositories %>
