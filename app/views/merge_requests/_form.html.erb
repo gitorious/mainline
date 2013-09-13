@@ -21,34 +21,26 @@
   #++
   %>
 
-<p>
-  <%= form.label :summary, t(:summary, :scope => 'activerecord.attributes.merge_request') -%><br />
-  <small class="hint"><%= t("views.merges.info.summary") %></small><br />
-  <%= form.text_field :summary -%>
-</p>
-<p>
-  <%= form.label :proposal, t(:proposal, :scope => 'activerecord.attributes.merge_request') -%><br />
-  <small class="hint"><%= t("views.merges.info.proposal") %></small><br />
-  <%= form.text_area :proposal, :class => "text medium" -%>
-</p>
-<p>
-  <%= form.label :target_repository_id, t(:target_repository_id, :scope => 'activerecord.attributes.merge_request') -%><br />
-  <small class="hint"><%= t("views.merges.info.target_repos") %></small><br />
-  <%= form.select :target_repository_id, @repositories.map{|r| [r.name, r.id] } -%>
-  <span id="spinner" style="display:none;"><%= image_tag("spinner.gif") -%></span>
-</p>
+<%= form.input :summary, :label => t(:summary, :scope => 'activerecord.attributes.merge_request'),
+  :hint => t("views.merges.info.summary") %>
+
+<%= form.input :proposal, :label => t(:proposal, :scope => 'activerecord.attributes.merge_request'),
+  :hint => t("views.merges.info.proposal"), :input_html => { :size => '5x10' } %>
+
+<%= form.input :target_repository_id, :as => :select, :label => t(:target_repository_id, :scope => 'activerecord.attributes.merge_request'),
+  :hint => t("views.merges.info.target_repos"), :collection => @repositories %>
+
+<span id="spinner" style="display:none;"><%= image_tag("spinner.gif") %></span>
+
 <div id="target_branch_selection">
-  <%= render :partial => "target_branches" -%>
+  <%= form.input :target_branch, :as => :select, :collection => @target_branches.map(&:name),
+    :label => t(:target_branch, :scope => 'activerecord.attributes.merge_request'),
+    :hint => t('views.merges.info.target_branch') %>
 </div>
-<p>
-  <%= form.label :source_branch, t(:source_branch, :scope => 'activerecord.attributes.merge_request') -%><br />
-  <small class="hint"><%= t("views.merges.info.source_branch") %></small><br />
-  <%= form.select :source_branch, @source_branches.collect(&:name), {:include_blank => true} %>
-</p>
+
+<%= form.input :source_branch, :as => :select, :label => t(:source_branch, :scope => 'activerecord.attributes.merge_request'),
+  :hint => t("views.merges.info.target_repos"), :collection => @source_branches.map(&:name) %>
+
 <div id="commit_selection">
-  <%= link_to_remote "Fetch commits", :update => 'commit_selection',
-      :url => commit_list_project_repository_merge_requests_path,
-      :method => :get,
-      :with => 'Form.serialize(document.forms[1])' if false-%>
-  <%= render :partial => "commit_list" -%>
+  <%= render "commit_list" %>
 </div>

@@ -132,7 +132,10 @@ class MergeRequestsController < ApplicationController
     if first = @repository.parent || @repositories.first
       @merge_request.target_repository_id = first.id
     end
+
     get_branches_and_commits_for_selection
+
+    render :layout => 'ui3'
   end
 
   # This is a static URL the user returns to after accepting the terms
@@ -167,7 +170,7 @@ class MergeRequestsController < ApplicationController
         format.html {
           @repositories = @owner.repositories.where("id != ?", @repository.id)
           get_branches_and_commits_for_selection
-          render :action => "new"
+          render :action => "new", :layout => 'ui3'
         }
         format.xml { render :xml => @merge_request.errors, :status => :unprocessable_entity }
       end
@@ -207,6 +210,7 @@ class MergeRequestsController < ApplicationController
   end
 
   protected
+
   def find_repository
     @repository = authorize_access_to(
       @owner.repositories.find_by_name_in_project!(params[:repository_id],
@@ -253,7 +257,7 @@ class MergeRequestsController < ApplicationController
     return request_token
   end
 
-  def assert_merge_request_resolvable
+   def assert_merge_request_resolvable
     unless can_resolve_merge_request?(current_user, @merge_request)
       respond_to do |format|
         flash[:error] = I18n.t "merge_requests_controller.assert_resolvable_error"

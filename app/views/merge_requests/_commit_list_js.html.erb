@@ -17,6 +17,9 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+
+<%= javascript_include_tag 'commit_range_selector' %>
+
 <script type="text/javascript" charset="utf-8">
   var commitSelector = new CommitRangeSelector(
     '<%= commit_list_project_repository_merge_requests_path %>',

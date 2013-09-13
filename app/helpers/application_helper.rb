@@ -575,4 +575,10 @@ module ApplicationHelper
   def partial(template, locals = {})
     render(:template => template, :locals => locals).html_safe
   end
+
+  def site_header(&block)
+    content_tag(:div, :class => 'gts-site-header') {
+      content_tag(:div, :class => 'container', &block)
+    }
+  end
 end
