@@ -58,7 +58,7 @@
       </tbody>
     </table>
     <p>
-      <%= link_to("Remove all collaborators", { :controller => "repository_content_memberships", :action => "destroy", :id => "all" },
+      <%= link_to("Remove all members", { :controller => "repository_content_memberships", :action => "destroy", :id => "all" },
                   :method => :delete, :confirm => "Are you sure? This will delete all #{memberships.count} members") %>
       to make this repository public.
     </p>
