@@ -13,12 +13,17 @@ module AuthenticatedSystem
     end
 
     # Store the given user in the session.
-    def current_user=(new_user)
-      session[:user_id] = (new_user.nil? || new_user.is_a?(Symbol)) ? nil : new_user.id
-      if new_user && !new_user.is_a?(Symbol)
+    def current_user=(user)
+      if user.nil? || user.is_a?(Symbol)
+        session.delete(:user_id)
+        cookies.delete(:auth_token)
+        clear_varnish_auth_cookie
+      else
+        session[:user_id] = user.id
         set_varnish_auth_cookie
       end
-      @current_user = new_user
+
+      @current_user = user
     end
 
     def set_varnish_auth_cookie
