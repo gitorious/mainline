@@ -6,3 +6,13 @@
 # which shouldn't be used to store highly confidential information
 # (create the session table with "rails generate session_migration")
 # Gitorious::Application.config.session_store :active_record_store
+
+require_relative 'gitorious_config'
+
+Gitorious::Application.config.session_store(:cookie_store, {
+  :key => "_gitorious_session",
+  :domain => Gitorious.host =~ /\./ ? ".#{Gitorious.host}" : "",
+  :httponly => true,
+  :secure => Gitorious.ssl?,
+  :expire_after => 3.weeks
+})

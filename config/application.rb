@@ -112,12 +112,6 @@ module Gitorious
         })
       end
 
-      Gitorious::Application.config.session_store(:cookie_store, {
-        :key => "_gitorious_session",
-        :domain => Gitorious.host =~ /\./ ? ".#{Gitorious.host}" : "",
-        :expire_after => 3.weeks
-      })
-
       implementation = Gitorious::Configuration.get("enable_ldap_authorization", false) ? LdapGroup : Group
       Team.group_implementation = implementation
     end
