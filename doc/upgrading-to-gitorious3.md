@@ -111,11 +111,12 @@ The steps to upgrade are as follows:
 cd /var/www/gitorious/app/ && git fetch origin && git checkout next
 ```
 
-* Install new dependencies: the native postgresql development
-  libraries. Example for yum-based package install in CentOS (64bit):
+* Install new dependencies: the native postgresql development libraries and the
+  libicu development libraries. Example for yum-based package install in CentOS
+  (64bit):
 
 ```sh
-yum install postgresql-devel.x86_64
+yum install postgresql-devel libicu-devel
 ```
 
 * Make sure you have at least version 1.3.5 of the Bundler rubygem
