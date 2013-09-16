@@ -258,7 +258,7 @@ Gitorious::Application.routes.draw do
         get "/writable_by" => "repository_configurations#writable_by"
         get "/config" => "repository_configurations#show"
         get "/ownership/edit" => "repository_ownerships#edit", :as => :transfer_ownership
-        put "/ownership" => "repository_ownerships#update"
+        put "/ownership/edit" => "repository_ownerships#update"
         get "/activities" => "repository_activities#index", :as => :activities
       end
 
