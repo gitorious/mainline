@@ -20,6 +20,7 @@ require "test_helper"
 class RepositoryCloneSearchTest < ActionDispatch::IntegrationTest
   def login(user)
     open_session do |session|
+      session.host = Gitorious.host
       session.post("/sessions", :email => user.email, :password => "test")
       yield session
     end
