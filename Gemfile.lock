@@ -130,7 +130,7 @@ GEM
     json (1.7.7)
     just_paginate (0.1.1)
     kgio (2.8.0)
-    libdolt (0.33.2)
+    libdolt (0.33.3)
       htmlentities (~> 4.3)
       json (~> 1.7)
       makeup (~> 0.4.1)
