@@ -17,13 +17,7 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= partial("repositories/repo_header", {
-        :repository => repository,
-        :project => repository.project,
-        :app => Gitorious,
-        :active => :admin,
-        :header_level => 2
-      }) %>
+  <%= repo_header repository, :current_user => current_user, :active => :admin, :header_level => 2 %>
 
 <div class="container">
   <%= error_messages(repo_edit) -%>
