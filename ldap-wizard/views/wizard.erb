@@ -1,0 +1,56 @@
+<div class="row">
+  <div class="span6">
+    <h1>Test your LDAP connection</h1>
+    <form method="post" action="/test" class="form-horizontal">
+      <fieldset>
+        <legend>General configuration</legend>
+
+        <%= field(@configurator, :host, "LDAP server", "Enter the hostname/IP address of your LDAP server") %>
+        <%= field(@configurator, :port, "LDAP port") %>
+        <%= field(@configurator, :base_dn, "Base DN", "What is the LDAP base DN to use when searching for users?") %>
+        <%= field(@configurator, :login_attribute, "Login attribute", "Which LDAP attribute should the user's username be matched against?") %>
+        <%= field(@configurator, :encryption, "Encryption type", "Specify the encryption type", ["none","simple_tls", "start_tls"]) %>
+      </fieldset>
+
+      <fieldset>
+        <legend>Set up authenticated bind</legend>
+        <%= field(@configurator, :bind_username, "Username","Enter the full LDAP DN for the bind user") %>
+        <%= field(@configurator, :bind_password, "Password") %>
+      </fieldset>
+
+      <fieldset>
+        <legend>Credentials for testing</legend>
+        <%= field(@credentials, :username, "Username") %>
+        <%= field(@credentials, :password, "Password") %>
+
+      </fieldset>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Test the provided values</button>
+      </div>
+    </form>
+
+  </div>
+  <div class="span6">
+    <% if @test_results %>
+      <h2>Test results</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Test</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @test_results[:details].each do |detail| %>
+            <tr class="<%= detail.css_class %>">
+              <td><%= detail.title %></td>
+              <td><%= detail.details%></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+    <h3>Current authentication.yml</h3>
+    <pre><%= @configurator.to_yaml %></pre>
+  </div>
+</div>
