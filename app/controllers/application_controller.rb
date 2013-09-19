@@ -404,7 +404,7 @@ class ApplicationController < ActionController::Base
     filter_authorized(current_user, collection)
   end
 
-  def filter_paginated(page, per_page = 30, &block)
+  def filter_paginated(page, per_page = 30, collection_count = nil, &block)
     page = 1 if page.nil?
     WillPaginate::Collection.create(page, per_page) do |pager|
       result = filter(block.call(page))
@@ -414,7 +414,7 @@ class ApplicationController < ActionController::Base
 
       unless pager.total_entries
         # the pager didn't manage to guess the total count, do it manually
-        pager.total_entries = result.first.nil? ? 0 : result.first.class.count
+        pager.total_entries = result.first.nil? ? 0 : collection_count || result.first.class.count
       end
     end
   end
