@@ -117,7 +117,6 @@ class UsersController < ApplicationController
       filter_paginated(params[:page], FeedItem.per_page) do |page|
         res = user.events.excluding_commits.paginate({
             :page => page,
-            :order => "events.created_at desc",
             :include => [:user, :project]
           })
       end

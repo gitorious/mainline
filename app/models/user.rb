@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
   has_many :ssh_keys, :order => "id desc", :dependent => :destroy
   has_many :comments
   has_many :email_aliases, :class_name => "Email", :dependent => :destroy
-  has_many :events, :order => "events.created_at asc", :dependent => :destroy
+  has_many :events, :order => "events.created_at desc", :dependent => :destroy
   has_many :events_as_target, :class_name => "Event", :as => :target
   has_many :favorites, :dependent => :destroy
   has_many :feed_items, :foreign_key => "watcher_id"
