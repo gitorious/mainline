@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row-fluid">
   <div class="span6">
     <h1>Test your LDAP connection</h1>
     <form method="post" action="/test" class="form-horizontal">
@@ -30,7 +30,7 @@
     </form>
 
   </div>
-  <div class="span6">
+<div class="span6">
     <% if @test_results %>
       <h2>Test results</h2>
       <table class="table">
@@ -38,6 +38,7 @@
           <tr>
             <th>Test</th>
             <th>Result</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -45,6 +46,7 @@
             <tr class="<%= detail.css_class %>">
               <td><%= detail.title %></td>
               <td><%= detail.details%></td>
+              <td><span class="label label-<%= detail.css_class %>"><%= detail.success.to_s.capitalize %></span></td>
             </tr>
           <% end %>
         </tbody>
