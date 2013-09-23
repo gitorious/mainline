@@ -50,6 +50,7 @@ module Gitorious
 
     get_repo_ref_path '/*/source/*:*' do
       repo, ref, path = params[:splat]
+      path.force_encoding('ascii-8bit')
       safe_action(repo, ref) do
         configure_env(repo)
         dolt.tree_entry(repo, ref, path, env_data)
@@ -58,6 +59,7 @@ module Gitorious
 
     get_repo_ref_path "/*/raw/*:*" do
       repo, ref, path = params[:splat]
+      path.force_encoding('ascii-8bit')
       safe_action(repo, ref) do
         configure_env(repo)
         dolt.raw(repo, ref, path, env_data)
@@ -66,6 +68,7 @@ module Gitorious
 
     get_repo_ref_path "/*/blame/*:*" do
       repo, ref, path = params[:splat]
+      path.force_encoding('ascii-8bit')
       safe_action(repo, ref) do
         configure_env(repo)
         dolt.blame(repo, ref, path, env_data)
@@ -74,6 +77,7 @@ module Gitorious
 
     get_repo_ref_path "/*/history/*:*" do
       repo, ref, path = params[:splat]
+      path.force_encoding('ascii-8bit')
       safe_action(repo, ref) do
         configure_env(repo)
         dolt.history(repo, ref, path, (params[:commit_count] || 20).to_i, env_data)
@@ -82,6 +86,7 @@ module Gitorious
 
     get_repo_ref_path "/*/tree_history/*:*" do
       repo, ref, path = params[:splat]
+      path.force_encoding('ascii-8bit')
       safe_action(repo, ref) do
         configure_env(repo)
         dolt.tree_history(repo, ref, path, 1, env_data)
