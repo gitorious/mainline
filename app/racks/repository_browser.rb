@@ -26,6 +26,12 @@ module Gitorious
     include Gitorious::View::DoltUrlHelper
     include Gitorious::View::SiteHelper
 
+    def self.get_repo_ref_path(action, &blk)
+      get(action, &blk)
+      get(action.gsub(':', '%3a'), &blk)
+      get(action.gsub(':', '%3A'), &blk)
+    end
+
     def initialize(lookup, renderer)
       @lookup = lookup
       @renderer = renderer
@@ -42,7 +48,7 @@ module Gitorious
     #   -> 302 /gitorious/mainline/source/2d4e282d02f438043fc425cc99a781774d22561a:
     def redirect_refs?; true; end
 
-    get "/*/source/*:*" do
+    get_repo_ref_path '/*/source/*:*' do
       repo, ref, path = params[:splat]
       safe_action(repo, ref) do
         configure_env(repo)
@@ -50,7 +56,7 @@ module Gitorious
       end
     end
 
-    get "/*/raw/*:*" do
+    get_repo_ref_path "/*/raw/*:*" do
       repo, ref, path = params[:splat]
       safe_action(repo, ref) do
         configure_env(repo)
@@ -58,7 +64,7 @@ module Gitorious
       end
     end
 
-    get "/*/blame/*:*" do
+    get_repo_ref_path "/*/blame/*:*" do
       repo, ref, path = params[:splat]
       safe_action(repo, ref) do
         configure_env(repo)
@@ -66,7 +72,7 @@ module Gitorious
       end
     end
 
-    get "/*/history/*:*" do
+    get_repo_ref_path "/*/history/*:*" do
       repo, ref, path = params[:splat]
       safe_action(repo, ref) do
         configure_env(repo)
@@ -74,7 +80,7 @@ module Gitorious
       end
     end
 
-    get "/*/tree_history/*:*" do
+    get_repo_ref_path "/*/tree_history/*:*" do
       repo, ref, path = params[:splat]
       safe_action(repo, ref) do
         configure_env(repo)
