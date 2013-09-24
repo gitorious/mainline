@@ -385,7 +385,7 @@ DEPENDENCIES
   jruby-openssl
   json (>= 1.7.7, < 1.8)
   just_paginate (= 0.2.2)
-  libdolt (~> 0.33.1)
+  libdolt (~> 0.33.4)
   memcache-client (~> 1.8)
   mime-types (~> 1.16)
   minitest (= 4.2.0)
