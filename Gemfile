@@ -23,7 +23,7 @@ gem "rails_autolink", "~> 1.0"
 gem "mysql2", :platforms => :ruby
 gem "highline"
 gem "use_case", "~> 0.13"
-gem "virtus", :git => "https://github.com/solnic/virtus.git"
+gem "virtus", '~> 1.0.0.beta3'
 gem "rake", "~> 10.0"
 
 group :openid do

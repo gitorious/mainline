@@ -1,21 +1,8 @@
-GIT
-  remote: https://github.com/solnic/virtus.git
-  revision: 97a161f19d20a961094112464075c284d68d35e4
-  specs:
-    virtus (1.0.0.beta1)
-      abstract_type (~> 0.0.5)
-      adamantium (~> 0.0.7)
-      backports (~> 3.0, >= 3.1.0)
-      coercible (~> 0.2)
-      descendants_tracker (~> 0.0.1)
-
 GEM
   remote: https://rubygems.org/
   specs:
     RedCloth (4.2.9)
     SystemTimer (1.2.3)
-    abstract_type (0.0.5)
-      backports (~> 3.0, >= 3.0.3)
     actionmailer (3.2.14)
       actionpack (= 3.2.14)
       mail (~> 2.5.4)
@@ -45,11 +32,12 @@ GEM
       multi_json (~> 1.0)
     acts-as-taggable-on (2.4.1)
       rails (>= 3, < 5)
-    adamantium (0.0.10)
-      ice_nine (~> 0.8.0)
     addressable (2.3.5)
     arel (3.0.2)
-    backports (3.3.3)
+    axiom-types (0.0.3)
+      descendants_tracker (~> 0.0.1)
+      ice_nine (~> 0.9)
+    backports (3.3.4)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.0.4)
@@ -81,6 +69,7 @@ GEM
       tiltout (~> 1.4)
       trollop (~> 2.0)
     dotenv (0.8.0)
+    equalizer (0.0.7)
     erubis (2.7.0)
     escape_utils (0.3.2)
     eventmachine (1.0.3)
@@ -124,7 +113,7 @@ GEM
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
     i18n (0.6.5)
-    ice_nine (0.8.0)
+    ice_nine (0.10.0)
     innertube (1.1.0)
     journey (1.0.4)
     json (1.7.7)
@@ -300,6 +289,11 @@ GEM
     use_case (0.13.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
+    virtus (1.0.0.beta3)
+      axiom-types (~> 0.0.3)
+      coercible (~> 0.2)
+      descendants_tracker (~> 0.0.1)
+      equalizer (~> 0.0.7)
     webmock (1.13.0)
       addressable (>= 2.2.7)
       crack (>= 0.3.2)
@@ -376,7 +370,7 @@ DEPENDENCIES
   trinidad
   unicorn (~> 4.6.3)
   use_case (~> 0.13)
-  virtus!
+  virtus (~> 1.0.0.beta3)
   webmock
   wikicloth
   will_paginate (~> 3.0)
