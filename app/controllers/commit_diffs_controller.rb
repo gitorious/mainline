@@ -24,14 +24,22 @@ class CommitDiffsController < ApplicationController
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
   before_filter :find_commit, :only => :index
-
+  layout "ui3"
   skip_session
   after_filter :cache_forever
   renders_in_site_specific_context
 
   def index
-    @diffs = @commit.parents.empty? ? [] : @commit.diffs
-    render :layout => !request.xhr?
+    render("index", :layout => request.xhr? ? false : "ui3", :locals => {
+        :commit => @commit,
+        :diffs => @commit.parents.empty? ? [] : @commit.diffs,
+        :committer_user => @committer_user,
+        :author_user => @author_user,
+        :project => @project,
+        :repository => RepositoryPresenter.new(@repository),
+        :mode => @diffmode == "sidebyside" ? :sidebyside : :inline,
+        :comments => @comments
+      })
   end
 
   def compare

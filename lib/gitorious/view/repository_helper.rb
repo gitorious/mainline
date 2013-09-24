@@ -104,6 +104,29 @@ git push</pre>
           </ul>
         HTML
       end
+
+      def repository_title(repository, header_level = 1)
+        html = ""
+
+        if !(parent = repository.parent).nil?
+          html += <<-HTML
+            <p class="gts-clone-source">
+              <i title="Cloned from #{parent.slug}" class="icon icon-share-alt"></i>
+              Cloned from
+              <a href="#{project_path(parent.project)}">#{parent.project.slug}</a> /
+              <a href="#{project_repository_path(parent.project, parent)}">#{parent.name}</a>
+            </p>
+          HTML
+        end
+
+        project = repository.project
+        (html + <<-HTML).html_safe
+          <h#{header_level} class="span">
+            <a href="#{project_path(project)}">#{project.slug}</a> /
+            <a class="gts-repository-name-ph" href="#{project_repository_path(project, repository)}">#{repository.name}</a>
+          </h#{header_level}>
+        HTML
+      end
     end
   end
 end

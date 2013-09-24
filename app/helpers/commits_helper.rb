@@ -26,8 +26,28 @@ module CommitsHelper
   include DiffHelper
 
   def format_commit_message(message)
+    return nil if message.nil?
     force_utf8(message).gsub(/\b[a-z0-9]{40}\b/) do |match|
       link_to(match, project_repository_commit_path(@project, @repository, match), :class => "sha")
     end.html_safe
+  end
+
+  def parse_commit_message(message)
+    lines = message.split("\n")
+    summary, rest = split_summary(lines.shift)
+    [summary, rest, lines.join("\n").strip].map { |m| format_commit_message(m) }
+  end
+
+  def split_summary(message)
+    head = ""
+    tail = ""
+    message.split(" ").each do |word|
+      if (head.length + word.length) < 50
+        head << "#{word} "
+      else
+        head << "#{tail} "
+      end
+    end
+    [head, tail]
   end
 end

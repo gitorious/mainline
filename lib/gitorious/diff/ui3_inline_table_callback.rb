@@ -44,7 +44,7 @@ module Gitorious
           <tr class="gts-diff-mod">
             <td class="linenum L#{line.old_number}">#{line.old_number}</td>
             <td class="linenum L#{line.new_number}">#{line.new_number}</td>
-            <td class="gts-code"><code>#{render_line(line)}</code>)</td>
+            <td class="gts-code"><code>#{render_line(line)}</code></td>
           </tr>
         HTML
       end
@@ -54,7 +54,7 @@ module Gitorious
           <tr class="gts-diff-unmod">
             <td class="linenum L#{line.old_number}">#{line.old_number}</td>
             <td class="linenum L#{line.new_number}">#{line.new_number}</td>
-            <td class="gts-code"><code>#{render_line(line)}</code>)</td>
+            <td class="gts-code"><code>#{render_line(line)}</code></td>
           </tr>
         HTML
       end
@@ -74,7 +74,7 @@ module Gitorious
           <tr class="gts-diff-no-newline">
             <td class="linenum L#{line.old_number}">#{line.old_number}</td>
             <td class="linenum L#{line.new_number}">#{line.new_number}</td>
-            <td class="gts-code"><code>#{render_line(line)}</code>)</td>
+            <td class="gts-code"><code>#{render_line(line)}</code></td>
           </tr>
         HTML
       end

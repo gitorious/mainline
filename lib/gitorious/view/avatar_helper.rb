@@ -61,10 +61,14 @@ module Gitorious
         avatar_style = options.delete(:version) || :thumb
         image = User.find_avatar_for_email(email, avatar_style)
         if image == :nil
-          gravatar(email, options)
+          gravatar(email, options, :class => "gts-avatar")
         else
-          image_options = { :alt => 'avatar'}.merge(:width => options[:size], :height => options[:size])
-          image_tag(image, image_options)
+          image_tag(image, {
+              :alt => "avatar",
+              :width => options[:size],
+              :height => options[:size],
+              :class => "gts-avatar"
+            })
         end
       end
 

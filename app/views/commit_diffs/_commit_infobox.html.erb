@@ -22,71 +22,56 @@
 #++
 %>
 
-<a name="infobox"></a>
-<div class="commit-infobox">
-  <div class="commit-meta">
-    <ul class="people">
-      <li class="avatar">
-        <div>
-        <% if @committer_user -%>
-          <%= link_to(avatar_from_email(@commit.committer.email, { :size => 32 }), @committer_user) %>
-        <% else -%>
-          <%= avatar_from_email(@commit.committer.email, { :size => 32 }) %>
-        <% end -%>
-        </div>
-      </li>
-      <li>
-        <% if @committer_user -%>
-          <%= link_to h(@committer_user.title), @committer_user -%>
-        <% else -%>
-          <%= h force_utf8(@commit.committer.name) -%>
-          <%= render_email(@commit.committer.email) -%>
-        <% end -%>
-        <% if @commit.committer != @commit.author -%>
-          <small>(<%= t("views.commits.committer") %>)</small>
-        <% end -%>
-      </li>
-      <li class="meta"><%= time_ago(@commit.committed_date) -%></li>
-      <% if @commit.committer != @commit.author -%>
-        <li class="clear"></li>
-        <li class="avatar">
-          <div>
-          <% if @author_user -%>
-            <%= link_to(avatar_from_email(@commit.author.email, { :size => 32 }), @author_user) %>
-          <% else -%>
-            <%= avatar_from_email(@commit.author.email, { :size => 32 }) %>
-          <% end -%>
-          </div>
-        </li>
-        <li>
-          <% if @author_user -%>
-            <%= link_to h(@author_user.title), @author_user -%>
-          <% else -%>
-            <%= h force_utf8(@commit.author.name) -%>
-            <%= render_email(@commit.author.email) -%>
-          <% end -%>
-          <small>(<%= t("views.commits.author") %>)</small>
-        </li>
-        <li class="meta"><%= time_ago(@commit.authored_date) -%></li>
-      <% end -%>
-    </ul>
-    <ul class="meta">
-      <li><strong><%= t("views.commits.tree_sha1") %>:</strong> <%= link_to h(@commit.tree.id[0,7]),
-        project_repository_tree_path(@project, @repository, @commit.id) -%></li>
-      <% @commit.parents.each do |parent| -%>
-        <li><strong><%= t("views.commits.parent_sha1") %>:</strong> <%= link_to h(parent.id[0,7]),
-         project_repository_commit_path(@project, @repository, parent) -%>
-         <small>(<%=h force_utf8(parent.short_message) -%>)</small>
-        </li>
-      <% end -%>
-      <% unless @commit.merge? -%>
-      <li>
-        <%= link_to "raw diff", project_repository_commit_path(@project, @repository, @commit.id, :format => :diff) -%>
-        | <%= link_to "raw patch", project_repository_commit_path(@project, @repository, @commit.id, :format => :patch) -%>
-      </li>
-      <% end -%>
-    </ul>
-  </div>
-  <pre class="commit_message"><%= format_commit_message(h(@commit.message)) -%></pre>
+<div class="gts-commit">
+  <blockquote>
+    <p class="gts-commit-sha1">Commit: <a href="<%= project_repository_commit_path(repository.project, repository, commit.id) %>">#<%= commit.id[0,7] %></a></p>
+    <p class="gts-commit-sha1 gts-commit-parent">
+      Parent<%= "s" if commit.parents.length > 1 %>:
+      <%= commit.parents.map do |parent|
+            "<a href=\"#{project_repository_commit_path(repository.project, repository, parent.id)}\">##{parent.id[0,7]}</a>"
+          end.join(", ").html_safe %>
+    </p>
+    <% summary, overflow, message = parse_commit_message(commit.message) %>
+    <h1><%= summary %></h1>
+    <% if overflow %>
+      <p><strong><%= overflow %></strong></p>
+    <% end %>
+    <% if message != "" %>
+      <%= message.split("\n\n").map { |p| "<p>#{p}</p>" }.join("").html_safe %>
+    <% end %>
+  </blockquote>
 
+  <p class="gts-commit-meta">
+    <% if committer_user -%>
+      <%= link_to(avatar_from_email(commit.committer.email, { :size => 24 }), committer_user) %>
+      <%= link_to(commit.committer.name, committer_user) %>
+    <% else -%>
+      <%= avatar_from_email(commit.committer.email, { :size => 24 }) %>
+      <a>
+        <%=h commit.committer.name -%>
+        <%= render_email(commit.committer.email) -%>
+      </a>
+    <% end -%>
+    <% if commit.committer != commit.author -%>
+      <span class="muted">(<%= t("views.commits.committer") %>)</span>
+    <% end -%>
+    <span class="datetime" data-timestamp="<%= (commit.committed_date.to_f * 1000).floor %>"><%= commit.committed_date.strftime("%Y-%m-%d %H:%M") %></span>
+  </p>
+
+  <% if commit.committer != commit.author -%>
+    <p class="gts-commit-meta">
+      <% if author_user -%>
+        <%= link_to(avatar_from_email(commit.author.email, { :size => 24 }), author_user) %>
+        <%= link_to h(author_user.title), author_user -%>
+      <% else -%>
+        <%= avatar_from_email(commit.author.email, { :size => 24 }) %>
+        <a>
+          <%=h commit.author.name -%>
+          <%= render_email(commit.author.email) -%>
+        </a>
+      <% end -%>
+      <span class="muted">(<%= t("views.commits.author") %>)</span>
+      <span class="datetime" data-timestamp="<%= (commit.authored_date.to_f * 1000).floor %>"><%= commit.authored_date.strftime("%Y-%m-%d %H:%M") %></span>
+    </p>
+  <% end %>
 </div>

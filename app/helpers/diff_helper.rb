@@ -58,6 +58,30 @@ module DiffHelper
     end
   end
 
+  def render_ui3_inline_diffs_with_stats(repository, commit, file_diffs)
+    file_diffs.map do |file|
+      diff_renderer = Diff::Display::Unified.new(file.diff)
+      adds = diff_renderer.stats[:additions]
+      rms = diff_renderer.stats[:deletions]
+      blob_url = tree_entry_url(repository.slug, commit.id, file.a_path)
+      diff_options = {}
+
+      if file.diff[0..256].include?("\000")
+        "<em class=\"muted\">Binary files differ</em>"
+      else
+        diff_options[:comments] = yield(file) if block_given?
+        force_utf8(render_inline_diff2(file.diff, :navigation => <<-HTML))
+        <ul class="breadcrumb">
+          <li class="gts-diff-summary">
+            <a href="#{blob_url}"><i class="icon icon-file"></i> #{file.a_path}</a>
+            (<span class="gts-diff-add">+#{adds}</span>/<span class="gts-diff-rm">-#{rms}</span>)
+          </li>
+        </ul>
+        HTML
+      end
+    end.join("\n").html_safe
+  end
+
   # Supply a block that fetches an array of comments with the file path as parameter
   def render_inline_diffs_with_stats(file_diffs, state = :closed)
     file_diffs.map do |file|
@@ -120,15 +144,11 @@ module DiffHelper
     out.html_safe
   end
 
-  def render_inline_diff2(udiff)
+  def render_inline_diff2(udiff, options = {})
     differ ||= Diff::Display::Unified.new(udiff)
-
     <<-HTML.html_safe
 <div class="gts-file">
-  <ul class="breadcrumb">
-    <li class="gts-diff-summary">
-    </li>
-  </ul>
+  #{options[:navigation]}
   <table class="gts-code-listing">
 #{differ.render(Gitorious::Diff::UI3InlineTableCallback.new)}
   </table>
@@ -148,32 +168,40 @@ module DiffHelper
     out.html_safe
   end
 
-  def render_diffmode_selector(params = {})
-    url = params[:url] || ""
-    out = %Q{<ul class="mode_selector">}
-    out << %Q{<li class="list_header">Diff rendering mode:</li>}
+  def render_diffmode_selector(repository, commit, mode)
+    links = ""
 
-    if @diffmode == "sidebyside"
-      out << %Q{<li><a href="#{url}?diffmode=inline&amp;fragment=1" data-gts-target="parent">inline</a></li>}
-      out << %Q{<li class="selected">side by side</li>}
+    if mode == :sidebyside
+      links += "<li><a href=\"#{url_for(:diffmode => :inline)}\">Inline diffs</a></li>"
+      links += "<li class=\"active\"><a>Side by side diffs</a></li>"
     else
-      out << %Q{<li class="selected">inline</li>}
-      out << %Q{<li><a href="#{url}?diffmode=sidebyside&amp;fragment=1" data-gts-target="parent">side by side</a></li>}
+      links += "<li class=\"active\"><a>Inline diffs</a></li>"
+      links += "<li><a href=\"#{url_for(:diffmode => :sidebyside)}\">Side by side diffs</a></li>"
     end
-    out << "</ul>"
-    out.html_safe
+
+    project = repository.project
+    <<-HTML.html_safe
+      <ul class="nav nav-tabs">
+        #{links}
+       <li><a href="#{project_repository_commit_path(project, repository, commit.id, :format => :diff)}">Raw diff</a></li>
+       <li><a href="#{project_repository_commit_path(project, repository, commit.id, :format => :patch)}">Raw patch</a></li>
+      </ul>
+    HTML
   end
 
   def render_diff_stats(stats)
-    out = %Q{<ul class="diff_stats">\n}
+    out = "<h3>Summary</h3><ul class=\"gts-diff-summary\">"
+
     stats.files.each do |filename, adds, deletes, total|
-      out << %Q{<li><a href="##{h(filename)}">#{h(filename)}</a>&nbsp;#{total}&nbsp;}
-      out << %Q{<small class="deletions">#{(0...deletes).map{|i| "-" }.join}</small>}
-      out << %Q{<small class="insertions">#{(0...adds).map{|i| "+" }.join}</small>}
-      out << %Q{</li>}
+      del = (0...deletes).map { |i| "-" }.join
+      ins = (0...adds).map{ |i| "+" }.join
+      out << "<li><a href=\"##{h(filename)}\">#{h(filename)}</a> (#{total}) "
+      out << "<span class=\"gts-diff-rm\">#{del}</span>"
+      out << "<span class=\"gts-diff-add\">#{ins}</span>"
+      out << "</li>"
     end
-    out << "</ul>\n"
-    out.html_safe
+
+    (out + "</ul>\n").html_safe
   end
 
   def render_compact_diff_stats(stats)
