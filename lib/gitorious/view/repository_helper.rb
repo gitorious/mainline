@@ -31,6 +31,79 @@ module Gitorious
         return ref unless ref.length == 40
         ref[0...7]
       end
+
+      def remote_url_selection(app, repository)
+        default_remote = app.default_remote_url(repository)
+        <<-HTML.html_safe
+        <div class="btn-group gts-repo-urls">
+          #{remote_link(repository, app.ssh_daemon, "SSH", default_remote)}
+          #{remote_link(repository, app.git_http, app.git_http.scheme.upcase, default_remote)}
+          #{remote_link(repository, app.git_daemon, "Git", default_remote)}
+          <input class="span4 gts-current-repo-url gts-select-onfocus" type="url" value="#{default_remote}">
+          <button data-toggle="collapse" data-target="#repo-url-help" class="gts-repo-url-help btn">?</button>
+        </div>
+        HTML
+      end
+
+      def repo_action_buttons(app, repository, ref)
+        tarball_link = !app.tarballable?(repository) ? "" : <<-HTML
+          <a href="#{archive_url(repository.path_segment, ref, "tar.gz")}" class="btn gts-download" rel="tooltip" data-original-title="Download #{refname(ref)} as .tar.gz">
+            <i class="icon icon-download"></i> Download
+          </a>
+        HTML
+
+        <<-HTML.html_safe
+          <div class="pull-right">
+            #{tarball_link}
+            <div class="gts-watch-repository-ph gts-placeholder"></div>
+            <div class="gts-clone-repository-ph gts-placeholder"></div>
+          </div>
+        HTML
+      end
+
+      def clone_help(app, repository)
+        default_remote = app.default_remote_url(repository)
+        <<-HTML.html_safe
+          <div class="alert alert-info span pull-right">
+            <p>
+              To <strong>clone</strong> this repository:
+            </p>
+            <pre class="prettyprint">git clone #{default_remote}</pre>
+            <p>
+              To <strong>push</strong> to this repository:
+            </p>
+            <pre class="prettyprint"># Add a new remote
+git remote add origin #{default_remote}
+
+# Push the master branch to the newly added origin, and configure
+# this remote and branch as the default:
+git push -u origin master
+
+# From now on you can push master to the "origin" remote with:
+git push</pre>
+          </div>
+        HTML
+      end
+
+      def repo_navigation(repository, ref, active = nil)
+        project = repository.project
+        navigation = header_navigation([
+            [:source, url_for(File.join("/", project.to_param, repository.to_param, "source", "#{repository.head_candidate_name}:")), "Source code"],
+            [:activities, activities_project_repository_path(project, repository), "Activities"],
+            [:commits, project_repository_commits_in_ref_path(project, repository, ref), "Commits"],
+            [:merge_requests, project_repository_merge_requests_path(project, repository), "Merge requests <span class=\"count\">(#{repository.open_merge_request_count})</span>"],
+            [:community, url_for(File.join("/", project.to_param, repository.to_param, "community")), "Community"]
+          ], :active => active)
+
+        active_attr = active.nil? ? "" : " data-gts-active=\"#{active}\""
+        <<-HTML.html_safe
+          <ul class="nav nav-tabs gts-header-nav"#{active_attr}>
+            #{navigation}
+            <li class="gts-repository-admin-ph gts-placeholder"></li>
+            <li class="gts-request-merge-ph gts-placeholder"></li>
+          </ul>
+        HTML
+      end
     end
   end
 end

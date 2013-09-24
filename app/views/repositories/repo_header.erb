@@ -16,6 +16,7 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
 %><%
+header_levels = { :full => 1, :compact => 3 }
 header_level = defined?(header_level) && header_level || 1
 @body_class = "gts-private" if repository.private?
 ref = defined?(ref) && !ref.nil? ? ref : "HEAD"
@@ -38,46 +39,12 @@ has_git_backend = repository.ready? && repository.has_commits?
     </div>
     <div class="row">
       <div class="span">
-        <div class="btn-group gts-repo-urls">
-          <% default_remote = app.default_remote_url(repository) %>
-          <%= remote_link(repository, app.ssh_daemon, "SSH", default_remote) if current_user %>
-          <%= remote_link(repository, app.git_http, app.git_http.scheme.upcase, default_remote) %>
-          <%= remote_link(repository, app.git_daemon, "Git", default_remote) %>
-          <input class="span4 gts-current-repo-url gts-select-onfocus" type="url" value="<%= default_remote %>">
-          <button data-toggle="collapse" data-target="#repo-url-help" class="gts-repo-url-help btn">?</button>
-        </div>
+        <%= remote_url_selection(app, repository) %>
       </div>
-      <% if has_git_backend %>
-        <div class="pull-right">
-          <% if Gitorious.tarballable?(repository) %>
-            <a href="<%= archive_url(repository.path_segment, ref, "tar.gz") %>" class="btn gts-download" rel="tooltip" data-original-title="Download <%= refname(ref) %> as .tar.gz">
-              <i class="icon icon-download"></i> Download
-            </a>
-          <% end %>
-          <div class="gts-watch-repository-ph gts-placeholder"></div>
-          <div class="gts-clone-repository-ph gts-placeholder"></div>
-        </div>
-      <% end %>
+      <%= repo_action_buttons(app, repository, ref) if has_git_backend %>
     </div>
     <div class="collapse gts-help row" id="repo-url-help">
-      <div class="alert alert-info span pull-right">
-        <p>
-          To <strong>clone</strong> this repository:
-        </p>
-        <pre class="prettyprint">git clone <%= default_remote %></pre>
-        <p>
-          To <strong>push</strong> to this repository:
-        </p>
-        <pre class="prettyprint"># Add a new remote
-git remote add origin <%= default_remote %>
-
-# Push the master branch to the newly added origin, and configure
-# this remote and branch as the default:
-git push -u origin master
-
-# From now on you can push master to the "origin" remote with:
-git push</pre>
-      </div>
+      <%= clone_help(app, repository) %>
     </div>
     <div class="row gts-description">
       <div class="span gts-repository-description-ph">
@@ -85,17 +52,7 @@ git push</pre>
       </div>
     </div>
     <% if has_git_backend %>
-      <ul class="nav nav-tabs gts-header-nav" <%= "data-gts-active=#{defined?(active) && active.to_s}"  %>>
-        <%= header_navigation([
-                [:source, url_for(File.join("/", repository.project.to_param, repository.to_param, "source", "#{repository.head_candidate_name}:")), "Source code"],
-                [:activities, activities_project_repository_path(repository.project, repository), "Activities"],
-                [:commits, project_repository_commits_in_ref_path(repository.project, repository, ref), "Commits"],
-                [:merge_requests, project_repository_merge_requests_path(repository.project, repository), "Merge requests <span class=\"count\">(#{repository.open_merge_request_count})</span>"],
-                [:community, url_for(File.join("/", repository.project.to_param, repository.to_param, "community")), "Community"]
-              ], :active => defined?(active) ? active : nil) %>
-        <li class="gts-repository-admin-ph gts-placeholder"></li>
-        <li class="gts-request-merge-ph gts-placeholder"></li>
-      </ul>
+      <%= repo_navigation(repository, ref, defined?(active) && active) %>
     <% else %>
       <div class="gts-standalone"><p class="gts-repository-admin-ph gts-placeholder"></p></div>
     <% end %>
