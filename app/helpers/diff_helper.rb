@@ -40,22 +40,28 @@ module DiffHelper
     @diffmode == "sidebyside"
   end
 
-  def render_diffs(diffs)
-    if sidebyside_diff?
-      diffs.map do |file|
-        a_path = force_utf8(file.a_path)
-        out = %Q{<a name="#{h(a_path)}"></a>}
-        out << "<h4>"
-        out << link_to(h(a_path), file_path(@repository, a_path, @commit.id))
-        out << "</h4>"
-        out << force_utf8(render_diff(file.diff))
-        out
-      end.join("\n").html_safe
-    else
-      ('<div class="clear"></div><div id="commit-diff-container">' +
-       render_inline_diffs_controls("commits") +
-       render_inline_diffs_with_stats(diffs, :open) + "</div>").html_safe
-    end
+  def render_diffs(repository, commit, diffs)
+    diffs.map do |file|
+      diff_renderer = Diff::Display::Unified.new(file.diff)
+      adds = diff_renderer.stats[:additions]
+      rms = diff_renderer.stats[:deletions]
+      a_path = force_utf8(file.a_path)
+      blob_url = tree_entry_url(repository.slug, commit.id, a_path)
+
+      <<-HTML
+<div class="gts-file">
+  <ul class="breadcrumb">
+    <li class="gts-diff-summary">
+      <a href="#{blob_url}"><i class="icon icon-file"></i> #{a_path}</a>
+      (<span class="gts-diff-add">+#{adds}</span>/<span class="gts-diff-rm">-#{rms}</span>)
+    </li>
+  </ul>
+  <table class="gts-code-listing gts-side-by-side">
+#{force_utf8(diff_renderer.render(Gitorious::Diff::SidebysideTableCallback.new))}
+  </table>
+</div>
+      HTML
+    end.join("\n").html_safe
   end
 
   def render_ui3_inline_diffs_with_stats(repository, commit, file_diffs)
@@ -154,18 +160,6 @@ module DiffHelper
   </table>
 </div>
     HTML
-  end
-
-  def render_sidebyside_diff(udiff)
-    differ = Diff::Display::Unified.new(udiff)
-    out = %Q{<table class="codediff sidebyside">\n}
-    out << %Q{<colgroup class="left"><col class="lines"/><col class="code"/></colgroup>}
-    out << %Q{<colgroup class="right"><col class="lines"/><col class="code"/></colgroup>}
-    out << %Q{<thead><th class="line-numbers"></th><th></th>}
-    out << %Q{<th class="line-numbers"></th><th></th></thead>}
-    out << differ.render(Gitorious::Diff::SidebysideTableCallback.new)
-    out << "</table>"
-    out.html_safe
   end
 
   def render_diffmode_selector(repository, commit, mode)

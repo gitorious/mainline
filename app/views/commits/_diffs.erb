@@ -18,7 +18,7 @@
 #++
 %>
 <% if mode == :sidebyside -%>
-  <%= render_diffs(diffs) -%>
+  <%= render_diffs(repository, commit, diffs) -%>
 <% else -%>
   <%= render_ui3_inline_diffs_with_stats(repository, commit, diffs) do |file|
         comments.select { |c| c.path == file.a_path }

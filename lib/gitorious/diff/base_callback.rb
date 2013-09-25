@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -23,23 +24,23 @@ module Gitorious
     class BaseCallback < ::Diff::Renderer::Base
       def headerline(line); end
       def new_line; end
-      
+
       protected
-        def escape(text)
-          text.to_s.gsub('&', '&amp;').
-            gsub('<', '&lt;').
-            gsub('>', '&gt;').
-            gsub('"', '&#34;')
+      def escape(text)
+        text.to_s.gsub("&", "&amp;").
+          gsub("<", "&lt;").
+          gsub(">", "&gt;").
+          gsub("\"", "&#34;")
+      end
+
+      def render_line(line)
+        if line.inline_changes?
+          prefix, changed, postfix = line.segments.map { |segment| escape(segment) }
+          "{#{prefix}<span class=\"idiff\">#{changed}</span>#{postfix}"
+        else
+          escape(line)
         end
-        
-        def render_line(line)
-          if line.inline_changes?
-            prefix, changed, postfix = line.segments.map{|segment| escape(segment) }
-            %Q{#{prefix}<span class="idiff">#{changed}</span>#{postfix}}
-          else
-            escape(line)
-          end
-        end
+      end
     end
   end
 end

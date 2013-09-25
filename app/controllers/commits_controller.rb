@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -84,7 +84,11 @@ class CommitsController < ApplicationController
     @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
 
     respond_to do |format|
-      format.html
+      format.html do
+        render("show", :layout => "ui3", :locals => {
+
+          })
+      end
 
       format.diff do
         render(:text => commit_diffs.map { |d| d.diff }.join("\n"),
