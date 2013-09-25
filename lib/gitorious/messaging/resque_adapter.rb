@@ -61,6 +61,10 @@ module Gitorious::Messaging::ResqueAdapter
       mod.extend(Resque::Plugins::JobStats)
     end
 
+    def self.extended(mod)
+      mod.extend(Resque::Plugins::JobStats)
+    end
+
     def consumes(queue, options = {})
       @queue = queue.sub(/\/queue\//, "")
     end
