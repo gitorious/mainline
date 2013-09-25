@@ -61,6 +61,8 @@ module Gitorious
       def self.included(klass)
         if defined? @adapter
           klass.extend(@adapter)
+        else
+          raise "There is no messaging adapter configured!"
         end
       end
 

@@ -16,6 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "resque"
+require 'resque/plugins/job_stats'
 
 # Resque backed implementation of the Gitorious messaging API. For use with
 # lib/gitorious/messaging
@@ -54,6 +55,10 @@ module Gitorious::Messaging::ResqueAdapter
   module Consumer
     def self.included(klass)
       klass.send(:extend, self) if klass != Gitorious::Messaging::Consumer
+    end
+
+    def self.extended(mod)
+      mod.extend(Resque::Plugins::JobStats)
     end
 
     def consumes(queue, options = {})
