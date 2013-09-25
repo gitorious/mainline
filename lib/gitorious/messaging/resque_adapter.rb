@@ -54,7 +54,7 @@ module Gitorious::Messaging::ResqueAdapter
 
   module Consumer
     def self.included(klass)
-      klass.send(:extend, self) if klass != Gitorious::Messaging::Consumer
+      klass.extend(self) if klass != Gitorious::Messaging::Consumer
     end
 
     def self.extended(mod)
