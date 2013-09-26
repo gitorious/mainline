@@ -25,7 +25,7 @@ gem "highline"
 gem "use_case", "~> 0.13"
 gem "virtus", '~> 1.0.0.beta7'
 gem "rake", "~> 10.0"
-gem "airbrake", "~> 3.1.14", :require => false
+gem "airbrake", "~> 3.1.14"
 
 group :openid do
   gem "ruby-yadis", "0.3.4", :require => "yadis"

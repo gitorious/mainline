@@ -1,8 +1,6 @@
 airbrake_api_key = Gitorious::Configuration.get("airbrake_api_key")
 
 if airbrake_api_key
-  require 'airbrake'
-
   Airbrake.configure do |config|
     config.api_key = airbrake_api_key
   end
