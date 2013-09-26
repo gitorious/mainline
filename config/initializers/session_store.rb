@@ -7,8 +7,6 @@
 # (create the session table with "rails generate session_migration")
 # Gitorious::Application.config.session_store :active_record_store
 
-require_relative 'gitorious_config'
-
 Gitorious::Application.config.session_store(:cookie_store, {
   :key => "_gitorious_session",
   :domain => Gitorious.host =~ /\./ ? ".#{Gitorious.host}" : "",

@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "minitest/autorun"
-require "config/initializers/gitorious_config"
+require "config/gitorious_config"
 require "app/middlewares/dolt_auth_middleware"
 require "fast_test_helper"
 require "rack"

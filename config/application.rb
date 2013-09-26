@@ -112,3 +112,5 @@ module Gitorious
     # config.middleware.insert_before ActionDispatch::Cookies, ::GitHttpCloner
   end
 end
+
+require File.expand_path("../gitorious_config", __FILE__)

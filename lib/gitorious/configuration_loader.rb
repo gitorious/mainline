@@ -18,14 +18,14 @@
 require "pathname"
 require "yaml"
 
-# See also config/initializers/gitorious_config.yml for more information about
+# See also config/gitorious_config.rb for more information about
 # how Gitorious is configured.
 #
-# Load configuration from config/gitorious.yml) and optionally configure
+# Load configuration from config/gitorious.yml and optionally configure
 # the application's singletons within the Rails process.
 #
 # Most of the time, this loader is used by
-# config/initializers/gitorious_config.rb, which configures the application. In
+# config/gitorious_config.rb, which configures the application. In
 # cases where you are not running initializers but still need access to the
 # contents of gitorious.yml, you should look into using this class.
 #

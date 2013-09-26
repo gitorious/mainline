@@ -24,7 +24,7 @@ require "minitest/autorun"
 require "ci/reporter/rake/minitest_loader"
 require "mocha/setup"
 require "pathname"
-require((defined?(Rails) ? Rails.root : "") + "config/initializers/gitorious_config")
+require((defined?(Rails) ? Rails.root : "") + "config/gitorious_config")
 
 class MiniTest::Spec
   def assert_cache_header(cache_control, rack_response)

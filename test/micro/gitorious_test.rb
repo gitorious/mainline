@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "fast_test_helper"
-require "config/initializers/gitorious_config"
+require "config/gitorious_config"
 require "gitorious"
 
 class GitoriousTest < MiniTest::Spec
