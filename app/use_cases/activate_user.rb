@@ -21,7 +21,7 @@ require "validators/nil_validator"
 require "commands/activate_user_command"
 
 class UserActivationParams
-  include Virtus
+  include Virtus.model
   attribute :code, String
 end
 

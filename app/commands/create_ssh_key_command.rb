@@ -18,7 +18,7 @@
 require "virtus"
 
 class NewSshKeyParams
-  include Virtus
+  include Virtus.model
   attribute :key, String
 end
 

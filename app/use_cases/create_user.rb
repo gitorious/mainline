@@ -33,7 +33,7 @@ class CreateUserCommand
 end
 
 class NewUserParams
-  include Virtus
+  include Virtus.model
   attribute :login, String
   attribute :fullname, String
   attribute :email, String

@@ -18,7 +18,7 @@
 require "virtus"
 
 class DestroySshKeyParams
-  include Virtus
+  include Virtus.model
   attribute :id, Integer
 end
 

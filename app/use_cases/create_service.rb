@@ -20,7 +20,7 @@ require "virtus"
 require "validators/service_validator"
 
 class ServiceParams
-  include Virtus
+  include Virtus.model
   attribute :data, Hash
   attribute :service_type, String
   attribute :site_wide, Boolean

@@ -19,7 +19,7 @@ require "virtus"
 require "commands/create_repository_command"
 
 class CloneRepositoryInput < NewRepositoryInput
-  include Virtus
+  include Virtus.model
   attribute :login, String
   attribute :owner_type, String
   attribute :owner_id, Integer
