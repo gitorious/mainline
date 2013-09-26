@@ -564,15 +564,6 @@ class ProjectTest < ActiveSupport::TestCase
         @project.destroy
       end
     end
-
-    should "delete taggings" do
-      tags = ["super","awesome","great"]
-      @project.tag_list = tags
-      @project.save
-      assert_incremented_by(ActsAsTaggableOn::Tag, :count, -tags.length) do
-        @project.destroy
-      end
-    end
   end
 
   private
