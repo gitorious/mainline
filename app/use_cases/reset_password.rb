@@ -20,7 +20,7 @@ require "validators/new_password_validator"
 require "virtus"
 
 class ResetPasswordParams
-  include Virtus
+  include Virtus.model
   attribute :password, String
   attribute :password_confirmation, String
 end

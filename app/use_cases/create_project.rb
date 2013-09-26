@@ -19,7 +19,7 @@ require "use_case"
 require "virtus"
 
 class NewProjectParams
-  include Virtus
+  include Virtus.model
   attribute :title, String
   attribute :slug, String
   attribute :description, String

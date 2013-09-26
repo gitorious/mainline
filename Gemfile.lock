@@ -294,7 +294,7 @@ GEM
     use_case (0.13.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
-    virtus (1.0.0.beta3)
+    virtus (1.0.0.beta7)
       axiom-types (~> 0.0.3)
       coercible (~> 0.2)
       descendants_tracker (~> 0.0.1)
@@ -377,7 +377,7 @@ DEPENDENCIES
   trinidad
   unicorn (~> 4.6.3)
   use_case (~> 0.13)
-  virtus (~> 1.0.0.beta3)
+  virtus (~> 1.0.0.beta7)
   webmock
   wikicloth
   will_paginate (~> 3.0)

@@ -18,7 +18,7 @@
 require "virtus"
 
 class NewRepositoryInput
-  include Virtus
+  include Virtus.model
   attribute :name, String
   attribute :description, String
   attribute :merge_requests_enabled, Boolean, :default => true

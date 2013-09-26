@@ -66,7 +66,7 @@ class CreateMembershipCommand
 end
 
 class NewMembershipParams
-  include Virtus
+  include Virtus.model
   attribute :login, String
   attribute :user_id, Integer
   attribute :role, Integer

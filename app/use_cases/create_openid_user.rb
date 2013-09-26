@@ -21,7 +21,7 @@ require "validators/open_id_user_validator"
 require "commands/activate_user_command"
 
 class NewOpenIdUserParams
-  include Virtus
+  include Virtus.model
   attribute :login, String
   attribute :email, String
   attribute :fullname, String

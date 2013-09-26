@@ -36,7 +36,7 @@ class ChangePasswordCommand
 end
 
 class PasswordChangeParams
-  include Virtus
+  include Virtus.model
   attribute :current_password, :String
   attribute :password, :String
   attribute :password_confirmation, :String

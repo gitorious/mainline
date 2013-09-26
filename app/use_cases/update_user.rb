@@ -43,7 +43,7 @@ class UpdateUserCommand
 end
 
 class UpdateUserParams
-  include Virtus
+  include Virtus.model
   attribute :fullname, String
   attribute :email, String
   attribute :url, String
