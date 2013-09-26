@@ -33,6 +33,9 @@ GEM
     acts-as-taggable-on (2.4.1)
       rails (>= 3, < 5)
     addressable (2.3.5)
+    airbrake (3.1.14)
+      builder
+      json
     arel (3.0.2)
     axiom-types (0.0.3)
       descendants_tracker (~> 0.0.1)
@@ -315,6 +318,7 @@ DEPENDENCIES
   SystemTimer (~> 1.2)
   activerecord-jdbcmysql-adapter
   acts-as-taggable-on (~> 2.3)
+  airbrake (~> 3.1.14)
   binding_of_caller
   capillary (~> 1.0.1)
   ci_reporter

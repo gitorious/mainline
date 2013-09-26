@@ -33,4 +33,6 @@ rescue LoadError => err
   $stderr.puts "Failed loading some test dependencies: #{err.message}"
 end
 
+require 'airbrake'
+
 Gitorious::Application.load_tasks

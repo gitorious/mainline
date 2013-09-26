@@ -17,7 +17,7 @@ gem "capillary", "~> 1.0.1"
 gem "nokogiri", "~> 1.5", "< 1.6"
 gem "memcache-client", "~> 1.8"
 gem "unicorn", "~> 4.6.3", :platforms => :ruby
-gem "exception_notification", :require => "exception_notifier"
+gem "exception_notification", :require => false
 gem "thinking-sphinx", "~> 3.0"
 gem "rails_autolink", "~> 1.0"
 gem "mysql2", :platforms => :ruby
@@ -25,6 +25,7 @@ gem "highline"
 gem "use_case", "~> 0.13"
 gem "virtus", '~> 1.0.0.beta3'
 gem "rake", "~> 10.0"
+gem "airbrake", "~> 3.1.14", :require => false
 
 group :openid do
   gem "ruby-yadis", "0.3.4", :require => "yadis"
