@@ -52,7 +52,8 @@ class TransferProjectOwnershipCommand
 end
 
 class TransferProjectOwnershipParams
-  include Virtus
+  include Virtus.model
+
   attribute :owner_id, Integer
   attribute :owner_type, String
 
