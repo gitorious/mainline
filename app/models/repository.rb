@@ -736,6 +736,10 @@ class Repository < ActiveRecord::Base
     end
   end
 
+  def commit_comments(id)
+    comments.where(:sha1 => id).include(:user)
+  end
+
   protected
   def sharded_hashed_path(h)
     first = h[0,3]

@@ -224,6 +224,11 @@ if !defined?(Rails)
       attr_accessor :url
     end
   end
+
+  class Comment < TestHelper::Model
+    attr_accessor :user, :body, :created_at, :first_line_number,
+      :last_line_number, :context, :path
+  end
 end
 
 # Rails shims

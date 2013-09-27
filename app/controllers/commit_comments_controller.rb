@@ -19,22 +19,19 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "commit_comments_json_presenter"
+require "gitorious/view/avatar_helper"
 
 class CommitCommentsController < ApplicationController
+  include Gitorious::View::AvatarHelper
   before_filter :find_project_and_repository
-  skip_session
-  skip_before_filter :public_and_logged_in
-  skip_before_filter :require_current_eula
-  skip_after_filter :mark_flash_status
-  renders_in_site_specific_context
 
   def index
-    @comments = @repository.comments.find_all_by_sha1(params[:id], :include => :user)
-    last_modified = @comments.size > 0 ? @comments.last.created_at.utc : Time.at(0)
-
-    if stale_conditional?([params[:id], @comments.size], last_modified)
-      @comment_count = @comments.length
-      render :layout => !request.xhr?
+    respond_to do |format|
+      format.json do
+        comments = @repository.commit_comments(params[:id])
+        render(:json => CommitCommentsJSONPresenter.new(self, comments).render_for(current_user))
+      end
     end
   end
 end
