@@ -486,21 +486,15 @@ class RoutingTest < ActionController::TestCase
                           :repository_id => "mainline",
                           :id => @sha,
                           :format => "diff",
-                        }, {
-                          :path => "/gitorious/mainline/commit/diff/#{@sha}",
-                          :method => :get,
-                          :format => "diff"
-                        })
+                        }, "/gitorious/mainline/commit/#{@sha}.diff")
 
-      assert_generates("/gitorious/mainline/commit/diff/#{@sha}", {
+      assert_generates("/gitorious/mainline/commit/#{@sha}.diff", {
                          :controller => "commits",
                          :action => "show",
                          :project_id => "gitorious",
                          :repository_id => "mainline",
                          :id => @sha,
                          :format => "diff"
-                       }, {
-                         :format => "diff",
                        })
     end
 
@@ -511,21 +505,15 @@ class RoutingTest < ActionController::TestCase
                           :repository_id => "mainline",
                           :id => @sha,
                           :format => "patch",
-                        }, {
-                          :path => "/gitorious/mainline/commit/patch/#{@sha}",
-                          :method => :get,
-                          :format => "patch"
-                        })
+                        }, "/gitorious/mainline/commit/#{@sha}.patch")
 
-      assert_generates("/gitorious/mainline/commit/patch/#{@sha}", {
+      assert_generates("/gitorious/mainline/commit/#{@sha}.patch", {
                          :controller => "commits",
                          :action => "show",
                          :project_id => "gitorious",
                          :repository_id => "mainline",
                          :id => @sha,
                          :format => "patch"
-                       }, {
-                         :format => "patch",
                        })
     end
 
