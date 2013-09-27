@@ -1,6 +1,6 @@
 <%
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2011, 2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -22,33 +22,29 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+<%= partial("repositories/header_compact", {
+        :repository => commit.repository,
+        :project => commit.project,
+        :app => Gitorious,
+        :active => :commits
+      }) %>
+<div class="container gts-body">
+  <% @title = t("views.commits.title", :commit => h(commit.id)) %>
 
-<% @page_title = t("views.commits.page_title",
-                   :repo => @repository.name,
-                   :title => @project.title) -%>
-<%= breadcrumbs_from(@root) -%>
-
-<div id="commit-diffs" data-gts-source="<%= h(@diffs_url) %>?fragment=1">
-  <h1>Commit <%=h params[:id] %></h1>
-  <p>
-    <strong>NB!</strong> This page relies heavily on JavaScript, enable it for
-    a better view.
-  </p>
-  <ul>
-    <li><%= link_to "Diffs", :controller => :commit_diffs, :action => :index %></li>
-    <li><%= link_to "Comments", :controller => :commit_comments, :action => :index %></li>
-  </ul>
+  <%= render(:partial => "commit_meta", :locals => {
+          :commit => commit,
+          :project => commit.project,
+          :repository => commit.repository,
+          :committer_user => commit.committer_user,
+          :author_user => commit.author_user
+        }) -%>
+  <% if commit.diffs.blank? -%>
+    <p><%= t("views.commits.message", :path => tree_path(commit.id)) %></p>
+  <% elsif !commit.merge? -%>
+    <%= render_diff_stats(commit.stats) -%>
+    <%= render_diffmode_selector(commit.repository, commit, mode) -%>
+    <% commit.diffs.each do |diff| %>
+      <%= renderer.render(diff).html_safe %>
+    <% end %>
+  <% end -%>
 </div>
-
-<div data-gts-source="<%= h(@comments_url) %>">
-  <h2 id="comments">Comments</h2>
-</div>
-
-<%= render :partial => "comments/form", :locals => {:sha1 => @commit.id} -%>
-<%= render(:partial => "comments/inline_comment_form", :locals => {
-             :commentable_type => "commit",
-             :comment => :comment,
-             :url => new_polymorphic_comment_path(nil, Comment.new),
-             :sha1 => @commit.id,
-             :include_favorite_checkbox => false
-           }) -%>

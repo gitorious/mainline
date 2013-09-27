@@ -4,7 +4,7 @@
 ** TODO Add in diff stats to new diffs
       <a href="/files"><i class="icon icon-file"></i> app/models/repository.rb</a>
       (<span class="gts-diff-add">+45</span>/<span class="gts-diff-rm">-22</span>)
-* Views to port to UI3 [60/72]
+* Views to port to UI3 [62/72]
 ** DONE Admin::Diagnostics#index
 ** DONE Admin::OauthSettings#edit
 ** DONE Admin::ProjectProposals#index
@@ -18,9 +18,9 @@
 ** DONE Comments#new
 ** TODO CommitComments#index
 ** DONE CommitDiffs#index
-** TODO CommitDiffs#compare
+** DONE CommitDiffs#compare => CommitDiffs#show
 ** DONE Commits#index
-** TODO Commits#show
+** DONE Commits#show
 ** DONE Graphs#index
 ** DONE Groups#index
 ** DONE Groups#show

@@ -45,13 +45,7 @@ class CommitsHelperTest < ActionView::TestCase
     end
 
     should "renders a graph of minuses for deletions" do
-      assert render_diff_stats(@stats).include?(%Q{spec/database_spec.rb</a>&nbsp;17&nbsp;<small class="deletions">#{"-"*12}</small>})
-    end
-
-    should "renders a graph of plusses for inserts" do
-      assert_match(/spec\/database_spec\.rb<\/a>&nbsp;17&nbsp;<small class="deletions.+<\/small><small class="insertions">#{"\\+"*5}<\/small>/,
-        render_diff_stats(@stats))
+      assert render_diff_stats(@stats).include?(%Q{spec/database_spec.rb</a> (17) <span class="gts-diff-rm">#{"-"*12}</span>})
     end
   end
-
 end

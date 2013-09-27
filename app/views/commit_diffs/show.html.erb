@@ -1,6 +1,6 @@
 <%
 #--
-#   Copyright (C) 2011, 2013 Gitorious AS
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -18,30 +18,19 @@
 %>
 <%= partial("repositories/header_compact", {
         :repository => repository,
-        :project => project,
+        :project => repository.project,
         :app => Gitorious,
         :active => :commits
       }) %>
 <div class="container gts-body">
-  <% @title = t("views.commits.title", :commit => h(commit.id)) %>
-
-  <%= render(:partial => "commit_infobox", :locals => {
-          :commit => commit,
-          :project => project,
-          :repository => repository,
-          :committer_user => committer_user
-        }) -%>
+  <h1><%= @title = t("views.commits.compare_title", :last_commit => range.last[0..7], :first_commit => range.first[0..7]) %></h1>
   <% if diffs.blank? -%>
-    <p><%= t("views.commits.message", :path => tree_path(commit.id)) %></p>
-  <% elsif !commit.merge? -%>
+    <p><%= t("views.commits.message", :path => tree_path(range.last)) %></p>
+  <% else -%>
     <%= render_diff_stats(commit.stats) -%>
     <%= render_diffmode_selector(repository, commit, mode) -%>
-    <%= render(:partial => "commits/diffs", :locals => {
-            :mode => mode,
-            :diffs => diffs,
-            :comments => comments,
-            :repository => repository,
-            :commit => commit
-          }) -%>
+    <% diffs.each do |diff| %>
+      <%= renderer.render(diff).html_safe %>
+    <% end %>
   <% end -%>
 </div>

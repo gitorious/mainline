@@ -518,31 +518,11 @@ class RoutingTest < ActionController::TestCase
     end
 
     context "diffs" do
-      should "route index" do
-        assert_recognizes({ :controller => "commit_diffs",
-                            :action => "index",
-                            :project_id => "gitorious",
-                            :repository_id => "mainline",
-                            :id => @sha,
-                          }, {
-                            :path => "/gitorious/mainline/commit/#{@sha}/diffs",
-                            :method => :get
-                          })
-
-        assert_generates("/gitorious/mainline/commit/#{@sha}/diffs", {
-                           :controller => "commit_diffs",
-                           :action => "index",
-                           :project_id => "gitorious",
-                           :repository_id => "mainline",
-                           :id => @sha,
-                         })
-      end
-
       should "route comparison between two commits" do
         sha = "a" * 40
         other_sha = "b" * 40
         assert_recognizes({:controller => "commit_diffs",
-                            :action => "compare",
+                            :action => "show",
                             :project_id => "gitorious",
                             :repository_id => "mainline",
                             :from_id => sha,

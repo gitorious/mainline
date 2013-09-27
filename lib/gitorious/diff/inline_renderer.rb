@@ -1,6 +1,6 @@
-<%
+# encoding: utf-8
 #--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,8 +15,15 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-%>
+require "gitorious/diff/renderer"
+require "gitorious/diff/inline_table_callback"
 
-This Git object is too large to be displayed in the browser
-
-Consider cloning the repository locally and look at the object there
+module Gitorious
+  module Diff
+    class InlineRenderer < Gitorious::Diff::Renderer
+      def callback_class
+        Gitorious::Diff::InlineTableCallback
+      end
+    end
+  end
+end

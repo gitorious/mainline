@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,7 +18,8 @@
 #++
 %>
 
-<h4>This Git object is too large to be displayed in the browser</h4>
-<p>Consider cloning the repository locally and look at the object there</p>
-
-<p><a href="javascript:history.go(-1)">Go back</a></p>
+<br><br>
+<div class="container gts-body">
+  <h2><%= @title = "This Git object is too large to be displayed in the browser" %></h2>
+  <p>Consider cloning the repository locally and look at the object there</p>
+</div>

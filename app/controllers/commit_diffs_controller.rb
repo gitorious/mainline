@@ -19,50 +19,37 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious/diff/inline_renderer"
+require "gitorious/diff/sidebyside_renderer"
+require "gitorious/view/dolt_url_helper"
 
 class CommitDiffsController < ApplicationController
+  include Gitorious::View::DoltUrlHelper
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
-  before_filter :find_commit, :only => :index
   layout "ui3"
   skip_session
   after_filter :cache_forever
   renders_in_site_specific_context
 
-  def index
-    render("index", :layout => request.xhr? ? false : "ui3", :locals => {
-        :commit => @commit,
-        :diffs => @commit.parents.empty? ? [] : @commit.diffs,
-        :committer_user => @committer_user,
-        :author_user => @author_user,
-        :project => @project,
-        :repository => RepositoryPresenter.new(@repository),
-        :mode => @diffmode == "sidebyside" ? :sidebyside : :inline,
-        :comments => @comments
+  def show
+    commit = @repository.git.commit(params[:id])
+    render_not_found and return if !commit
+    repository = RepositoryPresenter.new(@repository)
+
+    render("show", :locals => {
+        :mode => params[:diffmode] == "sidebyside" ? :sidebyside : :inline,
+        :renderer => diff_renderer(params[:diffmode], repository, commit),
+        :range => [params[:from_id], params[:id]],
+        :repository => repository,
+        :commit => commit,
+        :diffs => Grit::Commit.diff(@repository.git, params[:from_id], params[:id])
       })
   end
 
-  def compare
-    if params[:fragment]
-      find_commit
-      @first_commit_id = params[:from_id]
-      @diffs = Grit::Commit.diff(@repository.git, @first_commit_id, params[:id])
-      render :partial => "compare_diffs", :layout => false and return
-    end
-  end
-
   private
-  def find_commit
-    @comments = []
-    @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
-    @git = @repository.git
-
-    unless @commit = @git.commit(params[:id])
-      render_not_found and return
-    end
-
-    @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
-    @committer_user = User.find_by_email_with_aliases(@commit.committer.email)
-    @author_user = User.find_by_email_with_aliases(@commit.author.email)
+  def diff_renderer(mode, repository, commit)
+    klass = mode == :inline ? Gitorious::Diff::InlineRenderer : Gitorious::Diff::SidebysideRenderer
+    klass.new(self, repository, commit)
   end
 end

@@ -105,7 +105,7 @@ class CommentsController < ApplicationController
           @diffs = commit.parents.empty? ? [] : commit.diffs.select { |diff|
             diff.a_path == @comment.path
           }
-          @file_diff = render_to_string(:partial => "commits/diffs")
+          @file_diff = "" #render_to_string(:partial => "commits/diffs")
         else
           @diffs = @target.diffs(range_or_string(@comment.sha1)).select{|d|
             d.a_path == @comment.path

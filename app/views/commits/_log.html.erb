@@ -41,7 +41,8 @@
       <% if defined?(display_diffs) && display_diffs %>
         <div class="diff">
           <% commit.diffs.each do |file| -%>
-            <%= render_inline_diff2(file.diff) -%>
+            <%# TODO! Replace with renderer.render(file) %>
+            <%# render_inline_diff2(file.diff) -%>
           <% end -%>
         </div>
       <% end %>

@@ -34,11 +34,17 @@ module CommitsHelper
 
   def parse_commit_message(message)
     lines = message.split("\n")
-    summary, rest = split_summary(lines.shift)
-    [summary, rest, lines.join("\n").strip].map { |m| format_commit_message(m) }
+    summary = nil
+
+    if lines.first.length <= 50
+      summary = lines.shift
+    end
+
+    [summary, lines.join("\n").strip].map { |m| format_commit_message(m) }
   end
 
   def split_summary(message)
+    return nil if message.nil?
     head = ""
     tail = ""
     message.split(" ").each do |word|

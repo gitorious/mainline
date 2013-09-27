@@ -34,19 +34,7 @@ class CommitsControllerTest < ActionController::TestCase
     should "get the commit data" do
       get :show, params
       assert_response :success
-      assert_equal @repository.git, assigns(:git)
-      assert_equal @repository.git.commit(@sha), assigns(:commit)
-      assert_not_nil assigns(:diffs)
-    end
-
-    should "default to 'inline' diffmode" do
-      get :show, params
-      assert_equal "inline", assigns(:diffmode)
-    end
-
-    should "set sidebyside diffmode" do
-      get :show, params(:diffmode => "sidebyside")
-      assert_equal "sidebyside", assigns(:diffmode)
+      assert_match /added a git directory/, response.body
     end
 
     should "get it in diff format" do

@@ -323,9 +323,8 @@ Gitorious::Application.routes.draw do
       match "/commits/*branch" => "commits#index", :as => :commits_in_ref, :branch => /.+/
 
       match "/commit/:id/comments" => "commit_comments#index", :as => :commit_comments, :id => /[^\/]+/
-      match "/commit/:id/diffs" => "commit_diffs#index", :as => :commit_diffs, :id => /[^\/]+/
-      match "/commit/:from_id/diffs/:id" => "commit_diffs#compare", :as => :commit_compare
-      match "/commit/:id.:format" => "commits#show", :as => :commit, :format => /diff|patch/
+      match "/commit/:from_id/diffs/:id" => "commit_diffs#show", :as => :commit_compare
+      match "/commit/:id.:format" => "commits#show", :as => :commit, :id => /.*/
       match "/commit/:id" => "commits#show", :as => :commit, :id => /.*/
 
       match "/graph" => "graphs#index", :as => :graph

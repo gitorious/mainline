@@ -36,7 +36,7 @@ module Gitorious
       def render_line(line)
         if line.inline_changes?
           prefix, changed, postfix = line.segments.map { |segment| escape(segment) }
-          "{#{prefix}<span class=\"idiff\">#{changed}</span>#{postfix}"
+          "#{prefix}<span class=\"idiff\">#{changed}</span>#{postfix}"
         else
           escape(line)
         end

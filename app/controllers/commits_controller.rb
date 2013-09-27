@@ -19,14 +19,13 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious/view/dolt_url_helper"
 
 class CommitsController < ApplicationController
+  include Gitorious::View::DoltUrlHelper
   REF_TYPE = :project_repository_commits_in_ref_path
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
-  skip_before_filter :public_and_logged_in, :only => [:diffs]
-  skip_before_filter :require_current_eula, :only => [:diffs]
-  skip_after_filter :mark_flash_status, :only => [:diffs]
   renders_in_site_specific_context
 
   def index
@@ -67,36 +66,25 @@ class CommitsController < ApplicationController
   end
 
   def show
-    @diffs = []
-    @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
-    @git = @repository.git
-    @diffs_url = project_repository_commit_diffs_url(:project_id => params[:project_id],
-                                                     :repository_id => params[:repository_id],
-                                                     :id => params[:id])
-    @comments_url = project_repository_commit_comments_url(:project_id => params[:project_id],
-                                                           :repository_id => params[:repository_id],
-                                                           :id => params[:id])
-
-    unless @commit = @git.commit(params[:id])
-      handle_missing_sha and return
-    end
-
-    @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
+    repository = RepositoryPresenter.new(@repository)
+    presenter = CommitPresenter.new(@repository, params[:id])
+    handle_missing_sha and return if !presenter.exists?
 
     respond_to do |format|
       format.html do
         render("show", :layout => "ui3", :locals => {
-
+            :commit => presenter,
+            :mode => params[:diffmode] == "sidebyside" ? :sidebyside : :inline,
+            :renderer => diff_renderer(params[:diffmode], repository, presenter.commit)
           })
       end
 
       format.diff do
-        render(:text => commit_diffs.map { |d| d.diff }.join("\n"),
-               :content_type => "text/plain")
+        render({ :text => presenter.raw_diffs, :content_type => "text/plain" })
       end
 
       format.patch do
-        render :text => @commit.to_patch, :content_type => "text/plain"
+        render(:text => presenter.to_patch, :content_type => "text/plain")
       end
     end
   end
@@ -118,13 +106,9 @@ class CommitsController < ApplicationController
     end
   end
 
-  protected
-  def handle_missing_sha
-    flash[:error] = "No such SHA1 was found"
-    redirect_to(project_repository_commits_path(@project, @repository))
-  end
-
-  def commit_diffs
-    @commit.parents.empty? ? [] : @commit.diffs
+  private
+  def diff_renderer(mode, repository, commit)
+    klass = mode == "sidebyside" ? Gitorious::Diff::SidebysideRenderer : Gitorious::Diff::InlineRenderer
+    klass.new(self, repository, commit)
   end
 end

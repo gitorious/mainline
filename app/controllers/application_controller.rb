@@ -22,6 +22,7 @@ require "gitorious/view"
 require "gitorious/view/site_helper"
 require "open_id_authentication"
 require "gitorious/view/ui_helper"
+require "gitorious/encoding"
 
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
@@ -33,6 +34,7 @@ class ApplicationController < ActionController::Base
   include Gitorious::Authorization
   include Gitorious::View::SiteHelper
   include Gitorious::View::UIHelper
+  include Gitorious::Encoding
   protect_from_forgery
 
   before_filter :public_and_logged_in
@@ -62,6 +64,11 @@ class ApplicationController < ActionController::Base
     else
       super
     end
+  end
+
+  def handle_missing_sha
+    flash[:error] = "No such SHA1 was found"
+    redirect_to(project_repository_commits_path(@project, @repository))
   end
 
   protected
@@ -171,7 +178,7 @@ class ApplicationController < ActionController::Base
 
   def render_git_timeout
     render("/shared/_git_timeout",
-           :layout => (request.xhr? ? false : "application"))
+           :layout => (request.xhr? ? false : "ui3"))
     return false
   end
 

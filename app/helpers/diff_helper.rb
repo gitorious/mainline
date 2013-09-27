@@ -17,75 +17,12 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "gitorious/diff/base_callback"
-require "gitorious/diff/comment_callback"
 require "gitorious/diff/inline_table_callback"
-require "gitorious/diff/ui3_inline_table_callback"
 require "gitorious/diff/sidebyside_table_callback"
 
 module DiffHelper
-  # Takes a unified diff as input and renders it as html
-  def render_diff(udiff, display_mode = "inline")
-    return if udiff.blank?
-
-    udiff = force_utf8(udiff)
-
-    if sidebyside_diff?
-      render_sidebyside_diff(udiff)
-    else
-      render_inline_diff(udiff)
-    end
-  end
-
   def sidebyside_diff?
     @diffmode == "sidebyside"
-  end
-
-  def render_diffs(repository, commit, diffs)
-    diffs.map do |file|
-      diff_renderer = Diff::Display::Unified.new(file.diff)
-      adds = diff_renderer.stats[:additions]
-      rms = diff_renderer.stats[:deletions]
-      a_path = force_utf8(file.a_path)
-      blob_url = tree_entry_url(repository.slug, commit.id, a_path)
-
-      <<-HTML
-<div class="gts-file">
-  <ul class="breadcrumb">
-    <li class="gts-diff-summary">
-      <a href="#{blob_url}"><i class="icon icon-file"></i> #{a_path}</a>
-      (<span class="gts-diff-add">+#{adds}</span>/<span class="gts-diff-rm">-#{rms}</span>)
-    </li>
-  </ul>
-  <table class="gts-code-listing gts-side-by-side">
-#{force_utf8(diff_renderer.render(Gitorious::Diff::SidebysideTableCallback.new))}
-  </table>
-</div>
-      HTML
-    end.join("\n").html_safe
-  end
-
-  def render_ui3_inline_diffs_with_stats(repository, commit, file_diffs)
-    file_diffs.map do |file|
-      diff_renderer = Diff::Display::Unified.new(file.diff)
-      adds = diff_renderer.stats[:additions]
-      rms = diff_renderer.stats[:deletions]
-      blob_url = tree_entry_url(repository.slug, commit.id, file.a_path)
-      diff_options = {}
-
-      if file.diff[0..256].include?("\000")
-        "<em class=\"muted\">Binary files differ</em>"
-      else
-        diff_options[:comments] = yield(file) if block_given?
-        force_utf8(render_inline_diff2(file.diff, :navigation => <<-HTML))
-        <ul class="breadcrumb">
-          <li class="gts-diff-summary">
-            <a href="#{blob_url}"><i class="icon icon-file"></i> #{file.a_path}</a>
-            (<span class="gts-diff-add">+#{adds}</span>/<span class="gts-diff-rm">-#{rms}</span>)
-          </li>
-        </ul>
-        HTML
-      end
-    end.join("\n").html_safe
   end
 
   # Supply a block that fetches an array of comments with the file path as parameter
@@ -148,18 +85,6 @@ module DiffHelper
     end
     out << "</table>"
     out.html_safe
-  end
-
-  def render_inline_diff2(udiff, options = {})
-    differ ||= Diff::Display::Unified.new(udiff)
-    <<-HTML.html_safe
-<div class="gts-file">
-  #{options[:navigation]}
-  <table class="gts-code-listing">
-#{differ.render(Gitorious::Diff::UI3InlineTableCallback.new)}
-  </table>
-</div>
-    HTML
   end
 
   def render_diffmode_selector(repository, commit, mode)

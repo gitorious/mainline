@@ -25,11 +25,11 @@ module Gitorious
 
       # Before blocks
       def before_addblock(block)
-        "<tr class=\"gts-diff-add\">"
+        "<tr>"
       end
 
       def before_remblock(block)
-        "<tr class=\"gts-diff-rm\">"
+        "<tr>"
       end
 
       def before_modblock(block)
@@ -71,7 +71,7 @@ module Gitorious
       def addline(line)
         added = <<-HTML
         <td class="linenum L#{line.new_number}">#{line.new_number}</td>
-        <td class="gts-code"><code><ins>#{render_line(line)}</ins></code></td>
+        <td class="gts-code gts-diff-add"><code><ins>#{render_line(line)}</ins></code></td>
         HTML
 
         return added if modblock?
@@ -86,51 +86,43 @@ module Gitorious
       def remline(line)
         removed = <<-HTML
         <td class="linenum L#{line.old_number}">#{line.old_number}</td>
-        <td class="gts-code"><code><del>#{render_line(line)}</del></code></td>
+        <td class="gts-code gts-diff-rm"><code><del>#{render_line(line)}</del></code></td>
         HTML
 
         return removed if modblock?
 
         <<-HTML
-        <!-- REMLINE -->
         #{removed}
         <td class="linenum L#{line.new_number}">#{line.new_number}</td>
         <td class="gts-code"></td>
-        <!-- /REMLINE -->
         HTML
       end
 
       def unmodline(line)
         # unmods goes on both sides
         <<-HTML
-        <!-- UNMODLINE -->
         <td class="linenum L#{line.old_number}">#{line.old_number}</td>
         <td class="gts-code"><code>#{render_line(line)}</code></td>
         <td class="linenum L#{line.new_number}">#{line.new_number}</td>
         <td class="gts-code"><code>#{render_line(line)}</code></td>
-        <!-- /UNMODLINE -->
         HTML
       end
 
       def sepline(line)
         <<-HTML
-        <!-- SEPLINE -->
         <td class="linenum">&hellip;</td>
         <td class="gts-code"><code></code></td>
         <td class="linenum">&hellip;</td>
         <td class="gts-code"></td>
-        <!-- /SEPLINE -->
         HTML
       end
 
       def nonewlineline(line)
         <<-HTML
-        <!-- NONEWLINE -->
         <td class="linenum">&hellip;</td>
         <td class="gts-code"><code></code></td>
         <td class="linenum">&hellip;</td>
         <td class="gts-code"><code>#{line}</code></td>
-        <!-- /NONEWLINE -->
         HTML
       end
 

@@ -29,47 +29,10 @@ class CommitDiffsControllerTest < ActionController::TestCase
     Repository.any_instance.stubs(:git).returns(@grit)
   end
 
-  context "index" do
-    should "not show diffs for the initial commit" do
-      commit = @grit.commit(@sha)
-      commit.stubs(:parents).returns([])
-      @grit.expects(:commit).returns(commit)
-      get :index, params
-
-      assert_equal [], assigns(:diffs)
-      assert_select "#content p", /This is the initial commit in this repository/
-    end
-
-    should "show diffs for successive commits" do
-      get :index, params("5a0943123f6872e75a9b1dd0b6519dd42a186fda")
-      assert_response :success
-    end
-
-    should "yield 404 if commit does not exist" do
-      get :index, params("0000000")
-      assert_response 404
-    end
-
-    should "not touch the session object" do
-      Gitorious::Configuration.override("enable_private_repositories" => false) do
-        ApplicationController.any_instance.expects(:authorize_access_with_private_repositories_enabled).never
-        get :index, params("5a0943123f6872e75a9b1dd0b6519dd42a186fda")
-      end
-    end
-
-    should "not bypass authorization if private repositories are enabled" do
-      Gitorious::Configuration.override("enable_private_repositories" => true) do
-        @controller.expects(:authorize_access_with_private_repositories_enabled).with(@project).returns(@project)
-        @controller.expects(:authorize_access_with_private_repositories_enabled).with(@repository).returns(@repository)
-        get :index, params("5a0943123f6872e75a9b1dd0b6519dd42a186fda")
-      end
-    end
-  end
-
   context "Comparing arbitrary commits" do
     should "pick the correct commits" do
       Grit::Commit.expects(:diff).with(@repository.git, OTHER_SHA, @sha).returns([])
-      get :compare, compare_params
+      get :show, params
       assert_response :success
     end
   end
@@ -79,25 +42,14 @@ class CommitDiffsControllerTest < ActionController::TestCase
       enable_private_repositories
     end
 
-    should "disallow unauthorized access to diffs" do
-      get :index, params
+    should "disallow unauthorized access to show view" do
+      get :show, params
       assert_response 403
     end
 
-    should "allow authorized access to diffs" do
+    should "allow authorized access to show view" do
       login_as :johan
-      get :index, params
-      assert_response 200
-    end
-
-    should "disallow unauthorized access to compare view" do
-      get :compare, compare_params
-      assert_response 403
-    end
-
-    should "allow authorized access to compare view" do
-      login_as :johan
-      get :compare, compare_params
+      get :show, params
       assert_response 200
     end
   end
@@ -107,37 +59,20 @@ class CommitDiffsControllerTest < ActionController::TestCase
       enable_private_repositories(@repository)
     end
 
-    should "disallow unauthorized access to diffs" do
-      get :index, params
+    should "disallow unauthorized access to show view" do
+      get :show, params
       assert_response 403
     end
 
-    should "allow authorized access to diffs" do
+    should "allow authorized access to show view" do
       login_as :johan
-      get :index, params
-      assert_response 200
-    end
-
-    should "disallow unauthorized access to compare view" do
-      get :compare, compare_params
-      assert_response 403
-    end
-
-    should "allow authorized access to compare view" do
-      login_as :johan
-      get :compare, compare_params
+      get :show, params
       assert_response 200
     end
   end
 
   private
-  def params(sha = @sha)
-    { :project_id => @project.to_param,
-      :repository_id => @repository.to_param,
-      :id => sha }
-  end
-
-  def compare_params
+  def params
     { :project_id => @project.slug,
       :repository_id => @repository.name,
       :from_id => OTHER_SHA,
