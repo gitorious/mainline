@@ -1,9 +1,18 @@
 airbrake_api_key = Gitorious::Configuration.get("airbrake_api_key")
 
 if airbrake_api_key
+  require 'airbrake'
+
   Airbrake.configure do |config|
     config.api_key = airbrake_api_key
   end
+
+  # Manually register Airbrake's middleware as Rails doesn't initialize any
+  # railtie that is registered after the initialization process started.
+  Gitorious::Application.config.middleware.insert(0, "Airbrake::UserInformer")
+  Gitorious::Application.config.middleware.insert_after(
+    "ActionDispatch::DebugExceptions", "Airbrake::Rails::Middleware"
+  )
 else
   exception_recipients = Gitorious::Configuration.get("exception_recipients")
 
