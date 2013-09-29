@@ -50,6 +50,7 @@ class CommitCommentsJSONPresenter
       },
       "body" => comment.body,
       "createdAt" => comment.created_at.iso8601,
+      "updatedAt" => comment.updated_at.iso8601,
       "firstLine" => comment.first_line_number,
       "lastLine" => comment.last_line_number,
       "context" => comment.context,

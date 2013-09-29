@@ -39,7 +39,8 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
       presenter = CommitCommentsJSONPresenter.new(App.new, [Comment.new({
               :user => @user,
               :body => "Yup",
-              :created_at => DateTime.new(2013, 1, 1)
+              :created_at => DateTime.new(2013, 1, 1),
+              :updated_at => DateTime.new(2013, 1, 2)
             })])
 
       assert_equal({
@@ -52,6 +53,7 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
               },
               "body" => "Yup",
               "createdAt" => "2013-01-01T00:00:00+00:00",
+              "updatedAt" => "2013-01-02T00:00:00+00:00",
               "firstLine" => nil,
               "lastLine" => nil,
               "context" => nil,
@@ -65,11 +67,13 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
       presenter = CommitCommentsJSONPresenter.new(App.new, [Comment.new({
               :user => @user,
               :body => "Yup",
-              :created_at => DateTime.new(2013, 1, 1)
+              :created_at => DateTime.new(2013, 1, 1),
+              :updated_at => DateTime.new(2013, 1, 1)
             }), Comment.new({
               :user => @user,
               :body => "Yup",
               :created_at => DateTime.new(2013, 1, 1),
+              :updated_at => DateTime.new(2013, 1, 1),
               :path => "some/path.rb",
               :first_line_number => "0-1",
               :last_line_number => "0-1"
@@ -77,6 +81,7 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
               :user => @user,
               :body => "Yup",
               :created_at => DateTime.new(2013, 1, 1),
+              :updated_at => DateTime.new(2013, 1, 1),
               :path => "some/other/path.rb",
               :first_line_number => "0-1",
               :last_line_number => "0-1"
@@ -84,6 +89,7 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
               :user => @user,
               :body => "Yup",
               :created_at => DateTime.new(2013, 1, 1),
+              :updated_at => DateTime.new(2013, 1, 1),
               :path => "some/path.rb",
               :first_line_number => "0-1",
               :last_line_number => "0-1"
