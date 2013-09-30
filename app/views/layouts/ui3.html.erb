@@ -34,6 +34,7 @@
     <script type="text/javascript" src="/ui3/jquery-ui/ui/jquery.ui.widget.js"></script>
     <script type="text/javascript" src="/ui3/jquery-ui/ui/jquery.ui.mouse.js"></script>
     <script type="text/javascript" src="/ui3/jquery-ui/ui/jquery.ui.selectable.js"></script>
+    <%= content_for(:javascripts) %>
     <% if defined?(session) && session[:_csrf_token] %>
       <meta class="csrf-param" content="authenticity_token" name="csrf-param" data-gts-env-csrf-param="authenticity_token">
       <meta class="csrf-token" content="<%= session[:_csrf_token] %>" name="csrf-token" data-gts-env-csrf-token="<%= session[:_csrf_token] %>">
