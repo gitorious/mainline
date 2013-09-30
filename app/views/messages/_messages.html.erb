@@ -20,7 +20,7 @@
 
 <% render "header" %>
 
-<%= form_tag(bulk_update_messages_path) do %>
+<%= form_tag(bulk_update_messages_path, :method => :put) do %>
   <table class="table">
     <tr>
       <th></th>
