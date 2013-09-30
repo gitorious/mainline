@@ -32,9 +32,11 @@
     <tfoot>
       <tr>
         <td colspan="4">
-          <%= render "bulk_action_menu" %>
+          <%= render_pagination_links (messages) %>
         </td>
       </tr>
     </tfoot>
   </table>
+  <hr/>
+  <%= render "bulk_action_menu" %>
 <% end %>

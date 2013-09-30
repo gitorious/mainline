@@ -68,7 +68,7 @@ class MessagesControllerTest < ActionController::TestCase
 
     assert_response :success
     assert_not_nil assigns(:messages)
-    assert_template("messages/sent")
+    assert_template("messages/index")
   end
 
   context "paginating sent messages" do
@@ -217,7 +217,7 @@ class MessagesControllerTest < ActionController::TestCase
 
     assert_not_nil assigns(:messages)
     assert_response :success
-    assert_template "messages/all"
+    assert_template("messages/index")
   end
 
   context "paginating all" do

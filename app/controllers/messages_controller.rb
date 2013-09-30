@@ -29,28 +29,23 @@ class MessagesController < ApplicationController
       current_user.messages_in_inbox.paginate(:page => params[:page])
     }
 
-    return if @messages.count == 0 && params.key?(:page)
-
-    respond_to do |wants|
-      wants.html { render :layout => 'ui3' }
-      wants.xml  { render :xml => @messages }
-    end
+    render_index
   end
 
   def all
-    @messages = paginate(page_free_redirect_options) do
+    @messages = paginate(page_free_redirect_options) {
       current_user.top_level_messages.paginate(:page => params[:page])
-    end
+    }
 
-    render :index, :layout => 'ui3'
+    render_index
   end
 
   def sent
-    @messages = paginate(page_free_redirect_options) do
+    @messages = paginate(page_free_redirect_options) {
       current_user.sent_messages.paginate(:page => params[:page])
-    end
+    }
 
-    render :index, :layout => 'ui3'
+    render_index
   end
 
   def read
@@ -135,5 +130,16 @@ class MessagesController < ApplicationController
   def auto_complete_for_message_recipients
     @users = User.find_fuzzy(params[:q]).reject{|u|u == current_user}.map{|u| u.login }.join("\n")
     render :text => @users, :content_type => Mime::TEXT
+  end
+
+  private
+
+  def render_index
+    return if @messages.count == 0 && params.key?(:page)
+
+    respond_to do |wants|
+      wants.html { render 'messages/index', :layout => 'ui3' }
+      wants.xml  { render :xml => @messages }
+    end
   end
 end
