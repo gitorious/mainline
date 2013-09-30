@@ -37,7 +37,7 @@ GEM
       builder
       json
     arel (3.0.2)
-    axiom-types (0.0.3)
+    axiom-types (0.0.4)
       descendants_tracker (~> 0.0.1)
       ice_nine (~> 0.9)
     backports (3.3.4)
@@ -294,7 +294,7 @@ GEM
     use_case (0.13.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
-    virtus (1.0.0.beta7)
+    virtus (1.0.0.beta8)
       axiom-types (~> 0.0.3)
       coercible (~> 0.2)
       descendants_tracker (~> 0.0.1)
@@ -377,7 +377,7 @@ DEPENDENCIES
   trinidad
   unicorn (~> 4.6.3)
   use_case (~> 0.13)
-  virtus (~> 1.0.0.beta7)
+  virtus (~> 1.0.0.beta8)
   webmock
   wikicloth
   will_paginate (~> 3.0)
