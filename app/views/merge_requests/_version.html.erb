@@ -34,7 +34,7 @@
           <%= inline_commit_link(c) -%>
         </li>
         <div class="hover-bubble-content round-10">
-          <p><%=h c.short_message %></p>
+          <p><%=h force_utf8(c.short_message) %></p>
         </div>
       <%- end -%>
     <% end -%>
