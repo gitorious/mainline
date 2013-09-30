@@ -58,13 +58,14 @@ module DiffHelper
   # Supply a block that fetches an array of comments with the file path as parameter
   def render_inline_diffs_with_stats(file_diffs, state = :closed)
     file_diffs.map do |file|
+      a_path = force_utf8(file.a_path)
       diff_renderer = Diff::Display::Unified.new(file.diff)
-      out =  %Q{<div class="file-diff" data-diff-path="#{file.a_path}">}
+      out =  %Q{<div class="file-diff" data-diff-path="#{a_path}">}
       out << %Q{<div class="header round-top-10 #{state == :closed ? 'closed' : 'open'}">}
       commit_link = if @commit
-                      link_to_if(@commit, "#{h(file.a_path)}", blob_path(@commit.id, file.a_path).sub("%2F","/"))
+                      link_to_if(@commit, "#{h(a_path)}", blob_path(@commit.id, a_path).sub("%2F","/"))
                     else
-                      h(file.a_path)
+                      h(a_path)
                     end
       out << %Q{<span class="title"><span class="icon"></span>#{commit_link}</span>}
       out << %Q{<div class="diff-stats">}
