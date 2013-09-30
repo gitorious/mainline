@@ -32,7 +32,7 @@
     <li class="<%= action_name == 'sent' && 'active' %>">
       <%= link_to(t("views.messages.sent_messages"), sent_messages_path, :class => "current") %>
     </li>
-    <li class="pull-right <%= action_name == 'new' || action_name == 'create' && 'active' %>">
+    <li class="pull-right <%= (action_name == 'new' || action_name == 'create') && 'active' %>">
       <%= link_to(t("views.messages.new"), new_message_path, :class => "current") %>
     </li>
   </ul>
