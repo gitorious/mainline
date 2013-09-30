@@ -301,6 +301,8 @@ module ApplicationHelper
   end
 
   def force_utf8(str)
+    return nil if str.nil?
+
     if str.respond_to?(:force_encoding)
       str.force_encoding("UTF-8")
       if str.valid_encoding?
