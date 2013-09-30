@@ -46,7 +46,7 @@ class MessagesControllerTest < ActionController::TestCase
 
       get :index
 
-      assert_match /<a href=\"\/messages\">\s*<span>0<\/span>\s*<\/a>/, @response.body
+      assert_match /No messages/, @response.body
     end
 
     context "paginating messages" do

@@ -28,7 +28,17 @@
       <th>What</th>
       <th>When</th>
     </tr>
-    <%= render messages %>
+    <% if messages.present? %>
+      <%= render messages %>
+    <% else %>
+      <tbody>
+        <tr>
+          <td colspan="4">
+            No messages
+          </td>
+        </tr>
+      </tbody>
+    <% end %>
     <tfoot>
       <tr>
         <td colspan="4">
