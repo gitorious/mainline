@@ -19,62 +19,54 @@
   #++
   %>
 
-<%= breadcrumbs_from(@message) -%>
+<%= render "header" %>
 
-<h1><%= h(@message.subject) %></h1>
-<%- @message.messages_in_thread.each do |message| -%>
-  <div class="<%= message.aasm_state -%> <%= message.css_class -%> message_full" id="<%= dom_id(message) -%>">
-    <div class="avatar">
-      <%= sender_avatar message -%>
-    </div>
-    <div class="message">
-      <% unless message.subject == @message.subject -%>
-        <h2 class="subject"><%=h message.subject -%></h2>
-      <% end -%>
-      <p class="meta">
-        <%= message_title(message).html_safe %> <%= distance_of_time_in_words_to_now(message.created_at) %> ago
-      </p>
-      <p class="body">
-        <%= simple_format h(message.body) %>
-        <%= render(:partial => "notifiable", :locals => {:notifiable => message.notifiable}) -%>
-      </p>
-      <ul class="message_actions">
-        <% if message.unread? and message.recipient == current_user %>
-          <li id="<%= dom_id(message, 'mark_as_read') -%>">
-            <a class="mark_as_unread" href="<%= read_message_path(message) -%>">
-              <%= t('views.messages.mark_as_read') -%>
-            </a>
-          </li>
-        <% end %>
-
-        <%- if (message.sender != current_user) and message.replies_enabled? -%>
-          <li>
-            <%= link_to_function(t("views.messages.reply"), "$('##{dom_id(message,"reply_to")}').toggle()") %>
-          </li>
-        <%- end -%>
-      </ul>
-      <% if (message.sender != current_user) and message.replies_enabled? -%>
-        <div class="reply" style="display:none" id="<%= dom_id(message,"reply_to") %>">
-          <%= form_for(message.build_reply, :url => reply_message_path(message)) do |f| %>
-            <p>
-              <%= f.label :subject, t("views.messages.subject") %><br/>
-              <%= f.text_field :subject %>
-            </p>
-            <p>
-              <%= f.label :subject, t("views.messages.body") %><br/>
-              <%= f.text_area :body %>
-            </p>
-
-            <p>
-              <%= f.submit t("views.messages.submit") %>
-            </p>
+<div class="container">
+  <h3><%= h(@message.subject) %></h3>
+  <%- @message.messages_in_thread.each do |message| -%>
+    <div class="<%= message.aasm_state -%> <%= message.css_class -%> message_full" id="<%= dom_id(message) -%>">
+      <div class="avatar">
+        <%= sender_avatar message -%>
+      </div>
+      <div class="message">
+        <% unless message.subject == @message.subject -%>
+          <h2 class="subject"><%=h message.subject -%></h2>
+        <% end -%>
+        <p class="meta">
+          <%= message_title(message).html_safe %> <%= distance_of_time_in_words_to_now(message.created_at) %> ago
+        </p>
+        <p class="body">
+          <%= simple_format h(message.body) %>
+          <%= render(:partial => "notifiable", :locals => {:notifiable => message.notifiable}) -%>
+        </p>
+        <hr/>
+        <ul class="message_actions unstyled">
+          <% if message.unread? and message.recipient == current_user %>
+            <li id="<%= dom_id(message, 'mark_as_read') -%>">
+              <a class="mark_as_unread" href="<%= read_message_path(message) -%>">
+                <%= t('views.messages.mark_as_read') -%>
+              </a>
+            </li>
           <% end %>
-        </div>
-      <% end %>
-    </div>
-  </div>
-<%- end -%>
 
-<%= content_for(:sidebar) do -%>
-  <%= render :partial => "sidebar" %>
-<%- end -%>
+          <%- if (message.sender != current_user) and message.replies_enabled? -%>
+            <li>
+              <%= link_to_function(t("views.messages.reply"), "$('##{dom_id(message,"reply_to")}').toggle()", :class => 'btn') %>
+            </li>
+          <%- end -%>
+        </ul>
+        <% if (message.sender != current_user) and message.replies_enabled? -%>
+          <div class="reply" style="display:none" id="<%= dom_id(message,"reply_to") %>">
+            <%= simple_form_for(message.build_reply, :url => reply_message_path(message)) do |f| %>
+              <%= f.input :subject, :label => t('views.messages.subject') %>
+              <%= f.input :body, :label => t('views.messages.body'), :input_html => { :class => 'input-xxlarge', :rows => 10 } %>
+              <div class="form-actions">
+                <%= f.submit t("views.messages.submit"), :class => 'btn btn-primary' %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <%- end -%>
+</div>

@@ -76,14 +76,17 @@ class MessagesController < ApplicationController
 
   def show
     @message = Message.find(params[:id])
+
     if !can_read?(current_user, @message)
       raise ActiveRecord::RecordNotFound and return
     end
+
     @message.mark_thread_as_read_by_user(current_user)
+
     respond_to do |wants|
-      wants.html
-      wants.xml {render :xml => @message}
-      wants.js {render :partial => "message", :layout => false}
+      wants.html { render :layout => 'ui3' }
+      wants.xml  { render :xml => @message }
+      wants.js   { render :partial => "message", :layout => false }
     end
   end
 
