@@ -17,12 +17,9 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= breadcrumbs_from(@message) -%>
 
-<h2 class="content-header"><%= t "views.messages.title_new" %></h2>
+<%= render "header" %>
 
-<%= render :partial => "form" %>
-
-<%= content_for(:sidebar) do %>
-  <%= render :partial => "sidebar" %>
-<% end %>
+<div class="container">
+  <%= render "form" %>
+</div>

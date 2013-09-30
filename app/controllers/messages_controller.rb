@@ -93,22 +93,29 @@ class MessagesController < ApplicationController
   end
 
   def create
-    thread_options = params[:message].merge({
+    thread_options = params[:message].merge(
       :recipients => params[:message][:recipients],
       :sender => current_user
-    })
+    )
+
     @messages = MessageThread.new(thread_options)
+
     if @messages.save
-      flash[:notice] =  "#{@messages.title} sent"
+      flash[:notice] = "#{@messages.title} sent"
       redirect_to :action => :index
     else
       @message = @messages.message
-      render :action => :new
+      @message.valid?
+      if @message.recipients.blank?
+        @message.errors.add(:recipients, "can't be blank")
+      end
+      render :new, :layout => 'ui3'
     end
   end
 
   def new
     @message = current_user.sent_messages.new(:recipients => params[:to])
+    render :layout => 'ui3'
   end
 
   # POST /messages/<id>/reply

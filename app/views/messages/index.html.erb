@@ -18,31 +18,7 @@
   #++
   %>
 
-<%= site_header do %>
-  <h2 class="content-header">
-    <%= t('views.messages.collection_title') %>
-  </h2>
-  <ul class="nav nav-tabs gts-header-nav">
-    <li class="active">
-      <%= link_to(t("views.messages.received_messages"), messages_path, :class => "current") %>
-    </li>
-    <li>
-      <%= link_to_unless_current t("views.messages.all_messages"), all_messages_path do
-            link_to(t("views.messages.all_messages"), all_messages_path, :class => "current")
-          end -%>
-    </li>
-    <li>
-      <%= link_to_unless_current t("views.messages.sent_messages"), sent_messages_path do
-            link_to(t("views.messages.sent_messages"), sent_messages_path, :class => "current")
-          end -%>
-    </li>
-    <li class="pull-right">
-      <%= link_to_unless_current t("views.messages.new"), new_message_path do
-            link_to(t("views.messages.new"), new_message_path, :class => "current")
-          end -%>
-    </li>
-  </ul>
-<% end %>
+<%= render "header" %>
 
 <div class="container gts-container">
   <%= render 'messages', :messages => @messages %>

@@ -26,26 +26,16 @@
   });
 </script>
 
-<%= form_for(@message) do |f| %>
+<%= simple_form_for(@message) do |f| %>
   <fieldset class="messages">
-    <li>
-      <%= label :recipient, t("views.messages.recipient") %>
-      <%#= text_field_with_auto_complete :message, :recipients, {},
-         :skip_style => true, :select => :login, :tokens => [',',';',' '] -%>
-      <div><%= f.text_field :recipients, :class => "autocomplete" -%></div>
-    </li>
-    <li>
-      <%= f.label :subject, t("views.messages.subject") %>
-      <div><%= f.text_field :subject %></div>
-    </li>
-    <li>
-      <%= f.label :body, t("views.messages.body") %>
-      <div><%= f.text_area :body, :class => "tall" %></div>
-    </li>
+    <legend>
+      <%= t "views.messages.title_new" %>
+    </legend>
+    <%= f.input :recipients, :label => t("views.messages.recipient"), :input_html => { :class => "autocomplete" } %>
+    <%= f.input :subject, :label => t("views.messages.subject") %>
+    <%= f.input :body, :label => t("views.messages.body"), :input_html => { :class => 'input-xxlarge', :rows => 10 } %>
   </fieldset>
-  <fieldset class="submit">
-    <li>
-      <%= f.submit t("views.messages.submit") %>
-    </li>
-  </fieldset>
+  <div class="form-actions">
+    <%= f.submit t("views.messages.submit"), :class => 'btn btn-primary' %>
+  </div>
 <% end %>

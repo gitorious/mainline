@@ -62,9 +62,10 @@ class MessageThread
   end
 
   protected
-    def initialize_messages
-      recipients.inject([]) do |result, recipient_name|
-        result << Message.new(:sender => @sender, :subject => @subject, :body => @body, :recipient => User.find_by_login(recipient_name))
-      end
+
+  def initialize_messages
+    recipients.inject([]) do |result, recipient_name|
+      result << Message.new(:sender => @sender, :subject => @subject, :body => @body, :recipient => User.find_by_login(recipient_name))
     end
+  end
 end

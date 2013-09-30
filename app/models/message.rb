@@ -34,7 +34,7 @@ class Message < ActiveRecord::Base
   has_many :replies, :class_name => 'Message', :foreign_key => :in_reply_to_id
 
   validates_presence_of :subject, :body
-  validates_presence_of :recipient, :sender
+  validates_presence_of :recipient, :sender, :allow_blank => false
 
   throttle_records(:create, {
       :limit => 10,
