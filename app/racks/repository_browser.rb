@@ -166,35 +166,40 @@ module Gitorious
 
     def render_too_big_to_tarball(repository, ref)
       pid, rid = repository.split("/")
+      uid = request.session["user_id"]
       project = Project.find_by_slug!(pid)
-      render({ :file => (Rails.root + "app/views/repositories/_too_big_to_tarball.html.erb").to_s }, {
+      renderer.render({ :file => (Rails.root + "app/views/repositories/_too_big_to_tarball.html.erb").to_s }, {
           :repository => RepositoryPresenter.new(project.repositories.find_by_name!(rid)),
+          :current_user => uid && User.find(uid),
+          :session => session,
           :ref => ref
         })
     end
 
     def render_empty_repository(repository)
       pid, rid = repository.split("/")
+      uid = request.session["user_id"]
       @template ||= (Rails.root + "app/views/repositories/_getting_started.html.erb").to_s
       project = Project.find_by_slug!(pid)
-      render({ :file => @template }, {
+      renderer.render({ :file => @template }, {
           :repository => RepositoryPresenter.new(project.repositories.find_by_name!(rid)),
+          :current_user => uid && User.find(uid),
+          :session => session
         })
     end
 
     def render_non_existent_refspec(repository, ref, error)
       pid, rid = repository.split("/")
+      uid = request.session["user_id"]
       @template ||= (Rails.root + "app/views/repositories/_non_existent_refspec.html.erb").to_s
       repo = Project.find_by_slug!(pid).repositories.find_by_name!(rid)
-      render({ :file => @template }, {
+      renderer.render({ :file => @template }, {
           :repository => RepositoryPresenter.new(repo),
+          :current_user => uid && User.find(uid),
+          :session => session,
           :ref => ref,
           :error => error
         })
-    end
-
-    def render(template, locals, opts = {})
-      renderer.render(template, {:session => session, :current_user => current_user}.merge(locals), opts)
     end
 
     def add_sendfile_headers(filename, format)
@@ -240,13 +245,8 @@ module Gitorious
       end
     end
 
-    def current_user
-      uid = session["user_id"]
-      uid && User.find(uid)
-    end
-
     def env_data
-      { :env => env, :current_site => current_site, :current_user => current_user, :session => session }
+      { :env => env, :current_site => current_site, :session => session }
     end
   end
 

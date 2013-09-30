@@ -51,7 +51,14 @@
     <% end -%>
     <%= alerts(defined?(flash) ? flash : {}).html_safe %>
     <% if defined?(repository_meta) %>
-      <%= repo_header repository_meta, :current_user => current_user, :ref => ref, :active => :source, :header_level => 2 %>
+      <%= partial("repositories/repo_header", {
+              :repository => repository_meta,
+              :project => repository_meta.project,
+              :ref => ref,
+              :app => Gitorious,
+              :active => :source,
+              :header_level => 2
+            }) %>
     <% end %>
     <%= yield %>
     <div class="footer">

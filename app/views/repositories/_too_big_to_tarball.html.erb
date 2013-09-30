@@ -21,7 +21,14 @@
 <% elsif !repository.has_commits? && committers(repository).include?(current_user) %>
   <%= render(:partial => "repositories/getting_started", :locals => { :repository => repository }) %>
 <% else %>
-  <%= repo_header repository, :current_user => current_user, :ref => ref, :active => :source, :header_level => 2 %>
+  <%= partial("repositories/repo_header", {
+          :repository => repository,
+          :project => repository.project,
+          :ref => ref,
+          :app => Gitorious,
+          :active => :source,
+          :header_level => 2
+        }) %>
   <div class="container gts-body">
     <h2><%= @title = "Repository is too big" -%></h2>
     <p>

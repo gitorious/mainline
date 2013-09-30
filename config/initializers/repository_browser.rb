@@ -34,7 +34,6 @@ view = Tiltout.new([Dolt.template_dir, views.realpath.to_s], {
 })
 
 module DoltViewHelpers
-  include Gitorious::RepoHeader
   include Gitorious::View::DoltUrlHelper
   include ::Dolt::View::MultiRepository
   include ::Dolt::View::Object

@@ -22,7 +22,14 @@
         :title => atom_auto_discovery_title) -%>
 <% end %>
 
-<%= repo_header repository, :current_user => current_user, :ref => ref, :active => :community, :header_level => 2 %>
+  <%= partial("repositories/repo_header", {
+          :repository => repository,
+          :project => repository.project,
+          :ref => ref,
+          :app => Gitorious,
+          :active => :community,
+          :header_level => 2
+        }) %>
 
 <div class="container">
   <div class="row-fluid">

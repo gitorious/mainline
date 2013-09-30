@@ -17,8 +17,11 @@
   #++
   %>
 <% current_user = nil if current_user == :false %>
-
-<%= repo_header repository, :current_user => current_user %>
+<%= partial("repositories/repo_header", {
+        :app => Gitorious,
+        :repository => repository,
+        :project => repository.project
+      }) %>
 
 <div class="container">
   <div class="row">

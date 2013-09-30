@@ -21,7 +21,13 @@
   <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url, :title => "Atom") -%>
 <% end %>
 
-<%= repo_header repository, :current_user => current_user, :active => :merge_request, :header_level => 2 %>
+<%= partial("repositories/repo_header", {
+        :repository => repository,
+        :project => repository.project,
+        :app => Gitorious,
+        :active => :merge_requests,
+        :header_level => 2
+      }) %>
 
 <div class="container">
   <h1>Merge requests for <%= repository.slug %></h1>
