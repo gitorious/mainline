@@ -18,25 +18,27 @@
   #++
   %>
 
-<ul class="links navigation">
-  <li class="new_email">
-    <%= link_to_unless_current t("views.messages.new"), new_message_path do
-          link_to(t("views.messages.new"), new_message_path, :class => "current")
-        end -%>
-  </li>
-  <li class="received_emails">
-    <%= link_to_unless_current t("views.messages.received_messages"), messages_path do
-          link_to(t("views.messages.received_messages"), messages_path, :class => "current")
-        end -%>
-  </li>
-  <li class="all_emails">
-    <%= link_to_unless_current t("views.messages.all_messages"), all_messages_path do
-          link_to(t("views.messages.all_messages"), all_messages_path, :class => "current")
-        end -%>
-  </li>
-  <li class="sent_emails">
-    <%= link_to_unless_current t("views.messages.sent_messages"), sent_messages_path do
-          link_to(t("views.messages.sent_messages"), sent_messages_path, :class => "current")
-        end -%>
-  </li>
-</ul>
+<%= pull_box 'Menu' do %>
+  <table class="table">
+    <li class="new_email">
+      <%= link_to_unless_current t("views.messages.new"), new_message_path do
+            link_to(t("views.messages.new"), new_message_path, :class => "current")
+          end -%>
+    </li>
+    <li class="received_emails">
+      <%= link_to_unless_current t("views.messages.received_messages"), messages_path do
+            link_to(t("views.messages.received_messages"), messages_path, :class => "current")
+          end -%>
+    </li>
+    <li class="all_emails">
+      <%= link_to_unless_current t("views.messages.all_messages"), all_messages_path do
+            link_to(t("views.messages.all_messages"), all_messages_path, :class => "current")
+          end -%>
+    </li>
+    <li class="sent_emails">
+      <%= link_to_unless_current t("views.messages.sent_messages"), sent_messages_path do
+            link_to(t("views.messages.sent_messages"), sent_messages_path, :class => "current")
+          end -%>
+    </li>
+  </table>
+<% end %>

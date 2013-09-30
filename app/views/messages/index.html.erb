@@ -18,14 +18,33 @@
   #++
   %>
 
-<%= breadcrumbs_from(@root) -%>
-
-<h2 class="content-header"><%= t "views.messages.index_message" %></h2>
-
-<%= render :partial => "messages", :locals => {:messages => @messages} %>
-
-<%= content_for(:sidebar) do %>
-  <%= render :partial => "sidebar" %>
+<%= site_header do %>
+  <h2 class="content-header">
+    <%= t('views.messages.collection_title') %>
+  </h2>
+  <ul class="nav nav-tabs gts-header-nav">
+    <li class="active">
+      <%= link_to(t("views.messages.received_messages"), messages_path, :class => "current") %>
+    </li>
+    <li>
+      <%= link_to_unless_current t("views.messages.all_messages"), all_messages_path do
+            link_to(t("views.messages.all_messages"), all_messages_path, :class => "current")
+          end -%>
+    </li>
+    <li>
+      <%= link_to_unless_current t("views.messages.sent_messages"), sent_messages_path do
+            link_to(t("views.messages.sent_messages"), sent_messages_path, :class => "current")
+          end -%>
+    </li>
+    <li class="pull-right">
+      <%= link_to_unless_current t("views.messages.new"), new_message_path do
+            link_to(t("views.messages.new"), new_message_path, :class => "current")
+          end -%>
+    </li>
+  </ul>
 <% end %>
 
-<%= render_pagination_links (@messages) %>
+<div class="container gts-container">
+  <%= render 'messages', :messages => @messages %>
+  <%= render_pagination_links (@messages) %>
+</div>

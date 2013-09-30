@@ -21,19 +21,19 @@ require "will_paginate/array"
 
 class MessagesController < ApplicationController
   before_filter :login_required
+
   renders_in_global_context
 
   def index
-    @messages = paginate(page_free_redirect_options) do
+    @messages = paginate(page_free_redirect_options) {
       current_user.messages_in_inbox.paginate(:page => params[:page])
-    end
+    }
 
     return if @messages.count == 0 && params.key?(:page)
 
-    @root = Breadcrumb::ReceivedMessages.new(current_user)
     respond_to do |wants|
-      wants.html
-      wants.xml {render :xml => @messages}
+      wants.html { render :layout => 'ui3' }
+      wants.xml  { render :xml => @messages }
     end
   end
 
@@ -42,7 +42,7 @@ class MessagesController < ApplicationController
       current_user.top_level_messages.paginate(:page => params[:page])
     end
 
-    @root = Breadcrumb::AllMessages.new(current_user)
+    render :index, :layout => 'ui3'
   end
 
   def sent
@@ -50,12 +50,13 @@ class MessagesController < ApplicationController
       current_user.sent_messages.paginate(:page => params[:page])
     end
 
-    @root = Breadcrumb::SentMessages.new(current_user)
+    render :index, :layout => 'ui3'
   end
 
   def read
     @message = current_user.received_messages.find(params[:id])
     @message.read
+
     respond_to do |wants|
       wants.js { head :ok }
     end
