@@ -39,7 +39,7 @@
         <% if @committer_user -%>
           <%= link_to h(@committer_user.title), @committer_user -%>
         <% else -%>
-          <%=h @commit.committer.name -%>
+          <%= h force_utf8(@commit.committer.name) -%>
           <%= render_email(@commit.committer.email) -%>
         <% end -%>
         <% if @commit.committer != @commit.author -%>
@@ -62,7 +62,7 @@
           <% if @author_user -%>
             <%= link_to h(@author_user.title), @author_user -%>
           <% else -%>
-            <%=h @commit.author.name -%>
+            <%= h force_utf8(@commit.author.name) -%>
             <%= render_email(@commit.author.email) -%>
           <% end -%>
           <small>(<%= t("views.commits.author") %>)</small>
