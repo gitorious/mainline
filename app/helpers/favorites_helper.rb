@@ -20,27 +20,23 @@
 module FavoritesHelper
   def favorite_button(watchable)
     return "" unless logged_in?
-    if logged_in? && favorite = current_user.favorites.detect{|f| f.watchable == watchable}
-      link = destroy_favorite_link_to(favorite, watchable)
-    else
-      link = create_favorite_link_to(watchable)
-    end
 
-    content_tag(:div, link, :class => "repository-link favorite button")
+    if logged_in? && favorite = current_user.favorites.detect{|f| f.watchable == watchable}
+      destroy_favorite_link_to(favorite, watchable)
+    else
+      create_favorite_link_to(watchable)
+    end
   end
 
   def create_favorite_link_to(watchable)
-    link_to("Watch",
-            favorites_path(:watchable_id => watchable.id,
-                           :watchable_type => watchable.class.name),
-            :"data-request-method" => "post",
-            :class => "watch-link disabled round-10")
+    url = favorites_path(:watchable_id => watchable.id, :watchable_type => watchable.class.name)
+    link_to("Watch", url, :"data-request-method" => "post", :class => "btn disabled")
   end
 
   def destroy_favorite_link_to(favorite, watchable, options = {})
-    link_to(options[:label] || "Unwatch", favorite_path(favorite),
-            :"data-request-method" => "delete",
-            :class => "watch-link enabled round-10")
+    name = options[:label] || "Unwatch"
+    url  = favorite_path(favorite)
+    link_to(name, url, :"data-request-method" => "delete", :class => "btn")
   end
 
   def link_to_notification_toggle(favorite)

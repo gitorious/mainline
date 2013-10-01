@@ -25,18 +25,27 @@
 
 <%= site_header do %>
   <h2><%= "Merge request ##{@merge_request.to_param}" %></h2>
+  <div class="pull-right">
+    <%= render "merge_requests/show/options" %>
+  </div>
   <p class="description"><%= h(@merge_request.summary) %></p>
+  <%= nav_tabs %w(summary commits), :class => 'nav nav-tabs gts-header-nav', :active => 'summary' %>
 <% end %>
 
 <div class="container">
-  <%= render "merge_requests/show/options" %>
-  <%= render "merge_requests/show/summary" %>
-  <% render_if_ready(@merge_request, {:include_refresh_link => true}) do -%>
-    <%= render "merge_requests/show/commits" %>
-    <%= render "merge_requests/show/comments" %>
-    <% if logged_in? && @merge_request.user == current_user %>
-      <%= render "merge_request/show/merge_help" %>
+  <%= tab_content do %>
+    <%= tab_pane 'summary', :active => true do %>
+      <%= render "merge_requests/show/summary" %>
     <% end %>
-    <%= render "merge_requests/show/help" %>
+    <%= tab_pane 'commits' do %>
+      <% render_if_ready(@merge_request, :include_refresh_link => true) do -%>
+        <%= render "merge_requests/show/commits" %>
+        <%= render "merge_requests/show/comments" %>
+        <% if logged_in? && @merge_request.user == current_user %>
+          <%= render "merge_requests/show/merge_help" %>
+        <% end %>
+        <%= render "merge_requests/show/help" %>
+      <% end -%>
+    <% end -%>
   <% end -%>
 </div>

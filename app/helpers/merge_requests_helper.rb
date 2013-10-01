@@ -82,7 +82,7 @@ module MergeRequestsHelper
 
   def colorized_status(status_tag)
     return "" unless status_tag
-    (%Q{<span style="color:#{h(status_tag.color)}">} +
+    (%Q{<span class="badge" style="background-color:#{h(status_tag.color)}">} +
      h(status_tag.name) + "</span>").html_safe
   end
 
@@ -129,6 +129,7 @@ module MergeRequestsHelper
   end
 
   private
+
   def merge_request_link(target, status = nil)
     args = {}
     args[:status] = status if !status.nil?
