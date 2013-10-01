@@ -38,22 +38,20 @@
 <div class="container">
   <div class="row-fluid">
     <div class="span7">
-      <% if @results -%>
-        <% if @results.empty? -%>
-          <p class="well no-results-box">
-            <%= t("views.searches.no_results", :term => h(force_utf8(params[:q]))) %>
-          </p>
-        <% else -%>
-          <dl class="search-results">
-            <% @results.each do |result| -%>
-              <%= render "result", :result => presenter(result) %>
-            <% end -%>
-          </dl>
-          <%= render_pagination_links (@results) -%>
-        <% end -%>
+      <% if @results.blank? -%>
+        <p class="well no-results-box">
+          <%= t("views.searches.no_results", :term => h(force_utf8(params[:q]))) %>
+        </p>
+      <% else -%>
+        <dl class="search-results">
+          <% @results.each do |result| -%>
+            <%= render "result", :result => presenter(result) %>
+          <% end -%>
+        </dl>
+        <%= render_pagination_links (@results) -%>
       <% end -%>
     </div>
-    <% if @results.empty? %>
+    <% if @results.blank? %>
       <div class="span5">
         <div class="well search-tips">
           <h2>Tips for searching</h2>
