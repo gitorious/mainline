@@ -41,9 +41,10 @@ module DiffHelper
   def render_diffs(diffs)
     if sidebyside_diff?
       diffs.map do |file|
-        out = %Q{<a name="#{h(force_utf8(file.a_path))}"></a>}
+        a_path = force_utf8(file.a_path)
+        out = %Q{<a name="#{h(a_path)}"></a>}
         out << "<h4>"
-        out << link_to(h(file.a_path), file_path(@repository, file.a_path, @commit.id))
+        out << link_to(h(a_path), file_path(@repository, a_path, @commit.id))
         out << "</h4>"
         out << force_utf8(render_diff(file.diff))
         out
