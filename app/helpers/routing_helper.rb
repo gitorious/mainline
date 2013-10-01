@@ -36,6 +36,7 @@ module RoutingHelper
     # we temporarily swap the + out with a magic byte, so
     # filenames/branches with +'s won't get unescaped to a space
     paths.flatten.compact.map do |p|
+      p.force_encoding('ascii-8bit') if p.respond_to?(:force_encoding)
       CGI.unescape(p.gsub("+", "\001")).gsub("\001", '+')
     end.join("/")
   end
