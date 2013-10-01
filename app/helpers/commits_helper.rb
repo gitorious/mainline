@@ -26,7 +26,7 @@ module CommitsHelper
   include DiffHelper
 
   def format_commit_message(message)
-    message.force_encoding("utf-8").gsub(/\b[a-z0-9]{40}\b/) do |match|
+    force_utf8(message).gsub(/\b[a-z0-9]{40}\b/) do |match|
       link_to(match, project_repository_commit_path(@project, @repository, match), :class => "sha")
     end.html_safe
   end
