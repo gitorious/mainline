@@ -372,7 +372,7 @@ module EventRenderingHelper
         %Q{<span class="timestamp">on #{l(commit.created_at, :format => :long)}</span>}).html_safe
       meta =  content_tag(:span,inside_meta)
 
-      message = content_tag(:div, icon.html_safe +  meta.html_safe)
+      message = content_tag(:div, icon.to_s.html_safe +  meta.html_safe)
       commit_msg = link_to(simple_format(h(commit.body)),
         project_repository_commit_path(commit.project,
                                        commit.target.target,
