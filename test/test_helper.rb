@@ -29,8 +29,8 @@ Capybara.default_host      = 'gitorious.test'
 
 Capybara.configure do |config|
   config.javascript_driver = :poltergeist
-  config.server_port       = 3000
-  config.app_host          = 'http://gitorious.test:3000'
+  config.server_port       = 3001
+  config.app_host          = 'http://gitorious.test:3001'
 end
 
 class ActionDispatch::IntegrationTest
