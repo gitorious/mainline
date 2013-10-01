@@ -84,6 +84,7 @@ class MergeRequestsController < ApplicationController
                                                                  :include => [:source_repository, :target_repository]))
 
     @version = @merge_request.current_version_number
+
     begin
       @commits = @merge_request.commits_to_be_merged
       @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map(&:id))
@@ -93,11 +94,15 @@ class MergeRequestsController < ApplicationController
       @git_timeout_occured = true
       flash[:error] = "A Git timeout occured. Only metadata is being displayed"
     end
+
     respond_to do |wants|
       wants.html {
+        # FIXME: what is this legacy thing?
         if @merge_request.legacy?
           render :template => "merge_requests/legacy" and return
-        end # else render show.html as usual
+        else
+          render :layout => 'ui3'
+        end
       }
       wants.xml {render :xml => @merge_request.to_xml}
       wants.patch {
