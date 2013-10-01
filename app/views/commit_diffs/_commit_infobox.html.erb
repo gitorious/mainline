@@ -76,7 +76,7 @@
       <% @commit.parents.each do |parent| -%>
         <li><strong><%= t("views.commits.parent_sha1") %>:</strong> <%= link_to h(parent.id[0,7]),
          project_repository_commit_path(@project, @repository, parent) -%>
-         <small>(<%=h parent.short_message.force_encoding("utf-8") -%>)</small>
+         <small>(<%=h force_utf8(parent.short_message) -%>)</small>
         </li>
       <% end -%>
       <% unless @commit.merge? -%>
