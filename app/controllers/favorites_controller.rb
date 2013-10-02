@@ -69,11 +69,16 @@ class FavoritesController < ApplicationController
 
   private
   def find_watchable
-    begin
-      watchable_class = params[:watchable_type].constantize
-    rescue NameError
+    watchable_type = params[:watchable_type]
+    if allowed_watchables.include?(watchable_type)
+      watchable_class = watchable_type.constantize
+    else
       raise ActiveRecord::RecordNotFound
     end
     @watchable = authorize_access_to(watchable_class.find(params[:watchable_id]))
+  end
+
+  def allowed_watchables
+    ActiveRecord::Base.descendants.select { |klass| klass < Watchable }.map(&:name)
   end
 end

@@ -86,6 +86,12 @@ class FavoritesControllerTest < ActionController::TestCase
       assert_response :not_found
     end
 
+    should "render not found when boo watchable type is provided" do
+      ::FakeWatchable = Class.new
+      do_create_post("FakeWatchable", @repository.id)
+      assert_response :not_found
+    end
+
     should "create a favorite" do
       do_create_post(@repository.class.name, @repository.id)
       assert_not_nil(favorite = assigns(:favorite))
