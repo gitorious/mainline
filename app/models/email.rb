@@ -26,7 +26,7 @@ class Email < ActiveRecord::Base
   validates_length_of :address, :within => 5..255
   validates_uniqueness_of :address, :scope => "user_id", :case_sensitive => false
 
-  attr_accessible :user, :address
+  attr_accessible :address
 
   before_create :set_confirmation_code
   after_create :send_confirmation_email

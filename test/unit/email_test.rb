@@ -31,31 +31,40 @@ class EmailTest < ActiveSupport::TestCase
   should validate_uniqueness_of(:address).scoped_to(:user_id).case_insensitive
 
   should "default to a pending state" do
-    e = Email.create!(:address => "foo@bar.com", :user => users(:johan))
-    assert e.pending?
-    e.confirm!
-    assert e.confirmed?
+    email = Email.new(:address => "foo@bar.com")
+    email.user = users(:johan)
+    email.save!
+    assert email.pending?
+    email.confirm!
+    assert email.confirmed?
   end
 
   should "send an email confirmation on create" do
-    email = Email.new(:address => "foo@bar.com", :user => users(:johan))
+    email = Email.new(:address => "foo@bar.com")
+    email.user = users(:johan)
     Mailer.expects(:new_email_alias).with(email).returns(FakeMail.new)
     email.save!
   end
 
   should "set a confirmation_code on create" do
-    email = Email.create!(:address => "foo@bar.com", :user => users(:johan))
+    email = Email.new(:address => "foo@bar.com")
+    email.user = users(:johan)
+    email.save!
     assert_match /^[a-z0-9]{40}$/, email.confirmation_code
   end
 
   should "confirm an email adress" do
-    email = Email.create!(:address => "foo@bar.com", :user => users(:johan))
+    email = Email.new(:address => "foo@bar.com")
+    email.user = users(:johan)
+    email.save!
     email.confirm!
     assert_nil email.confirmation_code
   end
 
   should "find confirmed email by address" do
-    email = Email.create!(:address => "foo@bar.com", :user => users(:johan))
+    email = Email.new(:address => "foo@bar.com")
+    email.user = users(:johan)
+    email.save!
     assert_nil Email.find_confirmed_by_address("foo@bar.com")
     email.confirm!
     assert email.reload.confirmed?
