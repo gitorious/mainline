@@ -239,7 +239,9 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should "not include pending emails" do
-      Email.create!(:user => users(:johan), :address => "foo@bar.com")
+      email = Email.new(:address => "foo@bar.com")
+      email.user = users(:johan)
+      email.save!
       assert_nil User.find_by_email_with_aliases("foo@bar.com")
     end
   end
