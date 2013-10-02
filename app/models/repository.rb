@@ -677,7 +677,7 @@ class Repository < ActiveRecord::Base
     sql = "SELECT repositories.* FROM repositories
       INNER JOIN users on repositories.user_id=users.id
       INNER JOIN groups on repositories.owner_id=groups.id
-      WHERE repositories.#{key}=#{value}
+      WHERE repositories.#{key}=:id
       AND (repositories.name LIKE :q OR repositories.description LIKE :q OR groups.name LIKE :q)
       AND repositories.owner_type='Group'
       AND kind in (:kinds)
@@ -685,7 +685,7 @@ class Repository < ActiveRecord::Base
       SELECT repositories.* from repositories
       INNER JOIN users on repositories.user_id=users.id
       INNER JOIN users owners on repositories.owner_id=owners.id
-      WHERE repositories.#{key}=#{value}
+      WHERE repositories.#{key}=:id
       AND (repositories.name LIKE :q OR repositories.description LIKE :q OR owners.login LIKE :q)
       AND repositories.owner_type='User'
       AND kind in (:kinds)"
