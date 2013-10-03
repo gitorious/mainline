@@ -29,7 +29,7 @@ class SearchesController < ApplicationController
       @all_results = nil  # The unfiltered search result from TS
       @results = filter_paginated(params[:page], PER_PAGE) do |page|
         begin
-          @all_results = ThinkingSphinx.search(params[:q],{
+          @all_results = ThinkingSphinx.search(query,{
                                                 :page => page,
                                                 :per_page => PER_PAGE,
                                                 :classes => [Project, Repository, MergeRequest],
@@ -49,6 +49,12 @@ class SearchesController < ApplicationController
       filtered_results_length = @results.length
       @total_entries = @all_results.total_entries - (unfiltered_results_length - filtered_results_length)
     end
+  end
+
+  private
+
+  def query
+    params[:q].to_s.gsub('/', ' ')
   end
 
   class NullSearchResults
