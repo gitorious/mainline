@@ -28,17 +28,33 @@ class SearchesController < ApplicationController
     unless params[:q].blank?
       @all_results = nil  # The unfiltered search result from TS
       @results = filter_paginated(params[:page], PER_PAGE) do |page|
-        @all_results = ThinkingSphinx.search(params[:q],{
-                                               :page => page,
-                                               :per_page => PER_PAGE,
-                                               :classes => [Project, Repository, MergeRequest],
-                                               :match_mode => :extended})
-        @all_results.to_a
+        begin
+          @all_results = ThinkingSphinx.search(params[:q],{
+                                                :page => page,
+                                                :per_page => PER_PAGE,
+                                                :classes => [Project, Repository, MergeRequest],
+                                                :match_mode => :extended})
+
+          @all_results.to_a
+        rescue ThinkingSphinx::SphinxError => e
+          # silence the exception if the requested page doesn't exist
+          raise e unless e.message =~ /offset out of bounds/
+
+          @all_results = NullSearchResults.new
+          @all_results.to_a
+        end
       end
 
       unfiltered_results_length = @all_results.nil? ? 0 : @all_results.length
       filtered_results_length = @results.length
       @total_entries = @all_results.total_entries - (unfiltered_results_length - filtered_results_length)
     end
+  end
+
+  class NullSearchResults
+    def total_entries; 0; end
+    def length; 0; end
+    def to_a; []; end
+    def query_time; 0.0; end
   end
 end
