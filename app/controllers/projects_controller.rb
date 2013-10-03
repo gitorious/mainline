@@ -67,7 +67,7 @@ class ProjectsController < ApplicationController
 
   def show
     @events = paginated_events
-    return if @events.count == 0 && params.key?(:page)
+    return if @events.length == 0 && params.key?(:page)
     @big_repos = 10
     @owner = @project
     @root = @project
