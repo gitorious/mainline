@@ -50,8 +50,6 @@ class CommitsController < ApplicationController
       @total_pages = @repository.git_derived_total_commit_count(@ref) / 30
       @commits = @repository.paginated_commits(@ref, @page, 30)
 
-      return if @commits.count == 0 && params.key?(:page)
-
       @atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, params[:branch], :atom)
       respond_to do |format|
         format.html do
