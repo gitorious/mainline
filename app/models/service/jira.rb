@@ -22,6 +22,7 @@ class Service::Jira < Service::Adapter
   attributes :url, :api_version, :username, :password
 
   validates :username, :password, :url, :api_version, :presence => true
+  validate :valid_url_format
 
   def name
     self.class.label

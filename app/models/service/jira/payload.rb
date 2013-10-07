@@ -19,7 +19,11 @@ class Service::Jira < Service::Adapter
     end
 
     def transition
-      actions['transition']
+      actions['transition'] || actions['status']
+    end
+
+    def resolution
+      actions['resolution']
     end
 
     def to_json
@@ -27,7 +31,11 @@ class Service::Jira < Service::Adapter
     end
 
     def body
-      { :transition => { :id => transition } }
+      hash = { :transition => transition }
+      if resolution
+        hash.update(:fields => { :resolution => { :id => resolution } })
+      end
+      hash
     end
 
     private

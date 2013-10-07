@@ -33,16 +33,4 @@ class Service::WebHook < Service::Adapter
   def name
     url
   end
-
-  private
-
-  def valid_url_format
-    begin
-      uri = URI.parse(url)
-      errors.add(:url, "must be a valid URL") and return if uri.host.blank?
-    rescue URI::InvalidURIError
-      errors.add(:url, "must be a valid URL")
-    end
-  end
 end
-

@@ -48,26 +48,28 @@ class Service::JiraTest < ActiveSupport::TestCase
   end
 
   context "#notify" do
-    should "send payload to jira" do
-      payload = { "message" => "hello world [#123 transition:oh-hai]" }
-      body    = { :transition => { :id => "oh-hai" } }.to_json
-      http    = mock
+    %w(transition status).each do |keyword|
+      should "send payload to jira when #{keyword} is provided" do
+        payload = { "message" => "hello world [#123 #{keyword}:yo resolution:oh-hai]" }
+        body    = { :transition => "yo", :fields => { :resolution => { :id => "oh-hai" } } }.to_json
+        http    = mock
 
-      http.expects(:post).with(
-        jira.service_url(123),
-        :body         => body,
-        :content_type => "application/json",
-        :basic_auth   => { :user => "foo@bar.com", :password => "foobar" }
-      )
+        http.expects(:post).with(
+          jira.service_url(123),
+          :body         => body,
+          :content_type => "application/json",
+          :basic_auth   => { :user => "foo@bar.com", :password => "foobar" }
+        )
 
-      jira.notify(http, payload)
-    end
+        jira.notify(http, payload)
+      end
 
-    should "do nothing if message doesn't include transition info" do
-      payload = { "message" => "hello world [#123 foo:bar]" }
-      http    = mock
+      should "do nothing if message doesn't include #{keyword} info" do
+        payload = { "message" => "hello world [#123 foo:bar]" }
+        http    = mock
 
-      assert_nil jira.notify(http, payload)
+        assert_nil jira.notify(http, payload)
+      end
     end
 
     should "do nothing if message doesn't include issue id" do
