@@ -19,4 +19,7 @@
 
 <%= f.input :username %>
 <%= f.input :password %>
-<%= f.input :url, :input_html => { :class => "input-xlarge" } %>
+<%= f.input :url, :input_html => { :class => "input-xlarge" }, :label => 'URL' %>
+
+<% # FIXME: what version should we support? %>
+<%= f.input :api_version, :as => 'select', :collection => %w(1 2 3), :label => 'API version' %>
