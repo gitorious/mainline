@@ -19,22 +19,28 @@
 class Service::Jira < Service::Adapter
   label "Jira"
 
-  attributes :url, :username, :password
+  attributes :url, :api_version, :username, :password
 
-  validates :username, :password, :url, :presence => true
+  validates :username, :password, :url, :api_version, :presence => true
 
   def name
     self.class.label
   end
 
-  def service_url
-    url
+  def service_url(issue_id)
+    "#{url}/rest/api/#{api_version}/issue/#{issue_id}/transitions"
   end
 
   def notify(http_client, payload)
-    http_client.post url,
-      :body => payload.to_json,
+    data = Service::Jira::Payload.new(payload)
+
+    return unless data.any?
+
+    http_client.post(
+      service_url(data.issue_id),
+      :body         => data.to_json,
       :content_type => "application/json",
-      :basic_auth => { :user => username, :password => password }
+      :basic_auth   => { :user => username, :password => password }
+    )
   end
 end

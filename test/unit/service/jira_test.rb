@@ -21,9 +21,10 @@ require 'test_helper'
 class Service::JiraTest < ActiveSupport::TestCase
   def jira(attrs = {})
     Service::Jira.new({
-      :username => "foo@bar.com",
-      :password => "foobar",
-      :url      => 'https://project.jira.test'
+      :username    => "foo@bar.com",
+      :password    => "foobar",
+      :api_version => "4.3",
+      :url         => "https://project.jira.test"
     }.merge(attrs))
   end
 
@@ -33,25 +34,47 @@ class Service::JiraTest < ActiveSupport::TestCase
   end
 
   should "validate presence of password" do
-    assert jira(:password => 'foobar').valid?
+    assert jira(:password => "foobar").valid?
     refute jira(:password => nil).valid?
   end
 
   context "#service_url" do
     should "return correct jira url" do
-      assert_equal jira.service_url, "https://project.jira.test"
+      assert_equal(
+        jira.service_url(123),
+        "https://project.jira.test/rest/api/4.3/issue/123/transitions"
+      )
     end
   end
 
   context "#notify" do
     should "send payload to jira" do
-      payload = { "foo" => "bar" }
-      http = mock
-      http.expects(:post).with(jira.service_url,
-                               :body => payload.to_json,
-                               :content_type => 'application/json',
-                               :basic_auth => {:user => "foo@bar.com", :password => "foobar"})
+      payload = { "message" => "hello world [#123 transition:oh-hai]" }
+      body    = { :transition => { :id => "oh-hai" } }.to_json
+      http    = mock
+
+      http.expects(:post).with(
+        jira.service_url(123),
+        :body         => body,
+        :content_type => "application/json",
+        :basic_auth   => { :user => "foo@bar.com", :password => "foobar" }
+      )
+
       jira.notify(http, payload)
+    end
+
+    should "do nothing if message doesn't include transition info" do
+      payload = { "message" => "hello world [#123 foo:bar]" }
+      http    = mock
+
+      assert_nil jira.notify(http, payload)
+    end
+
+    should "do nothing if message doesn't include issue id" do
+      payload = { "message" => "hello world [123 transition:oh-hai]" }
+      http    = mock
+
+      assert_nil jira.notify(http, payload)
     end
   end
 end
