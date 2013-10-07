@@ -131,10 +131,16 @@ module Gitorious
       safe_action(repo, ref) do
         repository = dolt.resolve_repository(repo)
         raise RepositoryTooBigError.new if !Gitorious.tarballable?(repository)
-        configure_env(repo)
-        filename = lookup.archive(repo, ref, format)
-        add_sendfile_headers(filename, format)
-        body("")
+
+        oid = lookup.rev_parse_oid(repo, ref)
+        if oid != ref
+          dolt.redirect("/#{repo}/archive/#{oid}.#{format}")
+        else
+          configure_env(repo)
+          filename = lookup.archive(repo, ref, format)
+          add_sendfile_headers(filename, format)
+          body("")
+        end
       end
     end
 

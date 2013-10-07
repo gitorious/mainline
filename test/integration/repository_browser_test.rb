@@ -18,15 +18,23 @@
 require "test_helper"
 
 class RepositoryBrowserTest < ActionDispatch::IntegrationTest
-  should "render the repository files" do
+  setup do
     Repository.any_instance.stubs(:full_repository_path).returns(push_test_repo_path)
     repository = repositories(:johans)
     repository.ready = true
     repository.save!
+  end
 
+  should "render the repository files" do
     get "/johans-project/johansprojectrepos"
     follow_redirect!
 
     assert_response :success
+  end
+
+  should "redirect to sha download url when ref (branch/tag) requested" do
+    get "/johans-project/johansprojectrepos/archive/master.tgz"
+
+    assert_redirected_to '/johans-project/johansprojectrepos/archive/ec433174463a9d0dd32700ffa5bbb35cfe2a4530.tgz'
   end
 end
