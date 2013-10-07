@@ -23,7 +23,7 @@ class Service < ActiveRecord::Base
   serialize :data
 
   def self.types
-    [WebHook, Sprintly]
+    [WebHook, Sprintly, Jira]
   end
 
   def self.global_services
