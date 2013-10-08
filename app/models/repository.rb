@@ -737,7 +737,7 @@ class Repository < ActiveRecord::Base
   end
 
   def commit_comments(id)
-    comments.where(:sha1 => id).include(:user)
+    comments.where(:sha1 => id).includes(:user)
   end
 
   protected
