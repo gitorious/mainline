@@ -16,6 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "test_helper"
+require "create_commit_comment"
 
 class CommitCommentsControllerTest < ActionController::TestCase
   def setup
@@ -23,30 +24,44 @@ class CommitCommentsControllerTest < ActionController::TestCase
     @repository = @project.repositories.mainlines.first
     @repository.update_attribute(:ready, true)
     @sha = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
+    @user = users(:zmalltalker)
   end
 
   context "index" do
     should "list comments" do
+      create_comment
 
+      get(:index, params(:format => "json"))
+
+      comments = JSON.parse(response.body)
+      assert_match "Hey man!", comments["commit"][0]["body"]
     end
   end
 
-  # context "index" do
-  #   should "display comments" do
-  #     comment = create_comment
-  #     get(:index, params)
+  context "creating commit comments" do
+    should "add comment to commit" do
+      login_as(@user)
+      post(:create, params(:comment => {
+            :body => "Look at me!"
+          }))
 
-  #     assert_match comment.body, @response.body
-  #   end
+      assert_response :redirect
+      assert_equal "Look at me!", Comment.last.body
+      assert_equal @user, Comment.last.user
+    end
 
-  #   should "have a different last-modified if there is a comment" do
-  #     create_comment
-  #     get(:index, params)
+    should "add inline comment to commit" do
+      login_as(@user)
+      post(:create, params(:comment => {
+            :body => "Look at me!",
+            :path => "some/path.rb",
+            :lines => "0-10:0-10+0"
+          }))
 
-  #     assert_response :success
-  #     assert_not_equal "Fri, 18 Apr 2008 23:26:07 GMT", @response.headers["Last-Modified"]
-  #   end
-  # end
+      assert_equal "some/path.rb", Comment.last.path
+      assert_equal "0-10", Comment.last.first_line_number
+    end
+  end
 
   context "With private projects" do
     setup do
@@ -55,14 +70,14 @@ class CommitCommentsControllerTest < ActionController::TestCase
 
     should "disallow unauthorized user from listing comments" do
       comment = create_comment
-      get(:index, params)
+      get(:index, params(:format => "json"))
       assert_response 403
     end
 
     should "allow authorized user to list comments" do
       login_as :johan
       comment = create_comment
-      get(:index, params)
+      get(:index, params(:format => "json"))
       assert_response 200
     end
   end
@@ -74,30 +89,28 @@ class CommitCommentsControllerTest < ActionController::TestCase
 
     should "disallow unauthorized user from listing comments" do
       comment = create_comment
-      get(:index, params)
+      get(:index, params(:format => "json"))
       assert_response 403
     end
 
     should "allow authorized user to list comments" do
       login_as :johan
       comment = create_comment
-      get(:index, params)
+      get(:index, params(:format => "json"))
       assert_response 200
     end
   end
 
   private
   def create_comment
-    Comment.create!({ :user => users(:johan),
-                      :body => "foo",
-                      :sha1 => @sha,
-                      :target => @repository,
-                      :project => @repository.project })
+    CreateCommitComment.new(@user, @repository, @sha).execute(:body => "Hey man!")
   end
 
-  def params
-    { :project_id => @project.slug,
-      :repository_id => @repository.name,
-      :id => @sha }
+  def params(param = {})
+    param.merge({
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :ref => @sha
+      })
   end
 end
