@@ -1,3 +1,13 @@
+GIT
+  remote: https://github.com/wrozka/grit.git
+  revision: 2d43c4eb977fa22ae8300566944927605fc6373b
+  specs:
+    gitlab-grit (2.6.0)
+      charlock_holmes (~> 0.6.9)
+      diff-lcs (~> 1.1)
+      mime-types (~> 1.15)
+      posix-spawn (~> 0.3.6)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -57,11 +67,18 @@ GEM
     coercible (0.2.0)
       backports (~> 3.0, >= 3.1.0)
       descendants_tracker (~> 0.0.1)
+    columnize (0.3.6)
     crack (0.4.1)
       safe_yaml (~> 0.9.0)
     creole (0.3.8)
     daemons (1.1.0)
     debug_inspector (0.0.2)
+    debugger (1.6.2)
+      columnize (>= 0.3.1)
+      debugger-linecache (~> 1.2.0)
+      debugger-ruby_core_source (~> 1.2.3)
+    debugger-linecache (1.2.0)
+    debugger-ruby_core_source (1.2.3)
     descendants_tracker (0.0.1)
     diff-lcs (1.1.2)
     dolt (0.30.0)
@@ -326,12 +343,14 @@ DEPENDENCIES
   ci_reporter
   creole
   daemons (= 1.1.0)
+  debugger
   diff-lcs (= 1.1.2)
   dolt (~> 0.30.0)
   exception_notification
   factory_girl_rails (~> 1.7)
   foreman (~> 0.41)
   geoip (= 0.8.9)
+  gitlab-grit!
   gitorious_openid_auth (~> 1.1)
   guard-ctags-bundler
   guard-minitest

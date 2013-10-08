@@ -375,7 +375,7 @@ class ApplicationController < ActionController::Base
 
     begin
       if commit = @git.commit(@ref)
-        return Grit::Head.new(commit.id_abbrev, commit)
+        return Grit::Head.new(commit.id_abbrev, @git, commit.id)
       end
     rescue Errno::EISDIR => err
     end
