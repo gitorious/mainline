@@ -47,7 +47,7 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
           "commit"=> [{
               "author" => {
                 "profilePath" => "/~cjohansen",
-                "avatarPath" => "http://www.gravatar.com/avatar/a59f9d19e6a527f11b016650dde6f4c9&amp;default=http://gitorious.test/images/default_face.gif",
+                "avatarUrl" => "http://www.gravatar.com/avatar/a59f9d19e6a527f11b016650dde6f4c9&amp;default=http://gitorious.test/images/default_face.gif",
                 "login" => "cjohansen",
                 "name" => "Christian Johansen"
               },

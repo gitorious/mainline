@@ -45,7 +45,7 @@ class CommitCommentsJSONPresenter
   def comment_hash(comment, user)
     { "author" => {
         "profilePath" => app.user_path(comment.user),
-        "avatarPath" => app.avatar_url(comment.user),
+        "avatarUrl" => app.avatar_url(comment.user),
         "login" => comment.user.login,
         "name" => comment.user.fullname
       },
