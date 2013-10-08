@@ -25,6 +25,7 @@ gem "highline"
 gem "use_case", "~> 0.13"
 gem "virtus", '~> 1.0.0.beta8'
 gem "rake", "~> 10.0"
+gem "gitlab-grit", :require => "grit", :git => "https://github.com/wrozka/grit.git"
 gem "airbrake", "~> 3.1.14", :require => false
 
 group :openid do
@@ -59,6 +60,7 @@ group :development do
   gem "thin", "~> 1.2"
   gem "sinatra-contrib"
   gem "pry-rails"
+  gem "debugger"
 end
 
 group :git_proxy do
