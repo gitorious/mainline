@@ -49,7 +49,6 @@ class CommitCommentsJSONPresenter
         "login" => comment.user.login,
         "name" => comment.user.fullname
       },
-      "body" => comment.body,
       "body" => Makeup::Markup.new.render("text.md", comment.body),
       "createdAt" => comment.created_at.iso8601,
       "updatedAt" => comment.updated_at.iso8601,
