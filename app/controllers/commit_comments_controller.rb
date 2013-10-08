@@ -29,9 +29,12 @@ class CommitCommentsController < ApplicationController
   def index
     respond_to do |format|
       format.json do
-        comments = @repository.commit_comments(params[:id])
+        comments = @repository.commit_comments(params[:ref])
         render(:json => CommitCommentsJSONPresenter.new(self, comments).render_for(current_user))
       end
     end
+  end
+
+  def update
   end
 end

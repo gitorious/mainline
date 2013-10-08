@@ -21,12 +21,17 @@ require "commit_comments_json_presenter"
 class App
   def user_path(user); "/~#{user.login}"; end
   def avatar_url(user); "http://www.gravatar.com/avatar/a59f9d19e6a527f11b016650dde6f4c9&amp;default=http://gitorious.test/images/default_face.gif"; end
+  def project_repository_update_commit_comment_path(project, repository, oid, id)
+    "/#{project.slug}/#{repository.name}/#{oid}/comments/#{id}"
+  end
 end
 
 class CommitCommentsJSONPresenterTest < MiniTest::Spec
   describe "#hash_for" do
     before do
       @user = User.new(:login => "cjohansen", :fullname => "Christian Johansen")
+      @project = Project.new(:slug => "gitorious")
+      @repository = Repository.new(:name => "mainline", :project => @project)
     end
 
     it "returns empty structure for no comments" do
@@ -40,7 +45,8 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
               :user => @user,
               :body => "Yup",
               :created_at => DateTime.new(2013, 1, 1),
-              :updated_at => DateTime.new(2013, 1, 2)
+              :updated_at => DateTime.new(2013, 1, 2),
+              :target => @repository
             })])
 
       assert_equal({
@@ -68,7 +74,8 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
               :user => @user,
               :body => "Yup",
               :created_at => DateTime.new(2013, 1, 1),
-              :updated_at => DateTime.new(2013, 1, 1)
+              :updated_at => DateTime.new(2013, 1, 1),
+              :target => @repository
             }), Comment.new({
               :user => @user,
               :body => "Yup",
@@ -76,7 +83,8 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
               :updated_at => DateTime.new(2013, 1, 1),
               :path => "some/path.rb",
               :first_line_number => "0-1",
-              :last_line_number => "0-1"
+              :last_line_number => "0-1",
+              :target => @repository
             }), Comment.new({
               :user => @user,
               :body => "Yup",
@@ -84,7 +92,8 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
               :updated_at => DateTime.new(2013, 1, 1),
               :path => "some/other/path.rb",
               :first_line_number => "0-1",
-              :last_line_number => "0-1"
+              :last_line_number => "0-1",
+              :target => @repository
             }), Comment.new({
               :user => @user,
               :body => "Yup",
@@ -92,7 +101,8 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
               :updated_at => DateTime.new(2013, 1, 1),
               :path => "some/path.rb",
               :first_line_number => "0-1",
-              :last_line_number => "0-1"
+              :last_line_number => "0-1",
+              :target => @repository
             })])
 
       comments = presenter.hash_for(nil)
@@ -112,6 +122,21 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
 
       assert_equal("<p><a href=\"http://somewhere.com\">Hey</a></p>\n",
                    presenter.hash_for(nil)["commit"][0]["body"])
+    end
+
+    it "includes update path for comment author" do
+      presenter = CommitCommentsJSONPresenter.new(App.new, [Comment.new({
+              :id => 42,
+              :user => @user,
+              :body => "[Hey](http://somewhere.com)",
+              :created_at => DateTime.new(2013, 1, 1),
+              :updated_at => DateTime.new(2013, 1, 2),
+              :sha1 => "0123456",
+              :target => @repository
+            })])
+
+      update_path = presenter.hash_for(@user)["commit"][0]["updatePath"]
+      assert_equal("/gitorious/mainline/0123456/comments/42", update_path)
     end
   end
 end

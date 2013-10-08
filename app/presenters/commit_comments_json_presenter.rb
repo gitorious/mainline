@@ -43,6 +43,8 @@ class CommitCommentsJSONPresenter
   end
 
   def comment_hash(comment, user)
+    repository = comment.target
+    project = repository.project
     { "author" => {
         "profilePath" => app.user_path(comment.user),
         "avatarUrl" => app.avatar_url(comment.user),
@@ -56,7 +58,7 @@ class CommitCommentsJSONPresenter
       "lastLine" => comment.last_line_number,
       "context" => comment.context,
       "path" => comment.path }.merge(user != comment.user ? {} : {
-        "editPath" => "TODO"
+        "updatePath" => app.project_repository_update_commit_comment_path(project, repository, comment.sha1, comment.id)
       })
   end
 

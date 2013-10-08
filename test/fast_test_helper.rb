@@ -227,7 +227,8 @@ if !defined?(Rails)
 
   class Comment < TestHelper::Model
     attr_accessor :user, :body, :created_at, :first_line_number,
-      :last_line_number, :context, :path
+      :last_line_number, :context, :path, :sha1, :target,
+      :user_id, :project_id
   end
 end
 
