@@ -273,7 +273,7 @@ Gitorious::Application.routes.draw do
         get "/activities" => "repository_activities#index", :as => :activities
       end
 
-      resources :comments
+      resources :comments, :only => [:index]
 
       resources :services, :only => [:index, :destroy] do
         collection do
@@ -283,8 +283,6 @@ Gitorious::Application.routes.draw do
         resources :service_tests, :as => :tests, :only => [:create]
       end
 
-      get "/comments/commit/:sha" => "comments#commit", :as => :commit_comment
-      match "/comments/preview" => "comments#preview", :as => :comments_preview, :via => [:get, :post]
       match "/community", :controller => :repository_community, :action => :index
 
       resources :merge_requests do
@@ -323,10 +321,12 @@ Gitorious::Application.routes.draw do
       match "/commits/*branch" => "commits#index", :as => :commits_in_ref, :branch => /.+/
 
       # Commit comments
+      post "/commit/:ref/comments" => "commit_comments#create", :as => :create_commit_comment, :ref => /[^\/]+/
       put "/commit/:ref/comments/:id" => "commit_comments#update", :as => :update_commit_comment, :ref => /[^\/]+/
       get "/commit/:ref/comments.:format" => "commit_comments#index", :as => :commit_comments, :ref => /[^\/]+/
 
       match "/commit/:from_id/diffs/:id" => "commit_diffs#show", :as => :commit_compare
+
       match "/commit/:id.:format" => "commits#show", :as => :commit, :id => /.*/
       match "/commit/:id" => "commits#show", :as => :commit, :id => /.*/
 

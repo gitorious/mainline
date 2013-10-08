@@ -47,4 +47,17 @@
       <%= renderer.render(diff).html_safe %>
     <% end %>
   <% end -%>
+  <div class="gts-commit-comments" data-gts-env-commit-comments-url="<%= project_repository_commit_comments_path(commit.project, commit.repository, commit.id, :format => "json") %>">
+    <h3>Comments</h3>
+    <div class="hidden">
+      <%= simple_form_for(Comment.new, {
+              :as => :comment,
+              :url => project_repository_create_commit_comment_path(commit.project, commit.repository, commit.id),
+              :html => { :class => "form-horizontal gts-comment-form", :id => "comment_form_tpl" }
+            }) do |form| -%>
+        <%= render(:partial => "commit_comments/form", :locals => { :form => form }) %>
+        <div class="comment-extra"></div>
+      <% end %>
+    </div>
+  </div>
 </div>

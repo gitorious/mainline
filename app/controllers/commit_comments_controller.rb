@@ -19,11 +19,13 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "create_commit_comment"
 require "commit_comments_json_presenter"
 require "gitorious/view/avatar_helper"
 
 class CommitCommentsController < ApplicationController
   include Gitorious::View::AvatarHelper
+  before_filter :login_required, :except => [:index]
   before_filter :find_project_and_repository
 
   def index
@@ -32,6 +34,29 @@ class CommitCommentsController < ApplicationController
         comments = @repository.commit_comments(params[:ref])
         render(:json => CommitCommentsJSONPresenter.new(self, comments).render_for(current_user))
       end
+    end
+  end
+
+  def create
+    uc = CreateCommitComment.new(current_user, @repository, params[:ref])
+    outcome = uc.execute(params[:comment])
+
+    pre_condition_failed(outcome) do |pc|
+      flash[:error] = "Couldn't create comment: #{pc.pre_condition.message}"
+      redirect_to(project_repository_commit_path(@project, @repository, params[:ref]))
+    end
+
+    outcome.success do |comment|
+      flash[:success] = "Your comment was added"
+      redirect_to(project_repository_commit_path(@project, @repository, comment.sha1))
+    end
+
+    outcome.failure do |comment|
+      render(:action => "edit", :layout => "ui3", :locals => {
+          :user => current_user,
+          :repository => RepositoryPresenter.new(@repository),
+          :comment => comment
+        })
     end
   end
 

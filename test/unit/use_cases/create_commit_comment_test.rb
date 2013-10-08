@@ -27,7 +27,8 @@ class CreateCommitCommentTest < ActiveSupport::TestCase
   should "create comment" do
     commit_id = "a" * 40
     outcome = CreateCommitComment.new(@user, @repository, commit_id).execute({
-        :body => "Nice going!"
+        :body => "Nice going!",
+        :path => "some/thing.rb"
       })
 
     assert outcome.success?, outcome.to_s
@@ -36,6 +37,7 @@ class CreateCommitCommentTest < ActiveSupport::TestCase
     assert_equal "Nice going!", outcome.result.body
     assert_equal @repository, outcome.result.target
     assert_equal "a" * 40, outcome.result.sha1
+    assert_equal "some/thing.rb", outcome.result.path
   end
 
   should "not create invalid comment" do

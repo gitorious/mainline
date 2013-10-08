@@ -1,4 +1,4 @@
-# encoding: utf-8
+<%
 #--
 #   Copyright (C) 2013 Gitorious AS
 #
@@ -15,31 +15,21 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
-class UserJSONPresenter
-  def initialize(app, user)
-    @app = app
-    @user = user
-  end
-
-  def render
-    JSON.dump(to_hash)
-  end
-
-  def to_hash
-    return {} if user.nil?
-    { "user" => {
-        "login" => user.login,
-        "unreadMessageCount" => user.unread_message_count,
-        "dashboardPath" => app.root_path,
-        "profilePath" => app.user_path(user),
-        "editPath" => app.edit_user_path(user),
-        "messagesPath" => app.messages_path,
-        "logoutPath" => app.logout_path,
-        "avatarUrl" => app.avatar_url(user)
-      } }
-  end
-
-  private
-  attr_reader :app, :user
-end
+%>
+<%= partial("repositories/header_compact", {
+        :repository => repository,
+        :project => repository.project,
+        :app => Gitorious,
+        :active => :commits
+      }) %>
+<div class="container gts-body">
+  <% @title = "Add comment" %>
+  <%= error_messages(comment) -%>
+  <%= simple_form_for(comment, {
+          :as => :comment,
+          :url => project_repository_create_commit_comment_path(repository.project, repository, comment.sha1),
+          :html => { :class => "form-horizontal gts-comment-form" }
+        }) do |form| -%>
+    <%= render(:partial => "form", :locals => { :form => form }) %>
+  <% end %>
+</div>

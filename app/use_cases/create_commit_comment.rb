@@ -25,7 +25,7 @@ class CreateCommitCommentCommand
   end
 
   def execute(comment)
-    comment.save!
+    comment.save
     comment
   end
 
@@ -36,7 +36,8 @@ class CreateCommitCommentCommand
         :sha1 => commit_id,
         :project => repository.project,
         :body => params.body,
-        :context => params.context
+        :context => params.context,
+        :path => params.path
       })
     comment.lines = params.lines unless params.lines.blank?
     comment
@@ -51,6 +52,7 @@ class CommitCommentParams
   attribute :body, String
   attribute :context, String
   attribute :lines, String
+  attribute :path, String
 end
 
 class CreateCommitComment
