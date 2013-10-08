@@ -1,4 +1,5 @@
 class Service::Jira < Service::Adapter
+
   class Payload < Struct.new(:payload)
     REGEXP = /\[#(.+)\]/.freeze
 
@@ -26,12 +27,16 @@ class Service::Jira < Service::Adapter
       actions['resolution']
     end
 
+    def comment
+      payload.values_at('message', 'url').join("\n")
+    end
+
     def to_json
       body.to_json
     end
 
     def body
-      hash = { :transition => transition }
+      hash = { :comment => { :body => comment }, :transition => transition }
       if resolution
         hash.update(:fields => { :resolution => { :id => resolution } })
       end
@@ -50,4 +55,5 @@ class Service::Jira < Service::Adapter
       }
     end
   end
+
 end

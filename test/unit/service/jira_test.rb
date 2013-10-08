@@ -49,19 +49,30 @@ class Service::JiraTest < ActiveSupport::TestCase
 
   context "#notify" do
     %w(transition status).each do |keyword|
-      should "send payload to jira when #{keyword} is provided" do
-        payload = { "message" => "hello world [#123 #{keyword}:yo resolution:oh-hai]" }
-        body    = { :transition => "yo", :fields => { :resolution => { :id => "oh-hai" } } }.to_json
-        http    = mock
+      setup do
+        @payload = {
+          "url"     => "http://some.commit",
+          "message" => "hello world [#123 #{keyword}:yo resolution:oh-hai]"
+        }
 
-        http.expects(:post).with(
+        @http = mock
+      end
+
+      should "send payload to jira when #{keyword} is provided" do
+        body = {
+          :comment    => { :body => "#{@payload['message']}\n#{@payload['url']}" },
+          :transition => "yo",
+          :fields     => { :resolution => { :id => "oh-hai" } }
+        }.to_json
+
+        @http.expects(:post).with(
           jira.service_url(123),
           :body         => body,
           :content_type => "application/json",
           :basic_auth   => { :user => "foo@bar.com", :password => "foobar" }
         )
 
-        jira.notify(http, payload)
+        jira.notify(@http, @payload)
       end
 
       should "do nothing if message doesn't include #{keyword} info" do
