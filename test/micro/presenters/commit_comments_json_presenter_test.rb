@@ -51,7 +51,7 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
                 "login" => "cjohansen",
                 "name" => "Christian Johansen"
               },
-              "body" => "Yup",
+              "body" => "<p>Yup</p>\n",
               "createdAt" => "2013-01-01T00:00:00+00:00",
               "updatedAt" => "2013-01-02T00:00:00+00:00",
               "firstLine" => nil,
@@ -99,6 +99,19 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
       assert_equal 1, comments["commit"].length
       assert_equal 1, comments["diffs"]["some/other/path.rb"].length
       assert_equal 2, comments["diffs"]["some/path.rb"].length
+    end
+
+    it "renders commit body as markdown" do
+      presenter = CommitCommentsJSONPresenter.new(App.new, [Comment.new({
+              :user => @user,
+              :body => "[Hey](http://somewhere.com)",
+              :created_at => DateTime.new(2013, 1, 1),
+              :updated_at => DateTime.new(2013, 1, 2),
+              :target => @repository
+            })])
+
+      assert_equal("<p><a href=\"http://somewhere.com\">Hey</a></p>\n",
+                   presenter.hash_for(nil)["commit"][0]["body"])
     end
   end
 end

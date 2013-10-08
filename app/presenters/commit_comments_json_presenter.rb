@@ -15,6 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "makeup/markup"
 
 class CommitCommentsJSONPresenter
   def initialize(app, comments)
@@ -49,6 +50,7 @@ class CommitCommentsJSONPresenter
         "name" => comment.user.fullname
       },
       "body" => comment.body,
+      "body" => Makeup::Markup.new.render("text.md", comment.body),
       "createdAt" => comment.created_at.iso8601,
       "updatedAt" => comment.updated_at.iso8601,
       "firstLine" => comment.first_line_number,
