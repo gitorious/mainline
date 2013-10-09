@@ -706,7 +706,7 @@ class RepositoryTest < ActiveSupport::TestCase
     include SampleRepoHelpers
 
     setup do
-      @grit = sample_repo('sample_repo')
+      @grit = sample_repo
       @repository.stubs(:git).returns(@grit)
     end
 

@@ -24,8 +24,15 @@ module SampleRepoHelpers
     tmp_dir
   end
 
-  def sample_repo(name)
+  def sample_repo(name = 'sample_repo')
     Grit::Repo.new(sample_repo_path(name), :is_bare => true)
+  end
+
+  def repository_with_working_git
+    repository = Repository.new
+    git = sample_repo
+    repository.stubs(:git => git)
+    repository
   end
 
   def cleanup_sample_repos

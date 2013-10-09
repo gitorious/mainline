@@ -241,9 +241,15 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def lookup_commits_for_selection
-    start_at = target_repository.git.get_head(target_branch).commit.id
-    end_at = source_repository.git.get_head(source_branch).commit.id
+    start_at = head_commit_id(target_repository, target_branch)
+    end_at = head_commit_id(source_repository, source_branch)
+    return [] unless start_at && end_at
     source_repository.git.commits_between(start_at, end_at).reverse
+  end
+
+  def head_commit_id(repository, branch)
+    head = repository.git.get_head(branch)
+    return head.commit.id if head
   end
 
   def applies_to_specific_commits?
