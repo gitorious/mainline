@@ -19,6 +19,7 @@ require "use_cases/create_openid_user"
 
 class OpenIdUsersController < ApplicationController
   renders_in_global_context
+  layout "ui3"
   before_filter :require_identity_url_in_session
   before_filter :require_openid_enabled
 
@@ -61,6 +62,6 @@ class OpenIdUsersController < ApplicationController
   end
 
   def render_new(user)
-    render_template("new", { :user => user }, { :layout => 'ui3' })
+    render(:new, :locals => { :user => user })
   end
 end

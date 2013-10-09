@@ -434,11 +434,4 @@ class ApplicationController < ActionController::Base
       block.call(f) if !block.nil?
     end
   end
-
-  # A less locals-hostile render function
-  def render_template(template, locals, options = {})
-    options[:action] = template
-    options[:locals] = locals
-    render(options)
-  end
 end

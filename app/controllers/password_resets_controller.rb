@@ -43,13 +43,13 @@ class PasswordResetsController < ApplicationController
   def prepare_reset
     outcome = PreparePasswordReset.new(user_from_token).execute
     reset_pre_condition_failed(outcome)
-    outcome.success { |user| render_template("reset", :user => user) }
+    outcome.success { |user| render(:reset, :locals => { :user => user }) }
   end
 
   def reset
     outcome = ResetPassword.new(user_from_token).execute(params[:user])
     reset_pre_condition_failed(outcome)
-    outcome.failure { |user| render_template("reset", :user => user) }
+    outcome.failure { |user| render(:reset, :locals => { :user => user }) }
 
     outcome.success do |user|
       flash[:success] = "Password updated"

@@ -23,7 +23,7 @@
 
 class UsersController < ApplicationController
   renders_in_global_context
-
+  layout "ui3"
   before_filter :login_required, :only => [:edit, :update]
   before_filter :find_user, :only => [:show, :edit, :update]
   before_filter :require_current_user, :only => [:edit, :update]
@@ -46,7 +46,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.atom { redirect_to(user_feed_path(@user, :format => :atom)) }
       format.html do
-        render_template("show", {
+        render(:show, :locals => {
             :user => @user,
             :events => events,
             :teams => Team.for_user(@user),
@@ -55,7 +55,7 @@ class UsersController < ApplicationController
             :favorites => filter(@user.favorites.all(:include => :watchable)),
             :atom_auto_discovery_url => user_feed_path(@user, :format => :atom),
             :atom_auto_discovery_title => "Public activity feed"
-          }, :layout => "ui3")
+          })
       end
     end
   end
@@ -77,13 +77,13 @@ class UsersController < ApplicationController
 
   def edit
     active_tab = params.fetch(:tab, 'my-details')
-    locals     = { :user => current_user, :active_tab => active_tab }
+    locals = { :user => current_user, :active_tab => active_tab }
 
     if pjax_request?
       partial = EDIT_VIEWS.fetch(params[:tab])
       render :partial => partial, :locals => locals
     else
-      render_template("edit", locals, :layout => 'ui3')
+      render(:edit, :locals => locals)
     end
   end
 
@@ -92,8 +92,8 @@ class UsersController < ApplicationController
     pre_condition_failed(outcome)
 
     outcome.failure do |user|
-      flash[:error] = 'Failed to save your details'
-      render_template("edit", { :user => user, :active_tab => 'my-details' }, :layout => 'ui3')
+      flash[:error] = "Failed to save your details"
+      render(:edit, :locals => { :user => user, :active_tab => "my-details" })
     end
 
     outcome.success do
@@ -129,7 +129,7 @@ class UsersController < ApplicationController
   helper_method :emails
 
   def render_form(user)
-    render_template(:new, { :user => user }, { :layout => "ui3" })
+    render(:new, :locals => { :user => user })
   end
 
   def find_user
