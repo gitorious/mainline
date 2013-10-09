@@ -535,23 +535,26 @@ class RoutingTest < ActionController::TestCase
 
     context "comments" do
       should "route index" do
-        assert_recognizes({ :controller => "commit_comments",
-                            :action => "index",
-                            :project_id => "gitorious",
-                            :repository_id => "capillary",
-                            :id => @sha,
-                          }, {
-                            :path => "/gitorious/capillary/commit/#{@sha}/comments",
-                            :method => :get
-                          })
+        assert_recognizes({
+            :controller => "commit_comments",
+            :action => "index",
+            :project_id => "gitorious",
+            :repository_id => "capillary",
+            :ref => @sha,
+            :format => "json"
+          }, {
+            :path => "/gitorious/capillary/commit/#{@sha}/comments.json",
+            :method => :get
+          })
 
-        assert_generates("/gitorious/capillary/commit/#{@sha}/comments", {
-                           :controller => "commit_comments",
-                           :action => "index",
-                           :project_id => "gitorious",
-                           :repository_id => "capillary",
-                           :id => @sha,
-                         })
+        assert_generates("/gitorious/capillary/commit/#{@sha}/comments.json", {
+            :controller => "commit_comments",
+            :action => "index",
+            :project_id => "gitorious",
+            :repository_id => "capillary",
+            :ref => @sha,
+            :format => "json"
+          })
       end
     end
   end
@@ -835,14 +838,15 @@ class RoutingTest < ActionController::TestCase
 
   context "Comment routing" do
     should "recognize commit comment" do
-      assert_recognizes({ :controller => "comments",
-                          :action => "index",
-                          :project_id => "johans-project",
-                          :repository_id => "johansprojectrepos"
-                        }, {
-                          :path => "/johans-project/johansprojectrepos/comments",
-                          :method => :post
-                        })
+      assert_recognizes({
+          :controller => "comments",
+          :action => "index",
+          :project_id => "johans-project",
+          :repository_id => "johansprojectrepos"
+        }, {
+          :path => "/johans-project/johansprojectrepos/comments",
+          :method => :get
+        })
     end
   end
 

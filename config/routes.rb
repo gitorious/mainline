@@ -324,11 +324,11 @@ Gitorious::Application.routes.draw do
       post "/commit/:ref/comments" => "commit_comments#create", :as => :create_commit_comment, :ref => /[^\/]+/
       put "/commit/:ref/comments/:id" => "commit_comments#update", :as => :update_commit_comment, :ref => /[^\/]+/
       get "/commit/:ref/comments.:format" => "commit_comments#index", :as => :commit_comments, :ref => /[^\/]+/
-      get "/commit/:ref/comments/:id/edit" => "commit_comments#edit", :as => :edit_commit_comments, :ref => /[^\/]+/
+      get "/commit/:ref/comments/:id/edit" => "commit_comments#edit", :as => :edit_commit_comment, :ref => /[^\/]+/
 
       match "/commit/:from_id/diffs/:id" => "commit_diffs#show", :as => :commit_compare
 
-      match "/commit/:id.:format" => "commits#show", :as => :commit, :id => /.*/
+      match "/commit/:id.:format" => "commits#show", :as => :commit, :format => /diff|patch/
       match "/commit/:id" => "commits#show", :as => :commit, :id => /.*/
 
       match "/graph" => "graphs#index", :as => :graph
