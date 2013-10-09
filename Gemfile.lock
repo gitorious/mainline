@@ -427,7 +427,7 @@ DEPENDENCIES
   trinidad
   unicorn (~> 4.6.3)
   use_case (~> 0.13)
-  virtus (~> 1.0.0.beta7)
+  virtus (~> 1.0.0.beta8)
   webmock
   wikicloth
   will_paginate (~> 3.0)
