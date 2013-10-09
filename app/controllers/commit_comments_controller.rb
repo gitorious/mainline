@@ -27,6 +27,7 @@ class CommitCommentsController < ApplicationController
   include Gitorious::View::AvatarHelper
   before_filter :login_required, :except => [:index]
   before_filter :find_project_and_repository
+  layout "ui3"
 
   def index
     respond_to do |format|
@@ -51,15 +52,44 @@ class CommitCommentsController < ApplicationController
       redirect_to(project_repository_commit_path(@project, @repository, comment.sha1))
     end
 
-    outcome.failure do |comment|
-      render(:action => "edit", :layout => "ui3", :locals => {
-          :user => current_user,
-          :repository => RepositoryPresenter.new(@repository),
-          :comment => comment
-        })
-    end
+    outcome.failure { |comment| render_form(comment) }
+  end
+
+  def edit
+    render_form(find_comment)
   end
 
   def update
+    outcome = UpdateCommitComment.new(find_comment, current_user).execute(params[:comment])
+
+    pre_condition_failed(outcome) do |pc|
+      flash[:error] = "Couldn't update comment: #{pc.pre_condition.message}"
+      redirect_to(project_repository_commit_path(@project, @repository, params[:ref]))
+    end
+
+    outcome.success do |comment|
+      flash[:success] = "Your comment was updated"
+      redirect_to(project_repository_commit_path(@project, @repository, comment.sha1))
+    end
+
+    outcome.failure { |comment| render_form(comment) }
+  end
+
+  private
+  def find_comment
+    Comment.where({
+        :id => params[:id],
+        :sha1 => params[:ref],
+        :target_type => "repository",
+        :target_id => @repository.id
+      }).first
+  end
+
+  def render_form(comment)
+    render(:action => "edit", :locals => {
+        :user => current_user,
+        :repository => RepositoryPresenter.new(@repository),
+        :comment => comment
+      })
   end
 end

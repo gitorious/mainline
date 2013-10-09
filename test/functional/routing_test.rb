@@ -836,11 +836,11 @@ class RoutingTest < ActionController::TestCase
   context "Comment routing" do
     should "recognize commit comment" do
       assert_recognizes({ :controller => "comments",
-                          :action => "preview",
+                          :action => "index",
                           :project_id => "johans-project",
                           :repository_id => "johansprojectrepos"
                         }, {
-                          :path => "/johans-project/johansprojectrepos/comments/preview",
+                          :path => "/johans-project/johansprojectrepos/comments",
                           :method => :post
                         })
     end

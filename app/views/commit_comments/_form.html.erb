@@ -16,8 +16,11 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+<% if !defined?(title)
+     title = "Add comment"
+   end %>
 <fieldset>
-  <legend>Add comment</legend>
+  <legend><%= title %></legend>
   <div id="comment-markdown-preview" class="gts-markdown-preview help-block">
     <div></div>
     <div class="gts-comment-author-ph"></div>
@@ -28,6 +31,6 @@
           :"data-gts-preview-target" => "comment-markdown-preview"
         }) %>
   <div class="form-actions">
-    <button class="btn btn-primary" type="submit">Add comment</button>
+    <button class="btn btn-primary" type="submit"><%= title %></button>
   </div>
 </fieldset>

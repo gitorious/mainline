@@ -25,6 +25,8 @@ class CommitCommentsControllerTest < ActionController::TestCase
     @repository.update_attribute(:ready, true)
     @sha = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
     @user = users(:zmalltalker)
+    Repository.any_instance.stubs(:has_commits?).returns(true)
+    Repository.any_instance.stubs(:head_candidate_name).returns("master")
   end
 
   context "index" do
@@ -63,6 +65,22 @@ class CommitCommentsControllerTest < ActionController::TestCase
     end
   end
 
+  context "edit" do
+    setup do
+      @comment = CreateCommitComment.new(@user, @repository, @sha).execute({
+          :body => "tis my comment'"
+        }).result
+    end
+
+    should "display editing form" do
+      login_as(@user)
+
+      get(:edit, params(:id => @comment.id))
+
+      assert_match "tis my comment", response.body
+    end
+  end
+
   context "With private projects" do
     setup do
       enable_private_repositories
@@ -78,6 +96,13 @@ class CommitCommentsControllerTest < ActionController::TestCase
       login_as :johan
       comment = create_comment
       get(:index, params(:format => "json"))
+      assert_response 200
+    end
+
+    should "allow authorized user to edit comments" do
+      login_as :johan
+      comment = create_comment
+      get(:edit, params(:id => comment.id))
       assert_response 200
     end
   end
@@ -99,11 +124,25 @@ class CommitCommentsControllerTest < ActionController::TestCase
       get(:index, params(:format => "json"))
       assert_response 200
     end
+
+    should "disallow unauthorized user from editing comment" do
+      login_as(:moe)
+      comment = create_comment
+      get(:edit, params(:id => comment.id))
+      assert_response 403
+    end
+
+    should "allow authorized user to edit comments" do
+      login_as :johan
+      comment = create_comment
+      get(:edit, params(:id => comment.id))
+      assert_response 200
+    end
   end
 
   private
   def create_comment
-    CreateCommitComment.new(@user, @repository, @sha).execute(:body => "Hey man!")
+    CreateCommitComment.new(@user, @repository, @sha).execute(:body => "Hey man!").result
   end
 
   def params(param = {})
