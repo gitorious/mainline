@@ -21,8 +21,8 @@ require "commit_comments_json_presenter"
 class App
   def user_path(user); "/~#{user.login}"; end
   def avatar_url(user); "http://www.gravatar.com/avatar/a59f9d19e6a527f11b016650dde6f4c9&amp;default=http://gitorious.test/images/default_face.gif"; end
-  def project_repository_update_commit_comment_path(project, repository, oid, id)
-    "/#{project.slug}/#{repository.name}/#{oid}/comments/#{id}"
+  def project_repository_edit_commit_comment_path(project, repository, oid, id)
+    "/#{project.slug}/#{repository.name}/#{oid}/comments/#{id}/edit"
   end
 end
 
@@ -135,8 +135,8 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
               :target => @repository
             })])
 
-      update_path = presenter.hash_for(@user)["commit"][0]["updatePath"]
-      assert_equal("/gitorious/mainline/0123456/comments/42", update_path)
+      edit_path = presenter.hash_for(@user)["commit"][0]["editPath"]
+      assert_equal("/gitorious/mainline/0123456/comments/42/edit", edit_path)
     end
   end
 end
