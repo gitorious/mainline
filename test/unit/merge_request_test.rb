@@ -378,6 +378,18 @@ class MergeRequestTest < ActiveSupport::TestCase
       end
     end
 
+    should "uses the default branches of target and source repository" do
+      mr = MergeRequest.new
+      mr.source_repository = repositories(:johans)
+      mr.target_repository = repositories(:moes)
+
+      mr.source_repository.stubs(:head_candidate_name).returns("trunk")
+      mr.target_repository.stubs(:head_candidate_name).returns("master")
+
+      assert_equal "trunk", mr.source_branch
+      assert_equal "master", mr.target_branch
+    end
+
     should "suggest relevant commits to be merged" do
       assert_equal(4, @merge_request.commits_for_selection.size)
     end
