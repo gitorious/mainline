@@ -81,8 +81,6 @@ class KeysController < ApplicationController
       flash[:notice] = I18n.t("keys_controller.destroy_notice")
       redirect_to user_edit_ssh_keys_path(current_user) and return
     end
-
-    render(:text => "Bad request", :status => 400)
   end
 
   protected

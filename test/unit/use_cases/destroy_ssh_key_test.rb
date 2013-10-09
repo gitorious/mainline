@@ -45,17 +45,16 @@ class DestroySshKeyTest < ActiveSupport::TestCase
   end
 
   should "fail for invalid key" do
-    assert_no_difference "SshKey.count" do
-      outcome = @uc.execute(:id => SshKey.new(:key => invalid_key))
-      refute outcome.success?
+    assert_raises ActiveRecord::RecordNotFound do
+      @uc.execute(:id => SshKey.new(:key => invalid_key))
     end
   end
 
   should "fail when attempting to remove key not belonging to user" do
     ssh_key = new_key(:user => users(:moe))
     ssh_key.save
-    uc = DestroySshKey.new(@hub, users(:mike))
-    outcome = @uc.execute(:id => ssh_key.id)
-    refute outcome.success?
+    assert_raises ActiveRecord::RecordNotFound do
+      @uc.execute(:id => ssh_key.id)
+    end
   end
 end

@@ -367,6 +367,8 @@ class MergeRequestTest < ActiveSupport::TestCase
   end
 
   context "with specific starting and ending commits" do
+    include SampleRepoHelpers
+
     setup do
       @merge_request.ending_commit = "6823e6622e1da9751c87380ff01a1db1"
     end
@@ -376,6 +378,24 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_nothing_raised do
         assert_equal [], mr.commits_for_selection
       end
+    end
+
+    should "not blow up if there is no source_branch" do
+      mr = MergeRequest.new
+      mr.source_repository = repository_with_working_git
+      mr.target_repository = repository_with_working_git
+      mr.source_branch = "does-not-exist"
+
+      assert_equal [], mr.commits_for_selection
+    end
+
+    should "not blow up if there is no target_branch" do
+      mr = MergeRequest.new
+      mr.source_repository = repository_with_working_git
+      mr.target_repository = repository_with_working_git
+      mr.target_branch = "does-not-exist"
+
+      assert_equal [], mr.commits_for_selection
     end
 
     should "uses the default branches of target and source repository" do
