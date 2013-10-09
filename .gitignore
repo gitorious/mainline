@@ -28,6 +28,7 @@ public/stylesheets/sites/*
 public/javascripts/sites/*
 public/system/avatars
 public/system/group_avatars
+public/dist/images/icons
 test/reports
 
 # Official Puppet installer artefacts
