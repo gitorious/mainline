@@ -59,7 +59,7 @@ class UserJSONPresenterTest < MiniTest::Spec
       assert_equal "/~cjohansen", hash["profilePath"]
       assert_equal "/messages", hash["messagesPath"]
       assert_equal "/logout", hash["logoutPath"]
-      assert_equal "http://www.gravatar.com/avatar/a59f9d19e6a527f11b016650dde6f4c9&amp;default=http://gitorious.test/images/default_face.gif", hash["avatarPath"]
+      assert_equal "http://www.gravatar.com/avatar/a59f9d19e6a527f11b016650dde6f4c9&amp;default=http://gitorious.test/images/default_face.gif", hash["avatarUrl"]
     end
   end
 end
