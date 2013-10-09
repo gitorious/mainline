@@ -19,8 +19,7 @@
 
 <%= f.input :url, :input_html => { :class => "input-xlarge" }, :label => 'URL',
   :hint => 'The URL of your Jira installation' %>
-<% # FIXME: what version should we support? %>
-<%= f.input :api_version, :as => 'select', :collection => %w(2.0 3.0 4.0), :label => 'API version',
+<%= f.input :api_version, :as => 'select', :collection => %w(latest), :label => 'API version',
   :hint => 'Select which API version you want to use', :input_html => { :class => 'input-small' } %>
 <%= f.input :username, :hint => 'The username of your gitorious user on Jira' %>
 <%= f.input :password, :hint => 'The password of your gitorious user on Jira' %>
