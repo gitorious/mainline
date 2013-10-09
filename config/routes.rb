@@ -273,7 +273,7 @@ Gitorious::Application.routes.draw do
         get "/activities" => "repository_activities#index", :as => :activities
       end
 
-      resources :comments, :only => [:index]
+      resources :comments
 
       resources :services, :only => [:index, :destroy] do
         collection do
