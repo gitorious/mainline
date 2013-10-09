@@ -8,6 +8,19 @@ class Grit::Ref
   end
 end
 
+class Grit::Repo
+  def update_head(target_head)
+    if heads.include?(target_head)
+      File.open(File.join(self.path, "HEAD"), 'w') do |f|
+        f.puts "ref: refs/heads/#{target_head.name}"
+      end
+      @__head = nil
+      return true
+    end
+    false
+  end
+end
+
 class Grit::Commit
   include Comparable
 
