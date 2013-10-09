@@ -162,7 +162,9 @@ class CommitsControllerTest < ActionController::TestCase
                       stub_everything("author"), Time.now,
                       stub_everything("comitter"), Time.now,
                       "my commit message".split(" "))
-        @repository.git.expects(:commits).twice.returns([commit])
+
+        @repository.git.stubs(:commits).with("master", 1).returns([commit])
+        @repository.git.stubs(:commits).with("master", 49, 1).returns([])
 
         get :feed, params(:id => "master", :format => "atom")
         assert @response.body.include?(%Q{<id>tag:test.host,2005:Grit::Commit/mycommitid</id>})

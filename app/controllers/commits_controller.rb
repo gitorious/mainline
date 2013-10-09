@@ -98,13 +98,16 @@ class CommitsController < ApplicationController
   end
 
   def feed
+    number_of_commits = 50
+    initial_number_of_commmits = 1
+
     expires_in(30.minutes, :public => true)
     @git = @repository.git
-    @ref = desplat_path(params[:branch])
-    @commits = @repository.git.commits(@ref, 1)
+    @ref = desplat_path(params[:id])
+    @commits = @repository.git.commits(@ref, initial_number_of_commmits)
     return if @commits.empty?
     if stale?(:etag => @commits.first.id, :last_modified => @commits.first.committed_date.utc)
-      @commits += @repository.git.commits(@ref, 49, 1)
+      @commits += @repository.git.commits(@ref, number_of_commits - initial_number_of_commmits, initial_number_of_commmits)
       respond_to do |format|
         format.atom
       end
