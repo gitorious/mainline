@@ -1,10 +1,4 @@
 GIT
-  remote: https://git.gitorious.org/gitorious/use_case.git
-  revision: df948dfa2ab0efb6bf89e62ecbec779ef2db7725
-  specs:
-    use_case (0.13.0)
-
-GIT
   remote: https://github.com/wrozka/grit.git
   revision: 2d43c4eb977fa22ae8300566944927605fc6373b
   specs:
@@ -316,6 +310,7 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    use_case (1.0.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
     virtus (1.0.0.beta8)
@@ -403,7 +398,7 @@ DEPENDENCIES
   tiltout (~> 1.4)
   trinidad
   unicorn (~> 4.6.3)
-  use_case (~> 0.13)!
+  use_case
   virtus (~> 1.0.0.beta8)
   webmock
   wikicloth
