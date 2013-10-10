@@ -42,6 +42,7 @@ module ApplicationHelper
   include Gitorious::CacheInPrivateHelper
   include DoltViewHelpers
   include Gitorious::View::AvatarHelper
+  include ForceUTF8
 
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 
@@ -298,21 +299,6 @@ module ApplicationHelper
 
   def current_site
     controller.current_site
-  end
-
-  def force_utf8(str)
-    return nil if str.nil?
-
-    if str.respond_to?(:force_encoding)
-      str.force_encoding("UTF-8")
-      if str.valid_encoding?
-        str
-      else
-        str.encode("binary", :invalid => :replace, :undef => :replace).encode("utf-8")
-      end
-    else
-      str.mb_chars
-    end
   end
 
   # Creates a CSS styled <button>.
