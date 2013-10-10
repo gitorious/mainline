@@ -37,9 +37,11 @@ class Service::Jira < Service::Adapter
 
     return unless data.any?
 
-    http_client.post(
-      service_url(data.issue_id),
-      :body         => data.to_json,
+    url  = service_url(data.issue_id)
+    body = data.to_json
+
+    http_client.post(url,
+      :body         => body,
       :content_type => "application/json",
       :basic_auth   => { :user => username, :password => password }
     )

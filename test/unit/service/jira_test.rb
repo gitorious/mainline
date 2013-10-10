@@ -60,9 +60,19 @@ class Service::JiraTest < ActiveSupport::TestCase
 
       should "send payload to jira when #{keyword} is provided" do
         body = {
-          :comment    => { :body => "#{@payload['message']}\n#{@payload['url']}" },
-          :transition => "yo",
-          :fields     => { :resolution => { :id => "oh-hai" } }
+          :fields => {
+            :resolution => {
+              :name => "oh-hai".inspect
+            },
+          },
+          :update => {
+            :comment => [{
+              :add => {
+                :body => "#{@payload['message']}\n#{@payload['url']}"
+              }
+            }]
+          },
+          :transition => { :name => "yo".inspect },
         }.to_json
 
         @http.expects(:post).with(

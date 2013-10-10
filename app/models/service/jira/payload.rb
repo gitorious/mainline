@@ -19,28 +19,16 @@ class Service::Jira < Service::Adapter
       issue_id && transition
     end
 
-    def transition
-      actions['transition'] || actions['status']
-    end
-
-    def resolution
-      actions['resolution']
-    end
-
-    def comment
-      payload.values_at('message', 'url').join("\n")
-    end
-
     def to_json
       body.to_json
     end
 
     def body
-      hash = { :comment => { :body => comment }, :transition => transition }
-      if resolution
-        hash.update(:fields => { :resolution => { :id => resolution } })
+      with_hash do |hash|
+        hash[:transition] = transition
+        hash[:fields].update(:resolution => resolution) if resolution
+        hash[:update].update(:comment => [{ :add => { :body => comment } }])
       end
-      hash
     end
 
     private
@@ -54,6 +42,35 @@ class Service::Jira < Service::Adapter
         hash.update(Hash[[action.split(':')]])
       }
     end
+
+    def transition
+      id_or_name(actions['transition'] || actions['status'])
+    end
+
+    def resolution
+      id_or_name(actions['resolution'])
+    end
+
+    def comment
+      payload.values_at('message', 'url').join("\n")
+    end
+
+    def id_or_name(input)
+      return unless input
+
+      if input =~ /\d+/
+        { :id => input }
+      else
+        { :name => input.inspect }
+      end
+    end
+
+    def with_hash
+      hash = { :fields => {}, :update => {} }
+      yield(hash)
+      hash
+    end
+
   end
 
 end
