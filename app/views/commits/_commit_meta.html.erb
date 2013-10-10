@@ -21,6 +21,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+<% committer_is_author = commit.committer.email == commit.author.email %>
 
 <div class="gts-commit">
   <blockquote>
@@ -51,13 +52,12 @@
         <%= render_email(commit.committer.email) -%>
       </a>
     <% end -%>
-    <% if commit.committer != commit.author -%>
+    <% if !committer_is_author -%>
       <span class="muted">(<%= t("views.commits.committer") %>)</span>
     <% end -%>
     <span class="datetime" data-timestamp="<%= (commit.committed_date.to_f * 1000).floor %>"><%= commit.committed_date.strftime("%Y-%m-%d %H:%M") %></span>
   </p>
-
-  <% if commit.committer != commit.author -%>
+  <% if !committer_is_author -%>
     <p class="gts-commit-meta">
       <% if author_user -%>
         <%= link_to(avatar_from_email(commit.author.email, { :size => 24 }), author_user) %>
