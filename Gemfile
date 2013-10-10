@@ -22,7 +22,7 @@ gem "thinking-sphinx", "~> 3.0"
 gem "rails_autolink", "~> 1.0"
 gem "mysql2", :platforms => :ruby
 gem "highline"
-gem "use_case", "~> 0.13", :git => "https://git.gitorious.org/gitorious/use_case.git"
+gem "use_case"
 gem "virtus", '~> 1.0.0.beta8'
 gem "rake", "~> 10.0"
 gem "gitlab-grit", :require => "grit", :git => "https://github.com/wrozka/grit.git"
