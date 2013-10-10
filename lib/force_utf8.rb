@@ -25,7 +25,7 @@ module ForceUTF8
       if str.valid_encoding?
         str
       else
-        str.encode("binary", :invalid => :replace, :undef => :replace).encode("utf-8")
+        str.chars.map { |c| c.valid_encoding? ? c : '?' }.join
       end
     else
       str.mb_chars
