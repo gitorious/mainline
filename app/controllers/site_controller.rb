@@ -152,7 +152,7 @@ class SiteController < ApplicationController
         []
       end
     end
-    render :template => "site/public_index", :layout => "second_generation/application"
+    render :template => "site/public_index", :layout => "ui3"
   end
 
   # Render the global index template

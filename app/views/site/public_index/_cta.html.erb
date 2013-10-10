@@ -1,0 +1,11 @@
+<ul class="cta unstyled clearfix">
+  <% if Gitorious.registrations_enabled? -%>
+    <li>
+      <%= link_to "Sign up", new_user_path, :class => 'btn btn-primary btn-large' %>
+    </li>
+    <li class="cta-or">- or -</li>
+  <% end %>
+  <li>
+    <%= link_to "Sign in", login_path, :class => 'btn btn-large' %>
+  </li>
+</ul>

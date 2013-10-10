@@ -1,0 +1,9 @@
+<h3 class="find">Find a project</h3>
+<div class="search">
+  <%= form_for(:search,
+    :url => search_path(:only_path => false, :host => Gitorious.host),
+    :html => { :method => 'get', :class => 'form-search' }) do |f| %>
+      <%= text_field_tag :q, '', :class => 'search-query' %>
+      <%= f.submit 'Search', :class => 'btn' %>
+  <% end %>
+</div>

@@ -17,192 +17,50 @@
   #++
   %>
 
-<div id="top-wrapper">
-  <div id="header">
-    <%= screenshots_rotator("img/external/screens") %>
-    <div id="introduction">
-      <h2>The Git hosting software that you can install yourself</h2>
-      <p class="description">
-        Gitorious.org provides free hosting for open source
-        projects that use Git.
-      </p>
-      <p class="directions">
-        Learn more <%= link_to t("views.layout.about_gitorious"), about_path %> or the
-        <%= link_to "projects", projects_path -%> we host.
-      </p>
-    </div>
-    <div id="call-to-actions">
-      <ul>
-        <% if Gitorious.registrations_enabled? -%>
-          <li id="sign-up"><%= link_to t("views.layout.register"), new_user_path %></li>
-        <% end %>
-        <li id="or"></li>
-        <li id="log-in"><%= link_to "Login", login_path %></li>
-      </ul>
+<%= content_for :head do %>
+  <%= stylesheet_link_tag 'public_index' %>
+<% end %>
+
+<div class="intro-container">
+  <div class="container">
+    <div class="row-fluid">
+      <div class="span6">
+        <%= render "site/public_index/intro" %>
+      </div>
+      <div class="span6">
+        <%= screenshots_rotator("img/external/screens") %>
+      </div>
     </div>
   </div>
 </div>
-<div class="features-wrapper" id="features-wrapper">
-  <div class="fp-highlight">
-    <h3 id="features">Features &mdash; what we bring to the table</h3>
-    <ul>
-      <li id="project-hosting">
-        <h4>Project hosting</h4>
-        <p>Host your open source projects and their repositories for free on Gitorious to enable community contributions.</p>
-      </li>
-      <li id="activity-monitoring">
-        <h4>Activity monitoring</h4>
-        <p>Keep track of project activity for both your personal projects and team projects.</p>
-      </li>
-      <li id="public-merge-requests">
-        <h4>Public merge requests</h4>
-        <p>Allow other developers to submit contributions to your project and merge them easily.</p>
-      </li>
-      <li id="project-wikis">
-        <h4>Project Wikis</h4>
-        <p>Document your project using Gitorious<br /> built-in wiki.</p>
-      </li>
-      <li id="team-contributions">
-        <h4>Team contributions</h4>
-        <p>Create development teams to encourage<br /> and organize cooperative development.</p>
-      </li>
-      <li id="project-centric">
-        <h4>Project centric</h4>
-        <p>Maintain all code repositories related to a single project under a single project area on Gitorious.</p>
-      </li>
-    </ul>
-  </div>
-  <div class="fp-highlight commercial">
-    <h3>Professional Gitorious services</h3>
-    <ul>
-      <li>
-        <h4><a href="http://gitorious.com/local_install/">Local Install</a></h4>
-        <p>
-          Run Gitorious at your company with support and maintenance
-          from the Gitorious team.
-          <a href="http://gitorious.com/local_install/">Pricing and ordering</a>.
-        </p>
-      </li>
-      <li>
-        <h4><a href="http://gitorious.com/subdomain">Your own Gitorious subdomain</a></h4>
-        <p>
-          Follow the lead of <a href="http://qt.gitorious.org">Qt</a>
-          and others; get your own branded Gitorious subdomain for
-          maximum community visibility.
-          <a href="http://gitorious.com/subdomain/">Pricing and ordering</a>.
-        </p>
-      </li>
-      <li>
-        <h4><a href="http://gitorious.com/consulting">Hire the Gitorious team</a></h4>
-        <p>
-          Hire the Gitorious team to develop custom features, customize
-          the look and feel of your install, or integrate with your
-          company's existing systems.
-          <a href="http://gitorious.com/consulting/">Pricing and ordering</a>.
-        </p>
-      </li>
-    </ul>
+<div class="cta-container">
+  <div class="container">
+    <%= render "site/public_index/cta" %>
   </div>
 </div>
-<div id="content-container">
-  <div id="content">
-    <div class="column" id="user-testimonials">
-      <h3>Hear what our users say</h3>
-      <div class="testimonial" id="nokia">
-        <blockquote>
-          "Gitorious allows us to work closer with contributors and strengthens
-          the link to the community"
-        </blockquote>
-        <cite><em>Tor Arne Vestbø</em>, Nokia</cite>
+<div class="features-container">
+  <div class="container">
+    <div class="row-fluid">
+      <%= render "site/public_index/features" %>
+    </div>
+    <div class="row-fluid">
+      <%= render "site/public_index/commercial" %>
+    </div>
+  </div>
+</div>
+<div class="promo-container">
+  <div class="container">
+    <div class="row-fluid">
+      <div class="span5">
+        <%= render "site/public_index/testimonials" %>
       </div>
-      <div class="testimonial" id="opensuse">
-        <blockquote>
-          &laquo;The openSUSE project has chosen gitorious since it supports our
-          collaborative development model and due to similarities between the
-          projects: A reliable, efficient and easy to use service that is open
-          source.&raquo;
-        </blockquote>
-        <cite><em>Andreas Jaeger</em>, Program Manager openSUSE</cite>
+      <div class="span4">
+        <%= render "site/public_index/search_projects" %>
+        <%= render "site/public_index/featured_projects" %>
       </div>
-      <div class="testimonial" id="regjeringen">
-        <blockquote>
-          &laquo;We decided to use Gitorious for our code because the service invites
-          to collaboration.&raquo;
-        </blockquote>
-        <cite><em>Gorm Haug Eriksen</em>, Norwegian Government Administration Services</cite>
+      <div class="span3">
+        <%= render "site/public_index/blog_feed" if Gitorious.dot_org? %>
       </div>
     </div>
-    <div class="column" id="featured-projects">
-      <h3 class="find">Find a project</h3>
-      <div class="search">
-        <%= form_for(:search, :url => search_path(:only_path => false,
-                                                  :host => Gitorious.host),
-                     :html => { :method => "get" }) do |f| -%>
-          <p>
-            <%= text_field_tag :q, "", :class => "text search-field round-5" -%>
-            <%= submit_tag "Search" -%>
-          </p>
-        <% end -%>
-      </div>
-      <h3>Featured projects</h3>
-      <ul>
-        <li id="qt">
-          <a href="http://qt.gitorious.org/qt"><img src="img/external/projects/qt.png"></a>
-          <p>
-            <strong><a href="http://qt.gitorious.org/qt">Qt</a></strong> is a
-            cross-platform application and UI framework by Nokia. Gitorious
-            provides hosting for 8 different projects and several teams.
-          </p>
-        </li>
-        <li id="opensuse">
-          <a href="http://gitorious.org/opensuse"><img src="img/external/projects/opensuse.png"></a>
-          <p>
-            <strong><a href="http://gitorious.org/opensuse">OpenSUSE</a></strong>
-            is a free and Linux-based operating system for your PC, Laptop or
-            Server. Gitorious provides hosting for 8 different projects and
-            several teams.
-          </p>
-        </li>
-        <li id="xbmc">
-          <a href="http://gitorious.org/xbmc"><img src="img/external/projects/xbmc.png"></a>
-          <p>
-            <strong><a href="http://gitorious.org/xbmc">XBMC</a></strong> is a
-            complete media center solution for Windows, OSX, Linux, and XBOX.
-          </p>
-        </li>
-        <li id="regjeringen" style="display: none">
-          <a href="http://gitorious.org/sfa"><img src="img/external/projects/regjeringen.png"></a>
-          <p>
-            <strong><a href="http://gitorious.org/sfa">Samarbeid for
-                arbeid</a></strong> is an initiave from the norwegian government for
-            political debating through social media.
-          </p>
-        </li>
-        <li id="statusnet">
-          <a href="http://gitorious.org/StatusNet"><img src="img/external/projects/statusnet.png"></a>
-          <p>
-            <strong><a href="http://gitorious.org/StatusNet">StatusNet</a></strong>
-            is a microblogging platform. It helps people in a community,
-            company, or group to exchange short (140 character) messages over
-            the Web.
-          </p>
-        </li>
-      </ul>
-    </div>
-    <% if Gitorious.dot_org? -%>
-      <div class="column" id="from-the-blog">
-        <h3>From our blog</h3>
-        <ul>
-          <% @feed_items.each do |entry| -%>
-            <li class="blog-entry">
-              <h4><a href="<%=h entry[:link] -%>"><%= strip_tags(entry[:title]) -%></a></h4>
-              <p> &mdash; <%= truncate(strip_tags(entry[:description]), :length => 255) -%></p>
-              <p class="date"><%= l(entry[:date], :format => :short) -%></p>
-            </li>
-          <% end -%>
-        </ul>
-        <p><a class="go-to-blog" href="http://blog.gitorious.org">Go to the Gitorious Blog</a></p>
-      </div>
-    <% end -%>
   </div>
 </div>

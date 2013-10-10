@@ -187,39 +187,6 @@ body#sessions #wrapper {
     letter-spacing: 1px;
 }
 
-#header #screenshots-rotator {
-    padding-top: 32px;
-    width: 440px;
-    height: 310px;
-    position: relative;
-    float: right;
-}
-
-#header #screenshots-container {
-    float: right;
-    width: 440px;
-    height: 310px;
-    overflow: hidden;
-}
-
-#header #screenshotsnavigation {
-    position: absolute;
-    top: 321px;
-    float: left;
-    z-index: 999;
-    left: 190px;
-}
-
-#header #screenshotsnavigation a{
-    width: 8px;
-    height: 8px;
-    text-indent: -9999px;
-    float: left;
-    display: block;
-    background: url(../img/external/screens-nav.png) no-repeat;
-    margin: 0px 4px;
-}
-
 #header #screenshotsnavigation a:hover { background-position: -16px 0px; }
 #header #screenshotsnavigation a.activeSlide { background-position: -8px 0px; }
 

@@ -4,8 +4,9 @@ require "time"
 
 class BlogFeed
   def initialize(url, limit = 2)
-    @url = url
+    @url   = url
     @limit = limit
+    @html  = HTMLEntities.new
   end
 
   def fetch
@@ -17,7 +18,7 @@ class BlogFeed
         break if i+1 > @limit
         feed_item = {
           :title => item.title,
-          :description => item.description,
+          :description => decode(item.description),
           # FIXME: There's some issues with ActiveSupport and RSS both overriding
           # Time#to_s so we waste some cycles pasing twice, until there's a fix
           :date => Time.parse(item.date.to_s),
@@ -27,5 +28,9 @@ class BlogFeed
       end
     end
     items
+  end
+
+  def decode(str)
+    @html.decode(str)
   end
 end
