@@ -54,7 +54,8 @@ GEM
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.0.4)
-    capillary (1.0.3)
+    capillary (1.0.4)
+      htmlentities
       json (~> 1.5)
     charlock_holmes (0.6.9.4)
     ci_reporter (1.9.0)
