@@ -32,7 +32,7 @@ module Gitorious
 <div class="gts-file">
   <ul class="breadcrumb">
     <li class="gts-diff-summary">
-      <a href="#{blob_url(file)}"><i class="icon icon-file"></i> #{file.a_path}</a>
+      <a href="#{blob_url(file)}"><i class="icon icon-file"></i> <span class="gts-path">#{file.a_path}</span></a>
       (<span class="gts-diff-add">+#{adds(diff)}</span>/<span class="gts-diff-rm">-#{rms(diff)}</span>)
     </li>
   </ul>
