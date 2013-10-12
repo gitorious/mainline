@@ -254,7 +254,6 @@ GEM
     riddle (1.5.7)
     ruby-hmac (0.4.0)
     ruby-openid (2.2.3)
-    ruby-yadis (0.3.4)
     rubypants (0.2.0)
     rugged (0.18.0.gh.de28323)
     safe_yaml (0.9.5)
@@ -387,7 +386,6 @@ DEPENDENCIES
   resque-job-stats (~> 0.3.0)
   ruby-hmac (= 0.4.0)
   ruby-openid
-  ruby-yadis (= 0.3.4)
   shoulda (~> 3.3)
   shoulda-matchers (~> 1.4)
   simplecov

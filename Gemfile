@@ -29,7 +29,6 @@ gem "gitlab-grit", :require => "grit", :git => "https://github.com/wrozka/grit.g
 gem "airbrake", "~> 3.1.14", :require => false
 
 group :openid do
-  gem "ruby-yadis", "0.3.4", :require => "yadis"
   gem "ruby-openid", :require => "openid"
   gem "gitorious_openid_auth", "~> 1.1", :require => "open_id_authentication"
 end

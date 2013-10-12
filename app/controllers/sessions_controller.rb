@@ -23,7 +23,6 @@
 #++
 require "uri"
 require "openid"
-require "yadis"
 require "gitorious"
 require "gitorious/authentication/configuration"
 require "gitorious/authentication/kerberos_authentication"
