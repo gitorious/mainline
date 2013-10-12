@@ -1,0 +1,160 @@
+.intro-container {
+  background-color: #222;
+  margin-top: -1px;
+}
+
+.intro-container .intro {
+  color: #e1e1e1;
+  margin-top: 45px;
+}
+
+.intro-container .intro h2 {
+  letter-spacing: 0.4px;
+  margin-bottom: 10px;
+}
+
+.intro-container .intro p {
+  font-size: 14px;
+}
+
+.cta-container {
+  background-color: #878787;
+  padding: 20px 0;
+  border-top: 1px solid #b1afb1;
+}
+
+.cta-container .cta {
+  margin: 0;
+}
+
+.cta-container .cta li {
+  float: left;
+}
+
+.cta-container .cta a {
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.cta-container .cta .cta-or {
+  color: #3e3e3e;
+  font-weight: 700;
+  font-size: 18px;
+  margin: 10px 20px;
+}
+
+.features-container {
+  padding: 20px 0;
+  background-color: #ececec;
+}
+
+.features-container h3 {
+  letter-spacing: 1.25px;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.features-container ul li {
+  float: left;
+  width: 33.33333%;
+  margin-bottom: 15px;
+}
+
+.features-container li h4 {
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.features-container li .feature {
+  padding: 0 20px 0 45px;
+  background-repeat: no-repeat;
+  background-position: center left;
+}
+
+.features-container li .project-hosting {
+  background-image: url(/img/external/icons/server_database.png);
+}
+
+.features-container li .activity-monitoring {
+  background-image: url(/img/external/icons/feed.png);
+}
+
+.features-container li .public-merge-requests {
+  background-image: url(/img/external/icons/arrow_in.png);
+}
+
+.features-container li .project-centric {
+  background-image: url(/img/external/icons/database.png);
+}
+
+.features-container li .team-contributions {
+  background-image: url(/img/external/icons/team-contributions.png);
+}
+
+.features-container li .project-wikis {
+  background-image: url(/img/external/icons/project-wikis.png);
+}
+
+.promo-container {
+  padding: 20px 0;
+}
+
+.promo-container h3 {
+  margin-bottom: 15px;
+}
+
+.promo-container .testimonial {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.promo-container .featured-projects li {
+  clear: both;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.promo-container .featured-projects p {
+  float: right;
+  width: 75%;
+}
+
+.promo-container .blog-feed h4 {
+  margin-bottom: 10px;
+}
+
+#screenshots-rotator {
+  padding-top: 32px;
+  margin-bottom: -45px;
+  width: 440px;
+  height: 265px;
+  position: relative;
+  float: right;
+}
+
+#screenshots-container {
+  float: right;
+  width: 440px;
+  height: 265px;
+  overflow: hidden;
+}
+
+#screenshotsnavigation {
+  position: absolute;
+  top: 321px;
+  float: left;
+  z-index: 999;
+  left: 190px;
+}
+
+#screenshotsnavigation a {
+  width: 8px;
+  height: 8px;
+  text-indent: -9999px;
+  float: left;
+  display: block;
+  background: url(../img/external/screens-nav.png) no-repeat;
+  margin: 0px 4px;
+}
