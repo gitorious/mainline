@@ -1,7 +1,7 @@
 <%
   # encoding: utf-8
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
   #   Copyright (C) 2009 Sven Eckelmann <sven.eckelmann@gmx.de>
@@ -22,30 +22,57 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-
-<%= site_header do %>
-  <h2><%= "Merge request ##{@merge_request.to_param}" %></h2>
+<%= partial("repositories/header_compact", {
+        :repository => repository,
+        :project => repository.project,
+        :app => Gitorious,
+        :active => :merge_requests
+      }) %>
+<div class="container gts-body">
   <div class="pull-right">
-    <%= render "merge_requests/show/options" %>
+    <%= render(:partial => "merge_requests/show/options", :locals => { :merge_request => merge_request }) %>
   </div>
-  <p class="description"><%= h(@merge_request.summary) %></p>
-  <%= nav_tabs %w(summary commits), :class => 'nav nav-tabs gts-header-nav', :active => 'summary' %>
-<% end %>
+  <h3>Reviewing merge request #<%= merge_request.sequence_number %></h3>
+  <h1><%= @title = merge_request.summary %></h1>
+  <%= description(merge_request) %>
+  <p class="gts-bordered-row">
+    <%= link_to(avatar(user, :size => 24) + " #{user.login}", user_path(user)) %>
+    requested a merge from <%= link_to(source_repo.slug, project_repository_path(source_repo.project, source_repo)) %>
+    to <%= link_to(target_repo.slug, project_repository_path(target_repo.project, target_repo)) %>
+    on <%= merge_request.created_at.strftime("%B %-dth, %Y %H:%M.") %>
+    <span class="pull-right">This merge request is <strong><%= merge_request.status_string %></strong>.</span>
+  </p>
 
-<div class="container">
-  <%= tab_content do %>
-    <%= tab_pane 'summary', :active => true do %>
-      <%= render "merge_requests/show/summary" %>
+  <%# TODO: Add a drop-down for merge request versions %>
+  <%# nav_tabs(%w(summary commits), :class => "nav nav-tabs gts-header-nav", :active => "summary") %>
+
+  <%= link_to("View all diffs", "#", :class => "btn btn-primary pull-right") %>
+  <h2>Commits to be merged</h2>
+  <table class="table table-striped">
+    <% commits.each do |commit| %>
+      <tr>
+        <td>
+          <%= link_to(commit.id[0...7], project_repository_commit_path(repository.project, repository, commit.id)) %>
+        </td>
+        <td>
+          <% first_line = commit.message.split("\n")[0] %>
+          <%= first_line.slice(0, 100) %>
+          <%= "(...)" if first_line.length > 100 %>
+        </td>
+      </tr>
     <% end %>
-    <%= tab_pane 'commits' do %>
-      <% render_if_ready(@merge_request, :include_refresh_link => true) do -%>
-        <%= render "merge_requests/show/commits" %>
-        <%= render "merge_requests/show/comments" %>
-        <% if logged_in? && @merge_request.user == current_user %>
-          <%= render "merge_requests/show/merge_help" %>
-        <% end %>
-        <%= render "merge_requests/show/help" %>
-      <% end -%>
-    <% end -%>
-  <% end -%>
+  </table>
+
+  <h2>Discussion</h2>
+  <% comments.each do |comment| %>
+    <%= render(:partial => "comment", :locals => { :comment => comment }) %>
+  <% end %>
+
+  <%= simple_form_for(Comment.new, {
+          :as => :comment,
+          :url => project_repository_merge_request_comments_path(repository.project, repository, merge_request),
+          :html => { :class => "form-horizontal gts-comment-form" }
+        }) do |form| -%>
+    <%= render(:partial => "commit_comments/form", :locals => { :form => form }) %>
+  <% end %>
 </div>

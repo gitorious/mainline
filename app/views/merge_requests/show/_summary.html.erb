@@ -1,7 +1,26 @@
+<%
+  # encoding: utf-8
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 <div class="row-fluid">
   <div class="span8">
     <div class="proposal">
-      <%= simple_format(auto_link(h(@merge_request.proposal), :urls)) %>
+      <%= simple_format(auto_link(h(merge_request.proposal), :urls)) %>
     </div>
   </div>
   <div class="span4">
@@ -10,28 +29,28 @@
         <dt>Author</dt>
         <dd>
           <span class="avatar">
-            <%= link_to(avatar(@merge_request.user, { :size => 16 }),
-                        user_path(@merge_request.user)) %>
+            <%= link_to(avatar(merge_request.user, { :size => 16 }),
+                        user_path(merge_request.user)) %>
           </span>
-          <%= link_to(h(@merge_request.user.title), @merge_request.user) %>
+          <%= link_to(h(merge_request.user.title), merge_request.user) %>
         </dd>
         <dt>Status</dt>
         <dd>
-          <%= colorized_status(@merge_request.status_tag) %>
+          <%= colorized_status(merge_request.status_tag) %>
         </dd>
         <dt>Source</dt>
         <dd>
-          <%= link_to h(@merge_request.source_name),
-              [@merge_request.source_repository.project, @merge_request.source_repository] %>
+          <%= link_to h(merge_request.source_name),
+              [merge_request.source_repository.project, merge_request.source_repository] %>
         </dd>
         <dt>Target</dt>
         <dd>
-          <%= link_to h(@merge_request.target_name),
-              [@merge_request.source_repository.project, @merge_request.target_repository] %>
+          <%= link_to h(merge_request.target_name),
+              [merge_request.source_repository.project, merge_request.target_repository] %>
         </dd>
         <dt>Created at</dt>
         <dd>
-          <%= long_ordinal(@merge_request.created_at) %>
+          <%= long_ordinal(merge_request.created_at) %>
         </dd>
       </dl>
     </div>

@@ -130,6 +130,12 @@ class Comment < ActiveRecord::Base
     created_at > 10.minutes.ago
   end
 
+  def repository
+    return target if target.is_a?(Repository)
+    return target.source_repository if target.is_a?(MergeRequest)
+    target.merge_request.source_repository # MergeRequestVersion
+  end
+
   protected
   def notify_target_if_supported
     if target && NOTIFICATION_TARGETS.include?(target.class)

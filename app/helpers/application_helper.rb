@@ -96,13 +96,11 @@ module ApplicationHelper
   end
 
   def render_markdown(text, *options)
-    # RDiscount < 1.4 doesn't support the :auto_link, use Rails' instead
     auto_link = options.delete(:auto_link)
-    markdown_options = [:smart] + options
-    markdownized_text = markdown(text, markdown_options)
-    if auto_link
-      markdownized_text = auto_link(markdownized_text, :urls)
-    end
+    # Libdolt's renderer only offers a markdown helper for rendering the
+    # contents of files - eventually needs to be fixed.
+    markdownized_text = render_markup("text.md", text)
+    markdownized_text = auto_link(markdownized_text, :urls) if auto_link
     sanitize(markdownized_text).html_safe
   end
 

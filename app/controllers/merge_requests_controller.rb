@@ -79,36 +79,34 @@ class MergeRequestsController < ApplicationController
   end
 
   def show
-    @merge_request = authorize_access_to(
-      @repository.merge_requests.public.find_by_sequence_number!(params[:id],
-                                                                 :include => [:source_repository, :target_repository]))
-
-    @version = @merge_request.current_version_number
+    merge_request = authorize_access_to(@repository.merge_requests.public.find_by_sequence_number!(params[:id], :include => [:source_repository, :target_repository]))
+    version = merge_request.current_version_number
 
     begin
-      @commits = @merge_request.commits_to_be_merged
-      @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map(&:id))
+      commits = merge_request.commits_to_be_merged
+      #commit_comments = merge_request.source_repository.comments.with_shas(commits.map(&:id))
     rescue Grit::Git::GitTimeout
-      @commits = []
-      @commit_comments = []
-      @git_timeout_occured = true
+      commits = []
       flash[:error] = "A Git timeout occured. Only metadata is being displayed"
     end
 
     respond_to do |wants|
-      wants.html {
-        # FIXME: what is this legacy thing?
-        if @merge_request.legacy?
-          render :template => "merge_requests/legacy" and return
-        else
-          render :layout => 'ui3'
-        end
-      }
-      wants.xml {render :xml => @merge_request.to_xml}
-      wants.patch {
-        render :text => @commits.collect(&:to_patch).join("\n"),
-          :content_type => "text/plain"
-      }
+      wants.html do
+        render(:show, :layout => "ui3", :locals => {
+            :merge_request => merge_request,
+            :version => version,
+            :repository => RepositoryPresenter.new(@repository),
+            :comments => merge_request.cascaded_comments,
+            :commits => commits,
+            :source_repo => RepositoryPresenter.new(merge_request.source_repository),
+            :target_repo => RepositoryPresenter.new(merge_request.target_repository),
+            :user => merge_request.user
+          })
+      end
+      wants.xml { render(:xml => merge_request.to_xml) }
+      wants.patch do
+        render(:text => commits.collect(&:to_patch).join("\n"), :content_type => "text/plain")
+      end
     end
   end
 

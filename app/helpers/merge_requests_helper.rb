@@ -128,6 +128,12 @@ module MergeRequestsHelper
     content_tag(:div, content_html, options)
   end
 
+  def status_open?(name)
+    @statuses ||= {}
+    return @statuses[name] if @statuses.key?(name)
+    @statuses[name] = MergeRequestStatus.find_by_name(c.state_changed_to).open?
+  end
+
   private
 
   def merge_request_link(target, status = nil)
