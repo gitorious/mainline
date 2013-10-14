@@ -26,6 +26,7 @@ class CreateCommentCommand
 
   def execute(comment)
     comment.save
+    create_event(comment)
     comment
   end
 
@@ -38,7 +39,13 @@ class CreateCommentCommand
       })
   end
 
-  private
+  protected
+  def create_event(comment)
+    target = comment.target
+    event_target = target.is_a?(MergeRequestVersion) ? target.merge_request : target
+    project.create_event(Action::COMMENT, event_target, user, comment.to_param, event_target.class.to_s)
+  end
+
   def project
     return target.project if target.respond_to?(:project)
     target.merge_request.project # MergeRequestVersion

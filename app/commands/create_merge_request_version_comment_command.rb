@@ -15,27 +15,14 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "use_case"
+require "create_merge_request_comment_command"
 
-CommentValidator = UseCase::Validator.define do
-  validates_presence_of :user_id, :target, :project_id
-end
-
-class EditableCommentValidator < CommentValidator
-  validates_presence_of :body
-end
-
-class CommitCommentValidator < EditableCommentValidator
-  validates_presence_of :sha1
-  validates_format_of :sha1, :with => /^[a-z0-9]{40}$/
-end
-
-class MergeRequestCommentValidator < CommentValidator
-  validates_presence_of :body, :if =>  Proc.new { |mr| mr.state_change.blank? }
-  validate :state_change_user
-
-  def state_change_user
-    return if state.blank? || Gitorious::App.can_resolve_merge_request?(user, target)
-    errors.add(:state, "can only be updated by merge request owner")
+class CreateMergeRequestVersionCommentCommand < CreateMergeRequestCommentCommand
+  def execute(comment)
+    comment.save
+    create_event(comment)
+    owner = target.merge_request.user
+    notify_repository_owner(comment, owner) if owner != user
+    comment
   end
 end

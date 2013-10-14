@@ -53,4 +53,16 @@ class CreateCommentTest < ActiveSupport::TestCase
     assert_equal "Nice going!", outcome.result.body
     assert_equal MergeRequest.first, outcome.result.target
   end
+
+  should "create new comment event" do
+    outcome = CreateComment.new(@user, @repository).execute({ :body => "Nice going!" })
+    event = @repository.project.events.last
+
+    assert_equal Action::COMMENT, event.action
+    assert_equal @user, event.user
+    assert_equal event.data, outcome.result.id.to_s
+    assert_equal "Repository", event.body
+    assert_equal @repository.project, event.project
+    assert_equal @repository, event.target
+  end
 end
