@@ -21,21 +21,23 @@
 <% content_for(:head) do %>
   <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url, :title => atom_auto_discovery_title) -%>
 <% end %>
+
+<%= site_header do %>
+  <%= render "users/show/user_profile", :user => user %>
+<% end %>
+
 <div class="container">
-  <div class="container-fluid gts-container">
-    <div class="row-fluid">
-      <div class="span7">
-        <%= render "users/show/user_profile", :user => user %>
-        <div class="content-container w-510">
-          <%= render "users/show/activities", :atom_auto_discovery_url => atom_auto_discovery_url, :events => events %>
-        </div>
+  <div class="row-fluid">
+    <div class="span7">
+      <div class="content-container w-510">
+        <%= render "users/show/activities", :atom_auto_discovery_url => atom_auto_discovery_url, :events => events %>
       </div>
-      <div class="span5">
-        <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
-        <%= render "users/show/repositories", :user => user, :repositories => repositories %>
-        <%= render "users/show/watched_projects", :user => user, :favorites => favorites %>
-        <%= render "users/show/teams", :user => user, :teams => teams unless teams.blank? %>
-      </div>
+    </div>
+    <div class="span5">
+      <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
+      <%= render "users/show/repositories", :user => user, :repositories => repositories %>
+      <%= render "users/show/watched_projects", :user => user, :favorites => favorites %>
+      <%= render "users/show/teams", :user => user, :teams => teams unless teams.blank? %>
     </div>
   </div>
 </div>
