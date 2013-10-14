@@ -27,16 +27,26 @@ class CreateMergeRequestCommentCommand < CreateCommentCommand
     create_event(comment) if !comment.body.blank?
     notify_repository_owner(comment, comment.target.user) if target.user != user
     update_merge_request_state(comment) if !comment.state_change.blank?
+    add_to_favorites(comment.target, user) if add_to_favorites?
     comment
   end
 
   def build(params)
     comment = super
     comment.state = params.state if params.respond_to?(:state)
+    @add_to_favorites = params.add_to_favorites
     comment
   end
 
   protected
+  def add_to_favorites?
+    @add_to_favorites
+  end
+
+  def add_to_favorites(merge_request, user)
+    merge_request.watched_by!(user)
+  end
+
   def notify_repository_owner(comment, owner)
     message_body = "#{comment.user.title} commented:\n\n#{comment.body}"
 
@@ -64,4 +74,5 @@ end
 
 class MergeRequestCommentParams < CommentParams
   attribute :state, String
+  attribute :add_to_favorites, Boolean
 end

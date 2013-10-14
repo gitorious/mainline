@@ -22,7 +22,7 @@ class CreateMergeRequestVersionComment
   include UseCase
 
   def initialize(user, merge_request_version)
-    input_class(CommentParams)
+    input_class(MergeRequestVersionCommentParams)
     step(CreateMergeRequestVersionCommentCommand.new(user, merge_request_version), :validator => EditableCommentValidator)
   end
 end

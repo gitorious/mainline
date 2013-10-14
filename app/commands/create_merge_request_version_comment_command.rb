@@ -22,7 +22,12 @@ class CreateMergeRequestVersionCommentCommand < CreateMergeRequestCommentCommand
     comment.save
     create_event(comment)
     owner = target.merge_request.user
-    notify_repository_owner(comment, owner) if owner != user
+    notify_repository_owner(comment, owner) if owner != comment.user
+    add_to_favorites(comment.target.merge_request, comment.user) if add_to_favorites?
     comment
   end
+end
+
+class MergeRequestVersionCommentParams < CommentParams
+  attribute :add_to_favorites, Boolean
 end

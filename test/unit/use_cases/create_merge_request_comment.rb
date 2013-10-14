@@ -95,4 +95,16 @@ class CreateMergeRequestCommentTest < ActiveSupport::TestCase
 
     refute outcome.success, outcome.to_s
   end
+
+  should "add to user's favorites" do
+    user = users(:moe)
+    assert_difference "user.favorites.count" do
+      outcome = CreateMergeRequestComment.new(user, @merge_request).execute({
+          :body => "Nice going!",
+          :add_to_favorites => true
+        })
+    end
+
+    assert @merge_request.watched_by?(user)
+  end
 end
