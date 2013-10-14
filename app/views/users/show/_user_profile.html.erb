@@ -5,7 +5,7 @@
   <div class="span8">
     <div class="profile-data">
       <h1>
-        ~<%= link_to h(user.login), user %>
+        <%= link_to h(user.login), user %>
       </h1>
       <ul class="details unstyled">
         <% if user.fullname.present? %>
