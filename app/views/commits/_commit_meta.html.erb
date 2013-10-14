@@ -32,13 +32,15 @@
             "<a href=\"#{project_repository_commit_path(repository.project, repository, parent.id)}\">##{parent.id[0,7]}</a>"
           end.join(", ").html_safe %>
     </p>
-    <% summary, message = parse_commit_message(commit.message) %>
-    <% if summary %>
-      <h1><%= @title = summary %></h1>
-    <% end %>
-    <% if message != "" %>
-      <%= message.split("\n\n").map { |p| "<p>#{p}</p>" }.join("").html_safe %>
-    <% end %>
+    <div class="gts-commit-message">
+      <% summary, message = parse_commit_message(commit.message) %>
+      <% if summary %>
+        <h1><%= @title = summary %></h1>
+      <% end %>
+      <% if message != "" %>
+        <%= message.split("\n\n").map { |p| "<p>#{p}</p>" }.join("").html_safe %>
+      <% end %>
+    </div>
   </blockquote>
 
   <p class="gts-commit-meta">
