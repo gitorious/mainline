@@ -19,20 +19,20 @@
 <%= partial("repositories/header_compact", {
         :repository => repository,
         :project => repository.project,
-        :app => Gitorious,
-        :active => :commits
+        :app => Gitorious
       }) %>
 <div class="container gts-body">
   <% @title = "Update comment" %>
   <%= error_messages(comment) -%>
   <%= simple_form_for(comment, {
           :as => :comment,
-          :url => project_repository_update_commit_comment_path(repository.project, repository, comment.sha1, comment),
+          :url => update_comment_path(comment),
           :html => { :class => "form-horizontal gts-comment-form" }
         }) do |form| -%>
     <%= render(:partial => "form", :locals => {
             :form => form,
-            :title => "Update comment"
+            :title => "Update comment",
+            :comment => comment
           }) %>
   <% end %>
 </div>

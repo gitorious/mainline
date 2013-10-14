@@ -87,21 +87,21 @@ class CommitCommentsControllerTest < ActionController::TestCase
     end
 
     should "disallow unauthorized user from listing comments" do
-      comment = create_comment
+      comment = create_comment(users(:johan))
       get(:index, params(:format => "json"))
       assert_response 403
     end
 
     should "allow authorized user to list comments" do
       login_as :johan
-      comment = create_comment
+      comment = create_comment(users(:johan))
       get(:index, params(:format => "json"))
       assert_response 200
     end
 
     should "allow authorized user to edit comments" do
       login_as :johan
-      comment = create_comment
+      comment = create_comment(users(:johan))
       get(:edit, params(:id => comment.id))
       assert_response 200
     end
@@ -113,36 +113,36 @@ class CommitCommentsControllerTest < ActionController::TestCase
     end
 
     should "disallow unauthorized user from listing comments" do
-      comment = create_comment
+      comment = create_comment(users(:johan))
       get(:index, params(:format => "json"))
       assert_response 403
     end
 
     should "allow authorized user to list comments" do
       login_as :johan
-      comment = create_comment
+      comment = create_comment(users(:johan))
       get(:index, params(:format => "json"))
       assert_response 200
     end
 
     should "disallow unauthorized user from editing comment" do
       login_as(:moe)
-      comment = create_comment
+      comment = create_comment(users(:johan))
       get(:edit, params(:id => comment.id))
       assert_response 403
     end
 
     should "allow authorized user to edit comments" do
       login_as :johan
-      comment = create_comment
+      comment = create_comment(users(:johan))
       get(:edit, params(:id => comment.id))
       assert_response 200
     end
   end
 
   private
-  def create_comment
-    CreateCommitComment.new(@user, @repository, @sha).execute(:body => "Hey man!").result
+  def create_comment(owner = @user)
+    CreateCommitComment.new(owner, @repository, @sha).execute(:body => "Hey man!").result
   end
 
   def params(param = {})

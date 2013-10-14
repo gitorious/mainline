@@ -273,7 +273,7 @@ Gitorious::Application.routes.draw do
         get "/activities" => "repository_activities#index", :as => :activities
       end
 
-      resources :comments
+      resources :comments, :controller => :repository_comments, :only => [:index, :edit, :update]
 
       resources :services, :only => [:index, :destroy] do
         collection do
@@ -298,18 +298,10 @@ Gitorious::Application.routes.draw do
           get :terms_accepted
         end
 
-        resources :comments do
-          collection do
-            post :preview
-          end
-        end
+        resources :comments, :controller => :merge_request_comments, :only => [:new, :create, :edit, :update]
 
         resources :merge_request_versions do
-          resources :comments do
-            collection do
-              post :preview
-            end
-          end
+          resources :comments
         end
       end
 

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -21,14 +21,8 @@
 #++
 require "create_commit_comment"
 require "commit_comments_json_presenter"
-require "gitorious/view/avatar_helper"
 
-class CommitCommentsController < ApplicationController
-  include Gitorious::View::AvatarHelper
-  before_filter :login_required, :except => [:index]
-  before_filter :find_project_and_repository
-  layout "ui3"
-
+class CommitCommentsController < CommentsController
   def index
     respond_to do |format|
       format.json do
@@ -38,44 +32,28 @@ class CommitCommentsController < ApplicationController
     end
   end
 
-  def create
-    uc = CreateCommitComment.new(current_user, @repository, params[:ref])
-    outcome = uc.execute(params[:comment])
-
-    pre_condition_failed(outcome) do |pc|
-      flash[:error] = "Couldn't create comment: #{pc.pre_condition.message}"
-      redirect_to(project_repository_commit_path(@project, @repository, params[:ref]))
-    end
-
-    outcome.success do |comment|
-      flash[:success] = "Your comment was added"
-      redirect_to(project_repository_commit_path(@project, @repository, comment.sha1))
-    end
-
-    outcome.failure { |comment| render_form(comment) }
+  protected
+  # Callbacks from CommentController
+  def create_use_case
+    CreateCommitComment.new(current_user, @repository, params[:ref])
   end
 
-  def edit
-    render_form(find_comment)
+  def create_failed_path
+    project_repository_commit_path(@project, @repository, params[:ref])
   end
 
-  def update
-    outcome = UpdateCommitComment.new(find_comment, current_user).execute(params[:comment])
-
-    pre_condition_failed(outcome) do |pc|
-      flash[:error] = "Couldn't update comment: #{pc.pre_condition.message}"
-      redirect_to(project_repository_commit_path(@project, @repository, params[:ref]))
-    end
-
-    outcome.success do |comment|
-      flash[:success] = "Your comment was updated"
-      redirect_to(project_repository_commit_path(@project, @repository, comment.sha1))
-    end
-
-    outcome.failure { |comment| render_form(comment) }
+  def create_succeeded_path(comment)
+    project_repository_commit_path(@project, @repository, comment.sha1)
   end
 
-  private
+  def update_failed_path
+    project_repository_commit_path(@project, @repository, params[:ref])
+  end
+
+  def update_succeeded_path(comment)
+    project_repository_commit_path(@project, @repository, comment.sha1)
+  end
+
   def find_comment
     Comment.where({
         :id => params[:id],
@@ -83,13 +61,5 @@ class CommitCommentsController < ApplicationController
         :target_type => "repository",
         :target_id => @repository.id
       }).first
-  end
-
-  def render_form(comment)
-    render(:action => "edit", :locals => {
-        :user => current_user,
-        :repository => RepositoryPresenter.new(@repository),
-        :comment => comment
-      })
   end
 end

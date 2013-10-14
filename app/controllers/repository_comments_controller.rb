@@ -1,4 +1,4 @@
-<%
+# encoding: utf-8
 #--
 #   Copyright (C) 2013 Gitorious AS
 #
@@ -15,24 +15,20 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-%>
-<%= partial("repositories/header_compact", {
-        :repository => repository,
-        :project => repository.project,
-        :app => Gitorious,
-        :active => :commits
-      }) %>
-<div class="container gts-body">
-  <% @title = "Update comment" %>
-  <%= error_messages(comment) -%>
-  <%= simple_form_for(comment, {
-          :as => :comment,
-          :url => project_repository_update_commit_comment_path(repository.project, repository, comment.sha1, comment),
-          :html => { :class => "form-horizontal gts-comment-form" }
-        }) do |form| -%>
-    <%= render(:partial => "form", :locals => {
-            :form => form,
-            :title => "Update comment"
-          }) %>
-  <% end %>
-</div>
+require "create_commit_comment"
+
+class RepositoryCommentsController < CommentsController
+  protected
+  # Callbacks from CommentController
+  def target
+    authorize_access_to(@repository)
+  end
+
+  def update_failed_path
+    project_repository_comments_path(@project, @repository)
+  end
+
+  def update_succeeded_path
+    project_repository_comments_path(@project, @repository)
+  end
+end

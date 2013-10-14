@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -20,25 +20,26 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious/view/avatar_helper"
 
 class CommentsController < ApplicationController
-  before_filter :login_required, :only => [:new, :create, :edit, :update, :destroy]
+  include Gitorious::View::AvatarHelper
+  before_filter :login_required, :except => [:index]
   before_filter :find_project_and_repository
-  before_filter :find_polymorphic_parent
   before_filter :comment_should_be_editable, :only => [:edit, :update]
   renders_in_site_specific_context
+  layout "ui3"
 
   def index
     locals = {
       :repository => RepositoryPresenter.new(@repository),
       :project => @project,
-      :comments => @target.comments.includes(:user)
+      :comments => target.comments.includes(:user)
     }
 
     respond_to do |format|
       format.html do
-        render("index", :layout => "ui3", :locals => locals.merge({
-              :merge_request_count => @repository.merge_requests.count_open,
+        render("index", :locals => locals.merge({
               :atom_auto_discovery_url => project_repository_comments_path(
                 @project,
                 @repository,
@@ -51,146 +52,96 @@ class CommentsController < ApplicationController
   end
 
   def new
-    render_form(@target.comments.new)
+    render_form(target.comments.new)
   end
 
   def create
-    state = params[:comment].delete(:state)
-    @comment = @target.comments.new(params[:comment])
-    @comment.user = current_user
-    @comment.state = state
-    @comment.project = @project
-    render_or_redirect
+    uc = create_use_case
+    outcome = uc.execute(params[:comment].merge(:add_to_favorites => params[:add_to_favorites]))
+
+    pre_condition_failed(outcome) do |pc|
+      flash[:error] = "Couldn't create comment: #{pc.pre_condition.message}"
+      redirect_to(create_failed_path)
+    end
+
+    outcome.success do |comment|
+      flash[:success] = "Your comment was added"
+      redirect_to(create_succeeded_path(comment))
+    end
+
+    outcome.failure { |comment| render_form(comment) }
   end
 
   def edit
-    render :partial => "edit_body"
+    render_form(@comment)
   end
 
   def update
-    @comment.body = params[:comment][:body]
-    @comment.save
-    render :partial => @comment
+    outcome = UpdateComment.new(@comment, current_user).execute(params[:comment])
+
+    pre_condition_failed(outcome) do |pc|
+      flash[:error] = "Couldn't update comment: #{pc.pre_condition.message}"
+      redirect_to(update_failed_path)
+    end
+
+    outcome.success do |comment|
+      flash[:success] = "Your comment was updated"
+      redirect_to(update_succeeded_path(comment))
+    end
+
+    outcome.failure { |comment| render_form(comment) }
   end
 
   protected
-  def render_or_redirect
-    if @comment.save
-      comment_was_created and return
-    end
-
-    respond_to do |wants|
-      wants.html { render_form(@comment) }
-      wants.js { render :nothing => true, :status => :not_acceptable }
-    end
+  def update_comment_path(comment)
+    project_repository_comment_path(comment.project, comment.repository, comment)
   end
 
-  def comment_was_created
-    create_new_commented_posted_event
-    add_to_favorites if params[:add_to_favorites]
-    respond_to do |wants|
-      wants.html do
-        flash[:success] = I18n.t "comments_controller.create_success"
-        if @comment.sha1.blank?
-          redirect_to_repository_or_target
-        else
-          redirect_to(project_repository_commit_path(@project, @repository, @comment.sha1))
-        end
-      end
-      wants.js do
-        case @target
-        when Repository
-          commit = @target.git.commit(@comment.sha1)
-          @comments = @target.comments.find_all_by_sha1(@comment.sha1, :include => :user)
-          @diffs = commit.parents.empty? ? [] : commit.diffs.select { |diff|
-            diff.a_path == @comment.path
-          }
-          @file_diff = "" #render_to_string(:partial => "commits/diffs")
-        else
-          @diffs = @target.diffs(range_or_string(@comment.sha1)).select{|d|
-            d.a_path == @comment.path
-          }
-          @file_diff = render_to_string(:partial => "merge_request_versions/comments")
-        end
-        render :json => {
-          "file-diff" => @file_diff,
-          "comment" => render_to_string(:partial => @comment)
-        }, :status => :created
-      end
-    end
+  def edit_comment_path(comment)
+    edit_project_repository_comment_path(comment.project, comment.repository, comment)
   end
 
-  def add_to_favorites
-    favorite_target.watched_by!(current_user)
+  helper_method :update_comment_path
+  helper_method :edit_comment_path
+
+  def create_failed_path
+    # Implement in sub-classes
   end
 
-  def favorite_target
-    @target.is_a?(MergeRequest) ? @target : @target.merge_request
+  def create_succeeded_path(comment)
+    # Implement in sub-classes
   end
 
-  def applies_to_merge_request_version?
-    MergeRequestVersion === @target
+  def update_failed_path
+    # Implement in sub-classes
   end
 
-  def range_or_string(str)
-    if match = /^([a-z0-9]*)-([a-z0-9]*)$/.match(str)
-      @sha_range = Range.new(match[1],match[2])
-    else
-      @sha_range = str
-    end
-  end
-
-  def find_repository
-    @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
-      @containing_project)
-  end
-
-  def find_polymorphic_parent
-    if params[:merge_request_version_id]
-      @target = MergeRequestVersion.find(params[:merge_request_version_id])
-    elsif params[:merge_request_id]
-      @target = @repository.merge_requests.find_by_sequence_number!(params[:merge_request_id])
-    else
-      @target = @repository
-    end
-    authorize_access_to(@target)
-  end
-
-  def redirect_to_repository_or_target
-    if @target == @repository
-      redirect_to([@project, @target, :comments])
-    else
-      redirect_to([@project, @repository, @target])
-    end
-  end
-
-  def create_new_commented_posted_event
-    if applies_to_merge_request_version?
-      @project.create_event(Action::COMMENT, @target.merge_request, current_user,
-        @comment.to_param, "MergeRequest")
-      return
-    end
-
-    if @target == @repository
-      @project.create_event(Action::COMMENT, @repository, current_user,
-        @comment.to_param, "Repository")
-    else
-      @project.create_event(Action::COMMENT, @target, current_user,
-        @comment.to_param, "MergeRequest") if @comment.state_change.blank?
-    end
-  end
-
-  def comment_should_be_editable
-    @comment = authorize_access_to(Comment.find(params[:id]))
-    if !can_edit?(current_user, @comment)
-      render :status => :unauthorized, :text => "Sorry mate"
-    end
+  def update_succeeded_path(comment)
+    # Implement in sub-classes
   end
 
   def render_form(comment)
-    render("new", :layout => "ui3", :locals => {
-        :comment => comment,
-        :user => current_user
+    render(:action => "edit", :locals => {
+        :user => current_user,
+        :repository => RepositoryPresenter.new(@repository),
+        :comment => comment
       })
+  end
+
+  def find_repository
+    rid = params[:repository_id]
+    @repository = @owner.repositories.find_by_name_in_project!(rid, @containing_project)
+  end
+
+  def comment_should_be_editable
+    @comment = authorize_access_to(find_comment)
+    if !can_edit?(current_user, @comment)
+      flash[:error] = !@comment.recently_created? ? "Only recently created comments can be edited, sorry" :  "You are not authorized to edit this comment"
+      redirect_to(update_failed_path)
+    end
+  end
+
+  def find_comment
+    Comment.find(params[:id])
   end
 end

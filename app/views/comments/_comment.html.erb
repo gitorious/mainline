@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -19,47 +20,31 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<a name="<%= dom_id(comment) -%>"></a>
-<%= comment_block(comment) do -%>
-  <%- if comment.state_changed_from -%>
-  <p class="meta_body">
-    &#x2192; State changed <%- if comment.state_changed_from -%>from
-    <span class="changed"><%=h comment.state_changed_from %></span><%- end -%> to
-    <span class="changed"><%=h comment.state_changed_to %></span>
-  </p>
-  <%- end -%>
-  <div class="body">
-    <% unless comment.context.blank? -%>
-      <blockquote>
-        <pre class="diff-comment-context"><code><%= comment.context %></code></pre>
-      </blockquote>
+<%- if comment.state_changed_to -%>
+  <p class="gts-bordered-row">
+    → State changed
+    <% if comment.state_changed_from %>
+      from <span class="label label-<%= status_open?(comment.state_changed_from) ? 'success' : 'inverse' %>"><%=h comment.state_changed_from %></span>
     <% end %>
-    <%= render_markdown(comment.body, :auto_link).html_safe -%>
-  </div>
-  <p class="byline">
-    <span class="avatar">
-      <%= link_to(avatar(comment.user, { :size => 16 }), user_path(comment.user)) %>
-    </span>
-    <%= link_to(h(comment.user.title), comment.user) -%> |
-    <span class="permalink">
-      <%= link_to time_ago(comment.created_at), "##{dom_id(comment)}" -%>
-    </span>
-    <% if comment.applies_to_line_numbers? -%>
-      <span class="inline_comment_link">
-        on <%= link_to h(comment.path), "##{dom_id(comment,'inline')}" -%>
-      </span>
-      <span class="link-spinner" id="loading_comment_<%= comment.to_param -%>">
-        <%= image_tag("spinner.gif") -%>
-      </span>
-    <% end -%>
-    <%- if can_edit?(current_user, comment) -%>
-      <span class="edit_link">
-        <%= link_to "Edit comment", "##{dom_id(comment)}",
-              "gts:url" => url_for([:edit, @project, @repository, comment]) -%>
-      </span>
-      <span class="link-spinner" id="loading_comment_editing_<%= comment.to_param -%>">
-        <%= image_tag("spinner.gif") -%>
-      </span>
-    <%- end -%>
+    to <span class="label label-<%= status_open?(comment.state_changed_to) ? 'success' : 'inverse' %>"><%=h comment.state_changed_to %></span>
   </p>
-<% end -%>
+<% end %>
+<div class="gts-comment" id="comment-<%= comment.id %>">
+  <% if !comment.context.blank? -%>
+    <blockquote>
+      <pre class="diff-comment-context"><code><%= comment.context %></code></pre>
+    </blockquote>
+  <% end %>
+  <%= render_markdown(comment.body, :auto_link).html_safe -%>
+  <p>
+    <img width="24" height="24" src="<%= avatar_url(comment.user, :size => 24) %>" alt="avatar" class="gts-avatar">
+    <%= link_to(comment.user.login, user_path(comment.user)) %>
+    <% if comment.applies_to_line_numbers? -%>
+      on <%= link_to("##{comment.sha1[0...7]}", project_repository_commit_path(comment.project, comment.repository, comment.sha1)) %>
+    <% end -%>
+    <%= comment.created_at.strftime("%b %-d %Y, %H:%M.") %>
+    <% if can_edit?(current_user, comment) %>
+      <%= link_to("Edit comment", edit_comment_path(comment)) %>
+    <% end %>
+  </p>
+</div>

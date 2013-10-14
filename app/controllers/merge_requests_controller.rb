@@ -84,7 +84,6 @@ class MergeRequestsController < ApplicationController
 
     begin
       commits = merge_request.commits_to_be_merged
-      #commit_comments = merge_request.source_repository.comments.with_shas(commits.map(&:id))
     rescue Grit::Git::GitTimeout
       commits = []
       flash[:error] = "A Git timeout occured. Only metadata is being displayed"
@@ -304,4 +303,10 @@ class MergeRequestsController < ApplicationController
       end
     end
   end
+
+  def edit_comment_path(comment)
+    edit_project_repository_merge_request_comment_path(@project, @repository, comment.target, comment)
+  end
+
+  helper_method :edit_comment_path
 end

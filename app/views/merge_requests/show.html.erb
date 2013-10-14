@@ -65,14 +65,21 @@
 
   <h2>Discussion</h2>
   <% comments.each do |comment| %>
-    <%= render(:partial => "comment", :locals => { :comment => comment }) %>
+    <%= render(:partial => "comments/comment", :locals => { :comment => comment }) %>
   <% end %>
 
-  <%= simple_form_for(Comment.new, {
-          :as => :comment,
-          :url => project_repository_merge_request_comments_path(repository.project, repository, merge_request),
-          :html => { :class => "form-horizontal gts-comment-form" }
-        }) do |form| -%>
-    <%= render(:partial => "commit_comments/form", :locals => { :form => form }) %>
+  <% if logged_in? %>
+    <%= simple_form_for(Comment.new(:target => merge_request), {
+            :as => :comment,
+            :url => project_repository_merge_request_comments_path(repository.project, repository, merge_request),
+            :html => { :class => "form-horizontal gts-comment-form" }
+          }) do |form| -%>
+      <%= render(:partial => "comments/form", :locals => { :form => form }) %>
+    <% end %>
+  <% else %>
+    <p>
+      <%= link_to t("views.sessions.login"), new_sessions_path -%> or
+      <%= link_to t("views.users.create"), new_user_path -%> to post a comment
+    </p>
   <% end %>
 </div>
