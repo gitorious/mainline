@@ -28,6 +28,12 @@
         :app => Gitorious,
         :active => :merge_requests
       }) %>
+<%
+  source_repo_link = project_repository_path(source_repo.project, source_repo)
+  target_repo_link = project_repository_path(target_repo.project, target_repo)
+  source_branch_link = project_repository_commits_in_ref_path(source_repo.project, source_repo, merge_request.source_branch)
+  target_branch_link = project_repository_commits_in_ref_path(target_repo.project, target_repo, merge_request.target_branch)
+%>
 <div class="container gts-body">
   <div class="pull-right">
     <%= render(:partial => "merge_requests/show/options", :locals => { :merge_request => merge_request }) %>
@@ -37,14 +43,12 @@
   <%= description(merge_request) %>
   <p class="gts-bordered-row">
     <%= link_to(avatar(user, :size => 24) + " #{user.login}", user_path(user)) %>
-    requested a merge from <%= link_to(source_repo.slug, project_repository_path(source_repo.project, source_repo)) %>
-    to <%= link_to(target_repo.slug, project_repository_path(target_repo.project, target_repo)) %>
+    requested a merge from
+    <%= link_to(source_repo.name, source_repo_link) %>:<%= link_to(merge_request.source_branch, source_branch_link) %>
+    to <%= link_to(target_repo.name, target_repo_link) %>:<%= link_to(merge_request.target_branch, target_branch_link) %>
     on <%= merge_request.created_at.strftime("%B %-dth, %Y %H:%M.") %>
     <span class="pull-right">This merge request is <strong><%= merge_request.status_string %></strong>.</span>
   </p>
-
-  <%# TODO: Add a drop-down for merge request versions %>
-  <%# nav_tabs(%w(summary commits), :class => "nav nav-tabs gts-header-nav", :active => "summary") %>
 
   <%= link_to("View all diffs", project_repository_merge_request_version_path(merge_request.project, merge_request.target_repository, merge_request), :class => "btn btn-primary pull-right") %>
   <h2>Commits to be merged</h2>
