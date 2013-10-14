@@ -18,7 +18,7 @@
 
 module Gitorious
   module View
-    class FormBuilder < ActionView::Helpers::FormBuilder
+    class FormBuilder < SimpleForm::FormBuilder
       def text_input_block(field, label, options = {})
         input_block(field, label, text_field(field, :class => "input-xlarge"), options)
       end

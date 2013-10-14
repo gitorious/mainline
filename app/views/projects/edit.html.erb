@@ -29,66 +29,19 @@
       }) %>
 
 <% @title = "Edit #{project.title}" %>
+
 <div class="container">
   <div class="row-fluid">
     <div class="span8">
-      <%= error_messages(project) -%>
-      <%= form_for(project, {
-              :as => :project,
-              :url => project_path(project),
-              :builder => Gitorious::View::FormBuilder,
-              :html => { :class => "form-horizontal" }
-            }) do |f| -%>
+      <%= simple_form_for(project, :as => :project, :url => project_path(project),
+                          :builder => Gitorious::View::FormBuilder,
+                          :html => { :class => "form form-horizontal" }) do |f| %>
         <fieldset>
-          <%= render(:partial => "form", :locals => {
-                :form => f,
-                :project => project,
-                :edit_slug => false,
-                :edit_urls => true
-              }) -%>
-
-          <div class="control-group">
-            <label class="control-label">Merge Request Statuses:</label>
-            <div class="controls gts-merge-request-statuses">
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Default?</th>
-                    <th>Name</th>
-                    <th>State</th>
-                    <th>Description</th>
-                    <th>Color</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <%= f.fields_for(:merge_request_statuses) do |status_form| -%>
-                  <%= render :partial => "merge_request_status_form",
-                      :locals => { :form => status_form, :project_form => f } -%>
-                <% end -%>
-                <% content_for(:footer) do %>
-                  <script src="/ui3/js/src/components/merge-request.js"></script>
-                  <script>
-                    gts.app.env("merge-request-status-template", "<%= escape_javascript(f.fields_for(:merge_request_statuses, MergeRequestStatus.new, :child_index => "MRSID") do |f|
-                            render(:partial => "merge_request_status_form", :locals => { :form => f, :project_form => nil })
-                          end) %>");
-
-                    gts.app.feature("edit-merge-request-statuses", gts.mergeRequest.editStatuses, {
-                      elements: ["gts-merge-request-statuses"],
-                      depends: ["merge-request-status-template"]
-                    });
-                  </script>
-                <% end %>
-              </table>
-              <div class="gts-mrs-add-ph"></div>
-              <p class="help-block">
-                <strong>Note</strong> that changing the name or state
-                of an existing status will update all affected merge
-                requests
-              </p>
-            </div>
-          </div>
+          <legend>Edit project</legend>
+          <%= render 'form', :form => f, :project => project, :edit_slug => false, :edit_urls => true %>
+          <%= render 'projects/edit/merge_request_statuses', :f => f %>
           <div class="form-actions">
-            <button class="btn btn-primary" type="submit"><%= t("views.projects.edit") %></button>
+            <%= f.submit 'Save', :class => 'btn btn-primary' %>
           </div>
         </fieldset>
       <% end %>

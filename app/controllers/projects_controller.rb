@@ -38,7 +38,7 @@ class ProjectsController < ApplicationController
   def index
     begin
       projects, total_pages, page = paginated_projects
-    rescue RangeError => err
+    rescue RangeError
       flash[:error] = "Page #{page} does not exist"
       redirect_to(projects_path, :status => 307) and return
     end
@@ -67,7 +67,7 @@ class ProjectsController < ApplicationController
     begin
       page = (params[:page] || 1).to_i
       events, total_pages = paginated_events(@project, page)
-    rescue RangeError => err
+    rescue RangeError
       flash[:error] = "Page #{page} does not exist"
       redirect_to(project_path(@project), :status => 307) and return
     end
@@ -123,12 +123,15 @@ class ProjectsController < ApplicationController
     input = { :private => params[:private] }.merge(params[:project])
     outcome = CreateProject.new(Gitorious::App, current_user).execute(input)
 
-    outcome.success do |result|
-      redirect_to(new_project_repository_path(result))
+    outcome.success do |project|
+      redirect_to(new_project_repository_path(project))
     end
 
     pre_condition_failed(outcome)
-    outcome.failure { |project| render_form(project) }
+
+    outcome.failure do |project|
+      render_form(project)
+    end
   end
 
   def edit
@@ -158,11 +161,13 @@ class ProjectsController < ApplicationController
 
     changed = @project.changed? # Dirty attr tracking is cleared after #save
     validation = ProjectValidator.call(@project)
+
     if validation.valid? && @project.save && @project.wiki_repository.save
       @project.create_event(Action::UPDATE_PROJECT, @project, current_user) if changed
       flash[:success] = "Project details updated"
       redirect_to project_path(@project)
     else
+      @validator = validation
       render_edit_form(@project)
     end
   end
@@ -184,7 +189,6 @@ class ProjectsController < ApplicationController
 
   def destroy
     if can_delete?(current_user, @project)
-      project_title = @project.title
       @project.destroy
       flash[:notice] = "The project and its repositories were deleted."
     else
@@ -194,12 +198,13 @@ class ProjectsController < ApplicationController
   end
 
   protected
+
   def render_form(project)
     render(:action => :new, :layout => "ui3", :locals => { :project => project })
   end
 
   def render_edit_form(project)
-    render(:action => "edit", :layout => "ui3", :locals => { :project => project })
+    render(:action => :edit, :layout => "ui3", :locals => { :project => project })
   end
 
   def pre_condition_failed(outcome)

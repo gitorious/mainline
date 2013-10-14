@@ -22,30 +22,29 @@
   #++
   %>
 <% scope = "activerecord.attributes.project" %>
-<%= form.text_input_block(:title, t(:title, :scope => scope)) %>
+
+<%= form.input :title, :label => t(:title, :scope => scope) %>
 <% if edit_slug %>
-  <%= form.text_input_block(:slug, t(:slug, :scope => scope)) %>
+  <%= form.input :slug, :label => t(:slug, :scope => scope) %>
 <% end %>
 <% if form.object.new_record? %>
-  <%= form.owner_input_block(:owner, t("views.projects.owner"), current_user) %>
+  <%= form.owner_input_block :owner, t("views.projects.owner"), current_user %>
 <% end %>
-<%= form.text_input_block(:tag_list, t(:tag_list, :scope => scope), :help => t(:tag_list_help, :scope => scope)) %>
-<%= form.select_block(
-      :license,
-      t(:license, :scope => scope),
-      project_license_choices(:selected => default_license(project)).html_safe,
-      { :help => "<div id=\"license-details\"></div>" },
-      :class => "gts-option-details", :"data-target" => "license-details"
-    ) %>
+<%= form.input(:tag_list, :label => t(:tag_list, :scope => scope), :hint => t(:tag_list_help, :scope => scope)) %>
+<%= form.select_block(:license, t(:license, :scope => scope),
+               project_license_choices(:selected => default_license(project)).html_safe,
+               { :help => "<div id=\"license-details\"></div>" },
+               :class => "gts-option-details", :"data-target" => "license-details"
+              ) %>
 <% if edit_urls %>
-  <%= form.text_input_block(:home_url, t(:home_url, :scope => scope)) %>
-  <%= form.text_input_block(:mailinglist_url, t(:mailinglist_url, :scope => scope)) %>
-  <%= form.text_input_block(:bugtracker_url, t(:bugtracker_url, :scope => scope)) %>
+  <%= form.input :home_url, :label => t(:home_url, :scope => scope) %>
+  <%= form.input :mailinglist_url, :label => t(:mailinglist_url, :scope => scope) %>
+  <%= form.input :bugtracker_url, :label => t(:bugtracker_url, :scope => scope) %>
 <% end %>
-<%= form.checkbox_block(:wiki_enabled, t(:wiki_enabled, :scope => scope)) %>
-<% unless form.object.new_record? -%>
-  <%= form.select_block(:wiki_permissions, t(:wiki_permissions, :scope => scope), wiki_permission_choices) %>
-<% end -%>
+<%= form.input :wiki_enabled, :as => :boolean, :label => t(:wiki_enabled, :scope => scope) %>
+<% if form.object.persisted? %>
+  <%= form.input(:wiki_permissions, :label => t(:wiki_permissions, :scope => scope), :collection => wiki_permission_choices) %>
+<% end %>
 <%= form.textarea_md_preview(:description, "Description") %>
 <% if form.object.new_record? && Gitorious.private_repositories? %>
   <%= form.private_toggle(params) %>
