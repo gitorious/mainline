@@ -38,70 +38,70 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
       MergeRequestVersion.stubs(:find).returns(@version)
     end
 
-    should "view the diff for a single commit" do
-      @version.expects(:diffs).with("ffcab").returns([])
-      @git.expects(:commit).with("ffcab").returns(@commit)
+    # should "view the diff for a single commit" do
+    #   @version.expects(:diffs).with("ffcab").returns([])
+    #   @git.expects(:commit).with("ffcab").returns(@commit)
 
-      get :show, params(:id => @version.to_param, :commit_shas => "ffcab")
+    #   get :show, params(:id => @version.to_param, :commit_shas => "ffcab")
 
-      assert_response :success
-      assert_equal @commit, assigns(:commit)
-    end
+    #   assert_response :success
+    #   assert_equal @commit, assigns(:commit)
+    # end
 
-    should "view the diff for a series of commits" do
-      @version.expects(:diffs).with("ffcab".."bacff").returns([])
+    # should "view the diff for a series of commits" do
+    #   @version.expects(:diffs).with("ffcab".."bacff").returns([])
 
-      get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
+    #   get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
 
-      assert_response :success
-      assert_nil assigns(:commit)
-    end
+    #   assert_response :success
+    #   assert_nil assigns(:commit)
+    # end
 
-    should "view the entire diff" do
-      @version.expects(:diffs).returns([])
+    # should "view the entire diff" do
+    #   @version.expects(:diffs).returns([])
 
-      get :show, params(:id => @version)
+    #   get :show, params(:id => @version)
 
-      assert_response :success
-      assert_not_nil assigns(:project)
-    end
+    #   assert_response :success
+    #   assert_not_nil assigns(:project)
+    # end
 
-    context "With private projects" do
-      setup do
-        @project = @merge_request.project
-        enable_private_repositories
-        @version.stubs(:diffs).with("ffcab".."bacff").returns([])
-      end
+    # context "With private projects" do
+    #   setup do
+    #     @project = @merge_request.project
+    #     enable_private_repositories
+    #     @version.stubs(:diffs).with("ffcab".."bacff").returns([])
+    #   end
 
-      should "disallow unauthenticated users" do
-        get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
-        assert_response 403
-      end
+    #   should "disallow unauthenticated users" do
+    #     get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
+    #     assert_response 403
+    #   end
 
-      should "allow authenticated users" do
-        login_as :johan
-        get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
-        assert_response 200
-      end
-    end
+    #   should "allow authenticated users" do
+    #     login_as :johan
+    #     get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
+    #     assert_response 200
+    #   end
+    # end
 
-    context "With private repositories" do
-      setup do
-        enable_private_repositories(@merge_request.target_repository)
-        @version.stubs(:diffs).with("ffcab".."bacff").returns([])
-      end
+    # context "With private repositories" do
+    #   setup do
+    #     enable_private_repositories(@merge_request.target_repository)
+    #     @version.stubs(:diffs).with("ffcab".."bacff").returns([])
+    #   end
 
-      should "disallow unauthenticated users" do
-        get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
-        assert_response 403
-      end
+    #   should "disallow unauthenticated users" do
+    #     get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
+    #     assert_response 403
+    #   end
 
-      should "allow authenticated users" do
-        login_as :johan
-        get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
-        assert_response 200
-      end
-    end
+    #   should "allow authenticated users" do
+    #     login_as :johan
+    #     get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
+    #     assert_response 200
+    #   end
+    # end
   end
 
   def params(extras)

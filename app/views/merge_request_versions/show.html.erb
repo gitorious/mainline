@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,5 +17,46 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+<%= partial("repositories/header_compact", {
+        :repository => repository,
+        :project => repository.project,
+        :app => Gitorious,
+        :active => :merge_requests
+      }) %>
+<% @title = "Diffs for #{merge_request.summary}" %>
+<div class="container gts-body">
+  <h3>Diffs for merge request #<%= merge_request.sequence_number %></h3>
+  <h2><%= link_to(merge_request.summary, project_repository_merge_request_path(project, merge_request.target_repository, merge_request)) %></h2>
+  <% if timeout %>
+    <div class="alert alert-error">
+      <h3>Git timeout</h3>
+      <p>
+        We're sorry, but it seems that the server timed out trying to fetch the
+        diffs for your merge request. This typically means that the merge request
+        is large. Please review changes locally:
+      </p>
+      <pre># Create a local branch
+git checkout -b merge-requests/<%= merge_request.sequence_number %>
 
-<%= render :partial => "merge_request_version", :locals => {:diffs => @diffs} -%>
+# Fetch the merge request into the new branch
+git pull <%= merge_request.target_repository.clone_url %> <%= merge_request.merge_branch_name %>
+
+# Show the commits
+git log --pretty=oneline --abbrev-commit <%= merge_request.target_branch %>..merge-requests/<%= merge_request.sequence_number %></pre>
+      <p>
+        If you believe that this merge request is indeed not too big for the web
+        interface, please
+        contact <a href="mailto:<%= Gitorious.support_email %>"><%= Gitorious.support_email %></a>.
+      </p>
+    </div>
+  <% end %>
+
+  <% if !diffs.blank? %>
+    <%= render_diffmode_selector_plain(repository, renderer.mode) do
+          version_drop_down(merge_request, merge_request_version).html_safe
+        end %>
+    <% diffs.each do |diff| %>
+      <%= renderer.render(diff).html_safe %>
+    <% end %>
+  <% end %>
+</div>

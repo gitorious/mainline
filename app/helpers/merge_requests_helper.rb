@@ -134,6 +134,22 @@ module MergeRequestsHelper
     @statuses[name] = MergeRequestStatus.find_by_name(name).open?
   end
 
+  def version_drop_down(mr, current)
+    choices = mr.versions.reverse.select { |v| v != current }.map do |v|
+      path = project_repository_merge_request_version_path(mr.project, mr.target_repository, mr, :version => v.version)
+      "<li><a href=\"#{path}\">Version #{v.version}</a></li>"
+    end
+
+    <<-HTML
+      <li class="pull-right dropdown">
+        <a href="#" class="dropdown-toggle">Version #{current.version}</a>
+        <ul class="dropdown-menu">
+          #{choices.join("")}
+        </ul>
+      </li>
+    HTML
+  end
+
   private
 
   def merge_request_link(target, status = nil)

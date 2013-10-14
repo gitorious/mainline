@@ -300,9 +300,11 @@ Gitorious::Application.routes.draw do
 
         resources :comments, :controller => :merge_request_comments, :only => [:new, :create, :edit, :update]
 
-        resources :merge_request_versions do
-          resources :comments
-        end
+        get "/diffs(/:version)" => "merge_request_versions#show", :as => :version
+
+        # resources :merge_request_versions do
+        #   resources :comments
+        # end
       end
 
       resources :repository_memberships, :only => [:new, :create, :destroy]

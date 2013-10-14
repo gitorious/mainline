@@ -46,7 +46,7 @@
   <%# TODO: Add a drop-down for merge request versions %>
   <%# nav_tabs(%w(summary commits), :class => "nav nav-tabs gts-header-nav", :active => "summary") %>
 
-  <%= link_to("View all diffs", "#", :class => "btn btn-primary pull-right") %>
+  <%= link_to("View all diffs", project_repository_merge_request_version_path(merge_request.project, merge_request.target_repository, merge_request), :class => "btn btn-primary pull-right") %>
   <h2>Commits to be merged</h2>
   <table class="table table-striped">
     <% commits.each do |commit| %>
