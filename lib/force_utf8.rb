@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,11 +16,19 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require "fileutils"
-require "diff-display/lib/diff-display"
-require 'oauth/oauth'
-gem "rdiscount", ">=0"
-require 'rdiscount'
-silence_warnings do
-  BlueCloth = RDiscount
+module ForceUTF8
+  def force_utf8(str)
+    return nil if str.nil?
+
+    if str.respond_to?(:force_encoding)
+      str.force_encoding("UTF-8")
+      if str.valid_encoding?
+        str
+      else
+        str.chars.map { |c| c.valid_encoding? ? c : '?' }.join
+      end
+    else
+      str.mb_chars
+    end
+  end
 end

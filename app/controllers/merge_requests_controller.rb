@@ -182,6 +182,7 @@ class MergeRequestsController < ApplicationController
   def edit
     @repositories = filter(@owner.repositories.where("id != ?", @repository.id))
     get_branches_and_commits_for_selection
+    render :layout => 'ui3'
   end
 
   def update
@@ -193,7 +194,7 @@ class MergeRequestsController < ApplicationController
     else
       @repositories = filter(@owner.repositories.where("id != ?", @repository.id))
       get_branches_and_commits_for_selection
-      render :action => "edit"
+      render :action => 'edit', :layout => 'ui3'
     end
   end
 

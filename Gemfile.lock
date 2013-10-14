@@ -54,7 +54,8 @@ GEM
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.0.4)
-    capillary (1.0.3)
+    capillary (1.0.4)
+      htmlentities
       json (~> 1.5)
     capybara (2.1.0)
       mime-types (>= 1.16)
@@ -151,7 +152,7 @@ GEM
     json (1.7.7)
     just_paginate (0.2.2)
     kgio (2.8.0)
-    libdolt (0.33.4)
+    libdolt (0.33.5)
       htmlentities (~> 4.3)
       json (~> 1.7)
       makeup (~> 0.4.1)
@@ -270,7 +271,6 @@ GEM
     riddle (1.5.7)
     ruby-hmac (0.4.0)
     ruby-openid (2.2.3)
-    ruby-yadis (0.3.4)
     rubypants (0.2.0)
     rugged (0.18.0.gh.de28323)
     safe_yaml (0.9.5)
@@ -325,7 +325,7 @@ GEM
       polyglot
       polyglot (>= 0.3.1)
     trollop (2.0)
-    tzinfo (0.3.37)
+    tzinfo (0.3.38)
     unicorn (4.6.3)
       kgio (~> 2.6)
       rack
@@ -413,7 +413,6 @@ DEPENDENCIES
   resque-job-stats (~> 0.3.0)
   ruby-hmac (= 0.4.0)
   ruby-openid
-  ruby-yadis (= 0.3.4)
   shoulda (~> 3.3)
   shoulda-matchers (~> 1.4)
   simple_form (~> 2.1)

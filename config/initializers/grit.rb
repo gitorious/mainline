@@ -41,3 +41,20 @@ class Grit::Blob
     return true
   end
 end
+
+module Grit
+  class Diff
+    include ForceUTF8
+
+    def diff
+      if @diff.nil?
+        @diff = ""
+      else
+        lines = @diff.lines.to_a
+        path = force_utf8(lines.shift(2).join)
+        body = force_utf8(lines.join)
+        @diff = path + body
+      end
+    end
+  end
+end

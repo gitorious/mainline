@@ -18,27 +18,24 @@
   #++
   %>
 
-<%= breadcrumbs_from(Breadcrumb::MergeRequests.new(@repository)) -%>
+<%= site_header do %>
+  <h2>
+    <%= t("views.merges.edit_title") %>
+  </h2>
+<% end %>
 
-<h1><%= t("views.merges.edit_title") %></h1>
-
-<%= error_messages(@merge_request) -%>
-<%= form_for [@project, @repository, @merge_request] do |f| -%>
-<p>
-  <%= f.label :summary, t(:summary, :scope => 'activerecord.attributes.merge_request') -%><br />
-  <small class="hint"><%= t("views.merges.info.summary") %></small><br />
-  <%= f.text_field :summary -%>
-</p>
-<p>
-  <%= f.label :proposal, t(:proposal, :scope => 'activerecord.attributes.merge_request') -%><br />
-  <small class="hint"><%= t("views.merges.info.proposal") %></small><br />
-  <%= f.text_area :proposal, :class => "text medium" -%>
-</p>
-
-
-<%= render :partial => "commit_list" -%>
-
-<%= f.submit t("views.merges.update_btn") -%>
-<% end -%>
-
-<%= render :partial => "commit_list_js" -%>
+<div class="container">
+  <%= simple_form_for [@project, @repository, @merge_request], :html => { :class => 'form form-horizontal' } do |f| %>
+    <%= f.input :summary, :label => t(:summary, :scope => 'activerecord.attributes.merge_request'),
+      :hint => t('views.merges.info.summary') %>
+    <%= f.input :proposal, :label => t(:proposal, :scope => 'activerecord.attributes.merge_request'),
+      :hint => t('views.merges.info.proposal'),
+      :as => :text,
+      :input_html => { :rows => 8, :class => 'input-xxlarge' } %>
+    <%= render :partial => "commit_list" %>
+    <div class="form-actions">
+      <%= f.submit t("views.merges.update_btn"), :class => 'btn btn-primary' %>
+    </div>
+  <% end %>
+  <%= render :partial => "commit_list_js" %>
+</div>

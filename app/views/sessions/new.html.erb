@@ -22,14 +22,12 @@
   #++
   %>
 
-<div class="gts-site-header">
-  <div class="container">
-    <div class="row">
-      <h1 class="span"><%= @title = "Log in to #{Gitorious.site_name}" %></h1>
-    </div>
-    <%= login_menu(Gitorious::OpenID.enabled? && params[:method] == "openid" ? :openid : :login) %>
-  </div>
-</div>
+<%= site_header do %>
+  <h2>
+    <%= @title = "Sign in to #{Gitorious.site_name}" %>
+  </h2>
+  <%= login_menu(Gitorious::OpenID.enabled? && params[:method] == "openid" ? :openid : :login) %>
+<% end %>
 
 <div class="container">
   <%= form_tag(sessions_path, :class => "form-horizontal") do -%>

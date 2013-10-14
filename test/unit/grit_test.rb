@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,11 +16,22 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require "fileutils"
-require "diff-display/lib/diff-display"
-require 'oauth/oauth'
-gem "rdiscount", ">=0"
-require 'rdiscount'
-silence_warnings do
-  BlueCloth = RDiscount
+require "test_helper"
+require "ostruct"
+
+class GritTest < ActiveSupport::TestCase
+  context "diffs" do
+    include SampleRepoHelpers
+
+    should "not blow up with non utf8, non ascii files" do
+      repo = sample_repo("non_utf8_repo")
+      last_commit = repo.head.commit
+      diff = last_commit.diffs.first
+
+      string_diff = diff.diff
+      utf8_str = "żółć"
+
+      assert (utf8_str + string_diff).include?('foo')
+    end
+  end
 end

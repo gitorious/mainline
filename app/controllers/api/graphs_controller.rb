@@ -22,6 +22,7 @@ require "gitorious/git_shell"
 
 module Api
   class GraphsController < ApplicationController
+    include ForceUTF8
     include Gitorious::Authorization
     skip_session
     before_filter :find_project_and_repository
@@ -39,7 +40,7 @@ module Api
       end
 
       parser = Capillary::LogParser.new
-      data.force_encoding('ascii-8bit')
+      data = force_utf8(data)
       data.split("\n").each { |line| parser << line }
 
       respond_to do |wants|

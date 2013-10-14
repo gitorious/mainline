@@ -18,40 +18,18 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+
 <fieldset>
-  <div class="control-group">
-    <%= form.label :login, t(:login, :scope => "activerecord.attributes.user"), :class => "control-label" -%>
-    <div class="controls">
-      <%= form.text_field :login, :class => "input-xlarge" -%>
-    </div>
-  </div>
-  <div class="control-group">
-    <%= form.label :email, t(:email, :scope => "activerecord.attributes.user"), :class => "control-label" -%>
-    <div class="controls">
-      <%= form.text_field :email, :class => "input-xlarge" -%>
-    </div>
-  </div>
-  <div class="control-group">
-    <%= form.label :password, t(:password, :scope => "activerecord.attributes.user"), :class => "control-label" -%>
-    <div class="controls">
-      <%= form.password_field :password, :class => "input-xlarge" -%>
-    </div>
-  </div>
-  <div class="control-group">
-    <%= form.label :password_confirmation, t(:password_confirmation, :scope => "activerecord.attributes.user"), :class => "control-label" -%>
-    <div class="controls">
-      <%= form.password_field :password_confirmation, :class => "input-xlarge" -%>
-    </div>
-  </div>
-  <div class="control-group">
-    <div class="controls">
-      <label class="checkbox">
-        <%= form.check_box :terms_of_use  -%>
-         I accept the <%= render :partial => "licenses/tos_link" -%>
-      </label>
-    </div>
-  </div>
+  <%= form.input :login, :label => t(:login, :scope => "activerecord.attributes.user"),
+    :input_html => { :class => "input-xlarge" } %>
+  <%= form.input :email, :label => t(:email, :scope => "activerecord.attributes.user"),
+    :input_html => { :class => "input-xlarge" } %>
+  <%= form.input :password, :label => t(:password, :scope => "activerecord.attributes.user"),
+    :input_html => { :class => "input-xlarge" } %>
+  <%= form.input :password_confirmation, :label => t(:password_confirmation, :scope => "activerecord.attributes.user"),
+    :input_html => { :class => "input-xlarge" } %>
+  <%= form.input :terms_of_use, :as => :boolean, :label => false, :inline_label => "I accept the #{render "licenses/tos_link"}".html_safe %>
   <div class="form-actions">
-    <button class="btn btn-primary" type="submit">Sign up</button>
+    <%= form.submit "Sign up", :class => 'btn btn-primary' %>
   </div>
 </fieldset>

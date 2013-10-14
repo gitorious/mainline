@@ -1,4 +1,4 @@
-<%= pull_box("#{h user.title} is watching", :class => "watched") do %>
+<%= pull_box("#{h user.title} is watching", :class => 'watched') do %>
   <% if favorites.blank? %>
     <p class="hint muted">
       <%= no_watchings_notice_for(user) %>
@@ -38,4 +38,8 @@
       <% end %>
     </table>
   <% end %>
+<% end %>
+
+<% content_for :javascripts do %>
+  <%= javascript_include_tag 'gitorious/watched_filter' %>
 <% end %>
