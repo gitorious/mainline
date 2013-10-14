@@ -28,7 +28,7 @@
     <p><%= t("views.commits.message", :path => tree_path(range.last)) %></p>
   <% else -%>
     <%= render_diff_stats(commit.stats) -%>
-    <%= render_diffmode_selector(repository, commit, mode) -%>
+    <%= render_diffmode_selector(repository, commit, renderer.mode) -%>
     <% diffs.each do |diff| %>
       <%= renderer.render(diff).html_safe %>
     <% end %>

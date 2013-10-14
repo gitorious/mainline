@@ -21,6 +21,8 @@ require "gitorious/diff/inline_table_callback"
 module Gitorious
   module Diff
     class InlineRenderer < Gitorious::Diff::Renderer
+      def mode; :inline; end
+
       def callback_class
         Gitorious::Diff::InlineTableCallback
       end

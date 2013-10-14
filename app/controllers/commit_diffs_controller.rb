@@ -38,7 +38,6 @@ class CommitDiffsController < ApplicationController
     repository = RepositoryPresenter.new(@repository)
 
     render("show", :locals => {
-        :mode => params[:diffmode] == "sidebyside" ? :sidebyside : :inline,
         :renderer => diff_renderer(params[:diffmode], repository, commit),
         :range => [params[:from_id], params[:id]],
         :repository => repository,

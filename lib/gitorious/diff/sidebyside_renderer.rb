@@ -21,6 +21,8 @@ require "gitorious/diff/sidebyside_table_callback"
 module Gitorious
   module Diff
     class SidebysideRenderer < Gitorious::Diff::Renderer
+      def mode; :sidebyside; end
+
       def callback_class
         Gitorious::Diff::SidebysideTableCallback
       end
