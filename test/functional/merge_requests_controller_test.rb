@@ -111,7 +111,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
         get :show, mr_params(:format => format)
         assert_response :success
-        assert_equal 2, assigns(:commits).size
       end
     end
 
@@ -142,17 +141,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert_select "select#comment_state"
     end
 
-    context "legacy merge requests" do
-      setup { @merge_request.update_attribute(:legacy, true) }
-
-      should "create a version for the legacy merge_requests" do
-        get :show, mr_params
-
-        assert_response :success
-        assert_template "merge_requests/legacy"
-      end
-    end
-
     context "Git timeouts" do
       setup do
         MergeRequest.any_instance.stubs(:commits_to_be_merged).raises(Grit::Git::GitTimeout)
@@ -163,7 +151,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
         get :show, mr_params
 
         assert_response :success
-        assert assigns(:git_timeout_occured)
       end
     end
 
@@ -192,7 +179,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert_redirected_to(new_sessions_path)
     end
 
-    should "is successful" do
+    should "get new successfully" do
       login_as :johan
       get :new, params
       assert_response :success
@@ -207,13 +194,13 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert_response :success
     end
 
-    should "assigns the new merge_requests' source_repository" do
+    should "assign the new merge_requests' source_repository" do
       login_as :johan
       get :new, params(:repository_id => @source_repository.to_param)
       assert_equal @source_repository, assigns(:merge_request).source_repository
     end
 
-    should "gets a list of possible target clones" do
+    should "get a list of possible target clones" do
       login_as :johan
       get :new, params(:repository_id => @source_repository.to_param)
       assert_equal [repositories(:johans)], assigns(:repositories)

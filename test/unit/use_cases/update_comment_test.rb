@@ -17,13 +17,13 @@
 #++
 require "test_helper"
 require "create_commit_comment"
-require "update_commit_comment"
+require "update_comment"
 
 class UpdateCommentTest < ActiveSupport::TestCase
   def setup
     @user = users(:zmalltalker)
     @repository = repositories(:johans)
-    @comment = CreateComment.new(@user, @repository, "a" * 40).execute({
+    @comment = CreateComment.new(@user, @repository).execute({
         :body => "Nice going!",
         :path => "some/thing.rb"
       }).result
@@ -46,7 +46,7 @@ class UpdateCommentTest < ActiveSupport::TestCase
   should "not update other fields than body" do
     outcome = UpdateComment.new(@comment, @user).execute(:sha1 => "b" * 40)
 
-    assert_equal "a" * 40, @comment.reload.sha1
+    assert_nil @comment.reload.sha1
   end
 
   should "not update comment if no user" do

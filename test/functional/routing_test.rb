@@ -836,20 +836,6 @@ class RoutingTest < ActionController::TestCase
     end
   end
 
-  context "Comment routing" do
-    should "recognize commit comment" do
-      assert_recognizes({
-          :controller => "comments",
-          :action => "index",
-          :project_id => "johans-project",
-          :repository_id => "johansprojectrepos"
-        }, {
-          :path => "/johans-project/johansprojectrepos/comments",
-          :method => :get
-        })
-    end
-  end
-
   context "Commit routing" do
     should "recognize feed" do
       assert_recognizes({ :controller => "commits",
