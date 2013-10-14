@@ -16,16 +16,38 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "use_case"
+require "virtus"
 
-CommentValidator = UseCase::Validator.define do
-  validates_presence_of :user_id, :target, :project_id
+class CreateCommentCommand
+  def initialize(user, target)
+    @user = user
+    @target = target
+  end
+
+  def execute(comment)
+    comment.save
+    comment
+  end
+
+  def build(params)
+    Comment.new({
+        :user => user,
+        :target => target,
+        :project => project,
+        :body => params.body
+      })
+  end
+
+  private
+  def project
+    return target.project if target.respond_to?(:project)
+    target.merge_request.project # MergeRequestVersion
+  end
+
+  attr_reader :user, :target
 end
 
-class EditableCommentValidator < CommentValidator
-  validates_presence_of :body
-end
-
-class CommitCommentValidator < EditableCommentValidator
-  validates_presence_of :sha1
-  validates_format_of :sha1, :with => /^[a-z0-9]{40}$/
+class CommentParams
+  include Virtus.model
+  attribute :body, String
 end

@@ -17,7 +17,7 @@
 #++
 require "validators/comment_validator"
 
-class UpdateCommitCommentCommand
+class UpdateCommentCommand
   def initialize(comment)
     @comment = comment
   end
@@ -36,18 +36,18 @@ class UpdateCommitCommentCommand
   attr_reader :comment
 end
 
-class UpdateCommitCommentParams
+class UpdateCommentParams
   include Virtus.model
   attribute :body, String
 end
 
-class UpdateCommitComment
+class UpdateComment
   include UseCase
 
   def initialize(comment, user)
     add_pre_condition(CurrentUserRequired.new(user))
     add_pre_condition(OwnerRequired.new(comment, user))
-    input_class(UpdateCommitCommentParams)
-    step(UpdateCommitCommentCommand.new(comment), :validator => CommitCommentValidator)
+    input_class(UpdateCommentParams)
+    step(UpdateCommentCommand.new(comment), :validator => EditableCommentValidator)
   end
 end

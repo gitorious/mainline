@@ -15,41 +15,30 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "use_case"
+require "commands/create_comment_command"
 require "validators/comment_validator"
 
-class CreateCommitCommentCommand
+class CreateCommitCommentCommand < CreateCommentCommand
   def initialize(user, repository, commit_id)
-    @user = user
-    @repository = repository
     @commit_id = commit_id
-  end
-
-  def execute(comment)
-    comment.save
-    comment
+    super(user, repository)
   end
 
   def build(params)
-    comment = Comment.new({
-        :user => user,
-        :target => repository,
-        :sha1 => commit_id,
-        :project => repository.project,
-        :body => params.body,
-        :context => params.context,
-        :path => params.path
-      })
+    comment = super(params)
+    comment.sha1 = commit_id
+    comment.context = params.context
+    comment.path = params.path
     comment.lines = params.lines unless params.lines.blank?
     comment
   end
 
   private
-  attr_reader :user, :repository, :commit_id
+  attr_reader :commit_id
 end
 
-class CommitCommentParams
-  include Virtus.model
-  attribute :body, String
+class CommitCommentParams < CommentParams
   attribute :context, String
   attribute :lines, String
   attribute :path, String

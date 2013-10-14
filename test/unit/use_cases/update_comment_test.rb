@@ -19,18 +19,18 @@ require "test_helper"
 require "create_commit_comment"
 require "update_commit_comment"
 
-class UpdateCommitCommentTest < ActiveSupport::TestCase
+class UpdateCommentTest < ActiveSupport::TestCase
   def setup
     @user = users(:zmalltalker)
     @repository = repositories(:johans)
-    @comment = CreateCommitComment.new(@user, @repository, "a" * 40).execute({
+    @comment = CreateComment.new(@user, @repository, "a" * 40).execute({
         :body => "Nice going!",
         :path => "some/thing.rb"
       }).result
   end
 
   should "update comment" do
-    outcome = UpdateCommitComment.new(@comment, @user).execute(:body => "Changing")
+    outcome = UpdateComment.new(@comment, @user).execute(:body => "Changing")
 
     assert outcome.success?, outcome.to_s
     assert_equal "Changing", outcome.result.body
@@ -38,26 +38,26 @@ class UpdateCommitCommentTest < ActiveSupport::TestCase
   end
 
   should "not update invalid comment" do
-    outcome = UpdateCommitComment.new(@comment, @user).execute(:body => "")
+    outcome = UpdateComment.new(@comment, @user).execute(:body => "")
 
     refute outcome.success?, outcome.to_s
   end
 
   should "not update other fields than body" do
-    outcome = UpdateCommitComment.new(@comment, @user).execute(:sha1 => "b" * 40)
+    outcome = UpdateComment.new(@comment, @user).execute(:sha1 => "b" * 40)
 
     assert_equal "a" * 40, @comment.reload.sha1
   end
 
   should "not update comment if no user" do
-    outcome = UpdateCommitComment.new(@comment, nil).execute(:sha1 => "b" * 40)
+    outcome = UpdateComment.new(@comment, nil).execute(:sha1 => "b" * 40)
 
     refute outcome.success?
   end
 
   should "not update comment if user is not owner " do
     user = users(:johan)
-    outcome = UpdateCommitComment.new(@comment, user).execute(:sha1 => "b" * 40)
+    outcome = UpdateComment.new(@comment, user).execute(:sha1 => "b" * 40)
 
     refute outcome.success?
   end

@@ -15,17 +15,14 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "use_case"
+require "validators/comment_validator"
+require "commands/create_comment_command"
 
-CommentValidator = UseCase::Validator.define do
-  validates_presence_of :user_id, :target, :project_id
-end
+class CreateComment
+  include UseCase
 
-class EditableCommentValidator < CommentValidator
-  validates_presence_of :body
-end
-
-class CommitCommentValidator < EditableCommentValidator
-  validates_presence_of :sha1
-  validates_format_of :sha1, :with => /^[a-z0-9]{40}$/
+  def initialize(user, repository)
+    input_class(CommentParams)
+    step(CreateCommentCommand.new(user, repository), :validator => EditableCommentValidator)
+  end
 end
