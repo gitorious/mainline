@@ -20,14 +20,13 @@
   #++
   %>
 
-<div class="gts-site-header">
-  <div class="container">
-    <%= user_edit_tabbable :active => active_tab %>
-  </div>
-</div>
+<%= site_header do %>
+  <h2>Settings</h2>
+  <%= user_edit_tabbable :active => active_tab %>
+<% end %>
 
 <div class="container">
-  <div class="container-fluid gts-container user-edit-container">
+  <div class="user-edit-container">
     <%= tab_pane(active_tab.underscore.to_sym, :active => true) do %>
       <%= render "users/edit/#{active_tab.underscore}", :user => user %>
     <% end %>

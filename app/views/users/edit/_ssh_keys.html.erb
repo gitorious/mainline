@@ -4,5 +4,7 @@
 <% else %>
   <% @title = "SSH Keys" %>
   <%= render "keys/keys", :ssh_keys => current_user.ssh_keys %>
-  <%= link_to "Add new", new_user_key_path(current_user), :class => 'btn btn-primary' %>
+  <div class="form-actions">
+    <%= link_to "Add new", new_user_key_path(current_user), :class => 'btn btn-primary' %>
+  </div>
 <% end %>
