@@ -23,8 +23,7 @@
 #++
 
 class MergeRequestsController < ApplicationController
-  before_filter :login_required, :except => [:index, :show, :direct_access,
-                                             :commit_status, :version]
+  before_filter :login_required, :except => [:index, :show, :direct_access, :commit_status]
   before_filter :find_repository_owner, :except => [:oauth_return, :direct_access]
   before_filter :find_repository, :except => [:oauth_return, :direct_access]
   before_filter :find_merge_request,
@@ -33,7 +32,7 @@ class MergeRequestsController < ApplicationController
   before_filter :assert_merge_request_ownership,
     :except => [:index, :show, :new, :create, :resolve, :commit_list,
                 :target_branches, :oauth_return, :direct_access, :commit_status,
-                :version, :terms_accepted]
+                :terms_accepted]
   before_filter :assert_merge_request_resolvable, :only => [:resolve]
   renders_in_site_specific_context
 
@@ -106,21 +105,6 @@ class MergeRequestsController < ApplicationController
       wants.patch do
         render(:text => commits.collect(&:to_patch).join("\n"), :content_type => "text/plain")
       end
-    end
-  end
-
-  def version
-    @merge_request = authorize_access_to(
-      @repository.merge_requests.public.find_by_sequence_number!(params[:id],
-        :include => [:source_repository, :target_repository]))
-    version = @merge_request.version_number(params[:version].to_i)
-    if version.nil?
-      logger.error("Unable to find merge request version #{params[:version]} for merge request #{@merge_request.id}. Cannot continue")
-      render :nothing => true
-    else
-      render :partial => 'version', :layout => false, :locals => {
-        :version => version
-      }
     end
   end
 

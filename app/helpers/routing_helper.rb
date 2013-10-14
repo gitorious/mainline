@@ -95,14 +95,4 @@ module RoutingHelper
     url_for(polymorphic_path([:version, merge_request.target_repository.project,
                               merge_request.target_repository, merge_request]))
   end
-
-  # ul data-merge-request-version-url=""
-  def commit_diff_url(mr_version)
-    url_for(polymorphic_path([
-                             @merge_request.target_repository.project,
-                             @merge_request.target_repository,
-                             @merge_request,
-                             mr_version
-            ]))
-  end
 end

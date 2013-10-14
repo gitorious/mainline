@@ -88,6 +88,7 @@ module DiffHelper
   end
 
   def render_diffmode_selector(repository, commit, mode)
+    project = repository.project
     render_diffmode_selector_plain(repository, mode) do
       <<-HTML.html_safe
        <li><a href="#{project_repository_commit_path(project, repository, commit.id, :format => :diff)}">Raw diff</a></li>
@@ -107,7 +108,6 @@ module DiffHelper
       links += "<li><a href=\"#{url_for(:diffmode => :sidebyside)}\">Side by side diffs</a></li>"
     end
 
-    project = repository.project
     <<-HTML.html_safe
       <ul class="nav nav-tabs">
         #{links}

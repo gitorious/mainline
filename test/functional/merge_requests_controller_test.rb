@@ -480,14 +480,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
   end
 
-  context "GET #version" do
-    should "render the diff browser for the given version" do
-      MergeRequest.stubs(:find_by_sequence_number!).returns(@merge_request)
-      get :version, mr_params(:version => @merge_request.versions.first.version)
-      assert_response :success
-    end
-  end
-
   context "#destroy (DELETE)" do
     should "requires login" do
       session[:user_id] = nil
@@ -610,19 +602,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
       should "allow authenticated users" do
         login_as :johan
         get :show, mr_params
-        assert_response 200
-      end
-    end
-
-    context "GET #version" do
-      should "disallow unauthenticated users" do
-        get :version, mr_params(:version => @merge_request.versions.first.version)
-        assert_response 403
-      end
-
-      should "allow authenticated users" do
-        login_as :johan
-        get :version, mr_params(:version => @merge_request.versions.first.version)
         assert_response 200
       end
     end
@@ -758,19 +737,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
       should "allow authenticated users" do
         login_as :johan
         get :show, mr_params
-        assert_response 200
-      end
-    end
-
-    context "GET #version" do
-      should "disallow unauthenticated users" do
-        get :version, mr_params(:version => @merge_request.versions.first.version)
-        assert_response 403
-      end
-
-      should "allow authenticated users" do
-        login_as :johan
-        get :version, mr_params(:version => @merge_request.versions.first.version)
         assert_response 200
       end
     end

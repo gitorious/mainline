@@ -613,19 +613,6 @@ class RoutingTest < ActionController::TestCase
                        })
     end
 
-    should "recognize version" do
-      assert_recognizes({ :controller => "merge_request_versions",
-                          :action => "show",
-                          :project_id => "gitorious",
-                          :repository_id => "mainline",
-                          :merge_request_id => "1",
-                          :id => "1"
-                        }, {
-                          :path => "/gitorious/mainline/merge_requests/1/merge_request_versions/1",
-                          :method => :get
-                        })
-    end
-
     should "recognize show" do
       assert_recognizes({ :controller => "merge_requests",
                           :action => "show",
