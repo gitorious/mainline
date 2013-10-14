@@ -65,8 +65,8 @@ module Gitorious
       def sepline(line)
         <<-HTML
           <tr class="gts-diff-sepline">
-            <td class="linenum>&hellip;</td>
-            <td class="linenum>&hellip;</td>
+            <td class="linenum">…</td>
+            <td class="linenum">…</td>
             <td class="gts-code"></td>
           </tr>
         HTML
