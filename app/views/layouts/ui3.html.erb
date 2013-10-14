@@ -69,20 +69,20 @@
                 </div>
               </div>
             </div>
+            <% unless (system_message = Gitorious::Configuration.get("system_message")).blank? -%>
+              <%= alerts({ :notice => "<strong>#{t('views.layout.system_notice')}:</strong> #{system_message}" }).html_safe %>
+            <% end -%>
+            <%= alerts(defined?(flash) ? flash : {}).html_safe %>
+            <% if defined?(repository_meta) %>
+              <%= repo_header(repository_meta, {
+                      :current_user => current_user,
+                      :ref => ref,
+                      :active => :source,
+                      :header_level => 2
+                    }) %>
+            <% end %>
           </div>
         </div>
-        <% unless (system_message = Gitorious::Configuration.get("system_message")).blank? -%>
-          <%= alerts({ :notice => "<strong>#{t('views.layout.system_notice')}:</strong> #{system_message}" }).html_safe %>
-        <% end -%>
-        <%= alerts(defined?(flash) ? flash : {}).html_safe %>
-        <% if defined?(repository_meta) %>
-          <%= repo_header(repository_meta, {
-                  :current_user => current_user,
-                  :ref => ref,
-                  :active => :source,
-                  :header_level => 2
-                }) %>
-        <% end %>
         <%= yield %>
       </div>
     </div>
