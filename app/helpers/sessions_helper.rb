@@ -35,9 +35,9 @@ module SessionsHelper
   def menu_items
     return @menu_items if @menu_items
     @menu_items = [[:signup, "Sign up", new_user_path]]
-    @menu_items << [:login, "Log in", login_path]
-    @menu_items << [:openid, "Log in with OpenID", login_path(:method => :openid)] if Gitorious::OpenID.enabled?
-    @menu_items << [:kerberos, "Log in with Kerberos", { :controller => "sessions", :action => "http" }] if Gitorious::Kerberos.enabled?
+    @menu_items << [:login, "Sign in", login_path]
+    @menu_items << [:openid, "Sign in with OpenID", login_path(:method => :openid)] if Gitorious::OpenID.enabled?
+    @menu_items << [:kerberos, "Sign in with Kerberos", { :controller => "sessions", :action => "http" }] if Gitorious::Kerberos.enabled?
     @menu_items << [:forgot_password, t("views.sessions.forgot"), forgot_password_users_path]
     @menu_items
   end

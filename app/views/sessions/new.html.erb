@@ -25,7 +25,7 @@
 <div class="gts-site-header">
   <div class="container">
     <div class="row">
-      <h1 class="span"><%= @title = "Log in to #{Gitorious.site_name}" %></h1>
+      <h1 class="span"><%= @title = "Sign in to #{Gitorious.site_name}" %></h1>
     </div>
     <%= login_menu(Gitorious::OpenID.enabled? && params[:method] == "openid" ? :openid : :login) %>
   </div>
