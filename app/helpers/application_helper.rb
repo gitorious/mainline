@@ -28,7 +28,6 @@ require "gitorious"
 require "gitorious/view/dolt_url_helper"
 require "gitorious/view/repository_helper"
 require "gitorious/view/avatar_helper"
-require "gitorious/encoding"
 
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
@@ -43,7 +42,7 @@ module ApplicationHelper
   include Gitorious::CacheInPrivateHelper
   include DoltViewHelpers
   include Gitorious::View::AvatarHelper
-  include Gitorious::Encoding
+  include ForceUTF8
 
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 
@@ -96,11 +95,13 @@ module ApplicationHelper
   end
 
   def render_markdown(text, *options)
+    # RDiscount < 1.4 doesn't support the :auto_link, use Rails' instead
     auto_link = options.delete(:auto_link)
-    # Libdolt's renderer only offers a markdown helper for rendering the
-    # contents of files - eventually needs to be fixed.
-    markdownized_text = render_markup("text.md", text)
-    markdownized_text = auto_link(markdownized_text, :urls) if auto_link
+    markdown_options = [:smart] + options
+    markdownized_text = markdown(text, markdown_options)
+    if auto_link
+      markdownized_text = auto_link(markdownized_text, :urls)
+    end
     sanitize(markdownized_text).html_safe
   end
 
@@ -298,21 +299,6 @@ module ApplicationHelper
 
   def current_site
     controller.current_site
-  end
-
-  def force_utf8(str)
-    return nil if str.nil?
-
-    if str.respond_to?(:force_encoding)
-      str.force_encoding("UTF-8")
-      if str.valid_encoding?
-        str
-      else
-        str.encode("binary", :invalid => :replace, :undef => :replace).encode("utf-8")
-      end
-    else
-      str.mb_chars
-    end
   end
 
   # Creates a CSS styled <button>.
