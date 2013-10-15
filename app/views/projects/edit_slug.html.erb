@@ -25,27 +25,29 @@
       }) %>
 
 <% @title = "Edit #{project.title} URL string" %>
+
 <div class="container">
-  <h1><%= t("views.projects.edit_slug_title", :link => link_to(h(project.title), project_path(project))) -%></h1>
   <div class="row-fluid">
     <div class="span8">
-      <%= error_messages(project) -%>
       <%= simple_form_for(project, {
               :as => :project,
               :url => edit_slug_project_path(project),
               :method => "put",
               :html => { :class => "form-horizontal" }
-            }) do |form| -%>
+            }) do |form| %>
         <fieldset>
+          <legend>
+            <%= t("views.projects.edit_slug_title", :link => link_to(h(project.title), project_path(project))) %>
+          </legend>
           <%= form.input(:slug, {
                   :label => t(:slug, :scope => "activerecord.attributes.project"),
                   :hint => t('views.projects.edit_slug_disclaimer').html_safe
                 }) %>
           <div class="form-actions">
-            <%= form.submit(t("views.projects.update_slug"), :class => "btn btn-primary") -%>
+            <%= form.submit(t("views.projects.update_slug"), :class => "btn btn-primary") %>
           </div>
         </fieldset>
-      <% end -%>
+      <% end %>
     </div>
   </div>
 </div>
