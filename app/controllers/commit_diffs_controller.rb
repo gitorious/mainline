@@ -36,7 +36,8 @@ class CommitDiffsController < ApplicationController
 
   def compare
     if params[:fragment]
-      find_commit
+      return unless find_commit
+
       @first_commit_id = params[:from_id]
       @diffs = Grit::Commit.diff(@repository.git, @first_commit_id, params[:id])
       render :partial => "compare_diffs", :layout => false and return
@@ -50,11 +51,13 @@ class CommitDiffsController < ApplicationController
     @git = @repository.git
 
     unless @commit = @git.commit(params[:id])
-      render_not_found and return
+      render_not_found and return false
     end
 
     @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
     @committer_user = User.find_by_email_with_aliases(@commit.committer.email)
     @author_user = User.find_by_email_with_aliases(@commit.author.email)
+
+    true
   end
 end

@@ -74,6 +74,14 @@ class CommitDiffsControllerTest < ActionController::TestCase
     end
   end
 
+  context "Comparing arbitrary commits when sha is not found" do
+    should "render 404 page" do
+      @sha = @sha.reverse
+      get :compare, compare_params
+      assert_response 404
+    end
+  end
+
   context "With private projects" do
     setup do
       enable_private_repositories
