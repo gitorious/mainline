@@ -35,6 +35,7 @@
     <div class="span8">
       <%= simple_form_for(project,
                           :builder => Gitorious::View::FormBuilder,
+                          :method => project.persisted? ? :put : :post,
                           :html => { :class => "form form-horizontal" }) do |f| %>
         <fieldset>
           <legend>Edit project</legend>
