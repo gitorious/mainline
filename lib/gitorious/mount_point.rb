@@ -32,8 +32,12 @@ module Gitorious
     end
 
     def host_port
-      return host if port == default_port
+      return host if default_port?
       "#{host}:#{port}"
+    end
+
+    def default_port?
+      port == default_port
     end
 
     # A valid fully qualified domain name is required to contain one
@@ -76,9 +80,13 @@ module Gitorious
     end
 
     def url(path)
-      hp = host_port
-      separator = host_port =~ /:/ ? "/" : ":"
-      "#{user}@#{host_port}#{path.sub(/^\/?/, separator)}"
+      path = path[1..-1] if path[0] == '/'
+
+      if default_port?
+        "#{user}@#{host}:#{path}"
+      else
+        "ssh://#{user}@#{host_port}/#{path}"
+      end
     end
 
     def default_port; 22; end
