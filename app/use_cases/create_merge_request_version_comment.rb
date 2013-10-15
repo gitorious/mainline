@@ -21,8 +21,8 @@ require "commands/create_merge_request_version_comment_command"
 class CreateMergeRequestVersionComment
   include UseCase
 
-  def initialize(user, merge_request_version)
+  def initialize(user, merge_request_version, commit_range = nil)
     input_class(MergeRequestVersionCommentParams)
-    step(CreateMergeRequestVersionCommentCommand.new(user, merge_request_version), :validator => EditableCommentValidator)
+    step(CreateMergeRequestVersionCommentCommand.new(user, merge_request_version, commit_range), :validator => MergeRequestVersionCommentValidator)
   end
 end

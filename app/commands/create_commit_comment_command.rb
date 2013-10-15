@@ -15,15 +15,29 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "use_case"
-require "commands/create_commit_comment_command"
-require "validators/comment_validator"
+require "commands/create_comment_command"
 
-class CreateCommitComment
-  include UseCase
-
+class CreateCommitCommentCommand < CreateCommentCommand
   def initialize(user, repository, commit_id)
-    input_class(CommitCommentParams)
-    step(CreateCommitCommentCommand.new(user, repository, commit_id), :validator => CommitCommentValidator)
+    @commit_id = commit_id
+    super(user, repository)
   end
+
+  def build(params)
+    comment = super(params)
+    comment.sha1 = commit_id
+    comment.context = params.context
+    comment.path = params.path
+    comment.lines = params.lines unless params.lines.blank?
+    comment
+  end
+
+  private
+  attr_reader :commit_id
+end
+
+class CommitCommentParams < CommentParams
+  attribute :context, String
+  attribute :lines, String
+  attribute :path, String
 end

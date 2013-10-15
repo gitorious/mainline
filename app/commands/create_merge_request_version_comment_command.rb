@@ -15,9 +15,15 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "create_commit_comment_command"
 require "create_merge_request_comment_command"
 
 class CreateMergeRequestVersionCommentCommand < CreateMergeRequestCommentCommand
+  def initialize(user, merge_request_version, commit_range = nil)
+    @commit_range = commit_range
+    super(user, merge_request_version)
+  end
+
   def execute(comment)
     comment.save
     create_event(comment)
@@ -26,8 +32,19 @@ class CreateMergeRequestVersionCommentCommand < CreateMergeRequestCommentCommand
     add_to_favorites(comment.target.merge_request, comment.user) if add_to_favorites?
     comment
   end
+
+  def build(params)
+    self.add_to_favorites = params.add_to_favorites
+    CreateCommitCommentCommand.new(user, target, commit_range).build(params)
+  end
+
+  protected
+  attr_reader :commit_range
 end
 
 class MergeRequestVersionCommentParams < CommentParams
   attribute :add_to_favorites, Boolean
+  attribute :context, String
+  attribute :lines, String
+  attribute :path, String
 end

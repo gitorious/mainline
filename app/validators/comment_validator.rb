@@ -39,3 +39,7 @@ class MergeRequestCommentValidator < CommentValidator
     errors.add(:state, "can only be updated by merge request owner")
   end
 end
+
+class MergeRequestVersionCommentValidator < EditableCommentValidator
+  validates_format_of :sha1, :with => /^([a-z0-9]{40}(-[a-z0-9]{40})?)?$/
+end

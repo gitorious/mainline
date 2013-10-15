@@ -34,11 +34,15 @@ class CreateMergeRequestCommentCommand < CreateCommentCommand
   def build(params)
     comment = super
     comment.state = params.state if params.respond_to?(:state)
-    @add_to_favorites = params.add_to_favorites
+    add_to_favorites = params.add_to_favorites
     comment
   end
 
   protected
+  def add_to_favorites=(atf)
+    @add_to_favorites = atf
+  end
+
   def add_to_favorites?
     @add_to_favorites
   end

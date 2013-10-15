@@ -80,4 +80,48 @@ class CreateMergeRequestVersionCommentTest < ActiveSupport::TestCase
 
     assert @merge_request.watched_by?(user)
   end
+
+  should "comment on diff" do
+    range = ["0" * 40, "a" * 40].join("-")
+    outcome = CreateMergeRequestVersionComment.new(@user, @mrv, range).execute({
+        :body => "Nice going!",
+        :context => "+ something",
+        :path => "app/models/version.rb",
+        :lines => "1-1:31-32+32"
+      })
+
+    assert outcome.success?, outcome.to_s
+    assert_equal Comment.last, outcome.result
+    assert_equal "johan", outcome.result.user.login
+    assert_equal "Nice going!", outcome.result.body
+    assert_equal "+ something", outcome.result.context
+    assert_equal "app/models/version.rb", outcome.result.path
+    assert_equal range, outcome.result.sha1
+    assert_equal "1-1", outcome.result.first_line_number
+    assert_equal @mrv, outcome.result.target
+  end
+
+  should "comment on a single commit" do
+    outcome = CreateMergeRequestVersionComment.new(@user, @mrv, "a" * 40).execute({
+        :body => "Nice going!",
+        :context => "+ something",
+        :path => "app/models/version.rb",
+        :lines => "1-1:31-32+32"
+      })
+
+    assert outcome.success?, outcome.to_s
+    assert_equal "a" * 40, outcome.result.sha1
+  end
+
+  should "not allow invalid ref spec" do
+    range = ["a" * 40, "b" * 40, "c" * 40].join("-")
+    outcome = CreateMergeRequestVersionComment.new(@user, @mrv, range).execute({
+        :body => "Nice going!",
+        :context => "+ something",
+        :path => "app/models/version.rb",
+        :lines => "1-1:31-32+32"
+      })
+
+    refute outcome.success?, outcome.to_s
+  end
 end
