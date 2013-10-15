@@ -45,7 +45,6 @@
 <% if form.object.persisted? %>
   <%= form.input(:wiki_permissions, :label => t(:wiki_permissions, :scope => scope), :collection => wiki_permission_choices) %>
 <% end %>
-<%= form.textarea_md_preview(:description, "Description") %>
 <% if form.object.new_record? && Gitorious.private_repositories? %>
   <%= form.private_toggle(params) %>
 <% end %>

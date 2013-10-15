@@ -31,32 +31,38 @@
 <% @title = "Edit #{project.title}" %>
 
 <div class="container">
-  <div class="row-fluid">
-    <div class="span8">
-      <%= simple_form_for(project,
-                          :builder => Gitorious::View::FormBuilder,
-                          :method => project.persisted? ? :put : :post,
-                          :html => { :class => "form form-horizontal" }) do |f| %>
-        <fieldset>
-          <legend>Edit project</legend>
-          <%= render 'form', :form => f, :project => project, :edit_slug => false, :edit_urls => true %>
-          <%= render 'projects/edit/merge_request_statuses', :f => f, :project => project %>
-          <div class="form-actions">
-            <%= f.submit 'Save', :class => 'btn btn-primary' %>
+  <%= simple_form_for(project, :builder => Gitorious::View::FormBuilder, :method => project.persisted? ? :put : :post, :html => { :class => "form form-horizontal" }) do |f| %>
+    <fieldset>
+      <legend>Edit project</legend>
+      <%= tabbable %w(basic-info description merge-request-statuses), :active => 'basic-info' do %>
+        <%= tab_pane 'basic-info', :active => true do %>
+          <div class="row-fluid">
+            <div class="span8">
+              <%= render 'form', :form => f, :project => project, :edit_slug => false, :edit_urls => true %>
+            </div>
+            <% if Gitorious::Configuration.get("enable_sidebar_license_descriptions") %>
+              <div class="span4">
+                <h3>License overview</h3>
+                <dl>
+                  <% ProjectLicense.all.each do |license| %>
+                    <dt><%= license.name %></dt>
+                    <%=raw "<dd>#{license.description}</dd>" if license.description %></dd>
+                  <% end %>
+                </dl>
+              </div>
+            <% end %>
           </div>
-        </fieldset>
+        <% end %>
+        <%= tab_pane 'description' do %>
+          <%= f.textarea_md_preview(:description, 'Description') %>
+        <% end %>
+        <%= tab_pane 'merge-request-statuses' do %>
+          <%= render 'projects/edit/merge_request_statuses', :f => f, :project => project %>
+        <% end %>
+        <div class="form-actions">
+          <%= f.submit 'Save', :class => 'btn btn-primary' %>
+        </div>
       <% end %>
-    </div>
-    <% if Gitorious::Configuration.get("enable_sidebar_license_descriptions") %>
-      <div class="span4">
-        <h3>License overview</h3>
-        <dl>
-          <% ProjectLicense.all.each do |license| %>
-            <dt><%= license.name %></dt>
-            <%=raw "<dd>#{license.description}</dd>" if license.description %></dd>
-          <% end %>
-        </dl>
-      </div>
-    <% end %>
-  </div>
+    </fieldset>
+  <% end %>
 </div>
