@@ -68,7 +68,7 @@ git log --pretty=oneline --abbrev-commit <%= merge_request.target_branch %>..mer
               :url => project_repository_merge_request_version_create_comment_path(project, repository, merge_request, merge_request_version, range),
               :html => { :class => "form-horizontal gts-comment-form", :id => "comment_form_tpl" }
             }) do |form| -%>
-        <%= render "commit_comments/form", :form => form %>
+        <%= render "comments/form", :form => form %>
         <div class="comment-extra"></div>
       <% end %>
     </div>
