@@ -33,6 +33,13 @@
           :"data-gts-preview-target" => "comment-markdown-preview"
         }) %>
 
+  <%= form.hidden_field(:sha1) %>
+  <% if !form.object.path.blank? %>
+    <%= form.hidden_field(:path) %>
+    <%= form.hidden_field(:context) %>
+    <%= form.hidden_field(:lines) %>
+  <% end %>
+
   <% if comment_applies_to_merge_request?(form.object.target) %>
 
     <div class="control-group">

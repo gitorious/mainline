@@ -32,6 +32,18 @@ class CommitCommentsController < CommentsController
     end
   end
 
+  def edit_comment_path(comment)
+    project_repository_edit_commit_comment_path(@project, @repository, comment.sha1, comment.id)
+  end
+
+  def update_comment_path(comment)
+    if comment.new_record?
+      project_repository_create_commit_comment_path(@project, @repository, comment.sha1)
+    else
+      project_repository_update_commit_comment_path(@project, @repository, comment.sha1, comment.id)
+    end
+  end
+
   protected
   # Callbacks from CommentController
   def create_use_case

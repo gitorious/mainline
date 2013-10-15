@@ -85,6 +85,7 @@ class Comment < ActiveRecord::Base
   end
 
   def lines
+    return nil if self.first_line_number.blank?
     "#{self.first_line_number}:#{self.last_line_number}+#{self.number_of_lines}"
   end
 

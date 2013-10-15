@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -24,6 +25,10 @@ class MergeRequestVersion < ActiveRecord::Base
   before_destroy :schedule_branch_deletion
   after_create :add_creation_comment
 
+  def project
+    merge_request.project
+  end
+
   def affected_commits
     Rails.cache.fetch(cache_key + '/affected_commits') do
       @affected_commits ||= merge_request.tracking_repository.git.commits_between(
@@ -40,10 +45,6 @@ class MergeRequestVersion < ActiveRecord::Base
     else
       diff_backend.commit_diff(merge_base_sha, merge_request.ending_commit)
     end
-  end
-
-  def comments_for_path_and_sha(path, sha)
-    comments.select{|c|(c.path == path && c.sha1 == sha_range_string(sha))}
   end
 
   def comments_for_sha(sha, options={})
@@ -66,6 +67,8 @@ class MergeRequestVersion < ActiveRecord::Base
       [affected_commits.last, affected_commits.first].collect(&meth).join("-")
     end
   end
+
+  def to_param; version; end
 
   def diff_backend
     @diff_backend ||= DiffBackend.new(merge_request.target_repository.git)

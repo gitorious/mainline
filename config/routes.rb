@@ -301,10 +301,10 @@ Gitorious::Application.routes.draw do
         resources :comments, :controller => :merge_request_comments, :only => [:new, :create, :edit, :update]
 
         get "/diffs(/:version)" => "merge_request_versions#show", :as => :version
-
-        # resources :merge_request_versions do
-        #   resources :comments
-        # end
+        get "/diffs/:version/comments/:commit_range(.:format)" => "merge_request_version_comments#index", :as => :version_comments
+        post "/diffs/:version/comments/:commit_range" => "merge_request_version_comments#create", :as => :version_create_comment
+        put "/diffs/:version/comments/:id" => "merge_request_version_comments#update", :as => :version_update_comment
+        get "/diffs/:version/comments/:id/edit" => "merge_request_version_comments#edit", :as => :version_edit_comment
       end
 
       resources :repository_memberships, :only => [:new, :create, :destroy]

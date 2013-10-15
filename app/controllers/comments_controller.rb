@@ -93,14 +93,6 @@ class CommentsController < ApplicationController
   end
 
   protected
-  def update_comment_path(comment)
-    project_repository_comment_path(comment.project, comment.repository, comment)
-  end
-
-  def edit_comment_path(comment)
-    edit_project_repository_comment_path(comment.project, comment.repository, comment)
-  end
-
   helper_method :update_comment_path
   helper_method :edit_comment_path
 

@@ -20,6 +20,7 @@ require "timeout"
 
 class MergeRequestVersionsController < ApplicationController
   include Gitorious::View::DoltUrlHelper
+  include ParamsModelResolver
   before_filter :find_project_and_repository
   renders_in_site_specific_context
   layout "ui3"
@@ -47,25 +48,12 @@ class MergeRequestVersionsController < ApplicationController
         :renderer => diff_renderer(params[:diffmode], RepositoryPresenter.new(merge_request.source_repository), commit),
         :commit => commit,
         :diffs => diffs,
-        :timeout => timeout
+        :timeout => timeout,
+        :range => commit_range(params[:commit_shas])
       })
   end
 
   private
-  def merge_request
-    @merge_request ||= authorize_access_to(@repository.merge_requests.public.find_by_sequence_number!(params[:merge_request_id]))
-  end
-
-  def merge_request_version
-    return @merge_request_version if @merge_request_version
-    if params[:version].nil?
-      @merge_request_version = authorize_access_to(merge_request.versions.last)
-    else
-      @merge_request_version = authorize_access_to(merge_request.versions.find_by_version!(params[:version]))
-    end
-    @merge_request_version
-  end
-
   def diff_renderer(mode, repository, commit)
     klass = mode == "sidebyside" ? Gitorious::Diff::SidebysideRenderer : Gitorious::Diff::InlineRenderer
     klass.new(self, repository, commit)
@@ -77,9 +65,13 @@ class MergeRequestVersionsController < ApplicationController
 
   def extract_range_from_parameter(param)
     sha_range = if match = /^([a-z0-9]*)-([a-z0-9]*)$/.match(param)
-      Range.new(match[1],match[2])
+      Range.new(match[1], match[2])
     else
       param
     end
+  end
+
+  def commit_range(range)
+    range || "#{merge_request_version.merge_base_sha}-#{merge_request.ending_commit}"
   end
 end

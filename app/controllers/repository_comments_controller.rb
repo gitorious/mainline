@@ -18,6 +18,14 @@
 require "create_commit_comment"
 
 class RepositoryCommentsController < CommentsController
+  def update_comment_path(comment)
+    project_repository_comment_path(comment.project, comment.repository, comment)
+  end
+
+  def edit_comment_path(comment)
+    edit_project_repository_comment_path(comment.project, comment.repository, comment)
+  end
+
   protected
   # Callbacks from CommentController
   def target

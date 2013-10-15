@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -134,11 +134,6 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
         :project => @merge_request.target_repository.project)
     end
 
-    should 'fetch all comments with the specified path and sha' do
-    assert_equal([@comment],
-      @first_version.comments_for_path_and_sha(@comment.path, "ffac-aafc"))
-    end
-
     should 'fetch all comments with the specified sha' do
       assert_equal([@comment], @first_version.comments_for_sha("ffac-aafc"))
     end
@@ -151,16 +146,6 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
         )
       assert_equal([@comment, @mr_comment], @first_version.comments_for_sha("ffac-aafc",
           :include_merge_request_comments => true))
-    end
-
-
-    should 'fetch all comments when given a Range' do
-      assert_equal([@comment], @first_version.comments_for_path_and_sha(@comment.path, ("ffac".."aafc")))
-    end
-
-    should 'not fetch comments with a different sha or path' do
-      assert_equal([], @first_version.comments_for_path_and_sha(@comment.path, "fac-afc"))
-      assert_equal([], @first_version.comments_for_path_and_sha("foo/bar.rb", "ffac-aafc"))
     end
   end
 

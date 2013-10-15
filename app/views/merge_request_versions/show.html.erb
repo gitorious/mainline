@@ -59,4 +59,18 @@ git log --pretty=oneline --abbrev-commit <%= merge_request.target_branch %>..mer
       <%= renderer.render(diff).html_safe %>
     <% end %>
   <% end %>
+
+  <div class="gts-commit-comments" data-gts-env-commit-comments-url="<%= project_repository_merge_request_version_comments_path(project, repository, merge_request, merge_request_version, range, :format => "json") %>">
+    <h3>Comments</h3>
+    <div class="hidden">
+      <%= simple_form_for(merge_request_version.comments.new, {
+              :as => :comment,
+              :url => project_repository_merge_request_version_create_comment_path(project, repository, merge_request, merge_request_version, range),
+              :html => { :class => "form-horizontal gts-comment-form", :id => "comment_form_tpl" }
+            }) do |form| -%>
+        <%= render(:partial => "commit_comments/form", :locals => { :form => form }) %>
+        <div class="comment-extra"></div>
+      <% end %>
+    </div>
+  </div>
 </div>

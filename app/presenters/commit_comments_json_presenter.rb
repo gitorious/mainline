@@ -57,8 +57,8 @@ class CommitCommentsJSONPresenter
       "firstLine" => comment.first_line_number,
       "lastLine" => comment.last_line_number,
       "context" => comment.context,
-      "path" => comment.path }.merge(user != comment.user ? {} : {
-        "editPath" => app.project_repository_edit_commit_comment_path(project, repository, comment.sha1, comment.id)
+      "path" => comment.path }.merge(!app.can_edit?(user, comment) ? {} : {
+        "editPath" => app.edit_comment_path(comment)
       })
   end
 

@@ -19,10 +19,11 @@ require "fast_test_helper"
 require "commit_comments_json_presenter"
 
 class App
+  def can_edit?(user, comment); false; end
   def user_path(user); "/~#{user.login}"; end
   def avatar_url(user); "http://www.gravatar.com/avatar/a59f9d19e6a527f11b016650dde6f4c9&amp;default=http://gitorious.test/images/default_face.gif"; end
-  def project_repository_edit_commit_comment_path(project, repository, oid, id)
-    "/#{project.slug}/#{repository.name}/#{oid}/comments/#{id}/edit"
+  def edit_comment_path(comment)
+    "/comments/#{comment.id}/edit"
   end
 end
 
@@ -125,7 +126,9 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
     end
 
     it "includes update path for comment author" do
-      presenter = CommitCommentsJSONPresenter.new(App.new, [Comment.new({
+      app = App.new
+      def app.can_edit?(user, comment); true; end
+      presenter = CommitCommentsJSONPresenter.new(app, [Comment.new({
               :id => 42,
               :user => @user,
               :body => "[Hey](http://somewhere.com)",
@@ -136,7 +139,7 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
             })])
 
       edit_path = presenter.hash_for(@user)["commit"][0]["editPath"]
-      assert_equal("/gitorious/mainline/0123456/comments/42/edit", edit_path)
+      assert_equal("/comments/42/edit", edit_path)
     end
   end
 end
