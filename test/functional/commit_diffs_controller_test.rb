@@ -72,13 +72,10 @@ class CommitDiffsControllerTest < ActionController::TestCase
       get :compare, compare_params
       assert_response :success
     end
-  end
 
-  context "Comparing arbitrary commits when sha is not found" do
-    should "render 404 page" do
-      @sha = @sha.reverse
-      get :compare, compare_params
-      assert_response 404
+    should "render not found when given commit does not exist" do
+      get :compare, compare_params.merge(:id => "does-not-exist")
+      assert_response :not_found
     end
   end
 
