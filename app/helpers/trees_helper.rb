@@ -32,22 +32,6 @@ module TreesHelper
     current_path << path
   end
 
-  def breadcrumb_path(root_name = "root", commit_id = @ref)
-    out = %Q{<ul class="path_breadcrumbs">\n}
-    visited_path = []
-    out <<  %Q{  <li>/ #{link_to(root_name, tree_path(commit_id, []))}</li>\n}
-    current_path.each_with_index do |path, index|
-      visited_path << path
-      if visited_path == current_path
-        out << %Q{  <li>/ #{path}</li>\n}
-      else
-        out << %Q{  <li>/ #{link_to(path, tree_path(commit_id, visited_path))}</li>\n}
-      end
-    end
-    out << "</ul>"
-    out.html_safe
-  end
-
   def render_tag_box_if_match(sha, tags_per_sha)
     tags = tags_per_sha[sha]
     return if tags.blank?

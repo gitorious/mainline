@@ -400,25 +400,6 @@ class RepositoryTest < ActiveSupport::TestCase
     assert @repository.wiki?, "@repository.wiki? should be true"
   end
 
-  should "have a parent, which is the owner" do
-    @repository.kind = Repository::KIND_TEAM_REPO
-    @repository.owner = groups(:team_thunderbird)
-    assert_equal groups(:team_thunderbird), @repository.breadcrumb_parent
-
-    @repository.kind = Repository::KIND_USER_REPO
-    @repository.owner = users(:johan)
-    assert_equal users(:johan), @repository.breadcrumb_parent
-  end
-
-  should "have a parent, which is the project for mainlines" do
-    @repository.kind = Repository::KIND_PROJECT_REPO
-    @repository.owner = groups(:team_thunderbird)
-    assert_equal projects(:johans), @repository.breadcrumb_parent
-
-    @repository.owner = users(:johan)
-    assert_equal projects(:johans), @repository.breadcrumb_parent
-  end
-
   should "return its name as title" do
     assert_equal @repository.title, @repository.name
   end

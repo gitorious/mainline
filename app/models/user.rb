@@ -219,10 +219,6 @@ class User < ActiveRecord::Base
     crypted_password == encrypt(password)
   end
 
-  def breadcrumb_parent
-    nil
-  end
-
   def remember_token?
     remember_token_expires_at && Time.now.utc < remember_token_expires_at
   end

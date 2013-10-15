@@ -26,10 +26,6 @@ class Membership < ActiveRecord::Base
   before_destroy :nullify_messages
   attr_accessor :inviter
 
-  def breadcrumb_parent
-    Breadcrumb::Memberships.new(group)
-  end
-
   def title
     "Member"
   end

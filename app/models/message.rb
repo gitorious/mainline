@@ -86,10 +86,6 @@ class Message < ActiveRecord::Base
     end
   end
 
-  def breadcrumb_parent
-    in_reply_to || Breadcrumb::Messages.new(sender)
-  end
-
   def replies_enabled?
     notifiable.nil?
   end
@@ -112,13 +108,8 @@ class Message < ActiveRecord::Base
     (notifiable || self).class.name.underscore
   end
 
-  # Used in breadcrumbs
   def title
     subject || I18n.t("views.messages.new")
-  end
-
-  def breadcrumb_css_class
-    "new_email"
   end
 
   def number_of_messages_in_thread

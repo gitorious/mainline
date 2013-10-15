@@ -85,10 +85,6 @@ class LdapGroup < ActiveRecord::Base
     name
   end
 
-  def breadcrumb_parent
-    nil
-  end
-
   def title
     name
   end

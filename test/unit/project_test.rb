@@ -112,11 +112,6 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal "Project A\nProject A is a....", project.stripped_description
   end
 
-  should "have a breadcrumb_parent method which returns nil" do
-    project = create_project
-    assert_nil project.breadcrumb_parent
-  end
-
   should "remove leading and trailing whitespace from the URL" do
     p = projects(:johans)
     p.home_url = " http://foo.com/ "

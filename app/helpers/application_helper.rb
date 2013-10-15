@@ -33,7 +33,6 @@ require "gitorious/view/avatar_helper"
 module ApplicationHelper
   include ActsAsTaggableOn::TagsHelper
   include UsersHelper
-  include BreadcrumbsHelper
   include EventRenderingHelper
   include RoutingHelper
   include SiteWikiPagesHelper

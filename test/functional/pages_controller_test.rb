@@ -81,23 +81,6 @@ class PagesControllerTest < ActionController::TestCase
     end
   end
 
-  context "Preview" do
-    setup do
-      page_stub = mock("page stub")
-      page_stub.expects(:content=)
-      page_stub.expects(:content).returns("Messing around with wiki markup")
-      page_stub.expects(:save).never
-      Repository.any_instance.expects(:git).returns(mock("git"))
-      Page.expects(:find).returns(page_stub)
-    end
-
-    should "render the preview for an existing page" do
-      login_as :johan
-      put :preview, :project_id => @project.to_param, :id => "Sandbox", :format => "js", :page => {:content => "Foo"}
-      assert_response :success
-    end
-  end
-
   context "write permissions restricted to project members" do
     setup do
       @repo.update_attribute(:wiki_permissions, WikiRepository::WRITABLE_PROJECT_MEMBERS)
@@ -180,21 +163,6 @@ class PagesControllerTest < ActionController::TestCase
         Repository.any_instance.stubs(:git).returns(git_stub)
         get :edit, :project_id => @project.to_param, :id => "GreatSuccess"
         assert_response :success
-      end
-    end
-
-    context "put preview" do
-      should "disallow unauthenticated users" do
-        login_as :mike
-        put :preview, :project_id => @project.to_param, :id => "Sandbox", :format => "js", :page => {:content => "Foo"}
-        assert_response 403
-      end
-
-      should "allow authenticated users" do
-        login_as :johan
-        assert_raise Grit::NoSuchPathError do
-          put :preview, :project_id => @project.to_param, :id => "Sandbox", :format => "js", :page => {:content => "Foo"}
-        end
       end
     end
 

@@ -77,10 +77,6 @@ class Group < ActiveRecord::Base
     name
   end
 
-  def breadcrumb_parent
-    nil
-  end
-
   def member?(user)
     members.include?(user)
   end

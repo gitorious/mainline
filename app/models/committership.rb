@@ -100,10 +100,6 @@ class Committership < ActiveRecord::Base
     PERMISSION_TABLE.keys.select{|perm| permitted?(perm) }
   end
 
-  def breadcrumb_parent
-    Breadcrumb::Committerships.new(repository)
-  end
-
   def title
     new_record? ? "New collaborator" : "Collaborator"
   end

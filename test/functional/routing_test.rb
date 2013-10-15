@@ -665,12 +665,6 @@ class RoutingTest < ActionController::TestCase
                          :action => "history",
                          :id => "Testpage"
                        })
-
-      assert_generates("/wiki/Testpage/preview", {
-                         :controller => "site_wiki_pages",
-                         :action => "preview",
-                         :id => "Testpage"
-                       })
     end
 
     should "recognize /wiki/<sitename>/config" do

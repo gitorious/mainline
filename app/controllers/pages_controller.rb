@@ -44,14 +44,6 @@ class PagesController < WikiController
     render_edit(ProjectPresenter.new(@project), page)
   end
 
-  def preview
-    @page, @root = page_and_root
-    @page.content = params[:page][:content]
-    respond_to do |wants|
-      wants.js
-    end
-  end
-
   def update
     @page = Page.find(params[:id], @project.wiki_repository.git)
     @page.user = current_user
@@ -94,12 +86,6 @@ class PagesController < WikiController
     unless @project.wiki_enabled?
       redirect_to project_path(@project) and return
     end
-  end
-
-  def page_and_root
-    page = Page.find(params[:id], @project.wiki_repository.git)
-    root = Breadcrumb::Page.new(page, @project)
-    return page, root
   end
 
   def require_write_permissions

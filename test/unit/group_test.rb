@@ -94,10 +94,6 @@ class GroupTest < ActiveSupport::TestCase
     assert_equal "+#{grp.to_param}", grp.to_param_with_prefix
   end
 
-  should "has no breadcrumb parent" do
-    assert_equal nil, FactoryGirl.build(:group).breadcrumb_parent
-  end
-
   context 'Deleting groups' do
     setup do
       @group = FactoryGirl.create(:group)

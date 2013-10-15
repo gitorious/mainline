@@ -130,7 +130,6 @@ Gitorious::Application.routes.draw do
     end
 
     member do
-      put :preview
       get :history
     end
   end
@@ -240,7 +239,6 @@ Gitorious::Application.routes.draw do
       end
 
       member do
-        put :preview
         get :history
       end
     end

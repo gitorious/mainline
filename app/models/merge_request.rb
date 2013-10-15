@@ -316,14 +316,6 @@ class MergeRequest < ActiveRecord::Base
     target_repository.git.branches || []
   end
 
-  def breadcrumb_parent
-    Breadcrumb::MergeRequests.new(target_repository)
-  end
-
-  def breadcrumb_css_class
-    "merge_request"
-  end
-
   def title
     to_param
   end

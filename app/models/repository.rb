@@ -491,14 +491,6 @@ class Repository < ActiveRecord::Base
     wiki? || tracking_repo?
   end
 
-  def breadcrumb_parent
-    if mainline?
-      project
-    else
-      owner
-    end
-  end
-
   def title
     name
   end

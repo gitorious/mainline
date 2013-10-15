@@ -185,10 +185,6 @@ class Project < ActiveRecord::Base
     return events_count < 1
   end
 
-  def breadcrumb_parent
-    nil
-  end
-
   # TODO: Add tests
   def oauth_consumer
     @oauth_consumer ||= OAuth::Consumer.new(oauth_signoff_key, oauth_signoff_secret, oauth_consumer_options)
