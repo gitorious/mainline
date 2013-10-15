@@ -130,9 +130,9 @@ class MountPointTest < MiniTest::Spec
 
     it "generates ssh url for non-standard port" do
       mp = Gitorious::GitSshMountPoint.new("git", "gitorious.org", 443)
-      url = mp.url("gitorious/mainline.git")
+      url = mp.url("/gitorious/mainline.git")
 
-      assert_equal "git@gitorious.org:443/gitorious/mainline.git", url
+      assert_equal "ssh://git@gitorious.org:443/gitorious/mainline.git", url
     end
   end
 end
