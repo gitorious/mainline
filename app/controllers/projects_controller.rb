@@ -155,20 +155,18 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    @groups = current_user.groups.select{|g| admin?(current_user, g) }
-    @root = Breadcrumb::EditProject.new(@project)
-    @project.attributes = params[:project]
+    outcome = UpdateProject.new(current_user, @project).execute(params[:project])
 
-    changed = @project.changed? # Dirty attr tracking is cleared after #save
-    validation = ProjectValidator.call(@project)
-
-    if validation.valid? && @project.save && @project.wiki_repository.save
-      @project.create_event(Action::UPDATE_PROJECT, @project, current_user) if changed
+    outcome.success do |project|
       flash[:success] = "Project details updated"
-      redirect_to project_path(@project)
-    else
-      @validator = validation
-      render_edit_form(@project)
+      redirect_to(project)
+    end
+
+    pre_condition_failed(outcome)
+
+    outcome.failure do |validator|
+      flash[:error] = "Failed to update the project"
+      render_edit_form(validator)
     end
   end
 

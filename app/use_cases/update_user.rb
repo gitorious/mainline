@@ -53,7 +53,9 @@ class UpdateUserParams
   attribute :wants_email_notifications, Boolean
   attribute :default_favorite_notifications, Boolean
 
-  def to_hash; super.reject { |k,v| v.nil? }; end
+  def to_hash
+    super.reject { |k,v| v.nil? }
+  end
 end
 
 class UpdateUser

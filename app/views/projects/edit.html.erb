@@ -33,13 +33,13 @@
 <div class="container">
   <div class="row-fluid">
     <div class="span8">
-      <%= simple_form_for(project, :as => :project, :url => project_path(project),
+      <%= simple_form_for(project,
                           :builder => Gitorious::View::FormBuilder,
                           :html => { :class => "form form-horizontal" }) do |f| %>
         <fieldset>
           <legend>Edit project</legend>
           <%= render 'form', :form => f, :project => project, :edit_slug => false, :edit_urls => true %>
-          <%= render 'projects/edit/merge_request_statuses', :f => f %>
+          <%= render 'projects/edit/merge_request_statuses', :f => f, :project => project %>
           <div class="form-actions">
             <%= f.submit 'Save', :class => 'btn btn-primary' %>
           </div>

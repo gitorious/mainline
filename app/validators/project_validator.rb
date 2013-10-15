@@ -19,23 +19,40 @@ require "use_case"
 
 ProjectValidator = UseCase::Validator.define do
   NAME_FORMAT = /[a-z0-9_\-]+/.freeze
+  URL_FORMAT  = %r{\Ahttps?:\/\/([^\s:@]+:[^\s:@]*@)?[A-Za-z\d\-]+(\.[A-Za-z\d\-]+)+\.?(:\d{1,5})?([\/?]\S*)?\Z}i
+
   validates_presence_of(:title, :user_id, :slug, :description, :owner_id)
   validates_format_of(:slug, :with => /^#{NAME_FORMAT}$/i,
     :message => I18n.t( "project.format_slug_validation"))
   validates_exclusion_of(:slug, :in => lambda { |p| Project.reserved_slugs })
 
-  URL_FORMAT = %r{\Ahttps?:\/\/([^\s:@]+:[^\s:@]*@)?[A-Za-z\d\-]+(\.[A-Za-z\d\-]+)+\.?(:\d{1,5})?([\/?]\S*)?\Z}i
   validates_format_of(:home_url, :with => URL_FORMAT, :allow_nil => true, :message => I18n.t("project.ssl_required"))
   validates_format_of(:mailinglist_url, :with => URL_FORMAT, :allow_nil => true, :message => I18n.t("project.ssl_required"))
   validates_format_of(:bugtracker_url, :with => URL_FORMAT, :allow_nil => true, :message => I18n.t("project.ssl_required"))
 
   validate :unique_slug
 
-  def unique_slug
-    errors.add(:slug, I18n.t("project.unique_slug_validation_message")) if !uniq?
-  end
-
   def self.model_name
     Project.model_name
+  end
+
+  def to_param
+    @target.slug
+  end
+
+  private
+
+  def unique_slug
+    unless uniq?
+      errors.add(:slug, I18n.t("project.unique_slug_validation_message"))
+    end
+  end
+
+  def method_missing(method, *args, &block)
+    if @target.respond_to?(method)
+      @target.public_send(method, *args, &block)
+    else
+      super
+    end
   end
 end

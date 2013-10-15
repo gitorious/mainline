@@ -13,8 +13,9 @@
         </tr>
       </thead>
       <%= f.fields_for(:merge_request_statuses) do |status_form| %>
-        <%= render :partial => "merge_request_status_form",
-            :locals => { :form => status_form, :project_form => f } %>
+        <% if status_form.object %>
+          <%= render "merge_request_status_form", :form => status_form, :project_form => f %>
+        <% end %>
       <% end %>
       <% content_for(:footer) do %>
         <script src="/ui3/js/src/components/merge-request.js"></script>
