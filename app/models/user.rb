@@ -48,6 +48,7 @@ class User < ActiveRecord::Base
   has_many :favorites, :dependent => :destroy
   has_many :feed_items, :foreign_key => "watcher_id"
   has_many :content_memberships, :as => :member
+  has_many :created_groups, :class_name => "Group", :dependent => :destroy
 
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :password_confirmation, :current_password, :terms_of_use
@@ -337,7 +338,11 @@ class User < ActiveRecord::Base
   end
 
   def deletable?
-    repositories.count == 0 && projects.count == 0
+    repositories.count == 0 && projects.count == 0 && created_groups_have_no_other_members?
+  end
+
+  def created_groups_have_no_other_members?
+    created_groups.select { |g| g.members.count > 1 }.empty?
   end
 
   def self.admins

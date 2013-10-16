@@ -22,7 +22,6 @@ class Membership < ActiveRecord::Base
   belongs_to :user
   belongs_to :role
   has_many :messages, :as => :notifiable
-  before_destroy :dont_delete_group_creator
   before_destroy :nullify_messages
   attr_accessor :inviter
 
@@ -40,9 +39,6 @@ class Membership < ActiveRecord::Base
   end
 
   protected
-  def dont_delete_group_creator
-    return user != group.creator
-  end
 
   def nullify_messages
     messages.update_all({:notifiable_id => nil, :notifiable_type => nil})
