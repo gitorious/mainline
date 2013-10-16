@@ -41,8 +41,6 @@ class ApplicationController < ActionController::Base
 
   after_filter :mark_flash_status
 
-  layout :pick_layout_based_on_site
-
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
   rescue_from ActionController::UnknownController, :with => :render_not_found
   rescue_from ::AbstractController::ActionNotFound, :with => :render_not_found
@@ -241,14 +239,6 @@ class ApplicationController < ActionController::Base
   # Hook for Gitorious::View::SiteHelper#find_current_site
   def current_project
     @project
-  end
-
-  def pick_layout_based_on_site
-    if current_site && current_site.subdomain
-      current_site.subdomain
-    else
-      "application"
-    end
   end
 
   def redirect_to_current_site_subdomain
