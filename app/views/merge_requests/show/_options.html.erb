@@ -21,7 +21,11 @@
   <div class="btn-group">
     <% if merge_request.user == current_user %>
       <%= link_to t('views.common.edit'), [:edit, merge_request.source_repository.project, merge_request.target_repository, merge_request], :class => 'btn' %>
-      <%= link_to t('views.common.delete'), [merge_request.source_repository.project, merge_request.target_repository, merge_request], :method => :delete, :confirm => 'Are you sure you want to delete this merge request?', :class => 'btn' %>
+      <%= link_to t('views.common.delete'),
+        [merge_request.source_repository.project, merge_request.target_repository, merge_request],
+        :method => :delete,
+        :data => { :confirm => 'Are you sure you want to delete this merge request?' },
+        :class => 'btn' %>
     <% end %>
     <%= favorite_button(merge_request) %>
   </div>
