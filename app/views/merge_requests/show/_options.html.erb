@@ -20,7 +20,9 @@
 <div class="options">
   <div class="btn-group">
     <% if merge_request.user == current_user %>
-      <%= link_to t('views.common.edit'), [:edit, merge_request.source_repository.project, merge_request.target_repository, merge_request], :class => 'btn' %>
+      <%= link_to t('views.common.edit'),
+        [:edit, merge_request.source_repository.project, merge_request.target_repository, merge_request],
+        :class => 'btn' %>
       <%= link_to t('views.common.delete'),
         [merge_request.source_repository.project, merge_request.target_repository, merge_request],
         :method => :delete,

@@ -30,13 +30,13 @@ module FavoritesHelper
 
   def create_favorite_link_to(watchable)
     url = favorites_path(:watchable_id => watchable.id, :watchable_type => watchable.class.name)
-    link_to("Watch", url, :"data-request-method" => "post", :class => "btn disabled")
+    link_to('<i class="icon icon-star"></i> Watch'.html_safe, url, :method => 'post', :class => 'btn')
   end
 
   def destroy_favorite_link_to(favorite, watchable, options = {})
-    name = options[:label] || "Unwatch"
+    name = options[:label] || '<i class="icon icon-star-empty"></i> Unwatch'.html_safe
     url  = favorite_path(favorite)
-    link_to(name, url, :"data-request-method" => "delete", :class => "btn")
+    link_to(name, url, :method => 'delete', :class => 'btn')
   end
 
   def link_to_notification_toggle(favorite)

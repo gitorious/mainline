@@ -44,14 +44,14 @@ class FavoritesController < ApplicationController
     @favorite.create_event
 
     respond_to do |wants|
-      wants.html {
-        flash[:notice] = "You are now watching this #{@watchable.class.name.downcase}"
-        redirect_to([@watchable.project, @watchable])
-      }
-      wants.js {
+      wants.html do
+        redirect_to :back
+      end
+
+      wants.js do
         render :status => :created, :nothing => true,
           :location => polymorphic_path(@favorite)
-      }
+      end
     end
   end
 
@@ -61,7 +61,6 @@ class FavoritesController < ApplicationController
     watchable = @favorite.watchable
     respond_to do |wants|
       wants.html do
-        flash[:notice] = "You no longer watch this #{watchable.class.name.downcase}"
         redirect_to :back
       end
 

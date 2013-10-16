@@ -29,8 +29,10 @@ class FavoritesControllerTest < ActionController::TestCase
     setup_ssl_from_config
   end
 
-  def do_create_post(type, id, extra_options={})
-    post :create, extra_options.merge(:watchable_type => type, :watchable_id => id)
+  def do_create_post(type, id, options = {})
+    url = options.fetch(:referer, 'http://gitorious.test/somewhere')
+    request.env['HTTP_REFERER'] = url
+    post :create, options.merge(:watchable_type => type, :watchable_id => id)
   end
 
   context "Creating a new favorite" do
@@ -98,7 +100,8 @@ class FavoritesControllerTest < ActionController::TestCase
     end
 
     should "redirect to the watchable itself" do
-      do_create_post(@repository.class.name, @repository.id)
+      url = project_repository_path(@repository.project, @repository)
+      do_create_post(@repository.class.name, @repository.id, :referer => url)
       assert_redirected_to([@repository.project, @repository])
     end
 

@@ -149,7 +149,8 @@ class UserEditTest < ActionDispatch::IntegrationTest
       page.must_have_content('off')
       click_on 'Unwatch'
     end
-    page.must_have_content('You no longer watch this repository')
+    assert page.has_selector?('.table tbody tr', :count => 0),
+      'Unwatched item should be removed from the list'
   end
 
 end
