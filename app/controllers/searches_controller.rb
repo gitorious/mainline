@@ -49,8 +49,6 @@ class SearchesController < ApplicationController
       filtered_results_length = @results.length
       @total_entries = @all_results.total_entries - (unfiltered_results_length - filtered_results_length)
     end
-
-    render :layout => 'ui3'
   end
 
   private

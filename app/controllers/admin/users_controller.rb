@@ -21,7 +21,6 @@
 module Admin
   class UsersController < AdminController
     include Gitorious::UserAdministration
-    layout "ui3"
 
     def index
       scope = User.order("suspended_at, login")

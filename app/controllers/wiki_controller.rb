@@ -17,8 +17,6 @@
 #++
 
 class WikiController < ApplicationController
-  layout "ui3"
-
   protected
   def render_index(owner, wiki, atom_path)
     respond_to do |format|

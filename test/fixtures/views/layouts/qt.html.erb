@@ -26,7 +26,6 @@
           "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
   <head>
-    <%= render :partial => "layouts/common_head" %>
   </head>
 
   <body id="<%= controller.controller_name -%>">
@@ -48,7 +47,6 @@
         <% if not logged_in? -%>
           <li><%= link_to t("views.layout.about"), about_path -%></li>
         <% end -%>
-        <%= render "layouts/login_logout" -%>
       </ul>
 
       <% if Gitorious.public? -%>
@@ -101,7 +99,6 @@
         </div>
       <% end -%>
       <div id="footer">
-        <%= render :partial => "layouts/common_footer"  -%>
         <ul class="footer-links">
           <li><%= link_to t("views.layout.home"), root_path -%> | </li>
           <li><%= link_to t("views.layout.about"), about_path -%> | </li>

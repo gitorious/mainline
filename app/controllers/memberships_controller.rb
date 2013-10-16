@@ -21,7 +21,6 @@ class MembershipsController < ApplicationController
   before_filter :find_group
   before_filter :ensure_group_adminship, :except => [:index, :show, :create]
   renders_in_global_context
-  layout "ui3"
 
   def index
     memberships = paginate(page_free_redirect_options) do

@@ -23,7 +23,6 @@ class CommittershipsController < ApplicationController
   before_filter :find_repository
   before_filter :require_adminship
   renders_in_site_specific_context
-  layout "ui3"
 
   def index
     render_index(@repository, @repository.committerships.new)

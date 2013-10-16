@@ -33,7 +33,6 @@ require 'open_id_authentication'
 class SessionsController < ApplicationController
   skip_before_filter :public_and_logged_in
   renders_in_site_specific_context
-  layout "ui3"
   before_filter :validate_request_host, :only => :create
 
   include OpenIdAuthentication::ControllerMethods

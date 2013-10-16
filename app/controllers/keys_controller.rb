@@ -90,9 +90,9 @@ class KeysController < ApplicationController
   end
 
   def render_form(ssh_key = @ssh_key)
-    render 'users/edit', :locals => {
-      :user => current_user, :active_tab => 'ssh-keys', :ssh_key => ssh_key
-    }, :layout => 'ui3'
+    render("users/edit", :locals => {
+      :user => current_user, :active_tab => "ssh-keys", :ssh_key => ssh_key
+    })
   end
 
 end

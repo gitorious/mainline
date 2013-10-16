@@ -27,7 +27,6 @@ class CommitDiffsController < ApplicationController
   include Gitorious::View::DoltUrlHelper
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
-  layout "ui3"
   skip_session
   after_filter :cache_forever
   renders_in_site_specific_context

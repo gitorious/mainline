@@ -70,9 +70,9 @@ class AliasesController < ApplicationController
   protected
 
   def render_form
-    render "users/edit", :locals => {
+    render("users/edit", :locals => {
       :user => @user, :active_tab => 'email-aliases', :email => @email
-    }, :layout => 'ui3'
+    })
   end
 
   def find_user

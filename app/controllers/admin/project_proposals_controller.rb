@@ -19,7 +19,6 @@
 module Admin
   class ProjectProposalsController < AdminController
     before_filter :require_site_admin, :except => [:new, :create]
-    layout "ui3"
 
     def index
       render(:index, :locals => { :proposals => ProjectProposal.all })

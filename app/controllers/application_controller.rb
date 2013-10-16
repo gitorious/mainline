@@ -177,7 +177,7 @@ class ApplicationController < ActionController::Base
 
   def render_git_timeout
     render("/shared/_git_timeout",
-           :layout => (request.xhr? ? false : "ui3"))
+           :layout => (request.xhr? ? false : "application"))
     return false
   end
 

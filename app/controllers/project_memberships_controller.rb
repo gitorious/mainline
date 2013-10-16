@@ -23,7 +23,7 @@ class ProjectMembershipsController < ContentMembershipsController
   before_filter :require_private_repos
 
   def index
-    render("index", :layout => "ui3", :locals => {
+    render("index", :locals => {
         :memberships => content.content_memberships,
         :project => @project
       })
@@ -31,7 +31,7 @@ class ProjectMembershipsController < ContentMembershipsController
 
   protected
   def create_error(membership)
-    render("index", :layout => "ui3", :locals => {
+    render("index", :locals => {
         :memberships => content.content_memberships,
         :project => @project,
         :membership => membership

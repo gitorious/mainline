@@ -20,7 +20,6 @@ class RepositoryOwnershipsController < ApplicationController
   before_filter :login_required
   before_filter :load_authorized_repository
   renders_in_site_specific_context
-  layout "ui3"
 
   def update
     groups = Team.for_user(current_user)

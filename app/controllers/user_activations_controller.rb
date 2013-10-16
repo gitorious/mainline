@@ -21,7 +21,6 @@ class UserActivationsController < ApplicationController
   before_filter :require_not_logged_in, :only => [:show]
 
   renders_in_global_context
-  layout "ui3"
 
   def show; end
 

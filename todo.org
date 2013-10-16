@@ -1,7 +1,7 @@
 * Gitorious 3 [0/2]
 ** TODO Add tests for repository browser
 ** TODO Auto-complete for users/teams in collaborator/committership form
-* Views to port to UI3 [68/71]
+* Views to port to UI3 [71/71]
 ** DONE Admin::Diagnostics#index
 ** DONE Admin::OauthSettings#edit
 ** DONE Admin::ProjectProposals#index
@@ -29,11 +29,11 @@
 ** DONE Memberships#edit
 ** DONE Memberships#index
 ** DONE Memberships#new
-** TODO MergeRequests#edit
+** DONE MergeRequests#edit
 ** DONE MergeRequests#index
 ** DONE MergeRequests#new
-** TODO MergeRequests#show
-** TODO MergeRequestVersions#show
+** DONE MergeRequests#show
+** DONE MergeRequestVersions#show
 ** DONE Messages#index
 ** DONE Messages#new
 ** DONE Messages#sent

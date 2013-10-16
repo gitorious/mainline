@@ -23,7 +23,6 @@
 
 class UsersController < ApplicationController
   renders_in_global_context
-  layout "ui3"
   before_filter :login_required, :only => [:edit, :update]
   before_filter :find_user, :only => [:show, :edit, :update]
   before_filter :require_current_user, :only => [:edit, :update]

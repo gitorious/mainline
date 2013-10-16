@@ -23,7 +23,6 @@ class MergeRequestVersionsController < ApplicationController
   include ParamsModelResolver
   before_filter :find_project_and_repository
   renders_in_site_specific_context
-  layout "ui3"
 
   def show
     diffs = []

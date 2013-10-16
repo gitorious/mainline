@@ -44,15 +44,15 @@ class SiteController < ApplicationController
   end
 
   def about
-    render :about, :layout => "ui3"
+    render :about
   end
 
   def faq
-    render :faq, :layout => "ui3"
+    render :faq
   end
 
   def contact
-    render :contact, :layout => "ui3"
+    render :contact
   end
 
   protected
@@ -74,13 +74,13 @@ class SiteController < ApplicationController
     @active_users = User.most_active
     @active_groups = Group.most_active
     @latest_events = filter(Event.latest(25))
-    render :template => "site/index", :layout => 'ui3'
+    render :template => "site/index"
   end
 
   def render_dashboard
     @user = current_user
 
-    render :template => "site/dashboard", :layout => 'ui3', :locals => {
+    render :template => "site/dashboard", :locals => {
       :user => current_user,
       :events => events,
       :user_events => user_events,
@@ -152,7 +152,7 @@ class SiteController < ApplicationController
         []
       end
     end
-    render :template => "site/public_index", :layout => "ui3"
+    render :template => "site/public_index"
   end
 
   # Render the global index template

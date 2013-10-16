@@ -18,8 +18,6 @@
 
 module Admin
   class DiagnosticsController < ApplicationController
-    layout "ui3"
-
     if Rails.env.test?
       include Gitorious::Diagnostics::Test
     else

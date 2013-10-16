@@ -19,7 +19,6 @@
 class ProjectOwnershipsController < ApplicationController
   before_filter :login_required
   renders_in_site_specific_context
-  layout "ui3"
 
   def update
     uc = TransferProjectOwnership.new(self, project, current_user)

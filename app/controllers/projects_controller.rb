@@ -45,7 +45,7 @@ class ProjectsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        render(:index, :layout => "ui3", :locals => {
+        render(:index, :locals => {
             :atom_auto_discovery_url => projects_path(:format => :atom),
             :projects => projects,
             :total_pages => total_pages,
@@ -78,7 +78,7 @@ class ProjectsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        render(:show, :layout => "ui3", :locals => {
+        render(:show, :locals => {
             :project => ProjectPresenter.new(@project),
             :events => events,
             :current_page => page,
@@ -151,7 +151,7 @@ class ProjectsController < ApplicationController
         flash[:error] = "The slug isn't unique"
       end
     end
-    render("edit_slug", :layout => "ui3", :locals => { :project => @project })
+    render("edit_slug", :locals => { :project => @project })
   end
 
   def update
@@ -180,7 +180,7 @@ class ProjectsController < ApplicationController
       flash[:error] = "Project cannot be deleted as long as there are repository clones under it"
       redirect_to(project_path) and return
     end
-    render("confirm_delete", :layout => "ui3", :locals => {
+    render("confirm_delete", :locals => {
         :project => ProjectPresenter.new(project)
       })
   end
@@ -198,11 +198,11 @@ class ProjectsController < ApplicationController
   protected
 
   def render_form(project)
-    render(:action => :new, :layout => "ui3", :locals => { :project => project })
+    render(:action => :new, :locals => { :project => project })
   end
 
   def render_edit_form(project)
-    render(:action => :edit, :layout => "ui3", :locals => { :project => project })
+    render(:action => :edit, :locals => { :project => project })
   end
 
   def pre_condition_failed(outcome)

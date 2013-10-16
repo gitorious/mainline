@@ -34,7 +34,7 @@ class RepositoriesController < ApplicationController
 
     if !repository.ready?
       response.headers["Refresh"] = "3"
-      render(:action => "show", :layout => "ui3", :locals => {
+      render(:action => "show", :locals => {
           :repository => repository,
           :atom_auto_discovery_url => activities_project_repository_path(repository.project, repository, :format => :atom),
           :atom_auto_discovery_title => "#{repository.title} ATOM feed"
@@ -123,7 +123,7 @@ class RepositoriesController < ApplicationController
       flash[:error] = I18n.t("repositories_controller.adminship_error")
       redirect_to(@owner) and return
     end
-    render("confirm_delete", :layout => "ui3", :locals => {
+    render("confirm_delete", :locals => {
         :repository => RepositoryPresenter.new(repository)
       })
   end
@@ -144,14 +144,14 @@ class RepositoriesController < ApplicationController
 
   private
   def render_form(repository, project)
-    render(:action => :new, :layout => "ui3", :locals => {
+    render(:action => :new, :locals => {
         :repository => repository,
         :project => ProjectPresenter.new(project)
       })
   end
 
   def render_edit_form(repository, repo_edit = nil)
-    render(:action => :edit, :layout => "ui3", :locals => {
+    render(:action => :edit, :locals => {
         :repository => RepositoryPresenter.new(repository),
         :heads => repository.git.heads,
         :repo_edit => repo_edit || repository

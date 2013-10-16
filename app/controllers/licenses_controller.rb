@@ -20,7 +20,6 @@
 class LicensesController < ApplicationController
   before_filter :login_required
   skip_before_filter :require_current_eula
-  layout "ui3"
 
   def show
     if !current_user.terms_accepted?

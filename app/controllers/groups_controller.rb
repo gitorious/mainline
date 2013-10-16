@@ -22,7 +22,6 @@ class GroupsController < ApplicationController
   before_filter :find_group_and_ensure_group_adminship, :only => [:edit, :update, :avatar]
   before_filter :check_if_only_site_admins_can_create, :only => [:new, :create]
   renders_in_global_context
-  layout "ui3"
 
   def index
     begin

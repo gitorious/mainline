@@ -18,7 +18,6 @@
 
 class RepositoryCommunityController < ApplicationController
   renders_in_site_specific_context
-  layout "ui3"
 
   def index
     project = Project.find_by_slug(params[:project_id])

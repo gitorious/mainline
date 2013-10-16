@@ -84,7 +84,7 @@ class MessagesController < ApplicationController
     @message.mark_thread_as_read_by_user(current_user)
 
     respond_to do |wants|
-      wants.html { render :layout => 'ui3' }
+      wants.html { render :show }
       wants.xml  { render :xml => @message }
       wants.js   { render :partial => "message", :layout => false }
     end
@@ -107,13 +107,12 @@ class MessagesController < ApplicationController
       if @message.recipients.blank?
         @message.errors.add(:recipients, "can't be blank")
       end
-      render :new, :layout => 'ui3'
+      render :new
     end
   end
 
   def new
     @message = current_user.sent_messages.new(:recipients => params[:to])
-    render :layout => 'ui3'
   end
 
   # POST /messages/<id>/reply
@@ -141,7 +140,7 @@ class MessagesController < ApplicationController
     return if @messages.count == 0 && params.key?(:page)
 
     respond_to do |wants|
-      wants.html { render 'messages/index', :layout => 'ui3' }
+      wants.html { render "messages/index" }
       wants.xml  { render :xml => @messages }
     end
   end

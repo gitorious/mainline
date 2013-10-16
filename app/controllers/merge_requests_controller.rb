@@ -42,7 +42,7 @@ class MergeRequestsController < ApplicationController
 
     respond_to do |wants|
       wants.html do
-        render(:action => "index", :layout => "ui3", :locals => {
+        render(:action => "index", :locals => {
             :repository => RepositoryPresenter.new(@repository),
             :merge_request_statuses => @repository.project.merge_request_statuses,
             :atom_auto_discovery_url => url_for(:overwrite_params => { :format => "atom" }),
@@ -90,7 +90,7 @@ class MergeRequestsController < ApplicationController
 
     respond_to do |wants|
       wants.html do
-        render(:show, :layout => "ui3", :locals => {
+        render(:show, :locals => {
             :merge_request => merge_request,
             :version => version,
             :repository => RepositoryPresenter.new(@repository),
@@ -120,8 +120,6 @@ class MergeRequestsController < ApplicationController
     end
 
     get_branches_and_commits_for_selection
-
-    render :layout => 'ui3'
   end
 
   # This is a static URL the user returns to after accepting the terms
@@ -156,7 +154,7 @@ class MergeRequestsController < ApplicationController
         format.html {
           @repositories = @owner.repositories.where("id != ?", @repository.id)
           get_branches_and_commits_for_selection
-          render :action => "new", :layout => 'ui3'
+          render :action => "new"
         }
         format.xml { render :xml => @merge_request.errors, :status => :unprocessable_entity }
       end
@@ -166,7 +164,6 @@ class MergeRequestsController < ApplicationController
   def edit
     @repositories = filter(@owner.repositories.where("id != ?", @repository.id))
     get_branches_and_commits_for_selection
-    render :layout => 'ui3'
   end
 
   def update
@@ -178,7 +175,7 @@ class MergeRequestsController < ApplicationController
     else
       @repositories = filter(@owner.repositories.where("id != ?", @repository.id))
       get_branches_and_commits_for_selection
-      render :action => 'edit', :layout => 'ui3'
+      render :action => "edit"
     end
   end
 

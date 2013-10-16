@@ -52,7 +52,7 @@ class CommitsController < ApplicationController
       @atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, params[:branch], :atom)
       respond_to do |format|
         format.html do
-          render(:action => :index, :layout => "layouts/ui3", :locals => {
+          render(:action => :index, :locals => {
             :repository => RepositoryPresenter.new(@repository),
             :ref => head.commit.id,
             :commits => @commits,
@@ -72,7 +72,7 @@ class CommitsController < ApplicationController
 
     respond_to do |format|
       format.html do
-        render("show", :layout => "ui3", :locals => {
+        render("show", :locals => {
             :commit => presenter,
             :mode => params[:diffmode] == "sidebyside" ? :sidebyside : :inline,
             :renderer => diff_renderer(params[:diffmode], repository, presenter.commit)

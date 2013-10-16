@@ -534,7 +534,7 @@ class ProjectsControllerTest < ActionController::TestCase
       get :show, :id => projects(:johans).to_param
 
       assert_response :success
-      assert @layouts.include?("layouts/ui3")
+      assert @layouts.include?("layouts/application")
       assert_not_nil assigns(:current_site)
       assert_not_nil @controller.send(:current_site)
       assert_equal Site.default.title, @controller.send(:current_site).title

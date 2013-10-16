@@ -19,8 +19,6 @@
 
 module Admin
   class RepositoriesController < AdminController
-    layout "ui3"
-
     def index
       begin
         repositories, total_pages, page = paginated_repositories

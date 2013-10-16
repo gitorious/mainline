@@ -19,8 +19,6 @@
 
 module Admin
   class OauthSettingsController < AdminController
-    layout "ui3"
-
     def show
       redirect_to :action => "edit", :project_id => params[:project_id]
     end
