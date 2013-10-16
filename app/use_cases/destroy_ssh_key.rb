@@ -24,6 +24,6 @@ class DestroySshKey
   def initialize(app, user)
     input_class(DestroySshKeyParams)
     add_pre_condition(RequiredDependency.new(:user, user))
-    step(DestroySshKeyCommand.new(app, user), :validator => SshKeyValidator)
+    step(DestroySshKeyCommand.new(app, user))
   end
 end
