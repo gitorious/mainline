@@ -17,53 +17,45 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<%= render(:partial => "header", :locals => {
-        :active => true,
-        :title => @title = group.name,
-        :group => group
-      }) %>
+
+<% @title = group.name %>
+<%= render('header', :active => true, :title => @title, :group => group) %>
 
 <div class="container gts-body">
-  <div class="gts-container">
-    <div class="row-fluid">
-      <div class="span8">
-        <%= render(:partial => "repository_activities/activities", :locals => {
-                :events => events,
-                :page => events.current_page.to_i,
-                :total_pages => events.total_pages
-              }) %>
-      </div>
-      <div class="span4">
-        <%= meta = "<p class=\"muted\">Created #{l(group.created_at, :format => :long)}"
-            meta << " by #{link_to(h(group.creator.title), group.creator)}" if group.creator
-            meta << "</p>"
-            meta.html_safe %>
-        <%= render(:partial => "#{group.class.name.underscore}_members", :locals => {
-                :memberships => memberships
-              }) %>
-        <p>
-          <a class="btn btn-primary" href="<%= new_group_membership_path(group) %>">
-            <i class="icon-plus-sign icon-white"></i>
-            Add member
-          </a>
-          <br><br>
-        </p>
-        <%= render("projects/projects", {
-              :projects => projects,
-              :hint => "This team does not yet have any projects.",
-              :heading => "Team projects"
+  <div class="row-fluid">
+    <div class="span8">
+      <%= render(:partial => "repository_activities/activities", :locals => {
+              :events => events,
+              :page => events.current_page.to_i,
+              :total_pages => events.total_pages
             }) %>
-        <%= render("repositories/repositories", {
-              :repositories => mainlines,
-              :hint => "This team does not yet have any repositories.",
-              :heading => "Team repositories"
+    </div>
+    <div class="span4">
+      <%= render(:partial => "#{group.class.name.underscore}_members", :locals => {
+              :memberships => memberships
             }) %>
-        <%= render("repositories/repositories", {
-              :repositories => clones,
-              :hint => "This team does not yet have any repository clones.",
-              :heading => "Repository clones"
-            }) %>
-      </div>
+      <p>
+        <a class="btn btn-primary" href="<%= new_group_membership_path(group) %>">
+          <i class="icon-plus-sign icon-white"></i>
+          Add member
+        </a>
+        <br><br>
+      </p>
+      <%= render("projects/projects", {
+            :projects => projects,
+            :hint => "This team does not yet have any projects.",
+            :heading => "Team projects"
+          }) %>
+      <%= render("repositories/repositories", {
+            :repositories => mainlines,
+            :hint => "This team does not yet have any repositories.",
+            :heading => "Team repositories"
+          }) %>
+      <%= render("repositories/repositories", {
+            :repositories => clones,
+            :hint => "This team does not yet have any repository clones.",
+            :heading => "Repository clones"
+          }) %>
     </div>
   </div>
 </div>

@@ -16,33 +16,21 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
-<%
-  description = ""
-  description << image_tag(group.avatar.url(:thumb)) if group.avatar?
-  description << render_markdown(group.description) if !group.description.empty?
 %>
-<div class="gts-site-header">
-  <div class="container">
-    <div class="row">
-      <h1 class="span"><%= title %></h1>
-    </div>
-    <%= description.html_safe %>
-    <% if group_admin?(group, current_user) %>
-      <ul class="nav nav-tabs gts-header-nav">
-        <li class="pull-right dropdown<%= ' active' if active %>">
-          <a href="#" class="dropdown-toggle"><i class="icon-cog"></i> Admin</a>
-          <ul class="dropdown-menu">
-            <li><a href="<%= edit_group_path(group) %>"><i class="icon-pencil"></i> Edit team</a></li>
-            <li><a href="<%= group_path(group) %>" data-method="delete"><i class="icon-trash"></i> Delete team</a></li>
-            <% if Team.can_have_members?(group) -%>
-              <li><%= link_to t("views.groups.edit_memberships"), [group, :memberships] -%></li>
-              <li><%= link_to t("views.memberships.add_new_member"),
-                      new_group_membership_path(group) -%></li>
-            <% end -%>
-          </ul>
-        </li>
-      </ul>
+
+<%= site_header do %>
+  <h1>
+    <% if group.avatar? %>
+      <%= image_tag(group.avatar.url(:medium)) %>
     <% end %>
-  </div>
-</div>
+    <%= title %>
+  </h1>
+  <% if group.description? %>
+    <div class="gts-markup">
+      <%= render_markdown(group.description).html_safe %>
+    </div>
+  <% end %>
+  <% if group_admin?(group, current_user) %>
+    <%= render 'groups/show/admin_menu', :group => group, :active => active %>
+  <% end %>
+<% end %>
