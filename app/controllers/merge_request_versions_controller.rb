@@ -48,6 +48,9 @@ class MergeRequestVersionsController < ApplicationController
         :commit => commit,
         :diffs => diffs,
         :timeout => timeout,
+        :user => merge_request.user,
+        :source_repo => RepositoryPresenter.new(merge_request.source_repository),
+        :target_repo => RepositoryPresenter.new(merge_request.target_repository),
         :range => commit_range(params[:commit_shas])
       })
   end

@@ -31,12 +31,7 @@
       }) %>
 
 <div class="container gts-body">
-  <%= render "merge_requests/show/status", :user => user, :merge_request => merge_request, :source_repo => source_repo, :target_repo => target_repo %>
-
-  <%= pull_box merge_request.summary, :class => 'gts-mr-pull-box' do %>
-    <%= render(:partial => "merge_requests/show/options", :locals => { :merge_request => merge_request }) %>
-    <%= description(merge_request, :proposal) %>
-  <% end %>
+  <%= render 'header', :merge_request => merge_request, :source_repo => source_repo, :target_repo => target_repo, :user => user %>
 
   <% view_all_diffs_path = project_repository_merge_request_version_path(merge_request.project, merge_request.target_repository, merge_request) %>
   <%= link_to("View all diffs", view_all_diffs_path, :class => "btn btn-primary pull-right") %>

@@ -25,8 +25,8 @@
       }) %>
 <% @title = "Diffs for #{merge_request.summary}" %>
 <div class="container gts-body">
-  <h3>Diffs for merge request #<%= merge_request.sequence_number %></h3>
-  <h2><%= link_to(merge_request.summary, project_repository_merge_request_path(project, merge_request.target_repository, merge_request)) %></h2>
+  <%= render 'merge_requests/header', :merge_request => merge_request, :source_repo => source_repo, :target_repo => target_repo, :user => user %>
+
   <% if timeout %>
     <div class="alert alert-error">
       <h3>Git timeout</h3>

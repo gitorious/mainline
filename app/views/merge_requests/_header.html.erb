@@ -1,0 +1,6 @@
+<%= render 'merge_requests/show/status', :user => user, :merge_request => merge_request, :source_repo => source_repo, :target_repo => target_repo %>
+
+<%= pull_box merge_request.summary, :class => 'gts-mr-pull-box' do %>
+  <%= render('merge_requests/show/options', :merge_request => merge_request) %>
+  <%= description(merge_request, :proposal) %>
+<% end %>
