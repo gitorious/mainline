@@ -37,7 +37,7 @@ class CommitDiffsControllerTest < ActionController::TestCase
     end
 
     should "render not found when given commit does not exist" do
-      get :compare, compare_params.merge(:id => "does-not-exist")
+      get :show, params.merge(:id => "does-not-exist")
       assert_response :not_found
     end
   end
