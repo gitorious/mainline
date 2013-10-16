@@ -53,7 +53,20 @@ Capybara.configure do |config|
   config.app_host          = 'http://gitorious.test:3001'
 end
 
+class ActiveRecord::Base
+  mattr_accessor :shared_connection
+  @@shared_connection = nil
+
+  def self.connection
+    @@shared_connection || retrieve_connection
+  end
+end
+
+ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
+
 class ActionDispatch::IntegrationTest
+  self.use_transactional_fixtures = true
+  fixtures :all
   include Capybara::DSL
 end
 
