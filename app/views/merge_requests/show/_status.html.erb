@@ -1,0 +1,15 @@
+<%
+  source_repo_link = project_repository_path(source_repo.project, source_repo)
+  target_repo_link = project_repository_path(target_repo.project, target_repo)
+  source_branch_link = project_repository_commits_in_ref_path(source_repo.project, source_repo, merge_request.source_branch)
+  target_branch_link = project_repository_commits_in_ref_path(target_repo.project, target_repo, merge_request.target_branch)
+%>
+
+<p class="well gts-mr-status">
+  <%= link_to(avatar(user, :size => 24) + " #{user.login}", user_path(user)) %>
+  requested a merge from
+  <%= link_to(source_repo.name, source_repo_link) %>:<%= link_to(merge_request.source_branch, source_branch_link) %>
+  to <%= link_to(target_repo.name, target_repo_link) %>:<%= link_to(merge_request.target_branch, target_branch_link) %>
+  on <%= merge_request.created_at.strftime("%B %-dth, %Y %H:%M.") %>
+  <span class="pull-right">This merge request is <strong><%= merge_request.status_string %></strong>.</span>
+</p>

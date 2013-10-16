@@ -62,9 +62,10 @@ module Gitorious
         end.html_safe
       end
 
-      def description(object)
-        return "" if !object.description
-        render_markup("description.md", object.description).html_safe
+      def description(object, method = :description)
+        content = object.public_send(method)
+        return '' if content.blank?
+        render_markup('description.md', content).html_safe
       end
     end
   end

@@ -1,0 +1,18 @@
+<% comments.each do |comment| %>
+  <%= render('comments/comment', :comment => comment) %>
+<% end %>
+
+<% if logged_in? %>
+  <%= simple_form_for(Comment.new(:target => merge_request), {
+          :as => :comment,
+          :url => project_repository_merge_request_comments_path(repository.project, repository, merge_request),
+          :html => { :class => "form-horizontal gts-comment-form" }
+        }) do |form| %>
+    <%= render('comments/form', :form => form) %>
+  <% end %>
+<% else %>
+  <p>
+    <%= link_to t("views.sessions.login"), new_sessions_path %> or
+    <%= link_to t("views.users.create"), new_user_path %> to post a comment
+  </p>
+<% end %>

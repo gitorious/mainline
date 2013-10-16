@@ -21,98 +21,33 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
+%>
+
 <%= partial("repositories/header_compact", {
         :repository => repository,
         :project => repository.project,
         :app => Gitorious,
         :active => :merge_requests
       }) %>
-<%
-  source_repo_link = project_repository_path(source_repo.project, source_repo)
-  target_repo_link = project_repository_path(target_repo.project, target_repo)
-  source_branch_link = project_repository_commits_in_ref_path(source_repo.project, source_repo, merge_request.source_branch)
-  target_branch_link = project_repository_commits_in_ref_path(target_repo.project, target_repo, merge_request.target_branch)
-%>
+
 <div class="container gts-body">
-  <div class="pull-right">
+  <%= render "merge_requests/show/status", :user => user, :merge_request => merge_request, :source_repo => source_repo, :target_repo => target_repo %>
+
+  <%= pull_box merge_request.summary, :class => 'gts-mr-pull-box' do %>
     <%= render(:partial => "merge_requests/show/options", :locals => { :merge_request => merge_request }) %>
-  </div>
-  <h3>Reviewing merge request #<%= merge_request.sequence_number %></h3>
-  <h1><%= @title = merge_request.summary %></h1>
-  <%= description(merge_request) %>
-  <p class="gts-bordered-row">
-    <%= link_to(avatar(user, :size => 24) + " #{user.login}", user_path(user)) %>
-    requested a merge from
-    <%= link_to(source_repo.name, source_repo_link) %>:<%= link_to(merge_request.source_branch, source_branch_link) %>
-    to <%= link_to(target_repo.name, target_repo_link) %>:<%= link_to(merge_request.target_branch, target_branch_link) %>
-    on <%= merge_request.created_at.strftime("%B %-dth, %Y %H:%M.") %>
-    <span class="pull-right">This merge request is <strong><%= merge_request.status_string %></strong>.</span>
-  </p>
-
-  <%= link_to("View all diffs", project_repository_merge_request_version_path(merge_request.project, merge_request.target_repository, merge_request), :class => "btn btn-primary pull-right") %>
-  <h2>Commits to be merged</h2>
-  <table class="table table-striped">
-    <% commits.each do |commit| %>
-      <tr>
-        <td>
-          <%= link_to(commit.id[0...7], project_repository_commit_path(repository.project, repository, commit.id)) %>
-        </td>
-        <td><%= commit.short_message %></td>
-      </tr>
-    <% end %>
-  </table>
-
-  <h5 class="gts-toggler" data-toggle="collapse" data-target="#how-to-update">How to update the merge request?</h5>
-  <div class="collapse" id="how-to-update">
-    <p>
-      To update your merge request, either <%= link_to("edit here", :action =>
-                                                 :edit) %> or push your changes through git. A new version of your merge
-      request will be created, up until the last commit you push. You may make as
-      many updates as you like; the last one will always be displayed by default
-    </p>
-    <pre><%= "git push #{merge_request.target_repository.push_url}:#{merge_request.merge_branch_name}" %></pre>
-  </div>
-
-  <h5 class="gts-toggler" data-toggle="collapse" data-target="#how-to-merge">How to merge these changes?</h5>
-  <div class="collapse" id="how-to-merge">
-    <p>
-      Pull the changes into a local branch for review, verify the changes (run
-      tests etc) and then merge into master:
-    </p>
-    <pre># Check out a new branch for integration
-git checkout -b merge-requests/<%= merge_request.sequence_number %>
-
-# Fetch the merge request into this branch
-git pull <%= merge_request.target_repository.default_clone_url %> <%= merge_request.merge_branch_name %>
-
-# Review commits
-git log --pretty=oneline --abbrev-commit <%= merge_request.target_branch %>..merge-requests/<%= merge_request.sequence_number %>
-
-# Apply the changes to your branch:
-git checkout <%= merge_request.target_branch %>
-git merge merge-requests/<%= merge_request.sequence_number %>
-git push origin <%= merge_request.target_branch %></pre>
-  </div>
-  <br>
-
-  <h2>Discussion</h2>
-  <% comments.each do |comment| %>
-    <%= render(:partial => "comments/comment", :locals => { :comment => comment }) %>
+    <%= description(merge_request, :proposal) %>
   <% end %>
 
-  <% if logged_in? %>
-    <%= simple_form_for(Comment.new(:target => merge_request), {
-            :as => :comment,
-            :url => project_repository_merge_request_comments_path(repository.project, repository, merge_request),
-            :html => { :class => "form-horizontal gts-comment-form" }
-          }) do |form| -%>
-      <%= render(:partial => "comments/form", :locals => { :form => form }) %>
+  <% view_all_diffs_path = project_repository_merge_request_version_path(merge_request.project, merge_request.target_repository, merge_request) %>
+  <%= link_to("View all diffs", view_all_diffs_path, :class => "btn btn-primary pull-right") %>
+
+  <%= tabbable({ 'discussion' => '#discussion', 'commits' => '#commits' }, :active => 'discussion') do %>
+    <%= tab_pane 'discussion', :active => true do %>
+      <%= render 'merge_requests/show/comments', :comments => comments, :merge_request => merge_request, :repository => repository %>
     <% end %>
-  <% else %>
-    <p>
-      <%= link_to t("views.sessions.login"), new_sessions_path -%> or
-      <%= link_to t("views.users.create"), new_user_path -%> to post a comment
-    </p>
+    <%= tab_pane 'commits' do %>
+      <%= render 'merge_requests/show/commits', :commits => commits, :repository => repository, :merge_request => merge_request %>
+    <% end %>
   <% end %>
+
 </div>
