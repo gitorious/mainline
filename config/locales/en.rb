@@ -116,7 +116,7 @@
       :reset_password_inactive_account  => 'Your account has not been activated yet. Please check your mailbox (including your spam folder) for an activation message from Gitorious',
       :show_pagination_oob => "Sorry, there were no events for page %{page}.",
       :account_deleted => "Account deleted",
-      :delete_your_repos_and_projects_first => "Please delete or change ownership of your projects and repositories before you remove your own account."
+      :delete_your_repos_and_projects_first => "Before you remove your account, you must delete or change ownership of your projects and repositories and be the only member of groups you created."
     },
     :pages_controller => {
       :invalid_page_error => "invalid page, badly formatted title or body",

@@ -447,6 +447,13 @@ class UserTest < ActiveSupport::TestCase
   end
 
   context "user deletion" do
+    def user_without_projects_and_repos
+      user = users(:johan)
+      user.repositories.destroy_all
+      user.projects.destroy_all
+      user
+    end
+
     should "be possible if user has no repos or projects" do
       u = User.new
       assert u.deletable?
@@ -454,6 +461,41 @@ class UserTest < ActiveSupport::TestCase
 
     should "not be possible if user has any current repos and/or projects" do
       assert !users(:johan).deletable?
+    end
+
+    should "not be destroyed when any of the groups he has created has other members" do
+      user = user_without_projects_and_repos
+      group = user.created_groups.first
+      group.add_member(users(:moe), Role.admin)
+
+      refute user.deletable?
+    end
+
+    should "be deletable when all of the groups he has created have no other members" do
+      user = user_without_projects_and_repos # has created groups
+      another_group = group_created_by_other_user
+      another_group.add_member(user, Role.admin)
+
+      assert user.deletable?
+    end
+
+    should "destroy groups owned by user" do
+      user = user_without_projects_and_repos
+      created_group = user.created_groups.first
+      member_group = group_created_by_other_user
+      member_group.add_member(user, Role.admin)
+
+      user.destroy
+
+      refute User.exists?(user.id)
+      refute Group.exists?(created_group.id)
+      assert Group.exists?(member_group.id)
+    end
+
+    def group_created_by_other_user
+      group = FactoryGirl.create(:group)
+      group.add_member(group.creator, Role.admin)
+      group
     end
   end
 

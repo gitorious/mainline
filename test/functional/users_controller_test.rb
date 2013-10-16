@@ -222,7 +222,7 @@ class UsersControllerTest < ActionController::TestCase
       get :destroy, :id => user.to_param
 
       assert_redirected_to user_path(user)
-      assert_match(/Please delete or change ownership of your projects/i, flash[:error])
+      assert_not_nil flash[:error]
       assert_not_nil User.find_by_login(user.login)
     end
   end

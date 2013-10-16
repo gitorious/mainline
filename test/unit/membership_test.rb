@@ -56,19 +56,6 @@ class MembershipTest < ActiveSupport::TestCase
     end
   end
 
-  context "The group creator" do
-    setup do
-      @group = FactoryGirl.create(:group)
-      @creator = @group.creator
-      @membership = FactoryGirl.create(:membership, :user => @creator, :group => @group)
-      assert_equal @creator, @group.creator
-    end
-
-    should "not be deletable" do
-      assert !@membership.destroy
-    end
-  end
-
   context "A membership" do
     setup {
       @group = FactoryGirl.create(:group)
