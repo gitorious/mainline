@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
 require "test_helper"
 
 class MergeRequestVersionsControllerTest < ActionController::TestCase
@@ -25,6 +24,9 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
   context "Viewing diffs" do
     setup do
       @merge_request = merge_requests(:moes_to_johans)
+      @merge_request.status = MergeRequest::STATUS_OPEN
+      @merge_request..status_tag = "Open"
+      @merge_request.save
       @merge_request.stubs(:calculate_merge_base).returns("ffac0")
       @version = @merge_request.create_new_version
       @git = mock
@@ -35,79 +37,22 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
                                  "my commit message".split(" "))
 
       Repository.any_instance.stubs(:git).returns(@git)
-      MergeRequestVersion.stubs(:find).returns(@version)
+      MergeRequestVersion.stubs(:find_by_version!).returns(@version)
     end
 
-    # should "view the diff for a single commit" do
-    #   @version.expects(:diffs).with("ffcab").returns([])
-    #   @git.expects(:commit).with("ffcab").returns(@commit)
+    should "show all the diffs for this version" do
+      @version.expects(:diffs).with(nil).returns([])
+      @git.expects(:commit).with("286e8afb9576366a2a43b12b94738f07").returns(@commit)
 
-    #   get :show, params(:id => @version.to_param, :commit_shas => "ffcab")
+      get :show, params(:version => @version.to_param)
 
-    #   assert_response :success
-    #   assert_equal @commit, assigns(:commit)
-    # end
-
-    # should "view the diff for a series of commits" do
-    #   @version.expects(:diffs).with("ffcab".."bacff").returns([])
-
-    #   get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
-
-    #   assert_response :success
-    #   assert_nil assigns(:commit)
-    # end
-
-    # should "view the entire diff" do
-    #   @version.expects(:diffs).returns([])
-
-    #   get :show, params(:id => @version)
-
-    #   assert_response :success
-    #   assert_not_nil assigns(:project)
-    # end
-
-    # context "With private projects" do
-    #   setup do
-    #     @project = @merge_request.project
-    #     enable_private_repositories
-    #     @version.stubs(:diffs).with("ffcab".."bacff").returns([])
-    #   end
-
-    #   should "disallow unauthenticated users" do
-    #     get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
-    #     assert_response 403
-    #   end
-
-    #   should "allow authenticated users" do
-    #     login_as :johan
-    #     get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
-    #     assert_response 200
-    #   end
-    # end
-
-    # context "With private repositories" do
-    #   setup do
-    #     enable_private_repositories(@merge_request.target_repository)
-    #     @version.stubs(:diffs).with("ffcab".."bacff").returns([])
-    #   end
-
-    #   should "disallow unauthenticated users" do
-    #     get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
-    #     assert_response 403
-    #   end
-
-    #   should "allow authenticated users" do
-    #     login_as :johan
-    #     get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
-    #     assert_response 200
-    #   end
-    # end
+      assert_response :success
+    end
   end
 
   def params(extras)
-    { :project_id => "gitorious",
-      :repository_id => "repository",
-      :merge_request_id => 1,
-      :format => "js" }.merge(extras)
+    { :project_id => @merge_request.project.to_param,
+      :repository_id => @merge_request.target_repository.to_param,
+      :merge_request_id => @merge_request.to_param }.merge(extras)
   end
 end
