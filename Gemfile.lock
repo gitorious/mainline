@@ -47,10 +47,10 @@ GEM
       builder
       json
     arel (3.0.2)
-    axiom-types (0.0.4)
+    axiom-types (0.0.5)
       descendants_tracker (~> 0.0.1)
       ice_nine (~> 0.9)
-    backports (3.3.4)
+    backports (3.3.5)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.0.4)
@@ -92,7 +92,7 @@ GEM
       debugger-ruby_core_source (~> 1.2.3)
     debugger-linecache (1.2.0)
     debugger-ruby_core_source (1.2.3)
-    descendants_tracker (0.0.1)
+    descendants_tracker (0.0.3)
     diff-lcs (1.1.2)
     dolt (0.30.0)
       json (~> 1.5)
@@ -333,8 +333,8 @@ GEM
     use_case (1.0.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
-    virtus (1.0.0.beta8)
-      axiom-types (~> 0.0.3)
+    virtus (1.0.0)
+      axiom-types (~> 0.0.5)
       coercible (~> 0.2)
       descendants_tracker (~> 0.0.1)
       equalizer (~> 0.0.7)
@@ -426,7 +426,7 @@ DEPENDENCIES
   trinidad
   unicorn (~> 4.6.3)
   use_case
-  virtus (~> 1.0.0.beta8)
+  virtus (~> 1.0.0)
   webmock
   wikicloth
   will_paginate (~> 3.0)

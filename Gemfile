@@ -23,7 +23,7 @@ gem "rails_autolink", "~> 1.0"
 gem "mysql2", :platforms => :ruby
 gem "highline"
 gem "use_case"
-gem "virtus", '~> 1.0.0.beta8'
+gem "virtus", '~> 1.0.0'
 gem "rake", "~> 10.0"
 gem "gitlab-grit", :require => "grit", :git => "https://github.com/wrozka/grit.git"
 gem "airbrake", "~> 3.1.14", :require => false
