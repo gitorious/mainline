@@ -26,7 +26,7 @@ class GroupsController < ApplicationController
   def index
     begin
       groups, total_pages, page = paginated_groups
-    rescue RangeError => err
+    rescue RangeError
       flash[:error] = "Page #{params[:page] || 1} does not exist"
       redirect_to(groups_path, :status => 307) and return
     end
@@ -68,6 +68,7 @@ class GroupsController < ApplicationController
 
   def update
     Team.update_group(@group, params)
+    flash[:success] = 'Team was updated'
     redirect_to(group_path(@group))
   rescue ActiveRecord::RecordInvalid
     render(:action => "edit", :locals => { :group => @group })

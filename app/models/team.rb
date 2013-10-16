@@ -92,7 +92,7 @@ class Team
   def self.update_group(group, params)
     params = group_params(params)
     group.description = params[:description]
-    group.avatar = params[:avatar]
+    group.avatar = params[:avatar] if params[:avatar]
     group.ldap_group_names = params[:ldap_group_names] if params.key?(:ldap_group_names)
     group.save!
   end

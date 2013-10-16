@@ -16,22 +16,19 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
-<%= render(:partial => "header", :locals => {
-        :active => true,
-        :title => @title = t("views.groups.update_team"),
-        :group => group
-      }) %>
+%>
+
+<% @title = group.name %>
+
+<%= render('header', :active => true, :title => @title, :group => group) %>
 
 <div class="container">
-  <%= error_messages(group) -%>
-  <%= simple_form_for(group, {
-          :html => { :class => "form-horizontal", :multipart => true }
-        }) do |f| -%>
+  <%= simple_form_for(group, :html => { :class => "form form-horizontal", :multipart => true }) do |f| %>
     <fieldset>
-      <%= render(:partial => "form", :locals => { :form => f, :group => group }) -%>
+      <legend>Edit team</legend>
+      <%= render('form', :form => f, :group => group) %>
       <div class="form-actions">
-        <button class="btn btn-primary" type="submit"><%= t("views.groups.create_team_submit") %></button>
+        <%= f.submit 'Save', :class => 'btn btn-primary' %>
       </div>
     </fieldset>
   <% end %>

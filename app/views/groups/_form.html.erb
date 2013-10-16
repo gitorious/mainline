@@ -15,15 +15,22 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
-<%= form.input(:name, :label => t("views.groups.team_name")) %>
-<%= form.input(:description, :label => t("views.groups.description"), :input_html => { :rows => 5 }) %>
+%>
 
-<%= form.input(:avatar, {
-        :label => t("views.groups.avatar"),
-        :hint => !group.avatar? ? "" : image_tag(group.avatar.url(:thumb))
-      }) %>
-
+<%= form.input(:name, :label => t("views.groups.team_name"), :disabled => group.persisted?, :hint => group.persisted? && 'Changing existing group name is not allowed') %>
+<%= form.input(:description, :label => t("views.groups.description"), :input_html => { :class => 'input-xxlarge', :rows => 5 }) %>
+<%= form.input(:avatar, :label => t("views.groups.avatar")) %>
+<div class="control-group group-avatar">
+ <label class="control-label">Current avatar</label>
+ <div class="controls">
+   <%= image_tag(group.avatar.url(:thumb), :class => 'pull-left') %>
+   <% if group.avatar? %>
+     <%= link_to "&nbsp;Delete".html_safe, group_avatar_path(group), :method => :delete,
+       :data => { :confirm => 'Are you sure?' },
+       :class => 'delete-button' %>
+   <% end %>
+ </div>
+</div>
 <% if group.is_a?(LdapGroup) %>
   <%= form.input(:ldap_group_names, :hint => "Enter LDAP group DNs, one per line "+
         "<strong>Note:</strong> entries should be relative to the LDAP base DN") %>
