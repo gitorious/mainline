@@ -55,7 +55,7 @@ class UpdateProjectParams
   attribute :merge_request_statuses_attributes, Hash
 
   def to_hash
-    super.reject { |k,v| v.blank? }
+    super.reject { |k,v| v.nil? }
   end
 end
 

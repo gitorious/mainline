@@ -110,8 +110,9 @@ class ProjectsControllerTest < ActionController::TestCase
 
       should "render private repo update for owner" do
         login_as :johan
-        put :update, :id => projects(:johans).to_param, :project => { :slug => "  " }
-        assert_response 200
+        project = projects(:johans)
+        put :update, :id => project.to_param, :project => { :title => "foo" }
+        assert_redirected_to project
       end
 
       should "not render private repo delete confirmation for unauthorized user" do
