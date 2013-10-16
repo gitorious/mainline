@@ -17,11 +17,14 @@
 #++
 
 require "minitest/autorun"
+
 # We must load ci_reporter's minitest_loader explicitly here, even though
 # we've also loaded it in the main Gitorious Rakefile. The reason is that the
 # rake:micros task runs the fast tests through a separate system() call, so
 # ci_reporter never propagates to the MiniTest class in these tests.
+ENV['CI_CAPTURE'] ||= 'off'
 require "ci/reporter/rake/minitest_loader"
+
 require "mocha/setup"
 require "pathname"
 require((defined?(Rails) ? Rails.root : "") + "config/gitorious_config")
