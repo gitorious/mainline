@@ -22,14 +22,21 @@
 comment = CommentPresenter.new(comment, self)
 %>
 
-<%= comment.state_changed %>
 <div class="gts-comment" id="comment-<%= comment.id %>">
-  <%= comment.context %>
-  <%= comment.markdown %>
-  <p>
+  <%= comment.state_changed %>
+  <div class="gts-comment-header">
     <%= comment.avatar %>
     <%= comment.author_link %>
-    <%= comment.label %>
-    <%= comment.edit_link %>
-  </p>
+    <%= comment.line_number %>
+    <div class="gts-comment-meta">
+      <%= comment.timestamp %> ago
+      <%= comment.edit_link %>
+    </div>
+  </div>
+  <div class="gts-comment-context">
+    <% comment.context %>
+  </div>
+  <div class="gts-comment-body">
+    <%= comment.markdown %>
+  </div>
 </div>

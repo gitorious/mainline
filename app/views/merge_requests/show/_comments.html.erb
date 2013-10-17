@@ -1,6 +1,4 @@
-<% comments.each do |comment| %>
-  <%= render('comments/comment', :comment => comment) %>
-<% end %>
+<%= render(comments) %>
 
 <% if logged_in? %>
   <%= simple_form_for(Comment.new(:target => merge_request), {

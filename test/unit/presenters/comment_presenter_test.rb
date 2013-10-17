@@ -105,25 +105,6 @@ class CommentPresenterTest < ActiveSupport::TestCase
     end
   end
 
-  context "#label" do
-    should "render commit link if applies" do
-      comment = comments(:first_merge_request_version_comment)
-      comment.created_at = Time.parse("2013-10-17 10:12")
-      presenter = CommentPresenter.new(comment, view_context)
-
-      assert_include presenter.label, "#ffac0-a"
-      assert_include presenter.label, "Oct 17 2013, 10:12."
-    end
-
-    should "render only date if not attached to any commit" do
-      comment = Comment.new
-      comment.created_at = Time.parse("2013-10-17 10:12")
-      presenter = CommentPresenter.new(comment, view_context)
-
-      assert_equal "Oct 17 2013, 10:12.", presenter.label.strip
-    end
-  end
-
   context "#edit_link" do
     def view_context_with_current_user(user)
       v = view_context

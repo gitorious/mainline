@@ -41,7 +41,7 @@ class CommentPresenter
   def state_changed
     return unless comment.state_changed_to
 
-    v.content_tag :p, :class => 'gts-bordered-row' do |c|
+    v.content_tag :div, :class => 'gts-bordered-row' do |c|
       "→ State changed #{state_changed_from} #{state_changed_to}".html_safe
     end
   end
@@ -53,7 +53,7 @@ class CommentPresenter
   def avatar
     default_url = Gitorious::View::AvatarHelper::DEFAULT_AVATAR_FILE
     url = comment.user ? v.avatar_url(comment.user, :size => 24) : default_url
-    v.image_tag url, :width => 24, :height => 24, :alt => "avatar", :class => "gts-avatar"
+    v.image_tag url, :size => '24x24', :alt => "avatar", :class => "gts-avatar"
   end
 
   def author_link
@@ -61,22 +61,24 @@ class CommentPresenter
     v.link_to(comment.user.login, v.user_path(comment.user))
   end
 
-  def label
-    "#{line_number} #{time}"
-  end
-
   def edit_link
     return unless v.can_edit?(v.current_user, comment)
     v.link_to("Edit comment", v.edit_comment_path(comment))
   end
 
-  private
+  def timestamp
+    v.content_tag(:span, :class => 'gts-timestamp', :title => comment.created_at.utc) {
+      v.time_ago_in_words(comment.created_at)+' on'
+    }
+  end
 
   def line_number
     return unless comment.applies_to_line_numbers?
     link = v.link_to("##{comment.sha1[0...7]}", v.project_repository_commit_path(comment.project, comment.repository, comment.sha1))
-    "on " + link
+    " commented on #{link}".html_safe
   end
+
+  private
 
   def time
     comment.created_at.strftime("%b %-d %Y, %H:%M.")
