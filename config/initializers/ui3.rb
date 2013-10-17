@@ -55,7 +55,6 @@ else
       "/ui3/js/src/cache.js",
       "/ui3/js/src/json-request.js",
       "/ui3/js/src/components/dropdown.js",
-      "/ui3/js/src/components/ganalytics.js",
       "/ui3/js/src/components/abbrev.js",
       "/ui3/js/src/components/url.js",
       "/ui3/js/src/components/ref-selector.js",

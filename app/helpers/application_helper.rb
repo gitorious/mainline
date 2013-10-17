@@ -563,16 +563,4 @@ module ApplicationHelper
     }
   end
 
-  def google_analytics_enabled?
-    Gitorious::Configuration.get("google_analytics_account").present?
-  end
-
-  def google_analytics_account
-    Gitorious::Configuration.get("google_analytics_account")
-  end
-
-  def google_analytics_domain
-    ".#{Gitorious.host}"
-  end
-
 end

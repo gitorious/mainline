@@ -90,9 +90,6 @@
     <div class="footer">
       <%= partial("layouts/footer", :current_site => current_site) %>
     </div>
-    <% if google_analytics_enabled? %>
-      <script data-gts-env-analytics-account="<%= google_analytics_account %>" data-gts-env-analytics-domain-name="<%= google_analytics_domain %>"></script>
-    <% end %>
     <script data-gts-env-user-view-state-path="<%= view_state_users_path(:format => "json") %>"></script>
     <% repo = defined?(repository_meta) ? repository_meta : (defined?(repository) ? repository : nil) %>
     <% if repo %>
