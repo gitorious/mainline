@@ -77,7 +77,6 @@ class ProjectValidatorTest < MiniTest::Spec
     Project.new({
         :title => "foo project",
         :slug => "foo",
-        :description => "my little project",
         :user_id => 1,
         :owner_id => 1
       }.merge(options))

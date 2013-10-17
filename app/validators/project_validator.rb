@@ -21,7 +21,7 @@ ProjectValidator = UseCase::Validator.define do
   NAME_FORMAT = /[a-z0-9_\-]+/.freeze
   URL_FORMAT  = %r{\Ahttps?:\/\/([^\s:@]+:[^\s:@]*@)?[A-Za-z\d\-]+(\.[A-Za-z\d\-]+)+\.?(:\d{1,5})?([\/?]\S*)?\Z}i
 
-  validates_presence_of(:title, :user_id, :slug, :description, :owner_id)
+  validates_presence_of(:title, :user_id, :slug, :owner_id)
   validates_format_of(:slug, :with => /^#{NAME_FORMAT}$/i,
     :message => I18n.t( "project.format_slug_validation"))
   validates_exclusion_of(:slug, :in => lambda { |p| Project.reserved_slugs })
