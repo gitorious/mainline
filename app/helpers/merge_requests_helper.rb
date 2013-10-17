@@ -131,7 +131,7 @@ module MergeRequestsHelper
   def status_open?(name)
     @statuses ||= {}
     return @statuses[name] if @statuses.key?(name)
-    @statuses[name] = MergeRequestStatus.find_by_name(name).open?
+    @statuses[name] = MergeRequestStatus.open?(name)
   end
 
   def version_drop_down(mr, current)

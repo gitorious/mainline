@@ -18,6 +18,7 @@ guard :minitest, zeus: true, include: %w(. app app/presenters lib test),
   watch(%r{^app/models/(.*)\.rb}) { |m| "test/unit/#{m[1]}_test.rb" }
   watch(%r{^app/use_cases/(.*)\.rb}) { |m| "test/unit/use_cases/#{m[1]}_test.rb" }
   watch(%r{^app/validators/(.*)\.rb}) { |m| "test/unit/validators/#{m[1]}_test.rb" }
+  watch(%r{^app/presenters/(.*)\.rb}) { |m| "test/unit/presenters/#{m[1]}_test.rb" }
   watch(%r{^app/helpers/(.*)\.rb}) { |m| "test/unit/helpers/#{m[1]}_test.rb" }
   watch(%r{^app/finders/(.*)\.rb}) { |m| "test/unit/finders/#{m[1]}_test.rb" }
   watch(%r{^lib/(.*)\.rb}) { |m| "test/unit/lib/#{m[1]}_test.rb" }

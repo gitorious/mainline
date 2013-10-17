@@ -107,6 +107,12 @@ class ActiveSupport::TestCase
     (Rails.root + "test/fixtures/push_test_repo.git").to_s
   end
 
+  def view_context
+    controller = ApplicationController.new
+    controller.request = ActionController::TestRequest.new
+    controller.view_context
+  end
+
   def assert_incremented_by(obj, meth, value)
     value_before = obj.send(meth)
     yield
@@ -119,6 +125,11 @@ class ActiveSupport::TestCase
     assert(collection.include?(object),
       (message || inclusion_failure(collection, object, true)))
   end
+
+  def assert_blank(object)
+    assert object.blank?, "#{object.inspect} should be blank"
+  end
+
 
   def assert_not_includes(collection, object, message=nil)
     assert(!collection.include?(object),

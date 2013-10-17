@@ -19,10 +19,12 @@
 module Gitorious
   module View
     module AvatarHelper
+      DEFAULT_AVATAR_FILE = "default_face.gif"
+
       def gravatar_url_for(email, options = {})
         prefix = request.ssl? ? "https://secure" : "http://www"
         scheme = request.ssl? ? "https" : "http"
-        options.reverse_merge!(:default => "images/default_face.gif")
+        options.reverse_merge!(:default => "/images/#{DEFAULT_AVATAR_FILE}")
         port_string = [443, 80].include?(request.port) ? "" : ":#{request.port}"
         "#{prefix}.gravatar.com/avatar/" +
           (email.nil? ? "" : Digest::MD5.hexdigest(email.downcase)) + "&amp;default=" +

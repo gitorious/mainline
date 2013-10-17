@@ -52,6 +52,10 @@ class MergeRequestStatus < ActiveRecord::Base
     }
   end
 
+  def self.open?(name)
+    default_states[name] == MergeRequest::STATUS_OPEN
+  end
+
   def open?
     state == MergeRequest::STATUS_OPEN
   end

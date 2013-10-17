@@ -19,32 +19,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+comment = CommentPresenter.new(comment, self)
 %>
-<%- if comment.state_changed_to -%>
-  <p class="gts-bordered-row">
-    → State changed
-    <% if comment.state_changed_from %>
-      from <span class="label label-<%= status_open?(comment.state_changed_from) ? 'success' : 'inverse' %>"><%=h comment.state_changed_from %></span>
-    <% end %>
-    to <span class="label label-<%= status_open?(comment.state_changed_to) ? 'success' : 'inverse' %>"><%=h comment.state_changed_to %></span>
-  </p>
-<% end %>
+
+<%= comment.state_changed %>
 <div class="gts-comment" id="comment-<%= comment.id %>">
-  <% if !comment.context.blank? -%>
-    <blockquote>
-      <pre class="diff-comment-context"><code><%= comment.context %></code></pre>
-    </blockquote>
-  <% end %>
-  <%= render_markdown(comment.body, :auto_link).html_safe -%>
+  <%= comment.context %>
+  <%= comment.markdown %>
   <p>
-    <img width="24" height="24" src="<%= avatar_url(comment.user, :size => 24) %>" alt="avatar" class="gts-avatar">
-    <%= link_to(comment.user.login, user_path(comment.user)) %>
-    <% if comment.applies_to_line_numbers? -%>
-      on <%= link_to("##{comment.sha1[0...7]}", project_repository_commit_path(comment.project, comment.repository, comment.sha1)) %>
-    <% end -%>
-    <%= comment.created_at.strftime("%b %-d %Y, %H:%M.") %>
-    <% if can_edit?(current_user, comment) %>
-      <%= link_to("Edit comment", edit_comment_path(comment)) %>
-    <% end %>
+    <%= comment.avatar %>
+    <%= comment.author_link %>
+    <%= comment.label %>
+    <%= comment.edit_link %>
   </p>
 </div>
