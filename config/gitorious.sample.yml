@@ -260,6 +260,9 @@ archive_work_dir: "/var/git/tarballs-work"
 # Note: if you set both options above only Airbrake notifications will be
 # enabled.
 
+# The Google Analytics account ID.
+#google_analytics_account: UA-XXXXX-X
+
 # The git binary. Gitorious will use the binary for its various Git
 # activity. Gitorious will also list the Git version in the FAQ.
 #git_binary: /usr/bin/env git

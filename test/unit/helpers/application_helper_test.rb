@@ -132,4 +132,27 @@ class ApplicationHelperTest < ActionView::TestCase
       end
     end
   end
+
+  context "google_analytics_enabled?" do
+    should "be true when Google Analytics account is configured" do
+      Gitorious::Configuration.override("google_analytics_account" => "UA-12345-1") do |c|
+        assert google_analytics_enabled?
+      end
+    end
+  end
+
+  context "google_analytics_account" do
+    should "return the configured Google Analytics account ID" do
+      Gitorious::Configuration.override("google_analytics_account" => "UA-12345-1") do |c|
+        assert_equal "UA-12345-1", google_analytics_account
+      end
+    end
+  end
+
+  context "google_analytics_domain" do
+    should "return the Gitorious instance domain with dot prefix" do
+      assert_equal ".gitorious.test", google_analytics_domain
+    end
+  end
+
 end
