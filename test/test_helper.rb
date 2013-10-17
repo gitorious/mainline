@@ -34,6 +34,7 @@ require "fast_test_helper"
 require "capybara/rails"
 require "capybara/poltergeist"
 require "capybara-screenshot/minitest"
+require "database_cleaner"
 
 cache_dir = "#{Rails.root}/tmp/cache"
 FileUtils.mkdir(cache_dir) unless File.directory?(cache_dir)
@@ -53,21 +54,20 @@ Capybara.configure do |config|
   config.app_host          = 'http://gitorious.test:3001'
 end
 
-class ActiveRecord::Base
-  mattr_accessor :shared_connection
-  @@shared_connection = nil
-
-  def self.connection
-    @@shared_connection || retrieve_connection
-  end
-end
-
-ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
+DatabaseCleaner.strategy = :truncation
 
 class ActionDispatch::IntegrationTest
-  self.use_transactional_fixtures = true
+  self.use_transactional_fixtures = false
   fixtures :all
   include Capybara::DSL
+
+  setup do
+    DatabaseCleaner.start
+  end
+
+  teardown do
+    DatabaseCleaner.clean
+  end
 end
 
 WebMock.disable_net_connect!(:allow_localhost => true)

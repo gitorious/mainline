@@ -52,6 +52,7 @@ group :test do
   gem "capybara_minitest_spec", "~> 1.0"
   gem "capybara-screenshot"
   gem "poltergeist", "~> 1.4"
+  gem "database_cleaner"
 end
 
 group :postgres do
