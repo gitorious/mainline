@@ -77,6 +77,7 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
   def self.host; site.host; end
   def self.port; site.port; end
   def self.ssl?; site.ssl?; end
+  def self.default_port?; site.default_port?; end
   def self.url(path); site.url(path); end
 
   def self.client
