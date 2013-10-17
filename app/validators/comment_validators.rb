@@ -15,38 +15,33 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "use_case"
 
-class UpdateCommentCommand
-  def initialize(comment)
-    @comment = comment
+module CommentValidators
+  Basic = UseCase::Validator.define do
+    validates_presence_of :user_id, :target, :project_id
   end
 
-  def execute(comment)
-    comment.save
-    comment
+  class Editable < Basic
+    validates_presence_of :body
   end
 
-  def build(params)
-    comment.body = params.body
-    comment
+  class Commit < Editable
+    validates_presence_of :sha1
+    validates_format_of :sha1, :with => /^[a-z0-9]{40}$/
   end
 
-  private
-  attr_reader :comment
-end
+  class MergeRequest < Basic
+    validates_presence_of :body, :if =>  Proc.new { |mr| mr.state_change.blank? }
+    validate :state_change_user
 
-class UpdateCommentParams
-  include Virtus.model
-  attribute :body, String
-end
+    def state_change_user
+      return if state.blank? || Gitorious::App.can_resolve_merge_request?(user, target)
+      errors.add(:state, "can only be updated by merge request owner")
+    end
+  end
 
-class UpdateComment
-  include UseCase
-
-  def initialize(comment, user)
-    add_pre_condition(CurrentUserRequired.new(user))
-    add_pre_condition(OwnerRequired.new(comment, user))
-    input_class(UpdateCommentParams)
-    step(UpdateCommentCommand.new(comment), :validator => CommentValidators::Editable)
+  class MergeRequestVersion < Editable
+    validates_format_of :sha1, :with => /^([a-z0-9]{40}(-[a-z0-9]{40})?)?$/
   end
 end

@@ -16,11 +16,11 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "fast_test_helper"
-require "validators/comment_validator"
+require "validators/comment_validators"
 
-class CommentValidatorTest < MiniTest::Spec
+class CommentValidatorsTest < MiniTest::Spec
   it "validates presence of user, target, project" do
-    result = CommentValidator.call(Comment.new)
+    result = CommentValidators::Basic.call(Comment.new)
 
     refute result.valid?
     assert result.errors[:user_id]
@@ -30,7 +30,7 @@ class CommentValidatorTest < MiniTest::Spec
 
   describe "commit comments" do
     it "requires body and commit id" do
-      result = CommitCommentValidator.call(Comment.new({
+      result = CommentValidators::Commit.call(Comment.new({
             :user_id => 1,
             :target => Repository.new,
             :project_id => 1
@@ -42,7 +42,7 @@ class CommentValidatorTest < MiniTest::Spec
     end
 
     it "requires commit id be a proper sha1 hash" do
-      result = CommitCommentValidator.call(Comment.new({
+      result = CommentValidators::Commit.call(Comment.new({
             :user_id => 1,
             :target => Repository.new,
             :project_id => 1,
@@ -54,7 +54,7 @@ class CommentValidatorTest < MiniTest::Spec
     end
 
     it "approves valid comment" do
-      result = CommitCommentValidator.call(Comment.new({
+      result = CommentValidators::Commit.call(Comment.new({
             :user_id => 1,
             :target => Repository.new,
             :project_id => 1,

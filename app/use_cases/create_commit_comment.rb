@@ -17,13 +17,12 @@
 #++
 require "use_case"
 require "commands/create_commit_comment_command"
-require "validators/comment_validator"
 
 class CreateCommitComment
   include UseCase
 
   def initialize(user, repository, commit_id)
     input_class(CommitCommentParams)
-    step(CreateCommitCommentCommand.new(user, repository, commit_id), :validator => CommitCommentValidator)
+    step(CreateCommitCommentCommand.new(user, repository, commit_id), :validator => CommentValidators::Commit)
   end
 end

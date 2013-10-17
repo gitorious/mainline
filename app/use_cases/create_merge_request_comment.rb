@@ -15,7 +15,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "validators/comment_validator"
 require "commands/create_merge_request_comment_command"
 
 class CreateMergeRequestComment
@@ -23,6 +22,6 @@ class CreateMergeRequestComment
 
   def initialize(user, merge_request)
     input_class(MergeRequestCommentParams)
-    step(CreateMergeRequestCommentCommand.new(user, merge_request), :validator => MergeRequestCommentValidator)
+    step(CreateMergeRequestCommentCommand.new(user, merge_request), :validator => CommentValidators::MergeRequest)
   end
 end

@@ -15,7 +15,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "validators/comment_validator"
 require "commands/create_comment_command"
 
 class CreateComment
@@ -23,6 +22,6 @@ class CreateComment
 
   def initialize(user, repository)
     input_class(CommentParams)
-    step(CreateCommentCommand.new(user, repository), :validator => EditableCommentValidator)
+    step(CreateCommentCommand.new(user, repository), :validator => CommentValidators::Editable)
   end
 end
