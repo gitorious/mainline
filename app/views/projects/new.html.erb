@@ -21,33 +21,17 @@
   #++
   %>
 
-<div class="gts-site-header">
-  <div class="container">
-    <div class="row">
-      <h2 class="span"><%= @page_title = t("views.projects.new_title") %></h2>
-    </div>
-  </div>
-</div>
+<% @page_title = t("views.projects.new_title") %></h2>
 
-<div class="container">
+<div class="container gts-container">
   <div class="row-fluid">
     <div class="span8">
-      <%= error_messages(project) -%>
-      <%= form_for(project, {
-              :as => :project,
-              :url => projects_path,
-              :builder => Gitorious::View::FormBuilder,
-              :html => { :class => "form-horizontal" }
-            }) do |f| -%>
+      <%= simple_form_for(project, :url => projects_path, :builder => Gitorious::View::FormBuilder, :html => { :class => "form-horizontal" }) do |f| %>
         <fieldset>
-          <%= render(:partial => "form", :locals => {
-                :form => f,
-                :project => project,
-                :edit_slug => true,
-                :edit_urls => false
-              }) -%>
+          <legend>Create a new project</legend>
+          <%= render('form', :form => f, :project => project, :edit_slug => true, :edit_urls => false) %>
           <div class="form-actions">
-            <button class="btn btn-primary" type="submit"><%= t("views.projects.create") %></button>
+            <%= f.submit 'Save', :class => 'btn btn-primary' %>
           </div>
         </fieldset>
       <% end %>

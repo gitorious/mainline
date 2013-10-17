@@ -34,7 +34,7 @@
   <%= simple_form_for(project, :builder => Gitorious::View::FormBuilder, :method => project.persisted? ? :put : :post, :html => { :class => "form form-horizontal" }) do |f| %>
     <fieldset>
       <legend>Edit project</legend>
-      <%= tabbable %w(basic-info description merge-request-statuses), :active => 'basic-info' do %>
+      <%= tabbable %w(basic-info merge-request-statuses), :active => 'basic-info' do %>
         <%= tab_pane 'basic-info', :active => true do %>
           <div class="row-fluid">
             <div class="span8">
@@ -52,9 +52,6 @@
               </div>
             <% end %>
           </div>
-        <% end %>
-        <%= tab_pane 'description' do %>
-          <%= f.textarea_md_preview(:description, 'Description') %>
         <% end %>
         <%= tab_pane 'merge-request-statuses' do %>
           <%= render 'projects/edit/merge_request_statuses', :f => f, :project => project %>
