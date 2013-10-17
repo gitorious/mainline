@@ -23,6 +23,8 @@
   #++
 %>
 
+<% view_all_diffs_path = project_repository_merge_request_version_path(merge_request.project, merge_request.target_repository, merge_request) %>
+
 <%= partial("repositories/header_compact", {
         :repository => repository,
         :project => repository.project,
@@ -33,16 +35,22 @@
 <div class="container gts-body">
   <%= render 'header', :merge_request => merge_request, :source_repo => source_repo, :target_repo => target_repo, :user => user %>
 
-  <% view_all_diffs_path = project_repository_merge_request_version_path(merge_request.project, merge_request.target_repository, merge_request) %>
-  <%= link_to("View all diffs", view_all_diffs_path, :class => "btn btn-primary pull-right") %>
+  <% help_link = link_to('<i class="icon icon-question-sign"></i>'.html_safe, '#mr-help',
+                         :data => { :toggle => 'modal' }) %>
+  <% commit_header = "Commits #{help_link}".html_safe %>
 
-  <%= tabbable({ 'discussion' => '#discussion', 'commits' => '#commits' }, :active => 'discussion') do %>
+  <%= pull_box commit_header do %>
+    <div class="btn-group">
+      <%= link_to("View all diffs", view_all_diffs_path, :class => 'btn') %>
+    </div>
+    <%= render 'merge_requests/show/commits', :commits => commits, :repository => repository, :merge_request => merge_request %>
+  <% end %>
+
+  <%= tabbable({ 'discussion' => '#discussion' }, :active => 'discussion') do %>
     <%= tab_pane 'discussion', :active => true do %>
       <%= render 'merge_requests/show/comments', :comments => comments, :merge_request => merge_request, :repository => repository %>
     <% end %>
-    <%= tab_pane 'commits' do %>
-      <%= render 'merge_requests/show/commits', :commits => commits, :repository => repository, :merge_request => merge_request %>
-    <% end %>
   <% end %>
 
+  <%= render "merge_requests/show/help", :merge_request => merge_request %>
 </div>

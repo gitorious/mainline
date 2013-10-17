@@ -8,35 +8,3 @@
     </tr>
   <% end %>
 </table>
-
-<h5 class="gts-toggler" data-toggle="collapse" data-target="#how-to-update">How to update the merge request?</h5>
-<div class="collapse" id="how-to-update">
-  <p>
-    To update your merge request, either <%= link_to("edit here", :action =>
-                                               :edit) %> or push your changes through git. A new version of your merge
-    request will be created, up until the last commit you push. You may make as
-    many updates as you like; the last one will always be displayed by default
-  </p>
-  <pre><%= "git push #{merge_request.target_repository.push_url}:#{merge_request.merge_branch_name}" %></pre>
-</div>
-
-<h5 class="gts-toggler" data-toggle="collapse" data-target="#how-to-merge">How to merge these changes?</h5>
-<div class="collapse" id="how-to-merge">
-  <p>
-    Pull the changes into a local branch for review, verify the changes (run
-    tests etc) and then merge into master:
-  </p>
-  <pre># Check out a new branch for integration
-git checkout -b merge-requests/<%= merge_request.sequence_number %>
-
-# Fetch the merge request into this branch
-git pull <%= merge_request.target_repository.default_clone_url %> <%= merge_request.merge_branch_name %>
-
-# Review commits
-git log --pretty=oneline --abbrev-commit <%= merge_request.target_branch %>..merge-requests/<%= merge_request.sequence_number %>
-
-# Apply the changes to your branch:
-git checkout <%= merge_request.target_branch %>
-git merge merge-requests/<%= merge_request.sequence_number %>
-git push origin <%= merge_request.target_branch %></pre>
-</div>
