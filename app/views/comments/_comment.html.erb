@@ -23,11 +23,11 @@ comment = CommentPresenter.new(comment, self)
 %>
 
 <div class="gts-comment" id="comment-<%= comment.id %>">
-  <%= comment.state_changed %>
   <div class="gts-comment-header">
     <%= comment.avatar %>
     <%= comment.author_link %>
     <%= comment.line_number %>
+    <%= comment.state_changed %>
     <div class="gts-comment-meta">
       <%= comment.timestamp %>
       <%= comment.edit_link %>

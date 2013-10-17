@@ -41,9 +41,9 @@ class CommentPresenter
   def state_changed
     return unless comment.state_changed_to
 
-    v.content_tag :div, :class => 'gts-bordered-row' do |c|
+    v.content_tag(:span) {
       "→ State changed #{state_changed_from} #{state_changed_to}".html_safe
-    end
+    }
   end
 
   def markdown
