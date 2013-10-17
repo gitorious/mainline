@@ -54,8 +54,7 @@ class Mailer < ActionMailer::Base
     @url = url_for({
       :controller => "messages",
       :action => "show",
-      :id => message_id,
-      :host => Gitorious.host
+      :id => message_id
     })
     @body = sanitize(body)
     @recipient = recipient.title.to_s
@@ -74,7 +73,7 @@ class Mailer < ActionMailer::Base
 
   def forgotten_password(user, pw_key)
     @user = user
-    @url = reset_password_users_url(pw_key, :protocol => Gitorious.scheme)
+    @url = reset_password_users_url(pw_key)
     mail(:to => format_address(user),
          :subject => prefixed_subject(I18n.t("mailer.new_password")))
   end

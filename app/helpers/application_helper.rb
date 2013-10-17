@@ -486,10 +486,6 @@ module ApplicationHelper
     (will_paginate(collection, options.merge(default_options)) || "").html_safe
   end
 
-  def dashboard_path
-    root_url(:host => Gitorious.host, :protocol => Gitorious.scheme)
-  end
-
   def site_domain
     host = Gitorious.host
     port = Gitorious.port

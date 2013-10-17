@@ -16,8 +16,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-ActionMailer::Base.default_url_options[:host] = Gitorious.host
 ActionMailer::Base.default_url_options[:protocol] = Gitorious.scheme
+ActionMailer::Base.default_url_options[:host]     = Gitorious.host
+ActionMailer::Base.default_url_options[:port]     = Gitorious.port unless Gitorious.default_port?
 
 # Can intercept and override emails like this
 # Mail.register_interceptor(DevelopmentMailInterceptor) if Rails.env.development?
