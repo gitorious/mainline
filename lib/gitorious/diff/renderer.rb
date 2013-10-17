@@ -19,6 +19,8 @@
 module Gitorious
   module Diff
     class Renderer
+      include ForceUTF8
+
       def initialize(app, repository, commit)
         @app = app
         @repository = repository
@@ -27,12 +29,13 @@ module Gitorious
 
       def render(file)
         diff = ::Diff::Display::Unified.new(file.diff)
+        a_path = force_utf8(file.a_path)
         class_name = respond_to?(:table_class) ? " " + table_class : ""
         <<-HTML
 <div class="gts-file">
   <ul class="breadcrumb">
     <li class="gts-diff-summary">
-      <a href="#{blob_url(file)}"><i class="icon icon-file"></i> <span class="gts-path">#{file.a_path}</span></a>
+      <a href="#{blob_url(file)}"><i class="icon icon-file"></i> <span class="gts-path">#{a_path}</span></a>
       (<span class="gts-diff-add">+#{adds(diff)}</span>/<span class="gts-diff-rm">-#{rms(diff)}</span>)
     </li>
   </ul>
