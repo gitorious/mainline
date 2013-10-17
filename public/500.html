@@ -1,50 +1,71 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8">
     <title>500 Internal server error - Gitorious</title>
-    <link href="/stylesheets/gts-common.css" media="screen" rel="stylesheet" type="text/css">
-    <script src="/javascripts/all.js" type="text/javascript"></script>
-    <!--[if IE 8]><link rel="stylesheet" href="/stylesheets/ie8.css" type="text/css"><![endif]-->
-    <!--[if IE 7]><link rel="stylesheet" href="/stylesheets/ie7.css" type="text/css"><![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/ui3/lib/bootstrap/css/bootstrap.min.css?1371717279" rel="stylesheet" type="text/css">
+    <link href="/ui3/lib/bootstrap/css/bootstrap-responsive.min.css?1371717279" rel="stylesheet" type="text/css">
+    <link href="/ui3/dist/gitorious3.min.css?1371717279" rel="stylesheet" type="text/css">
   </head>
   <body>
-    <div id="wrapper">
-      <div id="header">
-        <h1 id="logo"><a href="/"><img alt="Logo" src="/ui3/images/gitorious2013.png" /></a></h1>
-      </div>
-      <div id="top-bar"></div>
-      <div id="container">
-        <div id="content">
-          <h1>Sorry, something went wrong</h1>
-          <p>
-            Gitorious encountered an server error. We are automatically notified
-            of errors and will look into it. If the error persists beyond what's
-            reasonable, <a href="/contact">let us know</a>.
-          </p>
+    <div class="gts-masthead navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="gts-logo" href="/"><img src="/ui3/images/gitorious2013.png" alt="Gitorious" title="Gitorious"></a>
         </div>
-      </div>
-      <div id="footer">
-        <div class="powered-by">
-          <a href="http://gitorious.org">
-            <img alt="Powered by Gitorious" src="/img/poweredby.png?1299242754"></a>
-        </div>
-        <div id="footer-links">
-          <h3>Gitorious</h3>
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About Gitorious</a></li>
-            <li><a href="/about/faq">FAQ</a></li>
-            <li><a href="/contact">Contact</a></li>
-          </ul>
-          <ul>
-            <li><a href="http://groups.google.com/group/gitorious">Discussion group</a></li>
-            <li><a href="http://blog.gitorious.org">Blog</a></li>
-          </ul>
-        </div>
-        <div class="clear"></div>
       </div>
     </div>
+    <div class="container gts-body">
+      <br>
+      <h1>Sorry, something went wrong</h1>
+      <p>
+        Gitorious encountered an server error. We are automatically notified
+        of errors and will look into it. If the error persists beyond what's
+        reasonable, <a href="/contact">let us know</a>.
+      </p>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <p class="pull-right gts-powered-by">
+          <a href="http://getgitorious.com">
+            <img alt="Powered by Gitorious" src="/ui3/images/powered-by.png" title="Powered by Gitorious">
+          </a>
+        </p>
+        <p>
+          Gitorious is free software licensed under the
+          <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero General Public License (AGPL)</a>
+          unless noted otherwise.
+        </p>
+        <div class="row">
+          <div class="span2">
+            <ul>
+              <li><a href="/about">About Gitorious</a></li>
+              <li><a href="http://groups.google.com/group/gitorious">Discussion group</a></li>
+            </ul>
+          </div>
+          <div class="span2">
+            <ul>
+              <li><a href="http://blog.gitorious.org">Blog</a></li>
+              <li><a href="http://en.gitorious.org/tos">Terms of Service</a></li>
+            </ul>
+          </div>
+          <div class="span2">
+            <ul>
+              <li><a href="http://en.gitorious.org/privacy_policy">Privacy Policy</a></li>
+            </ul>
+          </div>
+        </div>
+        <p class="gts-com-plug">
+          <a href="http://gitorious.com">Professional Gitorious services</a> -
+          Git hosting at your company, custom features, support and more.
+          <a href="http://gitorious.com">gitorious.com</a>.
+        </p>
+      </div>
+    </div>
+    <script data-gts-env-analytics-account="UA-52238-3"
+            data-gts-env-analytics-domain-name=".gitorious.org">
+    </script>
+    <script src="/ui3/dist/gitorious3.min.js?1371717365"></script>
   </body>
 </html>
