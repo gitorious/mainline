@@ -2,5 +2,9 @@
 
 <%= pull_box merge_request.summary, :class => 'gts-mr-pull-box' do %>
   <%= render('merge_requests/show/options', :merge_request => merge_request) %>
-  <%= description(merge_request, :proposal) %>
+  <% if merge_request.proposal? %>
+    <%= description(merge_request, :proposal) %>
+  <% else %>
+    <p class="muted gts-markup">No description</p>
+  <% end %>
 <% end %>
