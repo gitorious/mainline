@@ -68,7 +68,7 @@ class CommentPresenter
 
   def timestamp
     v.content_tag(:span, :class => 'gts-timestamp', :title => comment.created_at.utc) {
-      v.time_ago_in_words(comment.created_at)+' on'
+      v.time_ago_in_words(comment.created_at)+' ago'
     }
   end
 
