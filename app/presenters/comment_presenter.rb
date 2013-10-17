@@ -63,7 +63,11 @@ class CommentPresenter
 
   def edit_link
     return unless v.can_edit?(v.current_user, comment)
-    v.link_to("Edit comment", v.edit_comment_path(comment))
+    v.link_to(
+      '<i class="icon icon-edit"></i> Edit'.html_safe,
+      v.edit_comment_path(comment),
+      :class => 'btn btn-small'
+    )
   end
 
   def timestamp
