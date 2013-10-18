@@ -14,6 +14,20 @@ if airbrake_api_key
   Gitorious::Application.config.middleware.insert_after(
     "ActionDispatch::DebugExceptions", "Airbrake::Rails::Middleware"
   )
+
+  if Gitorious::Messaging.adapter == "resque"
+    require 'resque/failure/multiple'
+    require 'resque/failure/airbrake'
+    require 'resque/failure/redis'
+
+    Resque::Failure::Airbrake.configure do |config|
+      config.api_key = airbrake_api_key
+    end
+
+    Resque::Failure::Multiple.classes = [Resque::Failure::Redis, Resque::Failure::Airbrake]
+    Resque::Failure.backend = Resque::Failure::Multiple
+  end
+
 elsif exception_recipients.present?
   require "exception_notifier"
 
