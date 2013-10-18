@@ -6,9 +6,7 @@
 %>
 
 <div class="well gts-mr-status">
-  <span class="label gts-mr-status-label" style="background-color: <%= merge_request.status_tag.color %>">
-    <%= merge_request.status_string %>
-  </span>
+  <%= merge_request.status_label_tag %>
   <div class="gts-mr-status-desc">
     <%= link_to(avatar(user, :size => 24) + " #{user.login}", user_path(user)) %>
     requested a merge from

@@ -120,7 +120,7 @@ class CommentPresenterTest < ActiveSupport::TestCase
 
       presenter = CommentPresenter.new(comment, v)
 
-      assert_include presenter.edit_link, "Edit comment"
+      assert_include presenter.edit_link, "Edit"
       assert_include presenter.edit_link, "/path/to/comment"
     end
 
