@@ -116,10 +116,9 @@ class Project < ActiveRecord::Base
     self[:bugtracker_url] = clean_url(url)
   end
 
+  # TODO: move this to the view presentation layer
   def stripped_description
-    description.gsub(/<\/?[^>]*>/, "")
-    # sanitizer = HTML::WhiteListSanitizer.new
-    # sanitizer.sanitize(description, :tags => %w(str), :attributes => %w(class))
+    description.gsub(/<\/?[^>]*>/, "") if description.present?
   end
 
   def descriptions_first_paragraph
