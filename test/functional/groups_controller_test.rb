@@ -84,7 +84,7 @@ class GroupsControllerTest < ActionController::TestCase
   context "creating a group" do
     should "require login" do
       get :new
-      assert_redirected_to (new_sessions_path)
+      assert_redirected_to new_sessions_path
     end
 
     should "GET new successfully" do

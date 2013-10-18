@@ -30,16 +30,16 @@ class MembershipValidatorTest < MiniTest::Spec
   end
 
   it "requires uniq user" do
-    membership = Membership.new(:user => User.new, :group => Group.new, :role => Role.new)
+    membership = Membership.new(:user => User.new, :login => '', :group => Group.new, :role => Role.new)
     def membership.uniq?; false; end
     result = MembershipValidator.call(membership)
 
     refute result.valid?
-    assert result.errors[:user_id]
+    assert result.errors[:login]
   end
 
   it "passes validation" do
-    membership = Membership.new(:user => User.new, :group => Group.new, :role => Role.new)
+    membership = Membership.new(:user => User.new, :login => 'foo', :group => Group.new, :role => Role.new)
     def membership.uniq?; true; end
 
     assert MembershipValidator.call(membership).valid?
@@ -48,7 +48,7 @@ class MembershipValidatorTest < MiniTest::Spec
   it "does not allow demotion of group creator" do
     creator = User.new
     group = Group.new(:creator => creator)
-    membership = Membership.new(:user => creator, :group => group, :role => Role.member)
+    membership = Membership.new(:user => creator, :login => '', :group => group, :role => Role.member)
 
     refute MembershipValidator.call(membership).valid?
   end

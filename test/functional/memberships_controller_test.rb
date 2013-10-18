@@ -89,7 +89,7 @@ class MembershipsControllerTest < ActionController::TestCase
       end
       assert_response :success
       assert_template "new"
-      assert_match(/User can.*t be blank/, @response.body)
+      assert_match(/can't be blank/, @response.body)
     end
   end
 

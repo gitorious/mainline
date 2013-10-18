@@ -1,7 +1,6 @@
 # encoding: utf-8
 #--
 #   Copyright (C) 2013 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,31 +15,38 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "use_case"
+require "virtus"
 
-class Membership < ActiveRecord::Base
-  belongs_to :group
-  belongs_to :user
-  belongs_to :role
-  has_many :messages, :as => :notifiable
-  before_destroy :nullify_messages
-  attr_accessor :inviter
+class UpdateMembershipCommand
+  attr_reader :membership
 
-  def title
-    "Member"
+  def initialize(membership)
+    @membership = membership
   end
 
-  def login
-    user.login if user
+  def execute(membership)
+    membership.save!
+    membership
   end
 
-  def uniq?
-    membership = Membership.where(:user_id => user_id, :group_id => group_id).first
-    membership.nil? || membership == self
+  def build(params)
+    membership.role_id = params.role_id
+    membership
   end
+end
 
-  protected
+class UpdateMembershipParams
+  include Virtus.model
 
-  def nullify_messages
-    messages.update_all({:notifiable_id => nil, :notifiable_type => nil})
+  attribute :role_id, String
+end
+
+class UpdateMembership
+  include UseCase
+
+  def initialize(membership)
+    input_class(UpdateMembershipParams)
+    step(UpdateMembershipCommand.new(membership), :validator => MembershipValidator)
   end
 end

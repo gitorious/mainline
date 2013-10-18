@@ -35,29 +35,29 @@
         <th><%= t(:name, :scope => "activerecord.attributes.roles").humanize %></th>
         <th></th>
       </thead>
-      <% memberships.each do |membership| -%>
+      <% memberships.each do |membership| %>
         <tr>
-          <td><%= l(membership.created_at, :format => :short) -%></td>
-          <td><%= link_to h(membership.user.login), membership.user -%></td>
-          <td><%= membership.user.public_email? ? h(membership.user.email) : "N/A" -%></td>
-          <td><%=h membership.role.name -%></td>
+          <td><%= l(membership.created_at, :format => :short) %></td>
+          <td><%= link_to h(membership.user.login), membership.user %></td>
+          <td><%= membership.user.public_email? ? h(membership.user.email) : "N/A" %></td>
+          <td><%=h membership.role.name %></td>
           <td>
-            <%- if admin?(current_user, group) && group.is_a?(Group) -%>
-              <%= link_to(t("views.common.edit"), edit_group_membership_path(group, membership), :class => "btn") -%>
-              <%= link_to("Remove", group_membership_path(group, membership), :class => "btn btn-danger", :method => :delete) -%>
-            <%- end -%>
+            <%- if admin?(current_user, group) && group.is_a?(Group) %>
+              <%= link_to(t("views.common.edit"), edit_group_membership_path(group, membership), :class => "btn") %>
+              <%= link_to("Remove", group_membership_path(group, membership), :class => "btn btn-danger", :method => :delete) %>
+            <%- end %>
           </td>
         </tr>
-      <% end -%>
+      <% end %>
     </table>
-    <% if admin?(current_user, @group) and @group.is_a?(Group) -%>
+    <% if admin?(current_user, @group) and @group.is_a?(Group) %>
       <p>
         <a href="<%= new_group_membership_path(group) %>" class="btn btn-primary">
           <i class="icon-plus-sign icon-white"></i>
           <%= t("views.memberships.add_new_member") %>
         </a>
       </p>
-    <% end -%>
+    <% end %>
     <%= raw JustPaginate.page_navigation(page, total_pages) { |n| group_memberships_path(:page => n) } %>
   </div>
 </div>

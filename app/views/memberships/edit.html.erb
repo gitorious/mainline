@@ -16,22 +16,21 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
-<%= render(:partial => "groups/header", :locals => {
-        :active => true,
-        :title => group.name,
-        :group => group
-      }) %>
+%>
+
 <% @title = "#{group.name} members" %>
 
+<%= render('groups/header', :active => true, :title => group.name, :group => group) %>
+
 <div class="container gts-body">
-  <h2>Editing <%= membership.user.fullname %>'s role</h2>
   <div class="gts-container">
-    <%= error_messages(group) -%>
-    <%= error_messages(membership) -%>
-    <%= simple_form_for [group, membership], :html => { :class => "form-horizontal" } do |f| -%>
+    <%= simple_form_for [group, membership],
+      :url => group_membership_path(group, membership.id),
+      :method => membership.persisted? ? 'put' : 'post',
+      :html => { :class => "form-horizontal" } do |f| %>
       <fieldset>
-        <%= f.input :role_id, :collection => Role.all.map { |r| [r.name, r.id] } %>
+        <legend>Editing <%= membership.user.fullname %>'s role</legend>
+        <%= f.input :role_id, :collection => Role.all.map { |r| [r.name, r.id] }, :include_blank => false %>
       </fieldset>
       <div class="form-actions">
         <button class="btn btn-primary" type="submit">Update</button>

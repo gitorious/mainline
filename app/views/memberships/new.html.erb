@@ -17,26 +17,21 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
-<%= render(:partial => "groups/header", :locals => {
-        :active => true,
-        :title => group.name,
-        :group => group
-      }) %>
+%>
 
-<div class="container gts-body">
-  <h2><%= @title = "Add member to #{group.name}" %></h2>
-  <div class="gts-container">
-    <%= error_messages(group) -%>
-    <%= error_messages(membership) -%>
-    <%= simple_form_for(:membership, :url => group_memberships_path(group), :html => { :class => "form-horizontal" }) do |f| -%>
-      <fieldset>
-        <%= f.input :login, :label => t("views.users.username") %>
-        <%= f.input :role_id, :collection => Role.all.map { |r| [r.name, r.id] } %>
-      </fieldset>
-      <div class="form-actions">
-        <button class="btn btn-primary" type="submit">Add member</button>
-      </div>
-    <% end -%>
-  </div>
+<% @title = "Add member to #{group.name}" %>
+
+<%= render('groups/header', :active => true, :title => group.name, :group => group) %>
+
+<div class="container">
+  <%= simple_form_for(membership, :url => group_memberships_path(group), :html => { :class => "form-horizontal" }) do |f| %>
+    <fieldset>
+      <legend><%= @title %></legend>
+      <%= f.input :login, :label => t("views.users.username") %>
+      <%= f.input :role_id, :collection => Role.all.map { |r| [r.name, r.id] }, :include_blank => false %>
+    </fieldset>
+    <div class="form-actions">
+      <%= f.submit 'Save', :class => 'btn btn-primary' %>
+    </div>
+  <% end %>
 </div>

@@ -18,22 +18,25 @@
 require "use_case"
 
 MembershipValidator = UseCase::Validator.define do
-  validates_presence_of :group, :user, :role
+  validates :group, :user, :role, :login, :presence => true
   validate :unique_user
-  validate :group_creator_unchallenged
-
-  def unique_user
-    errors.add(:user, "is already a member of this team") if !uniq?
-  end
-
-  def group_creator_unchallenged
-    creator = group && group.creator
-    if user == creator && role != Role.admin
-      errors.add(:role, "The group creator cannot be demoted")
-    end
-  end
+  validate :group_creator_unchallenged, :if => :persisted?
 
   def self.model_name
     Membership.model_name
+  end
+
+  def unique_user
+    errors.add(:login, "is already a member of this team") unless uniq?
+  end
+
+  def group_creator_unchallenged
+    errors.add(:role_id, "The group creator cannot be demoted") if creator_demoted?
+  end
+
+  private
+
+  def creator_demoted?
+    group.creator == user && role != Role.admin
   end
 end

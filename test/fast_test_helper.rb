@@ -202,7 +202,11 @@ if !defined?(Rails)
   end
 
   class Membership < TestHelper::Model
-    attr_accessor :user, :group, :role
+    attr_accessor :user, :group, :role, :login, :persisted
+
+    def persisted?
+      @persisted
+    end
   end
 
   class Role

@@ -19,6 +19,7 @@
 
 class MembershipsController < ApplicationController
   before_filter :find_group
+  before_filter :find_membership, :only => [:edit, :update]
   before_filter :ensure_group_adminship, :except => [:index, :show, :create]
   renders_in_global_context
 
@@ -58,25 +59,25 @@ class MembershipsController < ApplicationController
       redirect_to group_memberships_path(@group)
     end
 
-    outcome.failure { |membership| render_form(membership) }
+    outcome.failure do |membership|
+      render_form(membership)
+    end
   end
 
   def edit
-    render("edit", :locals => {
-        :membership => @group.memberships.find(params[:id]),
-        :group => @group
-      })
+    render_edit_form
   end
 
   def update
-    @membership = @group.memberships.find(params[:id])
-    @membership.role_id = params[:membership][:role_id]
+    outcome = UpdateMembership.new(@membership).execute(params[:membership])
 
-    if @membership.save
+    outcome.success do
       flash[:success] = I18n.t("memberships_controller.membership_updated")
       redirect_to group_memberships_path(@group)
-    else
-      render :action => "edit"
+    end
+
+    outcome.failure do |membership|
+      render_edit_form(membership)
     end
   end
 
@@ -92,14 +93,23 @@ class MembershipsController < ApplicationController
   end
 
   protected
+
   def find_group
     @group = Team.find_by_name!(params[:group_id])
+  end
+
+  def find_membership
+    @membership = @group.memberships.find(params[:id])
   end
 
   def ensure_group_adminship
     unless admin?(current_user, @group)
       access_denied and return
     end
+  end
+
+  def render_edit_form(membership = @membership)
+    render("edit", :locals => { :membership => membership, :group => @group })
   end
 
   def render_form(membership)
