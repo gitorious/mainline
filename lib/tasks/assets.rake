@@ -1,5 +1,4 @@
 def rm_f(path)
-  raise 'aa'
   Dir.glob(Rails.root + path).each do |file|
     puts file if ENV["VERBOSE"]
     `rm -f #{file}`
