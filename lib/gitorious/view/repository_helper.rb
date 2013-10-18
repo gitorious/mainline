@@ -37,7 +37,7 @@ module Gitorious
         <<-HTML.html_safe
         <div class="btn-group gts-repo-urls">
           #{remote_link(repository, app.ssh_daemon, "SSH", default_remote)}
-          #{remote_link(repository, app.git_http, app.git_http.scheme.upcase, default_remote)}
+          #{remote_link(repository, app.git_http, app.git_http.scheme.upcase, default_remote) if app.git_http}
           #{remote_link(repository, app.git_daemon, "Git", default_remote)}
           <input class="span4 gts-current-repo-url gts-select-onfocus" type="url" value="#{default_remote}">
           <button data-toggle="collapse" data-target="#repo-url-help" class="gts-repo-url-help btn">?</button>
