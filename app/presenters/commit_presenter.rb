@@ -17,30 +17,85 @@
 #++
 require "repository_presenter"
 
-class CommitPresenter
-  attr_reader :repository, :id
+class CommitPresenter < SimpleDelegator
+  attr_reader :repository, :commit, :id
 
-  def initialize(repository, oid)
-    @git = repository.git
-    @repository = RepositoryPresenter.new(repository)
-    @id = oid
+  # FIXME: this is a trick to maintain backward compatibility
+  def self.new(repository, commit)
+    super(
+      repository.is_a?(RepositoryPresenter) ? repository : RepositoryPresenter.new(repository),
+      commit.is_a?(String) ? repository.git.commit(commit) : commit
+    )
   end
 
-  def commit; @commit ||= @git.commit(id); end
-  def short_oid; id[0,7]; end
-  def project; repository.project; end
-  def diffs; commit.parents.empty? ? [] : commit.diffs; end
-  def raw_diffs; diffs.map { |d| d.diff }.join("\n"); end
-  def exists?; !commit.nil?; end
-  def to_patch; commit.to_patch; end
-  def merge?; commit.merge?; end
-  def stats; commit.stats; end
-  def parents; commit.parents; end
-  def message; commit.message; end
-  def committer; commit.committer; end
-  def author; commit.author; end
-  def committed_date; commit.committed_date; end
-  def authored_date; commit.authored_date; end
+  def initialize(repository, commit)
+    @repository = repository
+    @commit     = commit
+  end
+
+  def short_oid
+    id[0, 7]
+  end
+
+  def project
+    repository.project
+  end
+
+  def diffs
+    parents.empty? ? [] : commit.diffs
+  end
+
+  def raw_diffs
+    diffs.map { |d| d.diff }.join("\n")
+  end
+
+  def exists?
+    !commit.nil?
+  end
+
+  def id
+    commit.id
+  end
+
+  def short_message
+    commit.short_message
+  end
+
+  def to_patch
+    commit.to_patch
+  end
+
+  def merge?
+    commit.merge?
+  end
+
+  def stats
+    commit.stats
+  end
+
+  def parents
+    commit.parents
+  end
+
+  def message
+    commit.message
+  end
+
+  def committer
+    commit.committer
+  end
+
+  def author
+    commit.author
+  end
+
+  def committed_date
+    commit.committed_date
+  end
+
+  def authored_date
+    commit.authored_date
+  end
 
   def committer_user
     User.find_by_email_with_aliases(committer.email)

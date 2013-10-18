@@ -41,7 +41,7 @@ end
 
 class CommitPresenterTest < MiniTest::Spec
   before do
-    @project = p = Project.new(:title => "My project")
+    @project = Project.new(:title => "My project")
     @git = FakeGit.new
     @repository = Repository.new(:project => @project, :git => @git)
   end
@@ -66,12 +66,14 @@ class CommitPresenterTest < MiniTest::Spec
 
     it "presents diffs if commit has parents" do
       @git.diffs = [{ id: 1 }, { id: 2 }]
-      assert_equal [{ id: 1 }, { id: 2 }], @commit.diffs
+      commit = CommitPresenter.new(@repository, "0123456789012345678901234567890123456789")
+      assert_equal [{ id: 1 }, { id: 2 }], commit.diffs
     end
 
     it "presents raw diffs as a string" do
       @git.diffs = [OpenStruct.new(:diff => "Diff #1"), OpenStruct.new(:diff => "Diff #2")]
-      assert_equal "Diff #1\nDiff #2", @commit.raw_diffs
+      commit = CommitPresenter.new(@repository, "0123456789012345678901234567890123456789")
+      assert_equal "Diff #1\nDiff #2", commit.raw_diffs
     end
 
     it "does not exist if commit is nil" do

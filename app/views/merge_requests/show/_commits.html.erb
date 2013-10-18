@@ -1,10 +1,20 @@
-<table class="table">
-  <% commits.each do |commit| %>
+<table class="table gts-mr-commit-table">
+  <colgroup>
+    <col class="sha-col"/>
+    <col class="commit-msg-col"/>
+    <col class="commit-date-col"/>
+  </colgroup>
+  <% commits.map { |commit| CommitPresenter.new(repository, commit) }.each do |commit| %>
     <tr>
       <td>
-        <%= link_to(commit.id[0...7], project_repository_commit_path(repository.project, repository, commit.id)) %>
+        <%= link_to(commit.short_oid, project_repository_commit_path(repository.project, repository, commit.id)) %>
       </td>
-      <td><%= commit.short_message %></td>
+      <td>
+        <%= commit.short_message %>
+      </td>
+      <td title="<%= commit.committed_date.utc %>">
+        <%= time_ago_in_words(commit.committed_date) %> ago
+      </td>
     </tr>
   <% end %>
 </table>

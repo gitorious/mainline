@@ -26,6 +26,7 @@ class RepositoryPresenter
     @repository = repository
   end
 
+  def git; repository.git; end
   def id; repository.id; end
   def name; repository.name; end
   def gitdir; repository.gitdir; end
