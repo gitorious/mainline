@@ -16,25 +16,29 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
-<%= render(:partial => "groups/header", :locals => {
-        :active => true,
-        :title => group.name,
-        :group => group
-      }) %>
+%>
+
+<%= render("groups/header", :active => true, :title => group.name, :group => group) %>
+
 <% @title = "#{group.name} members" %>
 
-<div class="container gts-body">
-  <div class="gts-container">
-    <h2>Members</h2>
-    <table class="table table-striped">
-      <thead>
-        <th><%= t(:created_at, :scope => "activerecord.attributes.memberships").humanize %></th>
-        <th><%= t(:login, :scope => "activerecord.attributes.user").humanize %></th>
-        <th><%= t(:email, :scope => "activerecord.attributes.user").humanize %></th>
-        <th><%= t(:name, :scope => "activerecord.attributes.roles").humanize %></th>
-        <th></th>
-      </thead>
+<div class="container gts-container">
+  <% if admin?(current_user, @group) and @group.is_a?(Group) %>
+    <a href="<%= new_group_membership_path(group) %>" class="btn btn-primary pull-right">
+      <i class="icon-plus-sign icon-white"></i>
+      <%= t("views.memberships.add_new_member") %>
+    </a>
+  <% end %>
+  <h2 class="gts-legend">Members</h2>
+  <table class="table table-striped">
+    <thead>
+      <th><%= t(:created_at, :scope => "activerecord.attributes.memberships").humanize %></th>
+      <th><%= t(:login, :scope => "activerecord.attributes.user").humanize %></th>
+      <th><%= t(:email, :scope => "activerecord.attributes.user").humanize %></th>
+      <th><%= t(:name, :scope => "activerecord.attributes.roles").humanize %></th>
+      <th></th>
+    </thead>
+    <tbody class="gts-tbody-actions">
       <% memberships.each do |membership| %>
         <tr>
           <td><%= l(membership.created_at, :format => :short) %></td>
@@ -49,15 +53,7 @@
           </td>
         </tr>
       <% end %>
-    </table>
-    <% if admin?(current_user, @group) and @group.is_a?(Group) %>
-      <p>
-        <a href="<%= new_group_membership_path(group) %>" class="btn btn-primary">
-          <i class="icon-plus-sign icon-white"></i>
-          <%= t("views.memberships.add_new_member") %>
-        </a>
-      </p>
-    <% end %>
-    <%= raw JustPaginate.page_navigation(page, total_pages) { |n| group_memberships_path(:page => n) } %>
-  </div>
+    </tbody>
+  </table>
+  <%= raw JustPaginate.page_navigation(page, total_pages) { |n| group_memberships_path(:page => n) } %>
 </div>

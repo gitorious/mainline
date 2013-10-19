@@ -22,19 +22,17 @@
 
 <%= render('groups/header', :active => true, :title => group.name, :group => group) %>
 
-<div class="container gts-body">
-  <div class="gts-container">
-    <%= simple_form_for [group, membership],
-      :url => group_membership_path(group, membership.id),
-      :method => membership.persisted? ? 'put' : 'post',
-      :html => { :class => "form-horizontal" } do |f| %>
-      <fieldset>
-        <legend>Editing <%= membership.user.fullname %>'s role</legend>
-        <%= f.input :role_id, :collection => Role.all.map { |r| [r.name, r.id] }, :include_blank => false %>
-      </fieldset>
-      <div class="form-actions">
-        <button class="btn btn-primary" type="submit">Update</button>
-      </div>
-    <% end %>
-  </div>
+<div class="container gts-container">
+  <%= simple_form_for [group, membership],
+    :url => group_membership_path(group, membership.id),
+    :method => membership.persisted? ? 'put' : 'post',
+    :html => { :class => "form-horizontal" } do |f| %>
+    <fieldset>
+      <legend>Editing <%= membership.user.fullname %>'s role</legend>
+      <%= f.input :role_id, :collection => Role.all.map { |r| [r.name, r.id] }, :include_blank => false %>
+    </fieldset>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Update</button>
+    </div>
+  <% end %>
 </div>
