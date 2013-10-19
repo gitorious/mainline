@@ -31,34 +31,28 @@
         :header_level => 1
       }) %>
 
-<div class="container gts-body">
-  <div class="gts-container">
-    <div class="row-fluid">
-      <div class="span8">
-        <%= render(:partial => "repository_activities/activities", :locals => {
-                :events => events,
-                :page => current_page,
-                :total_pages => total_pages
-              }) %>
-      </div>
-      <div class="span4">
-        <%= render "repositories/repositories", {
-              :repositories => mainlines,
-              :hint => "This project does not yet have any repositories.",
-              :heading => "Project repositories",
-              :footer => "<div class=\"pull-box-links\">" +
-              "<a class=\"btn btn-primary\" href=\"#{new_project_repository_path(project)}\">" +
-              "<i class=\"icon-plus-sign icon-white\"></i> Create repository</a></div>"
-            } %>
-        <%= render "repositories/repositories", {
-              :repositories => group_clones,
-              :heading => "Team repository clones"
-            } %>
-        <%= render "repositories/repositories", {
-              :repositories => user_clones,
-              :heading => "User repository clones"
-            } %>
-      </div>
+<div class="container">
+  <div class="row-fluid">
+    <div class="span8">
+      <%= render('repository_activities/activities', :events => events, :page => current_page, :total_pages => total_pages) %>
+    </div>
+    <div class="span4">
+      <%= render "repositories/repositories", {
+            :repositories => mainlines,
+            :hint => "This project does not yet have any repositories.",
+            :heading => "Project repositories",
+            :footer => "<div class=\"pull-box-links\">" +
+            "<a class=\"btn btn-primary\" href=\"#{new_project_repository_path(project)}\">" +
+            "<i class=\"icon-plus-sign icon-white\"></i> Create repository</a></div>"
+          } %>
+      <%= render "repositories/repositories", {
+            :repositories => group_clones,
+            :heading => "Team repository clones"
+          } %>
+      <%= render "repositories/repositories", {
+            :repositories => user_clones,
+            :heading => "User repository clones"
+          } %>
     </div>
   </div>
 </div>
