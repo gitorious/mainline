@@ -1,14 +1,14 @@
+<h2 class="gts-legend">Manage watched items</h2>
 <%= help_box do %>
   <p>
-    Here you can manage the watch settings for the objects you are
-    watching. Use the checkbox to toggle email settings. Turning email
-    notifications on will send you an email each time something from the
-    favorite is put in
-    <%= link_to "your news feed", current_user %>
+  Here you can manage settings for the items you are watching. Use the on/off
+  links to toggle email notifications. Turning email notifications on will send
+  you an email each time something from the favorite is put in
+    <%= link_to "your news feed", current_user %>.
   </p>
 <% end %>
 
-<table class="table" data-behavior="favorites-listing">
+<table class="table table-striped" data-behavior="favorites-listing">
   <colgroup>
     <col/>
     <col style="width: 20%"/>
@@ -16,12 +16,12 @@
   </colgroup>
   <thead>
     <tr>
-      <th></th>
+      <th>Name</th>
       <th>Email notifications</th>
-      <th>Unwatch</th>
+      <th></th>
     </tr>
   </thead>
-  <tbody>
+  <tbody class="gts-tbody-actions">
     <% favorites.each do |favorite| %>
       <tr>
         <td>

@@ -51,7 +51,7 @@ module FavoritesHelper
   end
 
   def link_to_unwatch_favorite(favorite)
-    link_to("Unwatch", favorite, :method => :delete)
+    link_to("Unwatch", favorite, :method => :delete, :class => 'btn')
   end
 
   # Builds a link to the target of a favorite event

@@ -3,8 +3,7 @@
   <%= render "keys/form", :ssh_key => @ssh_key || current_user.ssh_keys.build %>
 <% else %>
   <% @title = "SSH Keys" %>
+  <%= link_to "Add new", new_user_key_path(current_user), :class => 'btn btn-primary pull-right' %>
+  <h2 class="gts-legend">Manage your SSH keys</h2>
   <%= render "keys/keys", :ssh_keys => current_user.ssh_keys %>
-  <div class="form-actions">
-    <%= link_to "Add new", new_user_key_path(current_user), :class => 'btn btn-primary' %>
-  </div>
 <% end %>

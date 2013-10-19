@@ -1,38 +1,41 @@
+
+<%= link_to("Add new", new_user_alias_path(user), :class => 'btn btn-primary pull-right')  %>
+
+<h2 class="gts-legend">Manage your email aliases</h2>
+
 <p>
   Aliases are used to associate your commits with your Gitorious user  account.
   Useful if you commit under more than one email. Any communication sent to you from
-  Gitorious will still go to your primary email only (<strong><%= h(@user.email) -%></strong>)
+  Gitorious will still go to your primary email only (<strong><%= h(@user.email) %></strong>)
 </p>
 
-<table class="table">
+<table class="table table-striped">
   <thead>
     <th>Added</th>
     <th>Address</th>
-    <th>State</th>
+    <th>Confirmed?</th>
     <th></th>
   </thead>
-  <% emails.each do |email| -%>
-    <tr>
-      <td>
-        <%= l(email.created_at, :format => :short) %>
-      </td>
-      <td>
-        &lt;<%= h(email.address) -%>&gt;
-      </td>
-      <td>
-        <%= image_tag(email.confirmed? ? "silk/tick.png" : "silk/cross.png",
-                      :title => email.confirmed? ? 'Confirmed' : 'Not confirmed') %>
-      </td>
-      <td>
-        <%= link_to(t("views.common.delete"), user_alias_path(user, email),
-                    :method => :delete,
-                    :confirm => t("views.common.confirm"),
-                    :class => 'btn btn-danger') %>
-      </td>
-    </tr>
-  <% end -%>
+  <tbody class="gts-tbody-actions">
+    <% emails.each do |email| %>
+      <tr>
+        <td>
+          <%= l(email.created_at, :format => :short) %>
+        </td>
+        <td>
+          <%= h(email.address) %>
+        </td>
+        <td>
+          <%= image_tag(email.confirmed? ? "silk/tick.png" : "silk/cross.png",
+                        :title => email.confirmed? ? 'Confirmed' : 'Not confirmed') %>
+        </td>
+        <td>
+          <%= link_to(t("views.common.delete"), user_alias_path(user, email),
+                      :method => :delete,
+                      :confirm => t("views.common.confirm"),
+                      :class => 'btn btn-danger') %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>
-
-<div class="form-actions">
-  <%= link_to("Add new", new_user_alias_path(user), :class => 'btn btn-primary')  %>
-</div>

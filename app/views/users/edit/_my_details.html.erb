@@ -1,5 +1,6 @@
 <%= simple_form_for user, :url => user_path(user.login), :method => :put, :multipart => true, :html => { :class => 'form-horizontal' } do |f| -%>
   <fieldset>
+    <legend>Update your information</legend>
     <%= f.input :fullname, :label => t("views.users.realname") %>
     <%= f.input :email, :as => :email, :label => t(:email, :scope => 'views.users') %>
     <%= f.input :public_email, :as => :boolean, :hint => 'The email will be encoded to prevent scraping', :label => t(:public_email, :scope => 'activerecord.attributes.user') %>
