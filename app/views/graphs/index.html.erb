@@ -18,7 +18,7 @@
   %>
 <% content_for(:head) do %>
   <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url,
-        :title => atom_auto_discovery_title) -%>
+        :title => atom_auto_discovery_title) %>
 <% end %>
 
 <%= repo_header repository, :current_user => current_user, :ref => ref, :active => :commits %>
@@ -34,16 +34,17 @@
       <%= link_to("Graph <span class=\"gts-oid\">#{ref}</span>".html_safe, "") %>
     </li>
   </ul>
-  <h1><%= @title = t("views.graphs.title", :repo_url => h(repository.url_path), :ref => h(ref)) -%></h1>
-  <br>
-  <%= cache([[repository.project, repository], :graphs, ref, params[:type]], { :expires_in => 10.minutes }) do -%>
+  <h2 class="gts-legend">
+    <%= @title = t("views.graphs.title", :repo_url => h(repository.url_path), :ref => h(ref)) %>
+  </h2>
+  <%= cache([[repository.project, repository], :graphs, ref, params[:type]], { :expires_in => 10.minutes }) do %>
     <div class="capillary-graph capillary"
          data-gts-env-capillary-id-url="<%= "/#{repository.project.slug}/#{repository.name}/graph/{{id}}" %>"
          data-gts-env-capillary-message-url="<%= "/#{repository.project.slug}/#{repository.name}/commit/{{id}}" %>"
          data-gts-env-capillary-url="<%= url_for(:controller => "api/graphs", :action => "show", :branch => params[:branch], :type => params[:type]) %>">
       <h2>This page requires JavaScript</h2>
     </div>
-  <% end -%>
+  <% end %>
 </div>
 <% content_for(:footer) do %>
   <% (Rails.env.production? ? ["/dist/js/gitorious3-capillary.min.js"] : [

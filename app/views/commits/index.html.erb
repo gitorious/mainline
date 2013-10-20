@@ -17,10 +17,10 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<% @title = t("views.logs.title_clean", :repo_url => h(repository.url_path), :ref => h(ref)) -%>
+<% @title = t("views.logs.title_clean", :repo_url => h(repository.url_path), :ref => h(ref)) %>
 <% content_for(:head) do %>
   <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url,
-        :title => atom_auto_discovery_title) -%>
+        :title => atom_auto_discovery_title) %>
 <% end %>
 
 <%= repo_header repository, :current_user => current_user, :ref => ref, :active => :commits %>
@@ -34,9 +34,11 @@
                   project_repository_graph_in_ref_path(repository.project, repository, params[:branch])+"?page=#{page}") %>
     </li>
   </ul>
-  <h1><%= t("views.logs.title", :repo_url => h(repository.url_path), :ref => h(ref)).html_safe -%></h1>
+  <h2 class="gts-legend">
+    <%= t("views.logs.title", :repo_url => h(repository.url_path), :ref => h(ref)).html_safe %>
+  </h2>
 
-  <%= cache([[repository.project, repository], :commits, ref, commits.current_page], { :expires_in => 10.minutes }) do -%>
+  <%= cache([[repository.project, repository], :commits, ref, commits.current_page], { :expires_in => 10.minutes }) do %>
     <%= render(:partial => "log", :locals => {
             :repository => repository,
             :ref => ref,
@@ -44,6 +46,6 @@
             :page => page,
             :total_pages => total_pages,
             :atom_auto_discovery_url => atom_auto_discovery_url,
-            :atom_auto_discovery_title => atom_auto_discovery_title}) -%>
-  <% end -%>
+            :atom_auto_discovery_title => atom_auto_discovery_title}) %>
+  <% end %>
 </div>
