@@ -23,10 +23,13 @@
 <% end %>
 
 <div class="container">
-  <h1>Merge requests for <%= target.slug %></h1>
-  <p>
+  <h2 class="gts-legend">
+    Merge requests for <%= target.slug %>
+    <%= link_to_help 'merge-request' %>
+  </h2>
+  <%= modal_box("What's a merge request?", 'merge-request') do %>
     <%= t("views.merges.hint") %>
-  </p>
+  <% end %>
   <%= render_status_tag_list(merge_request_statuses, target, status) -%>
   <table class="table table-striped">
     <% merge_requests.each do |merge_request| -%>

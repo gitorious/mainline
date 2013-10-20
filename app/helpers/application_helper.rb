@@ -64,6 +64,25 @@ module ApplicationHelper
     HTML
   end
 
+  def link_to_help(id)
+    link_to(
+      '<i class="icon icon-question-sign"></i>'.html_safe,
+      "##{id}", :class => 'gts-help-link', :data => { :toggle => 'modal' }
+    )
+  end
+
+  def modal_box(title, id, &block)
+    content_tag(:div, :class => 'modal hide', :id => id) {
+      body_html = content_tag(:div, :class => 'modal-header') {
+        header_html = button_tag 'x', :class => 'close', :data => { :dismiss => 'modal' }
+        header_html << content_tag(:h3, title)
+        header_html.html_safe
+      }
+      body_html << content_tag(:div, capture(&block), :class => 'modal-body')
+      body_html.html_safe
+    }.html_safe
+  end
+
   def pull_box(title, options = {}, &block)
     title_html = title.nil? ? "" : "<div class=\"pull-box-header\"><h3>#{title}</h3></div>"
     raw <<-HTML

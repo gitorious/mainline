@@ -23,7 +23,7 @@
         :header_level => 2
       }) %>
 
-<%= partial("merge_requests/merge_request_table", {
+<%= render("merge_requests/merge_request_table", {
         :atom_auto_discovery_url => atom_auto_discovery_url,
         :target => project,
         :merge_request_statuses => merge_request_statuses,

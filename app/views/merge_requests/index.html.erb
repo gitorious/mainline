@@ -15,8 +15,10 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
+%>
+
 <% @title = t("views.merges.page_title", :repo => h(repository.name)) -%>
+
 <% content_for(:head) do %>
   <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url, :title => "Atom") -%>
 <% end %>
@@ -27,7 +29,7 @@
         :header_level => 2
         }) %>
 
-<%= partial("merge_requests/merge_request_table", {
+<%= render("merge_requests/merge_request_table", {
         :atom_auto_discovery_url => atom_auto_discovery_url,
         :target => repository,
         :merge_request_statuses => merge_request_statuses,
