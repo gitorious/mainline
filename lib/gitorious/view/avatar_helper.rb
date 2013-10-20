@@ -51,6 +51,7 @@ module Gitorious
         if user.avatar?
           avatar_style = options.delete(:version) || :thumb
           image_options = { :alt => 'avatar'}.merge(:width => options[:size], :height => options[:size])
+          image_options.update(:class => options[:class]) if options.key?(:class)
           image_tag(user.avatar.url(avatar_style), image_options)
         else
           gravatar(user.email, options)
