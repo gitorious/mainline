@@ -16,8 +16,10 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
+%>
+
 <% type = owner.class.model_name.underscore %>
+
 <%= partial("#{type.pluralize}/header", {
         type.to_sym => owner,
         :app => Gitorious,
@@ -26,21 +28,19 @@
       }) %>
 
 <div class="container">
-  <%= render(:partial => "pages/actions", :locals => {
-          :owner => owner,
-          :active => :index
-        }) %>
-  <h1><%= @title = "#{owner.title} Wiki pages" %></h1>
+  <%= render('pages/actions', :owner => owner, :active => :index) %>
+  <h2 class="gts-legend">
+    <%= @title = "#{owner.title} Wiki pages" %>
+  </h2>
   <ul>
-    <% tree_nodes.each do |node| -%>
-      <li><%= link_to(
-                page_node_name(node),
-                wiki_page_path(owner, page_node_name(node))
-              )-%></li>
-    <% end -%>
+    <% tree_nodes.each do |node| %>
+      <li>
+        <%= link_to page_node_name(node), wiki_page_path(owner, page_node_name(node)) %>
+      </li>
+    <% end %>
   </ul>
 </div>
 
 <% content_for(:head) do %>
-  <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url, :title => @title) -%>
+  <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url, :title => @title) %>
 <% end %>

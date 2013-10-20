@@ -50,7 +50,7 @@ class PagesController < WikiController
 
     if @page.content == params[:page][:content]
       flash[:error] = I18n.t("pages_controller.no_changes")
-      render :action => "edit" and return
+      render_edit(ProjectPresenter.new(@project), @page) and return
     end
 
     @page.content = params[:page][:content]
@@ -61,7 +61,7 @@ class PagesController < WikiController
       redirect_to project_page_path(@project, @page)
     else
       flash[:error] = I18n.t("pages_controller.invalid_page_error")
-      render :action => "edit"
+      render_edit(ProjectPresenter.new(@project), @page)
     end
   end
 

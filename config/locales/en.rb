@@ -120,7 +120,7 @@
     },
     :pages_controller => {
       :invalid_page_error => "invalid page, badly formatted title or body",
-      :no_changes => "No changes was submitted",
+      :no_changes => "No changes were submitted",
       :repository_not_ready => "The wiki is being created",
     },
     :memberships_controller => {
