@@ -18,8 +18,8 @@
 require "use_case"
 
 UpdateProjectValidator = UseCase::Validator.define do
+  validates_presence_of :default_merge_request_status
   validate :merge_request_statuses_valid
-  validate :ensure_has_default_merge_request_status
 
   def self.model_name
     Project.model_name
@@ -31,15 +31,13 @@ UpdateProjectValidator = UseCase::Validator.define do
 
   private
 
-  def ensure_has_default_merge_request_status
-    return if new_record?
-    return if merge_request_statuses.reject(&:marked_for_destruction?).any?(&:default)
-    errors.add(:default_merge_request_status_id, "must be present")
+  def default_merge_request_status
+    merge_request_statuses.reject(&:marked_for_destruction?).find(&:default)
   end
 
   def merge_request_statuses_valid
     if merge_request_statuses.any?(&:invalid?)
-      errors.add(:merge_request_statuses, "must be valid")
+      errors.add(:merge_request_statuses, I18n.t('project.merge_request_statuses_invalid'))
     end
   end
 end
