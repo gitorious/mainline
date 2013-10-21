@@ -16,45 +16,32 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
+%>
 
 <% @title = group.name %>
 <%= render('header', :active => true, :title => @title, :group => group) %>
 
-<div class="container gts-body">
+<div class="container">
   <div class="row-fluid">
     <div class="span8">
-      <%= render(:partial => "repository_activities/activities", :locals => {
-              :events => events,
-              :page => events.current_page.to_i,
-              :total_pages => events.total_pages
-            }) %>
+      <%= render('repository_activities/activities', :events => events, :page => events.current_page.to_i, :total_pages => events.total_pages) %>
     </div>
     <div class="span4">
-      <%= render(:partial => "#{group.class.name.underscore}_members", :locals => {
-              :memberships => memberships
-            }) %>
-      <p>
-        <a class="btn btn-primary" href="<%= new_group_membership_path(group) %>">
-          <i class="icon-plus-sign icon-white"></i>
-          Add member
-        </a>
-        <br><br>
-      </p>
+      <%= render("groups/show/memberships", :group => group, :memberships => memberships) %>
       <%= render("projects/projects", {
             :projects => projects,
             :hint => "This team does not yet have any projects.",
-            :heading => "Team projects"
+            :heading => "Projects"
           }) %>
       <%= render("repositories/repositories", {
             :repositories => mainlines,
             :hint => "This team does not yet have any repositories.",
-            :heading => "Team repositories"
+            :heading => "Repositories"
           }) %>
       <%= render("repositories/repositories", {
             :repositories => clones,
             :hint => "This team does not yet have any repository clones.",
-            :heading => "Repository clones"
+            :heading => "Clones"
           }) %>
     </div>
   </div>

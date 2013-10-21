@@ -195,7 +195,8 @@
         :change_password => 'Change password',
         :manage_favorites => 'Manage favorites',
         :activities => 'News feed',
-        :user_activities => 'Your activities',
+        :user_activities => 'Activities',
+        :my_activities => 'Your activities',
         :sprintly => 'Sprint.ly',
         :web_hook => 'Web hooks'
       },
@@ -484,7 +485,7 @@
         :manage_access => "Manage access",
         :update_title => "Edit project %{link}",
         :new => "New project",
-        :create_new => "Create a new project",
+        :create_new => "Add project",
         :popular => "Popular Labels",
         :new_title => "Create a new project",
         :create => "Create project",

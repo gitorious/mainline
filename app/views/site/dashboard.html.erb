@@ -24,8 +24,9 @@
       <%= render "site/dashboard/activities", :atom_auto_discovery_url => atom_auto_discovery_url, :events => events, :user_events => user_events %>
     </div>
     <div class="span5">
-      <%= render "users/show/repositories", :user => user, :repositories => repositories %>
       <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
+      <%= render "users/show/repositories", :user => user, :repositories => repositories %>
+      <%= render "site/dashboard/watched_projects", :user => user, :favorites => favorites %>
     </div>
   </div>
 </div>

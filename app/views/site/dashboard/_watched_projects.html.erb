@@ -1,4 +1,4 @@
-<%= pull_box("#{h user.title} is watching", :class => 'watched') do %>
+<%= pull_box('Watched', :class => 'watched') do %>
   <% if favorites.blank? %>
     <p class="hint muted">
       <%= no_watchings_notice_for(user) %>

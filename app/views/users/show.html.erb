@@ -29,14 +29,13 @@
 <div class="container">
   <div class="row-fluid">
     <div class="span7">
-      <div class="content-container w-510">
+      <div class="content-container">
         <%= render "users/show/activities", :atom_auto_discovery_url => atom_auto_discovery_url, :events => events %>
       </div>
     </div>
     <div class="span5">
       <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
       <%= render "users/show/repositories", :user => user, :repositories => repositories %>
-      <%= render "users/show/watched_projects", :user => user, :favorites => favorites %>
       <%= render "users/show/teams", :user => user, :teams => teams unless teams.blank? %>
     </div>
   </div>

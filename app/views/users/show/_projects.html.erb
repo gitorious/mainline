@@ -1,23 +1,28 @@
 <%= pull_box(t("views.site.dashboard.projects"), :class => "your-projects pull-box-390") do %>
-  <table class="table">
-    <% projects.each do |project| %>
-      <tr class="project">
-        <td>
-          <%= link_to h(project.title), project %>
-          <% if favorites.include?(project) %>
-            <%= image_tag("silk/star.png", :title => "favorited") %>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </table>
   <% if is_current_user?(user) %>
-    <div class="pull-box-links">
-      <%= link_to(
-        %(<i class="icon-plus-sign icon-white"></i> #{t("views.projects.create_new")}).html_safe,
-        new_project_path,
-        :id => "new-project-button",
-        :class => "btn btn-primary") %>
+    <div class="pull-box-header-action">
+      <%= link_to(new_project_path, :class => 'btn btn-primary btn-mini') do %>
+        <i class="icon-plus-sign icon-white"></i>
+        <%= t('views.projects.create_new') %>
+      <% end %>
     </div>
+  <% end %>
+  <% if projects.any? %>
+    <table class="table">
+      <% projects.each do |project| %>
+        <tr class="project">
+          <td>
+            <%= link_to h(project.title), project %>
+            <% if favorites.include?(project) %>
+              <%= image_tag("silk/star.png", :title => "favorited") %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  <% else %>
+    <p class="hint muted">
+      <%= "#{user.login} has no projects yet" %>
+    </p>
   <% end %>
 <% end %>
