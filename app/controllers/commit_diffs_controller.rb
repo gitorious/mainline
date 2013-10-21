@@ -47,7 +47,7 @@ class CommitDiffsController < ApplicationController
 
   private
   def diff_renderer(mode, repository, commit)
-    klass = mode == :inline ? Gitorious::Diff::InlineRenderer : Gitorious::Diff::SidebysideRenderer
+    klass = mode == "sidebyside" ? Gitorious::Diff::SidebysideRenderer : Gitorious::Diff::InlineRenderer
     klass.new(self, repository, commit)
   end
 end
