@@ -1,5 +1,13 @@
 <%= cache_in_private([:site_index, :newest_projects], :expires_in => 5.minutes) do %>
   <%= pull_box(t("views.site.newest_projects"), :class => "pull-box-510") do %>
+    <% if logged_in? %>
+      <div class="pull-box-header-action">
+        <%= link_to(new_project_path, :class => 'btn btn-primary') do %>
+          <i class="icon-white icon-plus-sign"></i>
+          <%= t("views.projects.create_new") %>
+        <% end %>
+      </div>
+    <% end %>
     <table class="table">
       <% @projects.each do |project| %>
         <tr class="project">
@@ -19,8 +27,5 @@
         </tr>
       </tfoot>
     </table>
-    <div class="pull-box-links">
-      <%= link_to_if(logged_in?, t("views.projects.create_new"), new_project_path, :class => 'btn btn-primary') %>
-    </div>
   <% end %>
 <% end %>
