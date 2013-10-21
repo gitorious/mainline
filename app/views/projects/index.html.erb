@@ -21,17 +21,14 @@
   #++
 %>
 
-<% @title = t("views.projects.title") -%>
+<% @title = t("views.projects.title") %>
 
 <div class="container gts-container">
   <div class="row-fluid">
     <div class="span8">
-      <% first = true %>
-      <% projects.each do |project| -%>
-        <%= "<hr>".html_safe unless first %>
-        <% first = false %>
-        <%= render :partial => project, :object => project -%>
-      <% end -%>
+      <ul class="gts-listing">
+        <%= render projects %>
+      </ul>
       <%= raw JustPaginate.page_navigation(page, total_pages) { |n| projects_path(:page => n) } %>
     </div>
     <div class="span4">
@@ -59,7 +56,7 @@
           <table class="table">
             <% active_recently.each do |project| %>
               <tr>
-                <td><%= link_to h(project.title), project -%></td>
+                <td><%= link_to h(project.title), project %></td>
               </tr>
             <% end %>
           </table>

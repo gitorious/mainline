@@ -19,16 +19,24 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
+%>
 
-<h2>
-  <%= link_to h(project.title), project_path(project) -%>
-  <% if project.private? -%><i class="icon icon-lock"></i><% end -%>
-</h2>
-<p><%= truncate h(project.stripped_description), :length => 250 -%></p>
-<% if !project.tag_list.blank? %>
-  <p class="muted">
-    <strong><%= t("views.projects.categories") %>:</strong>
-    <%= linked_tag_list_as_sentence(project.tags).html_safe -%>
+<li class="gts-listing-item">
+  <h2>
+    <%= link_to h(project.title), project_path(project) %>
+    <% if project.private? %>
+      <i class="icon icon-lock"></i>
+    <% end %>
+  </h2>
+  <p>
+    <%= truncate h(project.stripped_description), :length => 250 %>
   </p>
-<% end %>
+  <% if project.tag_list.present? %>
+    <p class="muted">
+      <strong>
+        <%= t("views.projects.categories") %>:
+      </strong>
+      <%= linked_tag_list_as_sentence(project.tags).html_safe %>
+    </p>
+  <% end %>
+</li>
