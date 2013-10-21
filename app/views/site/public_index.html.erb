@@ -28,7 +28,12 @@
         <%= render "site/public_index/intro" %>
       </div>
       <div class="span6">
-        <%= screenshots_rotator("img/external/screens") %>
+        <div id="screenshots-rotator">
+          <div id="screenshotsnavigation"></div>
+          <div id="screenshots-container">
+            <%= image_tag 'img/external/screens/gts_v3_01.jpg' %>
+          </div>
+        </div>
       </div>
     </div>
   </div>
