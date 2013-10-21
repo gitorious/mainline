@@ -24,6 +24,7 @@
 <%= repo_header repository, :current_user => current_user, :ref => ref, :active => :commits %>
 
 <div class="container">
+  <div class="gts-ref-selector-ph"></div>
   <ul class="nav nav-tabs">
     <li>
       <%= link_to "Log", project_repository_commits_in_ref_path(repository.project,
@@ -61,4 +62,5 @@
   ]).each do |script| %>
     <script src="<%= script %>"></script>
   <% end %>
+  <script data-gts-env-repository-refs-url="<%= repository_refs_path(:project_id => repository.project, :repository_id => repository) %>"></script>
 <% end %>
