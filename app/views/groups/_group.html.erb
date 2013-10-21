@@ -1,0 +1,12 @@
+<li class="gts-group-item">
+  <div class="gts-group-avatar">
+    <%= image_tag(group.avatar.url(:medium)) %>
+  </div>
+  <div class="gts-group-body">
+    <h2>
+      <%= link_to h(group.name), group_path(group.to_param) %>
+    </h2>
+    <%= pluralize group.members.count, t("views.groups.member_singular"), t("views.groups.member_plural") %>,
+    <%= pluralize group.repositories.count, t("views.groups.repo_singular"), t("views.groups.repo_plural") %>
+  </div>
+</li>

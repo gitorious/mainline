@@ -23,27 +23,17 @@
   <div class="gts-container">
     <div class="row-fluid">
       <div class="span8">
-        <% first = true %>
-        <% groups.each do |group| -%>
-          <%= "<hr>".html_safe unless first %>
-          <% first = false %>
-          <h2><%= link_to h(group.name), group_path(group.to_param) -%></h2>
-          <p>
-            <%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16") %>
-            <%= pluralize group.members.count, t("views.groups.member_singular"), t("views.groups.member_plural") -%>,
-            <%= pluralize group.repositories.count, t("views.groups.repo_singular"), t("views.groups.repo_plural") -%>
-          </p>
-        <% end -%>
+        <ul class="gts-group-listing">
+          <%= render groups %>
+        </ul>
         <%= raw JustPaginate.page_navigation(page, total_pages) { |n| groups_path(:page => n) } %>
       </div>
       <div class="span4">
         <% if current_user && (!Gitorious.restrict_team_creation_to_site_admins? || site_admin?(current_user)) %>
-          <p>
-            <a class="btn btn-primary" href="<%= new_group_path %>">
-              <i class="icon-plus-sign icon-white"></i>
-              <%= t("views.groups.create_team") %>
-            </a>
-          </p>
+          <a class="btn btn-primary pull-right" href="<%= new_group_path %>">
+            <i class="icon-plus-sign icon-white"></i>
+            <%= t("views.groups.create_team") %>
+          </a>
         <% end %>
       </div>
     </div>
