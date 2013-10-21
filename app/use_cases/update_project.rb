@@ -66,6 +66,6 @@ class UpdateProject
     add_pre_condition(RequiredDependency.new(:user, user))
     add_pre_condition(RequiredDependency.new(:project, project))
     input_class(UpdateProjectParams)
-    step(UpdateProjectCommand.new(user, project), :validator => ProjectValidator)
+    step(UpdateProjectCommand.new(user, project), :validator => [ProjectValidator, UpdateProjectValidator])
   end
 end

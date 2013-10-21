@@ -22,6 +22,7 @@ require "test_helper"
 class StatusTagTest < ActiveSupport::TestCase
   def setup
     @project = Project.first
+    @project.merge_request_statuses.destroy_all
     @open_status = MergeRequestStatus.create!({
         :project => @project,
         :name => "Open",
