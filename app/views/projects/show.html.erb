@@ -40,18 +40,18 @@
       <%= render "repositories/repositories", {
             :repositories => mainlines,
             :hint => "This project does not yet have any repositories.",
-            :heading => "Project repositories",
-            :footer => "<div class=\"pull-box-links\">" +
+            :heading => "Repositories",
+            :footer => '<div class="pull-box-header-action">' +
             "<a class=\"btn btn-primary\" href=\"#{new_project_repository_path(project)}\">" +
-            "<i class=\"icon-plus-sign icon-white\"></i> Create repository</a></div>"
+            "<i class=\"icon-plus-sign icon-white\"></i> Add new</a></div>"
           } %>
       <%= render "repositories/repositories", {
             :repositories => group_clones,
-            :heading => "Team repository clones"
+            :heading => "Team clones"
           } %>
       <%= render "repositories/repositories", {
             :repositories => user_clones,
-            :heading => "User repository clones"
+            :heading => "User clones"
           } %>
     </div>
   </div>
