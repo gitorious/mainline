@@ -41,7 +41,10 @@
 
   <%= pull_box commit_header do %>
     <div class="btn-group">
-      <%= link_to("View all diffs", view_all_diffs_path, :class => 'btn') %>
+      <%= link_to(view_all_diffs_path, :class => 'btn gts-btn-show-diffs') do %>
+        <i class="icon-list-alt"></i>
+        View all diffs
+      <% end %>
     </div>
     <%= render 'merge_requests/show/commits', :commits => commits, :repository => repository, :merge_request => merge_request %>
   <% end %>
