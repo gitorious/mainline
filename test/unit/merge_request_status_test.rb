@@ -48,6 +48,7 @@ class MergeRequestStatusTest < ActiveSupport::TestCase
     end
 
     should "create default statuses for a project" do
+      @project.merge_request_statuses.destroy_all
       MergeRequestStatus.create_defaults_for_project(@project)
       assert_equal 2, @project.reload.merge_request_statuses.size
 

@@ -13,7 +13,7 @@
         <tr class="project">
           <td>
             <%= link_to h(project.title), project %>
-            <small class="hint">
+            <small class="muted hint">
               <%= truncate(h(project.stripped_description), :length => 65) %>
             </small>
           </td>

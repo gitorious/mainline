@@ -111,6 +111,7 @@ class MergeRequestTest < ActiveSupport::TestCase
   context "default status" do
     setup do
       @project = @merge_request.target_repository.project
+      @project.merge_request_statuses.destroy_all
     end
 
     should "find the default state" do
