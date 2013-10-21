@@ -29,6 +29,10 @@ class CommentPresenter
     comment.id
   end
 
+  def body?
+    comment.body?
+  end
+
   def context
     return if comment.context.blank?
     v.content_tag :blockquote do

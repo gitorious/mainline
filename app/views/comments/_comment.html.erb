@@ -36,7 +36,9 @@ comment = CommentPresenter.new(comment, self)
   <div class="gts-comment-context">
     <%= comment.context %>
   </div>
-  <div class="gts-comment-body">
-    <%= comment.markdown %>
-  </div>
+  <% if comment.body? %>
+    <div class="gts-comment-body">
+      <%= comment.markdown %>
+    </div>
+  <% end %>
 </div>
