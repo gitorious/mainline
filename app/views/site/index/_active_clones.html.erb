@@ -1,5 +1,5 @@
 <%= cache_in_private([:site_index, :active_clones], :expires_in => 25.minutes) do %>
-  <%= pull_box("Most active repository clones", :class => "pull-box-510") do %>
+  <%= pull_box('Active repositories') do %>
     <table class="table">
       <% @top_repository_clones.each do |repo| %>
         <% project = repo.project %>
