@@ -32,7 +32,7 @@ class EventRenderingHelperTest < ActionView::TestCase
 
       action, body, category = render_event_create_tag(event)
 
-      assert_equal "<a href=\"/johans-project/johansprojectrepos/trees/v2.19-rc3\"><code>v2.19-rc3</code></a>", body
+      assert_equal "<a href=\"/johans-project/johansprojectrepos/source/v2.19-rc3:\"><code>v2.19-rc3</code></a>", body
     end
   end
 end

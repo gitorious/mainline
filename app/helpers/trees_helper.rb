@@ -61,7 +61,7 @@ module TreesHelper
     current_name = current_commit.id_abbrev if current_commit.id == current_name
     list_items = refs.map do |ref|
       display_diff_link = ref.commit.id != current_commit.id
-      tree_link = link_to(h(ref.name), project_repository_tree_path(project, repository, ensplat_path(ref.name)), :title => ref.name)
+      tree_link = link_to(h(ref.name), tree_entry_url(repository.slug, ref.name), :title => ref.name)
       diff_link = link_to("Diff: #{h(current_name)}..#{h(ref.name)}",
         project_repository_commit_compare_path(project, repository,
           :from_id => current_commit.id, :id => ref.commit.id),

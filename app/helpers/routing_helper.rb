@@ -63,7 +63,7 @@ module RoutingHelper
     if path.respond_to?(:to_str)
       path = path.split("/")
     end
-    project_repository_tree_path(@project, @repository, branch_with_tree(treeish, path))
+    tree_entry_url(@repository.slug, treeish, path)
   end
 
   def repository_path(action, sha1=nil)

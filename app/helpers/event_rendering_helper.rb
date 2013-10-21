@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,11 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious/view/dolt_url_helper"
+
 module EventRenderingHelper
+  include Gitorious::View::DoltUrlHelper
+
   def render_event_create_project(event)
     action = action_for_event(:event_status_created) do
       link_to h(event.target.title), project_path(event.target)
@@ -142,9 +146,7 @@ module EventRenderingHelper
       link_to(h(event.target.name), project_repository_url(project, event.target))
     end
 
-    body = link_to(ref(event.data),
-                   project_repository_tree_path(project, event.target, ensplat_path(h(event.data))))
-
+    body = link_to(ref(event.data), tree_entry_url(event.target.repository_plain_path, h(event.data)))
     category = "commit"
     [action, body, category]
   end

@@ -544,6 +544,8 @@ class Repository < ActiveRecord::Base
     end
   end
 
+  alias_method :slug, :repository_plain_path
+
   def set_repository_hash
     self.hashed_path ||= begin
       raw_hash = Digest::SHA1.hexdigest(owner.to_param +
