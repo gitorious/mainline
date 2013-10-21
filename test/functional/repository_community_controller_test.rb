@@ -21,7 +21,7 @@ class RepositoryCommunityControllerTest < ActionController::TestCase
     include SampleRepoHelpers
 
     should "render clones of the repository" do
-      repository = repositories(:johans)
+      repository = repositories(:johans2)
 
       get :index, :project_id => repository.project.to_param, :repository_id => repository.to_param
 

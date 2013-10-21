@@ -4,7 +4,7 @@
       <% @active_groups.each do |group| %>
         <tr>
           <td>
-            <%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16") %>
+            <%= group_avatar(group, :size => :thumb, :alt => "Avatar", :width => "16") %>
             &nbsp;
             <%= link_to h(group.title), group %>
           </td>
