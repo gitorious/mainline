@@ -23,7 +23,7 @@
 <div class="control-group group-avatar">
  <label class="control-label">Current avatar</label>
  <div class="controls">
-   <%= image_tag(group.avatar.url(:thumb), :class => 'pull-left') %>
+   <%= group_avatar(group, :size => :thumb, :class => 'pull-left') %>
    <% if group.avatar? %>
      <%= link_to "&nbsp;Delete".html_safe, group_avatar_path(group), :method => :delete,
        :data => { :confirm => 'Are you sure?' },

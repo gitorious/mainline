@@ -20,9 +20,7 @@
 
 <%= site_header do %>
   <h1>
-    <% if group.avatar? %>
-      <%= image_tag(group.avatar.url(:medium)) %>
-    <% end %>
+    <%= group_avatar(group) %>
     <%= title %>
   </h1>
   <% if group.description? %>

@@ -43,6 +43,12 @@ module Gitorious
         gravatar_url_for(user.email, options)
       end
 
+      def group_avatar(group, options = {})
+        options = options.dup
+        size = options.delete(:size) || :medium
+        image_tag(group.avatar.url(size), options) if group.avatar?
+      end
+
       # For a User object, return either his/her avatar or the gravatar for her email address
       # Options
       # - Pass on :size for the height+width of the image in pixels

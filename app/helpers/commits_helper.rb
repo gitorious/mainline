@@ -36,7 +36,7 @@ module CommitsHelper
     lines = message.split("\n")
     summary = nil
 
-    if lines.first.length <= 50
+    if !lines.empty? && lines.first.length <= 50
       summary = lines.shift
     end
 
