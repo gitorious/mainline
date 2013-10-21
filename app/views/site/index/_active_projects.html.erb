@@ -1,5 +1,5 @@
 <%= cache_in_private([:site_index, :active_projects_recently], :expires_in => 1.hour) do %>
-  <%= pull_box("Active projects", :class => "pull-box-510") do %>
+  <%= pull_box('Active projects') do %>
     <table class="table">
       <% @active_projects.each do |project| %>
         <tr class="project">
