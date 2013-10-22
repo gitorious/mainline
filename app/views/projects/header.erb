@@ -15,28 +15,26 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-%><%
+%>
+
+<%
 header_level = defined?(header_level) && header_level || 2
 @body_class = "gts-private" if project.private?
-%><div class="gts-site-header" data-gts-env-project-view-state-path="<%= project_view_state_users_path(project, :format => "json") %>">
-  <div class="container">
-    <div class="row">
-      <h<%= header_level %> class="span">
-        <a href="<%= project_path(project) %>"><%= project.title %></a>
-      </h<%= header_level %>>
-    </div>
-    <div class="row gts-description">
-      <div class="span">
-        <%= description(project) %>
-      </div>
-    </div>
-    <ul class="nav nav-tabs gts-header-nav" <%= "data-gts-active=#{defined?(active) && active.to_s}" %>>
-      <%= options = [[:activities, project_path(project), "Activities"]]
-          options << [:merge_requests, project_merge_requests_path(project), "Merge Requests <span class=\"count\">(#{project.open_merge_request_count})</span>"]
-          options << [:wiki, project_page_path(project, "Home"), "Wiki"] if project.wiki_enabled?
-          options << [:community, project_community_path(project), "Community"]
-          header_navigation(options, :active => defined?(active) ? active : nil) %>
-      <li class="gts-project-admin-ph gts-placeholder"></li>
-    </ul>
+%>
+
+<%= site_header :data => { 'gts-env-project-view-state-path' => project_view_state_users_path(project, :format => "json") } do %>
+  <h2>
+    <%= link_to(project.title, project) %>
+  </h2>
+  <div class="gts-description">
+    <%= description(project) %>
   </div>
-</div>
+  <ul class="nav nav-tabs gts-header-nav" <%= "data-gts-active=#{defined?(active) && active.to_s}" %>>
+    <%= options = [[:activities, project_path(project), "Activities"]]
+        options << [:merge_requests, project_merge_requests_path(project), "Merge Requests <span class=\"count\">(#{project.open_merge_request_count})</span>"]
+        options << [:wiki, project_page_path(project, "Home"), "Wiki"] if project.wiki_enabled?
+        options << [:community, project_community_path(project), "Community"]
+        header_navigation(options, :active => defined?(active) ? active : nil) %>
+    <li class="gts-project-admin-ph gts-placeholder"></li>
+  </ul>
+<% end %>

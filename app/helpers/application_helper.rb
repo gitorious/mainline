@@ -576,8 +576,8 @@ module ApplicationHelper
     render(:template => template, :locals => locals).html_safe
   end
 
-  def site_header(&block)
-    content_tag(:div, :class => 'gts-site-header') {
+  def site_header(options = {}, &block)
+    content_tag(:div, options.merge(:class => 'gts-site-header')) {
       content_tag(:div, :class => 'container', &block)
     }
   end
