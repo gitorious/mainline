@@ -10,13 +10,9 @@ class EventPresenter < SimpleDelegator
     end
 
     def action
-      link_foo = commit_link(pluralize(commit_count, 'commit'))
-      link_bar = commit_link(h("#{title}:#{branch}"))
-
-      action_for_event(:event_pushed_n, :commit_link => link_foo) {
-        splits = ['to', link_bar]
-        splits << link_to('View diff', diff_url) if diff_url
-        splits.join(' ')
+      diff_link = link_to("#{commit_count} commits", diff_url)
+      action_for_event(:event_pushed_n, :commit_link => diff_link) {
+        ['to', commit_link(h("#{title}:#{branch}"))].join(' ')
       }
     end
 
@@ -37,12 +33,7 @@ class EventPresenter < SimpleDelegator
         repository.project, repository, ensplat_path(branch)
       )
 
-      options = {
-        'gts:url' => commit_detail_url,
-        'gts:id' => event.to_param
-      }
-
-      link_to(title, url, options)
+      link_to(title, url)
     end
 
     def first_sha
@@ -65,10 +56,6 @@ class EventPresenter < SimpleDelegator
       view.project_repository_commit_compare_path(
         target.project, target, :from_id => first_sha, :id => last_sha
       )
-    end
-
-    def commit_detail_url
-      view.commits_event_path(event.to_param)
     end
 
     def repository
