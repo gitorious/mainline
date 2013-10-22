@@ -19,7 +19,6 @@
 class Site < ActiveRecord::Base
   has_many :projects
   validates_presence_of :title
-  attr_accessible :title
   after_create :init_wiki_git_path
 
   def self.default
