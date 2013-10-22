@@ -57,17 +57,6 @@ end
 DatabaseCleaner.strategy = :truncation
 
 class ActionDispatch::IntegrationTest
-  self.use_transactional_fixtures = false
-  fixtures :all
-  include Capybara::DSL
-
-  setup do
-    DatabaseCleaner.start
-  end
-
-  teardown do
-    DatabaseCleaner.clean
-  end
 end
 
 WebMock.disable_net_connect!(:allow_localhost => true)
@@ -296,4 +285,49 @@ end
 class FakeMail
   attr_reader :delivered
   def deliver; @delivered = true; end
+end
+
+module CapybaraTestCase
+  include Capybara::DSL
+
+  def self.included(klass)
+    klass.extend ClassMethods
+    CapybaraTestCase.setup_fixtures(klass)
+
+    klass.setup do
+      DatabaseCleaner.start
+
+      CapybaraTestCase.setup_capybara(klass)
+    end
+
+    klass.teardown do
+      DatabaseCleaner.clean
+
+      CapybaraTestCase.reset_capybara
+    end
+  end
+
+  def self.setup_fixtures(klass)
+    klass.use_transactional_fixtures = false
+    klass.fixtures :all
+  end
+
+  def self.setup_capybara(klass)
+    Capybara.current_driver = klass.capybara_driver
+  end
+
+  def self.reset_capybara
+    Capybara.reset_sessions!
+    Capybara.use_default_driver
+  end
+
+  module ClassMethods
+    def js_test
+      @capybara_driver = Capybara.javascript_driver
+    end
+
+    def capybara_driver
+      @capybara_driver || Capybara.default_driver
+    end
+  end
 end

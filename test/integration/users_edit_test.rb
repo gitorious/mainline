@@ -21,6 +21,8 @@ require "ssh_key_test_helper"
 
 class UserEditTest < ActionDispatch::IntegrationTest
   include SshKeyTestHelper
+  include CapybaraTestCase
+  js_test
 
   def login_as(name)
     user = users(name)
@@ -41,16 +43,9 @@ class UserEditTest < ActionDispatch::IntegrationTest
   end
 
   setup do
-    Capybara.default_driver = :poltergeist
-
     @user = users(:johan)
     login_as(:johan)
     visit edit_user_path(@user)
-  end
-
-  teardown do
-    Capybara.reset_sessions!
-    Capybara.use_default_driver
   end
 
   should "update user details" do

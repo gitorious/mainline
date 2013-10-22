@@ -19,6 +19,9 @@
 require "test_helper"
 
 class MergeRequestsShowTest < ActionDispatch::IntegrationTest
+  include CapybaraTestCase
+  js_test
+
   def login_as(name)
     user = users(name)
     fill_in 'Email or login', :with => user.email
@@ -49,8 +52,6 @@ class MergeRequestsShowTest < ActionDispatch::IntegrationTest
   end
 
   def setup
-    Capybara.default_driver = :poltergeist
-
     @project = projects(:johans)
     @project.update_attribute(:merge_requests_need_signoff, false)
     MergeRequestStatus.create_defaults_for_project(@project)
@@ -70,11 +71,6 @@ class MergeRequestsShowTest < ActionDispatch::IntegrationTest
     MergeRequest.any_instance.stubs(:commits_for_selection).returns([commit_stub])
 
     assert_not_nil @merge_request.versions.last
-  end
-
-  def teardown
-    Capybara.reset_sessions!
-    Capybara.use_default_driver
   end
 
   should 'show merge request information' do
