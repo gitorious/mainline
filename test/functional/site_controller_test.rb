@@ -140,11 +140,6 @@ class SiteControllerTest < ActionController::TestCase
       assert_template "#{@site.subdomain}/index"
     end
 
-    should "scope the projects to the current site" do
-      get :index
-      assert_equal @site.projects, assigns(:projects)
-    end
-
     context "With private repositories" do
       setup do
         @project = @site.projects.first
@@ -154,7 +149,7 @@ class SiteControllerTest < ActionController::TestCase
       should "not display unauthenticated projects" do
         get :index
         assert_response :success
-        assert !assigns(:projects).index(@project)
+        refute_match @project.title, response.body
       end
     end
   end
