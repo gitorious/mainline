@@ -47,6 +47,7 @@ module Gitorious
     config.autoload_paths << (Rails.root + "finders").to_s
     config.autoload_paths << (Rails.root + "serializers").to_s
     config.autoload_paths << (Rails.root + "app/validators").to_s
+    config.autoload_paths << (Rails.root + "app/renderers").to_s
 
     # Avoid class cache errors like "A copy of Gitorious::XYZ has been removed
     # from the module tree but is still active!"
