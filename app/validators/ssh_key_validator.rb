@@ -48,7 +48,7 @@ SshKeyValidator = UseCase::Validator.define do
     temp_key = Tempfile.new("ssh_key_#{Time.now.to_i}")
     temp_key.write(self.key)
     temp_key.close
-    system("ssh-keygen -l -f #{temp_key.path}")
+    system("ssh-keygen -l -f #{temp_key.path} > /dev/null")
     temp_key.delete
     return $?.success?
   end
