@@ -19,10 +19,10 @@
 %>
 
 <%= site_header do %>
-  <h1>
+  <h2>
     <%= group_avatar(group) %>
-    <%= title %>
-  </h1>
+    <%= link_to(group.name) %>
+  </h2>
   <% if group.description? %>
     <div class="gts-markup">
       <%= render_markdown(group.description).html_safe %>

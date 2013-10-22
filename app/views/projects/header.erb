@@ -26,8 +26,8 @@ header_level = defined?(header_level) && header_level || 2
   <h2>
     <%= link_to(project.title, project) %>
   </h2>
-  <div class="gts-description">
-    <%= description(project) %>
+  <div class="gts-markup">
+    <%= render_markdown(project.description).html_safe %>
   </div>
   <ul class="nav nav-tabs gts-header-nav" <%= "data-gts-active=#{defined?(active) && active.to_s}" %>>
     <%= options = [[:activities, project_path(project), "Activities"]]
