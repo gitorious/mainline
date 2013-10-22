@@ -18,4 +18,4 @@ git commit -am "Build UI"
 git push git@gitorious.org:gitorious/ui3.git master
 cd ../../
 git add public/dist public/ui3
-git commit -am "Up UI build"
+git commit "Up UI build"
