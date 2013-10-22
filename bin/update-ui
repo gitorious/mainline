@@ -14,8 +14,8 @@ cp -r public/ui3/lib/bootstrap public/dist/.
 cp -r public/ui3/images public/dist/.
 cd public/ui3/
 git add .
-git commit -am "Build UI"
+git commit -m "Build UI"
 git push git@gitorious.org:gitorious/ui3.git master
 cd ../../
 git add public/dist public/ui3
-git commit "Up UI build"
+git commit -m "Up UI build"
