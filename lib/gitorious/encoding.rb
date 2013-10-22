@@ -20,12 +20,13 @@ module Gitorious
   module Encoding
     def force_utf8(str)
       return nil if str.nil?
+
       if str.respond_to?(:force_encoding)
         str.force_encoding("UTF-8")
         if str.valid_encoding?
           str
         else
-          str.encode("binary", :invalid => :replace, :undef => :replace).encode("utf-8")
+          str.chars.map { |c| c.valid_encoding? ? c : '?' }.join
         end
       else
         str.mb_chars

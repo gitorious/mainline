@@ -44,7 +44,7 @@ end
 
 module Grit
   class Diff
-    include ForceUTF8
+    include Gitorious::Encoding
 
     def diff
       if @diff.nil?

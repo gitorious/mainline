@@ -41,7 +41,7 @@ module ApplicationHelper
   include Gitorious::CacheInPrivateHelper
   include DoltViewHelpers
   include Gitorious::View::AvatarHelper
-  include ForceUTF8
+  include Gitorious::Encoding
 
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 
