@@ -83,7 +83,7 @@ module Gitorious
 
       def gravatar(email, options = {}, image_options = {})
         size = options[:size]
-        image_options = image_options.merge({ :alt => "avatar" })
+        image_options = image_options.merge({ :alt => "avatar", :class => 'gts-avatar' })
         if size
           image_options.merge!(:width => size, :height => size)
         end

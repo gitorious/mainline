@@ -19,17 +19,25 @@
 
 <% timestamp = l(event.created_at, :format => :short) %>
 
-<% Rails.logger.debug "AAA: #{event.class}" %>
-
 <div class="gts-event" title="<%= timestamp %>">
-  <% if event.user %>
-    <%= link_to(user_path(event.user), :class => 'event-author') do %>
-      <%= gravatar(event.user.email, { :size => 24 }, :class => "gts-avatar") %>
-      <%= !event.user.fullname.blank? ? event.user.fullname : event.user.login %>
-    <% end %>
-  <% else %>
-    <%= event.actor_display %>
+  <% if event.has_avatar? %>
+    <div class="gts-event-actor-avatar">
+      <%= avatar(event.user, :size => 24, :class => 'gts-avatar') %>
+    </div>
   <% end %>
-  <%= content_tag(:span, event.action.html_safe, :class => 'event-action') if event.action.present? %>
-  <%= content_tag(:span, event.body.html_safe, :class => 'event-body muted') if event.body.present? %>
+  <div class="gts-event-content">
+    <div class="gts-event-action">
+      <% if event.user %>
+        <%= link_to(user_path(event.user), :class => 'event-author') do %>
+          <%= event.actor %>
+        <% end %>
+      <% else %>
+        <%= event.actor_display %>
+      <% end %>
+      <%= event.action.html_safe %>
+    </div>
+    <div class="gts-event-body muted">
+      <%= event.body.html_safe %>
+    </div>
+  </div>
 </div>

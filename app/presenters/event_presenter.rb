@@ -25,6 +25,16 @@ class EventPresenter < SimpleDelegator
     @view = view
   end
 
+  def actor
+    user.fullname? ? user.fullname : user.login
+  end
+
+  def has_avatar?
+    user && user.avatar
+  end
+
+  private
+
   def action_for_event(key, options = {}, &block)
     header = I18n.t("application_helper.#{key}", options)
     [header, block.call].join(' ')
