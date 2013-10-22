@@ -85,6 +85,10 @@ class MergeRequest < ActiveRecord::Base
     summary
   end
 
+  def list_as_favorite?
+    !closed?
+  end
+
   def reopen_with_user(a_user)
     if can_reopen_merge_request?(a_user, self)
       return reopen

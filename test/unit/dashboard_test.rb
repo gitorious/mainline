@@ -1,6 +1,8 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,25 +18,28 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-# By including this module in an AR::Base descendant, this class becomes watchable:
-# - has_many :favorites
-# - receives instance methods
-module Watchable
+require "test_helper"
 
-  def self.included(base)
-    base.has_many :favorites, :as => :watchable, :dependent => :destroy
-    base.has_many :watchers, :through => :favorites, :source => :user
-  end
+class DashboardTest < ActiveSupport::TestCase
+  context "#favorites" do
+    should "return open merge requests" do
+      user = users(:johan)
+      dashboard = Dashboard.new(user)
+      merge_request = merge_requests(:moes_to_johans_open)
+      favorite = merge_request.watched_by!(user)
 
-  def watched_by?(user)
-    watchers.include?(user)
-  end
+      assert_include dashboard.favorites, favorite
+    end
 
-  def list_as_favorite?
-    true
-  end
+    should "not return closed merge requests" do
+      user = users(:johan)
+      dashboard = Dashboard.new(user)
+      merge_request = merge_requests(:moes_to_johans_open)
+      merge_request.close
+      favorite = merge_request.watched_by!(user)
 
-  def watched_by!(a_user)
-    a_user.favorites.create!(:watchable => self, :notify_by_email => a_user.default_favorite_notifications)
+      assert_not_include dashboard.favorites, favorite
+    end
   end
 end
+

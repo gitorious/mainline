@@ -58,7 +58,7 @@ class SiteController < ApplicationController
   protected
   # Render a Site-specific index template
   def render_site_index
-    projects = filter_authorized(current_user, current_site.projects.order("created_at asc"))
+    projects = filter(current_site.projects.order("created_at asc"))
     render("site/#{current_site.subdomain}/index", :locals => {
         :projects => projects,
         :teams => Group.all_participating_in_projects(projects),
@@ -80,67 +80,19 @@ class SiteController < ApplicationController
   def render_dashboard
     @user = current_user
 
-    render :template => "site/dashboard", :locals => {
-      :user => current_user,
-      :events => events,
-      :user_events => user_events,
-      :projects => projects,
-      :repositories => repositories,
-      :favorites => favorites,
-      :atom_auto_discovery_url => atom_auto_discovery_url
-    }
-  end
+    current_dashboard = Dashboard.new(current_user)
+    dashboard_presenter = DashboardPresenter.new(current_dashboard, authorized_filter, self)
 
-  # for dashboard
-  #
-  # TODO: extract this into some Dashboard-context object
-  def events
-    @events ||= filter_paginated(params[:page], Event.per_page) { |page|
-      current_user.paginated_events_in_watchlist(:page => page)
-    }
-  end
-
-  # needed by dashboard
-  #
-  # TODO: extract this into some Dashboard-context object
-  def projects
-    @projects ||= filter(current_user.projects.includes(:tags, { :repositories => :project }))
-  end
-
-  # needed by dashboard
-  #
-  # TODO: extract this into some Dashboard-context object
-  def repositories
-    @repositories ||= filter(current_user.commit_repositories)
-  end
-
-  # needed by dashboard
-  #
-  # TODO: extract this into some Dashboard-context object
-  def atom_auto_discovery_url
-    @atom_auto_discovery_url ||= user_watchlist_path(current_user, :format => :atom)
-  end
-
-  # needed by dashboard
-  #
-  # TODO: extract this into some Dashboard-context object
-  def favorites
-    @favorites ||= filter(current_user.favorites.all(:include => :watchable))
-  end
-
-  # needed by dashboard
-  #
-  # TODO: extract this into some Dashboard-context object
-  # TODO: this is identical as UsersController#paginated_events
-  def user_events
     paginate(page_free_redirect_options) do
-      filter_paginated(params[:page], FeedItem.per_page) do |page|
-        current_user.events.excluding_commits.paginate(
-          :page => page,
-          :order => "events.created_at desc",
-          :include => [:user, :project]
-        )
-      end
+      render :template => "site/dashboard", :locals => {
+        :user => dashboard_presenter.user,
+        :events => dashboard_presenter.events(params[:page]),
+        :user_events => dashboard_presenter.user_events(params[:page]),
+        :projects => dashboard_presenter.projects,
+        :repositories => dashboard_presenter.repositories,
+        :favorites => dashboard_presenter.favorites,
+        :atom_auto_discovery_url => dashboard_presenter.atom_auto_discovery_url
+      }
     end
   end
 
