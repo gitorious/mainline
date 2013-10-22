@@ -278,10 +278,10 @@ class MergeRequestsController < ApplicationController
   def paginated_mrs(page, per_page)
     paginate(page_free_redirect_options) do
       filter_paginated(page, per_page) do |page|
-        @repository.merge_requests.from_filter(params[:status]) \
+        @repository.merge_requests.from_filter(params[:status])
           .paginate(:page => page,
                     :per_page => per_page,
-                    :order => "created_at desc")
+                    :order => 'created_at DESC')
       end
     end
   end

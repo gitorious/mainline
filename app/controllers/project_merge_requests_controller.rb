@@ -22,7 +22,7 @@ class ProjectMergeRequestsController < ApplicationController
   def index
     project = authorize_access_to(Project.find_by_slug!(params[:project_id]))
     status = params[:status] || "Open"
-    merge_requests = filter(project.merge_requests.by_status(status))
+    merge_requests = filter(project.merge_requests.by_status(status).order('created_at DESC'))
 
     respond_to do |wants|
       wants.html do
