@@ -239,18 +239,18 @@ body .gts-masthead {
 
 /** Repo "boxes" */
 .gts-site-header {
-    background: #f5f5f5;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 20px;
-    padding: 20px 0 0;
+  background: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 15px;
+  padding: 20px 0 0;
 }
 
 .gts-site-header h2 {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .gts-clone-source {
-    margin-left: 30px;
+  margin-left: 30px;
 }
 
 tt {
