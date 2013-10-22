@@ -117,9 +117,6 @@ class UserEditTest < ActionDispatch::IntegrationTest
     # for some reason changing tab doesn't work so we visit the page
     visit(user_edit_ssh_keys_path(@user))
 
-    # FIXME: this should not be required in an integration test
-    SshKeyValidator.any_instance.stubs(:valid_ssh_key).returns(true)
-
     find("a[data-method='delete'][href='#{user_key_path(@user, ssh_key)}']").click
 
     refute page.has_content?('foo@example.com')
@@ -127,9 +124,6 @@ class UserEditTest < ActionDispatch::IntegrationTest
   end
 
   should "add new ssh key" do
-    # FIXME: this should not be required in an integration test
-    SshKeyValidator.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
-
     change_tab('SSH keys')
     click_on 'Add new'
     page.must_have_content('Add new public SSH key')
