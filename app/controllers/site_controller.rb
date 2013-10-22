@@ -56,15 +56,15 @@ class SiteController < ApplicationController
   end
 
   protected
-
   # Render a Site-specific index template
   def render_site_index
-    all_projects = current_site.projects.order("created_at asc")
-    @projects = filter_authorized(current_user, all_projects)
-    @teams = Group.all_participating_in_projects(@projects)
-    @top_repository_clones = filter(Repository.most_active_clones_in_projects(@projects))
-    @latest_events = filter(Event.latest_in_projects(25, @projects.map{|p| p.id }))
-    render "site/#{current_site.subdomain}/index"
+    projects = filter_authorized(current_user, current_site.projects.order("created_at asc"))
+    render("site/#{current_site.subdomain}/index", :locals => {
+        :projects => projects,
+        :teams => Group.all_participating_in_projects(projects),
+        :top_repository_clones => filter(Repository.most_active_clones_in_projects(projects)),
+        :latest_events => filter(Event.latest_in_projects(25, projects.map { |p| p.id }))
+      })
   end
 
   def render_public_timeline

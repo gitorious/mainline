@@ -1,16 +1,34 @@
-<%= cache_in_private([:site_index, :active_projects_recently], :expires_in => 1.hour) do %>
-  <%= pull_box('Active projects') do %>
-    <table class="table">
-      <% @active_projects.each do |project| %>
-        <tr class="project">
-          <td>
-            <%= link_to h(project.title), project %>
-            <small class="muted hint">
-              <%= truncate(h(project.stripped_description), :length => 65) %>
-            </small>
-          </td>
-        </tr>
-      <% end %>
-    </table>
-  <% end %>
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
+<%= pull_box(defined?(title) ? title : "Active projects") do %>
+  <table class="table">
+    <% projects.each do |project| %>
+      <tr class="project">
+        <td>
+          <%= link_to h(project.title), project %>
+          <small class="muted hint">
+            <%= truncate(h(project.stripped_description), :length => 65) %>
+          </small>
+        </td>
+      </tr>
+    <% end %>
+  </table>
 <% end %>
+

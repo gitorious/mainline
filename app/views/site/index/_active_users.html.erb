@@ -1,16 +1,33 @@
-<%= cache_in_private([:site_index, :active_users], :expires_in => 20.minutes) do %>
-  <%= pull_box("Active users") do %>
-    <table class="table">
-      <tbody>
-        <% @active_users.each do |user| %>
-          <tr>
-            <td>
-              <%= avatar(user, { :size => 16 }) %>
-              <%= link_to h(user.title), user %>
-            </td>
-          </tr>
-          <% end %>
-      </tbody>
-    </table>
-  <% end %>
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
+<%= pull_box("Active users") do %>
+  <table class="table">
+    <tbody>
+      <% users.each do |user| %>
+        <tr>
+          <td>
+            <%= avatar(user, { :size => 16 }) %>
+            <%= link_to h(user.title), user %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <% end %>
