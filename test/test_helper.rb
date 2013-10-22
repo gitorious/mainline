@@ -130,7 +130,6 @@ class ActiveSupport::TestCase
     assert object.blank?, "#{object.inspect} should be blank"
   end
 
-
   def assert_not_includes(collection, object, message=nil)
     assert(!collection.include?(object),
       (message || inclusion_failure(collection, object, false)))

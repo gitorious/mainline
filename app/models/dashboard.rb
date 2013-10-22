@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,25 +16,35 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-# By including this module in an AR::Base descendant, this class becomes watchable:
-# - has_many :favorites
-# - receives instance methods
-module Watchable
+class Dashboard
+  attr_reader :user
 
-  def self.included(base)
-    base.has_many :favorites, :as => :watchable, :dependent => :destroy
-    base.has_many :watchers, :through => :favorites, :source => :user
+  def initialize(user)
+    @user = user
   end
 
-  def watched_by?(user)
-    watchers.include?(user)
+  def events(page)
+    user.paginated_events_in_watchlist(:page => page)
   end
 
-  def list_as_favorite?
-    true
+  def projects
+    user.projects.includes(:tags, { :repositories => :project })
   end
 
-  def watched_by!(a_user)
-    a_user.favorites.create!(:watchable => self, :notify_by_email => a_user.default_favorite_notifications)
+  def repositories
+    user.commit_repositories
+  end
+
+  def favorites
+    user.favorites.all(:include => :watchable).select { |f| f.watchable.list_as_favorite? }
+  end
+
+  def user_events(page)
+    user.events.excluding_commits.paginate(
+      :page => page,
+      :order => "events.created_at desc",
+      :include => [:user, :project]
+    )
   end
 end
+

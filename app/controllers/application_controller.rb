@@ -387,24 +387,11 @@ class ApplicationController < ActionController::Base
     redirect_to_ref(git.head.name, repo_view)
   end
 
-  def filter(collection)
-    filter_authorized(current_user, collection)
+  def authorized_filter
+    Gitorious::AuthorizedFilter.new(current_user)
   end
-
-  def filter_paginated(page, per_page = 30, collection_count = nil, &block)
-    page = 1 if page.nil?
-    WillPaginate::Collection.create(page, per_page) do |pager|
-      result = filter(block.call(page))
-
-      # inject the result array into the paginated collection:
-      pager.replace(result)
-
-      unless pager.total_entries
-        # the pager didn't manage to guess the total count, do it manually
-        pager.total_entries = result.first.nil? ? 0 : collection_count || result.first.class.count
-      end
-    end
-  end
+  extend Forwardable
+  def_delegators :authorized_filter, :filter, :filter_paginated
 
   helper_method :unshifted_polymorphic_path
 

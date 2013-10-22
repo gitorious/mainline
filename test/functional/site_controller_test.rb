@@ -46,12 +46,6 @@ class SiteControllerTest < ActionController::TestCase
         assert_response :success
         assert_template "site/dashboard"
       end
-
-      should "include the user's commit_repositories" do
-        login_as users(:johan)
-        get :index
-        assert_not_nil assigns(:repositories)
-      end
     end
 
     context "Anonymous users" do
@@ -85,16 +79,6 @@ class SiteControllerTest < ActionController::TestCase
         login_as :mike
         get :index
         assert_response :success
-        assert !assigns(:projects).index(@project)
-      end
-
-      should "not display unauthenticated repositories" do
-        repositories(:johans).make_private
-        users(:mike).commit_repositories << repositories(:johans)
-        login_as :mike
-        get :index
-        assert_response :success
-        assert_equal 0, assigns(:repositories).length
       end
 
       should "not display unauthenticated projects in public timeline" do
