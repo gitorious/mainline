@@ -12,3 +12,10 @@ cp public/ui3/dist/gitorious3.min.css public/dist/css/gitorious3.min.css
 cp public/ui3/js/src/logger.js public/dist/js/logger.js
 cp -r public/ui3/lib/bootstrap public/dist/.
 cp -r public/ui3/images public/dist/.
+cd public/ui3/
+git add .
+git commit -am "Build UI"
+git push git@gitorious.org:gitorious/ui3.git master
+cd ../../
+git add public/dist public/ui3
+git commit -am "Up UI build"
