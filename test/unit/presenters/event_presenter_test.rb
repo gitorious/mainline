@@ -1,7 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,20 +15,20 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "gitorious/view/dolt_url_helper"
 
-module EventRenderingHelper
-  include Gitorious::View::DoltUrlHelper
+require 'test_helper'
+require 'minitest/spec'
 
-  def repo_title(repo, project)
-    if repo.project_repo?
-      h(File.join(project.to_param_with_prefix, repo.name))
-    else
-      h(File.join(repo.owner.to_param_with_prefix, project.slug, repo.name))
+require 'event_presenter'
+require 'event_presenter/create_project_event'
+
+describe EventPresenter do
+  let(:event) { stub(:action => 'create_project') }
+  let(:event_presenter) { EventPresenter.build(event) }
+
+  describe 'build' do
+    it 'creates instance using correct class derived from "action"' do
+      assert_instance_of EventPresenter::CreateProjectEvent, event_presenter
     end
-  end
-
-  def ref(name)
-    "<code>#{h(name)}</code>".html_safe
   end
 end

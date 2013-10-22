@@ -34,7 +34,7 @@
 <div class="container">
   <div class="row-fluid">
     <div class="span8">
-      <%= render('repository_activities/activities', :events => events, :page => current_page, :total_pages => total_pages) %>
+      <%= render('repository_activities/activities', :events => events.map { |e| EventPresenter.build(e, self) }, :page => current_page, :total_pages => total_pages) %>
     </div>
     <div class="span4">
       <%= render "repositories/repositories", {

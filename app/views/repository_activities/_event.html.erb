@@ -15,10 +15,11 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
-<% action, body, category = action_and_body_for_event(event) %>
-<% type = Action.name(event.action).gsub(' ', '-') %>
+%>
+
 <% timestamp = l(event.created_at, :format => :short) %>
+
+<% Rails.logger.debug "AAA: #{event.class}" %>
 
 <div class="gts-event" title="<%= timestamp %>">
   <% if event.user %>
@@ -29,6 +30,6 @@
   <% else %>
     <%= event.actor_display %>
   <% end %>
-  <%= content_tag(:span, action.html_safe, :class => 'event-action') if action.present? %>
-  <%= content_tag(:span, body.html_safe, :class => 'event-body muted') if body.present? %>
+  <%= content_tag(:span, event.action.html_safe, :class => 'event-action') if event.action.present? %>
+  <%= content_tag(:span, event.body.html_safe, :class => 'event-body muted') if event.body.present? %>
 </div>

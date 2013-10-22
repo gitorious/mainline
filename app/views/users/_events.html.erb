@@ -3,7 +3,7 @@
 <% else %>
   <div class="gts-events">
     <% prev_date = nil %>
-    <% events.each do |event| %>
+    <% events.map { |event| EventPresenter.build(event, self) }.each do |event| %>
       <% if prev_date != event.created_at.strftime("%A, %B %e %Y") %>
         <p class="gts-date-heading">
           <span class="gts-date-heading-inner">
