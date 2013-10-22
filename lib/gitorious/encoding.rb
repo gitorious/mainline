@@ -32,5 +32,7 @@ module Gitorious
         str.mb_chars
       end
     end
+
+    extend self
   end
 end
