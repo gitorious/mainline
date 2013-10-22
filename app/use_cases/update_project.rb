@@ -19,26 +19,6 @@ require "use_case"
 require "virtus"
 require "validators/project_validator"
 
-class UpdateProjectCommand
-  attr_reader :user, :project
-
-  def initialize(user, project)
-    @user    = user
-    @project = project
-  end
-
-  def execute(project)
-    project.save!
-    project.create_event(Action::UPDATE_PROJECT, project, user)
-    project
-  end
-
-  def build(params)
-    project.attributes = params.to_hash
-    project
-  end
-end
-
 class UpdateProjectParams
   include Virtus.model
 

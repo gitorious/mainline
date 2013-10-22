@@ -1,4 +1,4 @@
-# encoding: utf-8
+#repository.inspect encoding: utf-8
 #--
 #   Copyright (C) 2013 Gitorious AS
 #
@@ -62,5 +62,12 @@ class UpdateProjectTest < ActiveSupport::TestCase
     )
 
     assert outcome.success?
+  end
+
+  should "save wiki settings" do
+    outcome = @update_project.execute(:wiki_permissions => 1)
+
+    assert outcome.success?
+    assert_equal projects(:johans).reload.wiki_permissions, 1
   end
 end
