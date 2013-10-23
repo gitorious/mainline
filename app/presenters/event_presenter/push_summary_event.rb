@@ -3,14 +3,14 @@ class EventPresenter
   class PushSummaryEvent < self
     COMMIT_LIMIT = 3
 
-    attr_reader :data
-    private :data
+    attr_reader :event_data
+    private :event_data
 
     attr_reader :commits
 
     def initialize(*)
       super
-      initialize_data
+      initialize_event_data
       initialize_commits
     end
 
@@ -72,19 +72,19 @@ class EventPresenter
     private
 
     def first_sha
-      data[:start_sha]
+      event_data[:start_sha]
     end
 
     def last_sha
-      data[:end_sha]
+      event_data[:end_sha]
     end
 
     def branch
-      data[:branch]
+      event_data[:branch]
     end
 
     def commit_count
-      data[:commit_count]
+      event_data[:commit_count]
     end
 
     def diff_url
@@ -97,8 +97,8 @@ class EventPresenter
       target
     end
 
-    def initialize_data
-      @data = PushEventLogger.parse_event_data(event.data)
+    def initialize_event_data
+      @event_data = PushEventLogger.parse_event_data(data)
     end
 
     def initialize_commits
