@@ -104,11 +104,17 @@
     <% Gitorious::View.theme_javascripts(current_site).each do |javascript| %>
       <script src="<%= javascript %>"></script>
     <% end %>
-    <script type="text/javascript">
-      $(function() {
-        $('.alert').append('<a class="close" data-dismiss="alert" href="#">&times;</a>').alert();
-      });
-    </script>
     <%= content_for(:footer) %>
+    <script>
+      $(function() { $('.alert').append('<a class="close" data-dismiss="alert" href="#">&times;</a>').alert(); });
+
+      (function () {
+          // Scan the document for data-gts-* attributes that set
+          // "environment variables"
+          gts.app.scanEnvAttrs(document.documentElement, "data-gts-env-");
+          // Start/load the JS part of the app
+          gts.app.load(document.documentElement);
+      }());
+    </script>
   </body>
 </html>
