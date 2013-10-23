@@ -24,7 +24,7 @@
 <div class="container">
   <div class="row-fluid">
     <div class="span8">
-      <%= render 'events/events', :events => events, :page => events.current_page.to_i, :total_pages => events.total_pages %>
+      <%= render 'events/events', :events => events %>
     </div>
     <div class="span4">
       <%= render("groups/show/memberships", :group => group, :memberships => memberships) %>

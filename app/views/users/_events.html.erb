@@ -1,5 +1,5 @@
 <% if events.empty? %>
   <p class="hint">no activities.</p>
 <% else %>
-  <%= render 'events/events', :events => events, :page => events.current_page.to_i, :total_pages => events.total_pages %>
+  <%= render 'events/events', :events => events %>
 <% end %>

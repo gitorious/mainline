@@ -36,8 +36,8 @@
   <% end %>
 </div>
 
-<% if defined?(page) %>
-  <%= raw JustPaginate.page_navigation(page, total_pages) { |page_no| "?page=#{page_no}" } -%>
+<% if events.respond_to?(:current_page) %>
+  <%= raw JustPaginate.page_navigation(events.current_page.to_i, events.total_pages) { |page_no| "?page=#{page_no}" } -%>
 <% end %>
 
 <script type="text/javascript">
