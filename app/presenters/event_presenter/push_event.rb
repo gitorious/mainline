@@ -1,36 +1,45 @@
 class EventPresenter
 
-  class PushEvent < self
+  class PushEvent < PushSummaryEvent
+    COMMIT_LIMIT = 3
 
-    def render_event_push(event)
-      event.single_commit? ? render_single_commit_push(event) : render_several_commit_push(event)
-    end
+    def action
+      if single_commit?
+        commit = events.first
 
-    def render_single_commit_push(event)
-      project = event.target.project
-      commit = event.events.first
-      repo = event.target
-      commit_link = link_to(commit.data[0,8],
-        project_repository_commit_path(project, repo, commit.data)
+        commit_link = link_to(
+          commit.data[0,8],
+          view.project_repository_commit_path(project, repository, commit.data)
         )
-      repo_link = link_to("#{repo_title(repo, project)}:#{data}",
-        [project, repo])
-      action = action_for_event(:event_pushed_n, :commit_link => commit_link) do
-        "to #{repo_link}"
+      else
+        commit_link = link_to("#{commit_count} commits", diff_url)
       end
-      [action,"","push"]
+
+      action_for_event(:event_pushed_n, :commit_link => commit_link) { "to #{repository_link}" }
     end
 
-    def render_several_commit_push(event)
-      commit_detail_url = commits_event_path(event.to_param)
-      commit_count = event.events.size
-      repository = event.target
-      branch_name = data
-      event_id = event.to_param
-      message = event.body
-      push_summary(commit_detail_url, commit_count, repository, branch_name, event_id, message)
+    def repository_link
+      link_to("#{repo_title(repository, project)}:#{data}", [project, repository])
     end
 
+    def commit_count
+      events.size
+    end
+
+    def repository
+      target
+    end
+
+    private
+
+    def initialize_event_data
+      @event_data = {
+        :start_sha    => events.first.data,
+        :end_sha      => events.last.data,
+        :commit_count => events.size,
+        :branch       => data
+      }
+    end
 
   end
 

@@ -1,6 +1,6 @@
 class EventPresenter
 
-  class CommentEvent < self
+  class CommitEvent < self
 
     def action
       repo = event.target
