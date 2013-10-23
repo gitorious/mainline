@@ -20,19 +20,32 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
+%>
 
-<% container_css_class ||= "" %>
-<% pagination_style ||= :full %>
+<div class="gts-events">
+  <% prev_date = nil %>
+  <% events.map { |event| EventPresenter.build(event, self) }.each do |event| %>
+    <% if prev_date != event.created_at.strftime("%A, %B %e %Y") %>
+      <p class="gts-date-heading">
+        <span class="gts-date-heading-inner">
+          <%= prev_date = event.created_at.strftime("%A, %B %e %Y") %>
+        </span>
+      </p>
+    <% end %>
+    <%= render 'events/event', :event => event %>
+  <% end %>
+</div>
 
-<ul class="events <%= container_css_class -%>">
-  <% events.group_by { |e| l(e.created_at, :format => :human) }.each do |day, events_group| -%>
-    <li>
-      <p class="date"><%= day -%></p>
-      <ul class="event_instances">
-        <%= render :partial => events_group -%>
-      </ul>
-    </li>
-  <% end -%>
-</ul>
-<%= render_pagination_links events, :page_links => (pagination_style == :full) -%>
+<% if defined?(page) %>
+  <%= raw JustPaginate.page_navigation(page, total_pages) { |page_no| "?page=#{page_no}" } -%>
+<% end %>
+
+<script type="text/javascript">
+  $(function() {
+    $('.gts-events').on('click', 'a[data-behavior="show-commits"]', function() {
+      $this = $(this);
+      $this.parents('ul').find('.hide').removeClass('hide');
+      $this.remove();
+    });
+  });
+</script>

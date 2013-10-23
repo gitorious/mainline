@@ -31,6 +31,11 @@ class CommitPresenter < SimpleDelegator
   def initialize(repository, commit)
     @repository = repository
     @commit     = commit
+    super(@commit)
+  end
+
+  def summary
+    commit.body.split("\n").first
   end
 
   def short_oid

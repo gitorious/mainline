@@ -1,12 +1,17 @@
 class EventPresenter < SimpleDelegator
 
   class PushSummaryEvent < self
+    COMMIT_LIMIT = 3
+
     attr_reader :data
     private :data
 
+    attr_reader :commits
+
     def initialize(*)
       super
-      @data = PushEventLogger.parse_event_data(event.data)
+      initialize_data
+      initialize_commits
     end
 
     def action
@@ -21,7 +26,35 @@ class EventPresenter < SimpleDelegator
     end
 
     def body
-      "#{branch} changed from #{first_sha[0,7]} to #{last_sha[0,7]}"
+      view.content_tag(:ul, :class => 'gts-event-commit-list') {
+        inner_html = visible_commits.map { |commit| render_commit(commit) }
+        inner_html << hidden_commits.map { |commit| render_commit(commit, :class => 'hide') }
+
+        if commits.size > COMMIT_LIMIT
+          inner_html << content_tag(:li, link_to("View all &raquo;".html_safe, '#', :data => { :behavior => 'show-commits' }))
+        end
+
+        inner_html.join("\n").html_safe
+      }
+    end
+
+    def render_commit(commit, options = {})
+      user    = commit.user
+      message = commit.summary
+
+      link = link_to(
+        view.content_tag('code', commit.short_oid).html_safe,
+        view.project_repository_commit_path(project, repository, commit.id)
+      )
+
+      content =
+        if user
+          "#{view.avatar(user, :size => 16, :class => 'gts-avatar')} #{link} #{message}"
+        else
+          "#{commit.actor_display} #{link} #{message}"
+        end
+
+      view.content_tag(:li, content.html_safe, options)
     end
 
     def title
@@ -35,6 +68,8 @@ class EventPresenter < SimpleDelegator
 
       link_to(title, url)
     end
+
+    private
 
     def first_sha
       data[:start_sha]
@@ -60,6 +95,26 @@ class EventPresenter < SimpleDelegator
 
     def repository
       target
+    end
+
+    def initialize_data
+      @data = PushEventLogger.parse_event_data(event.data)
+    end
+
+    def initialize_commits
+      commits = Gitorious::Commit.load_commits_between(
+        repository.git, first_sha, last_sha, id
+      )
+
+      @commits = commits.map { |commit| CommitPresenter.new(repository, commit) }
+    end
+
+    def visible_commits
+      commits[0, COMMIT_LIMIT]
+    end
+
+    def hidden_commits
+      Array(commits[COMMIT_LIMIT, commits.size]).compact
     end
 
   end
