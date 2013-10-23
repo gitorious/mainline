@@ -84,7 +84,7 @@ class EventPresenter
     end
 
     def commit_count
-      event_data[:commit_count]
+      commits.size
     end
 
     def diff_url
