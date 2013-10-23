@@ -1,4 +1,4 @@
-class EventPresenter < SimpleDelegator
+class EventPresenter
 
   class AddFavoriteEvent < self
 

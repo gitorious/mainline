@@ -1,8 +1,6 @@
-class EventPresenter < SimpleDelegator
-  attr_reader :view
-  private :view
-
-  alias_method :event, :__getobj__
+class EventPresenter
+  attr_reader :event, :view
+  private :event, :view
 
   delegate :link_to, :h, :truncate, :dom_id, :pluralize, :ensplat_path,
     :repo_path, :repo_title, :sanitize, :content_tag, :to => :view
@@ -21,8 +19,8 @@ class EventPresenter < SimpleDelegator
   end
 
   def initialize(event, view)
-    super(event)
-    @view = view
+    @event = event
+    @view  = view
   end
 
   def actor
@@ -38,6 +36,14 @@ class EventPresenter < SimpleDelegator
   def action_for_event(key, options = {}, &block)
     header = I18n.t("application_helper.#{key}", options)
     [header, block.call].join(' ')
+  end
+
+  def method_missing(name, *args, &block)
+    if event.respond_to?(name)
+      event.public_send(name, *args, &block)
+    else
+      super
+    end
   end
 
 end
