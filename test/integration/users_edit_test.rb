@@ -21,6 +21,8 @@ require "ssh_key_test_helper"
 
 class UserEditTest < ActionDispatch::IntegrationTest
   include SshKeyTestHelper
+  include CapybaraTestCase
+  js_test
 
   def login_as(name)
     user = users(name)
@@ -41,16 +43,9 @@ class UserEditTest < ActionDispatch::IntegrationTest
   end
 
   setup do
-    Capybara.default_driver = :poltergeist
-
     @user = users(:johan)
     login_as(:johan)
     visit edit_user_path(@user)
-  end
-
-  teardown do
-    Capybara.reset_sessions!
-    Capybara.use_default_driver
   end
 
   should "update user details" do
@@ -117,9 +112,6 @@ class UserEditTest < ActionDispatch::IntegrationTest
     # for some reason changing tab doesn't work so we visit the page
     visit(user_edit_ssh_keys_path(@user))
 
-    # FIXME: this should not be required in an integration test
-    SshKeyValidator.any_instance.stubs(:valid_ssh_key).returns(true)
-
     find("a[data-method='delete'][href='#{user_key_path(@user, ssh_key)}']").click
 
     refute page.has_content?('foo@example.com')
@@ -127,9 +119,6 @@ class UserEditTest < ActionDispatch::IntegrationTest
   end
 
   should "add new ssh key" do
-    # FIXME: this should not be required in an integration test
-    SshKeyValidator.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
-
     change_tab('SSH keys')
     click_on 'Add new'
     page.must_have_content('Add new public SSH key')

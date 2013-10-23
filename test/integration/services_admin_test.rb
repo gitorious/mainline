@@ -1,6 +1,8 @@
 require "test_helper"
 
 class ServicesAdminTest < ActionDispatch::IntegrationTest
+  include CapybaraTestCase
+
   def login_as(name)
     user = users(name)
     visit(new_sessions_path)
