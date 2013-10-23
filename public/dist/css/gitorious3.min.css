@@ -505,6 +505,14 @@ input[type=url].gts-current-repo-url {
   padding-top: 15px;
 }
 
+.gts-event-actor-avatar {
+  float: left;
+}
+
+.gts-event .gts-avatar {
+  margin-left: 0;
+}
+
 .gts-date-heading + .gts-event {
   margin-top: 0;
   padding-top: 0;
@@ -514,60 +522,43 @@ input[type=url].gts-current-repo-url {
   border-top: 1px solid #f7f7f9;
 }
 
-.gts-event .event-body {
-  display: block;
-  margin: 5px 0 0 40px;
+.gts-event-content {
+  padding-top: 2px;
 }
 
-.gts-event .event-icon {
-  background-color: transparent;
-  background-repeat: no-repeat;
-  background-position: center;
-  position: relative;
-  top: 2px;
-  margin-right: 5px;
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-}
-
-.gts-event .event-create-project {
-  background-image: url('/ui3/images/icons/16px/cabinet.png');
-}
-
-.gts-event .event-update-project {
-  background-image: url('/ui3/images/icons/16px/file3.png');
-}
-
-.gts-event .event-add-project-repository {
-  background-image: url('/ui3/images/icons/16px/plus.png');
-}
-
-.gts-event .event-create-branch {
-  background-image: url('/ui3/images/icons/16px/share.png');
-}
-
-.gts-event .event-push-summary {
-  background-image: url('/ui3/images/icons/16px/box-add.png');
+.gts-event-body {
+  margin: 5px 0 0 30px;
 }
 
 .gts-event-meta-body {
   display: block;
-  margin-left: 40px;
-  margin-top: 5px;
+  margin: 5px 0 0 30px;
   color: #666;
 }
 
+.gts-event-commit-list {
+  list-style: none;
+  margin: 10px 0 0;
+}
+
+.gts-event-commit-list li {
+  line-height: 24px;
+}
+
+.gts-event-commit-list .gts-avatar {
+  margin-top: -1px;
+}
+
 .gts-avatar {
-    margin: 0 6px;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
+  margin: 0 6px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
 .gts-comment-summary {
-    color: #48484c;
-    padding-left: 10px;
+  color: #48484c;
+  padding-left: 10px;
 }
 
 .gts-log-message {
