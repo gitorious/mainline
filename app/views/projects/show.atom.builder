@@ -23,14 +23,13 @@ namespaced_atom_feed do |feed|
   feed.title("Gitorious: #{project.slug} activity")
   feed.updated((events.blank? ? Time.now : events.first.created_at))
 
-  events.each do |event|
-    action, body, category = action_and_body_for_event(event)
+  events.map { |event| EventPresenter.build(event, self) }.each do |event|
     feed.entry(event, :url => Gitorious.url(project_path(project))) do |entry|
       if event.user
-        entry.title("#{h(event.user.login)} #{strip_tags(action)}")
+        entry.title("#{h(event.user.login)} #{strip_tags(event.action)}")
         entry_content = <<-EOS
-  <p>#{link_to event.user.login, user_path(event.user)} #{action}</p>
-  <p>#{body}<p>
+  <p>#{link_to event.user.login, user_path(event.user)} #{event.action}</p>
+  <p>#{event.body}<p>
   EOS
         if event.has_commits?
           entry_content << "<ul>"
@@ -47,15 +46,15 @@ namespaced_atom_feed do |feed|
           author.name(event.user.login)
         end
       else
-        entry.title("#{h(event.actor_display)} #{strip_tags(action)}")
+        entry.title("#{h(event.actor_display)} #{strip_tags(event.action)}")
         entry_content = <<-EOS
-          <p>#{action}</p>
-          <p>#{body}</p>
+          <p>#{event.action}</p>
+          <p>#{event.body}</p>
         EOS
         if event.has_commits?
           entry_content << "<ul>"
           event.events.commits.each do |commit_event|
-            entry_content << %Q{<li>#{h(commit_event.git_actor.name)} #{h(commit_event.data[0,7])}: #{truncate(h(commit_event.body), :length => 75)}</li>}
+            entry_content << %Q{<li>#{h(commit_event.git_actor.name)} #{h(commit_event.data[0,7])}: #{truncate(h(commit_event.event.body), :length => 75)}</li>}
           end
           entry_content << "</ul>"
         end
