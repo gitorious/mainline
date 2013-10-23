@@ -17,7 +17,7 @@
 #++
 require "repository_presenter"
 
-class CommitPresenter < SimpleDelegator
+class CommitPresenter
   attr_reader :repository, :commit, :id
 
   # FIXME: this is a trick to maintain backward compatibility
@@ -31,11 +31,14 @@ class CommitPresenter < SimpleDelegator
   def initialize(repository, commit)
     @repository = repository
     @commit     = commit
-    super(@commit)
   end
 
   def summary
     commit.body.split("\n").first
+  end
+
+  def user
+    commit.user
   end
 
   def short_oid
