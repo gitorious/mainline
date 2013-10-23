@@ -29,7 +29,7 @@
       </ul>
     </div>
     <table class="table">
-      <% favorites.reject { |favorite| favorite.watchable.nil? }.each do |favorite| %>
+      <% favorites.each do |favorite| %>
         <tr>
           <td class="<%= css_classes_for(favorite.watchable) %>">
             <%= link_to_watchable(favorite.watchable) %>

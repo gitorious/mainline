@@ -22,7 +22,6 @@ require "gitorious/git_shell"
 
 module Api
   class GraphsController < ApplicationController
-    include ForceUTF8
     include Gitorious::Authorization
     skip_session
     before_filter :find_project_and_repository

@@ -35,6 +35,7 @@ require "capybara/rails"
 require "capybara/poltergeist"
 require "capybara-screenshot/minitest"
 require "database_cleaner"
+require "capybara_test_case"
 
 cache_dir = "#{Rails.root}/tmp/cache"
 FileUtils.mkdir(cache_dir) unless File.directory?(cache_dir)
@@ -57,17 +58,6 @@ end
 DatabaseCleaner.strategy = :truncation
 
 class ActionDispatch::IntegrationTest
-  self.use_transactional_fixtures = false
-  fixtures :all
-  include Capybara::DSL
-
-  setup do
-    DatabaseCleaner.start
-  end
-
-  teardown do
-    DatabaseCleaner.clean
-  end
 end
 
 WebMock.disable_net_connect!(:allow_localhost => true)
@@ -129,7 +119,6 @@ class ActiveSupport::TestCase
   def assert_blank(object)
     assert object.blank?, "#{object.inspect} should be blank"
   end
-
 
   def assert_not_includes(collection, object, message=nil)
     assert(!collection.include?(object),
@@ -298,3 +287,4 @@ class FakeMail
   attr_reader :delivered
   def deliver; @delivered = true; end
 end
+

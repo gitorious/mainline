@@ -16,19 +16,35 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-module ForceUTF8
-  def force_utf8(str)
-    return nil if str.nil?
+class Dashboard
+  attr_reader :user
 
-    if str.respond_to?(:force_encoding)
-      str.force_encoding("UTF-8")
-      if str.valid_encoding?
-        str
-      else
-        str.chars.map { |c| c.valid_encoding? ? c : '?' }.join
-      end
-    else
-      str.mb_chars
-    end
+  def initialize(user)
+    @user = user
+  end
+
+  def events(page)
+    user.paginated_events_in_watchlist(:page => page)
+  end
+
+  def projects
+    user.projects.includes(:tags, { :repositories => :project })
+  end
+
+  def repositories
+    user.commit_repositories
+  end
+
+  def favorites
+    user.favorites.all(:include => :watchable).select { |f| f.watchable.list_as_favorite? }
+  end
+
+  def user_events(page)
+    user.events.excluding_commits.paginate(
+      :page => page,
+      :order => "events.created_at desc",
+      :include => [:user, :project]
+    )
   end
 end
+

@@ -19,7 +19,7 @@
 module Gitorious
   module Diff
     class Renderer
-      include ForceUTF8
+      include Gitorious::Encoding
 
       def initialize(app, repository, commit)
         @app = app

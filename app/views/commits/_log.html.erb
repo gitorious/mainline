@@ -31,7 +31,7 @@
         <% else %>
           <strong><%= h(commit.id_abbrev) -%></strong>:
         <% end %>
-        <%= commit.short_message.force_encoding("utf-8") -%>
+        <%= force_utf8(commit.short_message) -%>
       </p>
       <p>
         <%= avatar_from_email(commit.author.email, :size => 16)  %>
