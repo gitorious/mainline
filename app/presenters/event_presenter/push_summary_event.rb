@@ -39,7 +39,7 @@ class EventPresenter < SimpleDelegator
     end
 
     def render_commit(commit, options = {})
-      user    = commit.user
+      user    = commit.committer_user
       message = commit.summary
 
       link = link_to(
@@ -106,7 +106,7 @@ class EventPresenter < SimpleDelegator
         repository.git, first_sha, last_sha, id
       )
 
-      @commits = commits.map { |commit| CommitPresenter.new(repository, commit) }
+      @commits = commits.map { |commit| CommitPresenter.new(repository, commit.id) }
     end
 
     def visible_commits

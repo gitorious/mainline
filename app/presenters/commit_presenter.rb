@@ -34,15 +34,11 @@ class CommitPresenter
   end
 
   def summary
-    commit.body.split("\n").first
-  end
-
-  def user
-    commit.user
+    commit.message.split("\n").first
   end
 
   def actor_display
-    commit.actor_display
+    commit.committer.name
   end
 
   def short_oid
