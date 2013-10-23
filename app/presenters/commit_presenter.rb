@@ -41,6 +41,10 @@ class CommitPresenter
     commit.user
   end
 
+  def actor_display
+    commit.actor_display
+  end
+
   def short_oid
     id[0, 7]
   end
