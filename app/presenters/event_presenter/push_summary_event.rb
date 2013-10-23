@@ -15,7 +15,8 @@ class EventPresenter
     end
 
     def action
-      diff_link = link_to("#{commit_count} commits", diff_url)
+      link_title = commit_count > 1 ? "#{commit_count} commits" : "1 commit"
+      diff_link = link_to(link_title, diff_url)
       action_for_event(:event_pushed_n, :commit_link => diff_link) {
         ['to', commit_link(h("#{title}:#{branch}"))].join(' ')
       }
