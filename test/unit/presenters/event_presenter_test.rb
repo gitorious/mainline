@@ -23,8 +23,9 @@ require 'event_presenter'
 require 'event_presenter/create_project_event'
 
 describe EventPresenter do
-  let(:event) { stub(:action => 'create_project') }
-  let(:event_presenter) { EventPresenter.build(event) }
+  let(:view)  { mock }
+  let(:event) { stub(:action_name => 'create project', :data => '') }
+  let(:event_presenter) { EventPresenter.build(event, view) }
 
   describe 'build' do
     it 'creates instance using correct class derived from "action"' do

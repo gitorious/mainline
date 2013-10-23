@@ -1,10 +1,15 @@
 class EventPresenter
 
   class CommentEvent < self
+    attr_reader :comment
+    private :comment
+
+    def initialize(*)
+      super
+      @comment = Comment.find(data)
+    end
 
     def action
-      comment = Comment.find(event.data)
-
       if event.body == "MergeRequest"
         repo = event.target.target_repository
         project = repo.project

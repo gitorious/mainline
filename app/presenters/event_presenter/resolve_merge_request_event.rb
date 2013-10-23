@@ -10,7 +10,7 @@ class EventPresenter
       action_for_event(:event_resolved_merge_request) {
         link_to(h(target_repository.url_path) + " " + h("##{target.to_param}"),
           view.project_repository_merge_request_path(project, target_repository, target)) +
-        " as " + "<em>#{event.data.to_s}</em>"
+        " as " + "<em>#{state}</em>"
       }
     end
 
@@ -23,6 +23,12 @@ class EventPresenter
         truncate(h(event.target.proposal), :length => 100),
         [project, target.target_repository, target]
       )
+    end
+
+    private
+
+    def state
+      data
     end
 
   end

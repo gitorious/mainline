@@ -5,7 +5,7 @@ class EventPresenter
     def action
       repo = event.target.is_a?(Repository) ? event.target : event.target.repository
 
-      action_for_event(:event_committer_added, :collaborator => h(event.data)) {
+      action_for_event(:event_committer_added, :collaborator => collaborator) {
         " to " +
         view.link_to(view.repo_title(repo, project), [project, repo])
       }
@@ -19,6 +19,11 @@ class EventPresenter
       ''
     end
 
+    private
+
+    def collaborator
+      h(data)
+    end
 
   end
 

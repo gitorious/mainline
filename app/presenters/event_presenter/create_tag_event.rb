@@ -13,13 +13,19 @@ class EventPresenter
 
     def body
       view.link_to(
-        view.ref(data),
-        view.tree_entry_url(target.repository_plain_path, h(data))
+        view.ref(branch),
+        view.tree_entry_url(target.repository_plain_path, h(branch))
       )
     end
 
     def category
       'commit'
+    end
+
+    private
+
+    def branch
+      data
     end
 
   end

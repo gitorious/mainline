@@ -8,7 +8,7 @@ class EventPresenter
       target_repository = event.target.target_repository
 
       meta_body = content_tag(:span, :class => 'gts-event-meta-body') {
-        "&#x2192; #{sanitize(event.data.to_s)}".html_safe
+        "&#x2192; #{sanitize(state_change)}".html_safe
       }
 
       action_for_event(:event_updated_merge_request) {
@@ -26,6 +26,11 @@ class EventPresenter
       'merge_request'
     end
 
+    private
+
+    def state_change
+      data
+    end
 
   end
 
