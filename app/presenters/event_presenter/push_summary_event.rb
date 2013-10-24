@@ -120,17 +120,18 @@ class EventPresenter
       if commit_count > 1
         Rails.cache.fetch("push_summary_commits_#{id}") {
           begin
-            walker = Rugged::Walker.new(Rugged::Repository.new(repository.git.path))
-            walker.push(first_sha)
+            walker = Rugged::Walker.new(Rugged::Repository.new(repository.full_repository_path))
+
             walker.push(last_sha)
+
             first_commit_sha = nil
 
-            walker.each_with_index { |commit, index|
-              if index == 1
+            walker.each_with_index do |commit, index|
+              if index == commit_count-1
                 first_commit_sha = commit.oid
                 break
               end
-            }
+            end
 
             repository.git.commit(first_commit_sha)
           rescue Rugged::OdbError, Rugged::OSError
