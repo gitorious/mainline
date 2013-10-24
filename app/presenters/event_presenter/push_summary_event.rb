@@ -119,19 +119,23 @@ class EventPresenter
     def fetch_first_commit
       if commit_count > 1
         Rails.cache.fetch("push_summary_commits_#{id}") {
-          walker = Rugged::Walker.new(Rugged::Repository.new(repository.git.path))
-          walker.push(first_sha)
-          walker.push(last_sha)
-          first_commit_sha = nil
+          begin
+            walker = Rugged::Walker.new(Rugged::Repository.new(repository.git.path))
+            walker.push(first_sha)
+            walker.push(last_sha)
+            first_commit_sha = nil
 
-          walker.each_with_index { |commit, index|
-            if index == 1
-              first_commit_sha = commit.oid
-              break
-            end
-          }
+            walker.each_with_index { |commit, index|
+              if index == 1
+                first_commit_sha = commit.oid
+                break
+              end
+            }
 
-          repository.git.commit(first_commit_sha)
+            repository.git.commit(first_commit_sha)
+          rescue Rugged::OdbError
+            nil
+          end
         }
       else
         repository.git.commit(last_sha)
