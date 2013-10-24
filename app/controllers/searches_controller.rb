@@ -42,7 +42,7 @@ class SearchesController < ApplicationController
 
           @all_results = NullSearchResults.new
           @all_results.to_a
-        rescue ThinkingSphinx::SyntaxError
+        rescue ThinkingSphinx::QueryError, ThinkingSphinx::SyntaxError
           @all_results = NullSearchResults.new
           @all_results.to_a
         end
