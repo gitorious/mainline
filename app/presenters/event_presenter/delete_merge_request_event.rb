@@ -15,10 +15,6 @@ class EventPresenter
       'merge_request'
     end
 
-    def body
-      ''
-    end
-
   end
 
 end

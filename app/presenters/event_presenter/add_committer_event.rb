@@ -15,10 +15,6 @@ class EventPresenter
       'repository'
     end
 
-    def body
-      ''
-    end
-
     private
 
     def collaborator

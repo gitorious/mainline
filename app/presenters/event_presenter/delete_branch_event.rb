@@ -13,10 +13,6 @@ class EventPresenter
       }
     end
 
-    def body
-      ''
-    end
-
     def category
       'commit'
     end

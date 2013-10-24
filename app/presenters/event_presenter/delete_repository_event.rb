@@ -8,10 +8,6 @@ class EventPresenter
       end
     end
 
-    def body
-      ''
-    end
-
     def category
       'project'
     end

@@ -13,10 +13,6 @@ class EventPresenter
       'wiki'
     end
 
-    def body
-      ''
-    end
-
     private
 
     def page_name

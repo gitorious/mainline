@@ -29,7 +29,7 @@ class EventPresenter
       if master?
         h(event.body)
       else
-        ''
+        super
       end
     end
 

@@ -6,10 +6,6 @@ class EventPresenter
       action_for_event(:event_status_deleted){ h(project_name) }
     end
 
-    def body
-      ''
-    end
-
     def category
       'project'
     end

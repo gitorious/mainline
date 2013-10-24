@@ -53,10 +53,6 @@ class EventPresenter
       'comment'
     end
 
-    def body
-      ''
-    end
-
   end
 
 end

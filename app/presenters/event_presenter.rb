@@ -24,6 +24,10 @@ class EventPresenter
     user && user.avatar
   end
 
+  def body
+    ''
+  end
+
   private
 
   def action_for_event(key, options = {}, &block)
