@@ -37,7 +37,7 @@
       <%= event.action.html_safe %>
     </div>
     <div class="gts-event-body muted">
-      <%= event.body.html_safe %>
+      <%= event.body.html_safe if event.body %>
     </div>
   </div>
 </div>
