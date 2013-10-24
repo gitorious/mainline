@@ -1,7 +1,7 @@
 class EventPresenter
 
   class PushSummaryEvent < self
-    COMMIT_LIMIT = 3
+    COMMIT_LIMIT = 2
 
     attr_reader :event_data
     private :event_data
@@ -29,10 +29,11 @@ class EventPresenter
     def body
       view.content_tag(:ul, :class => 'gts-event-commit-list') {
         inner_html = visible_commits.map { |commit| render_commit(commit) }
-        inner_html << hidden_commits.map { |commit| render_commit(commit, :class => 'hide') }
 
         if commits.size > COMMIT_LIMIT
-          inner_html << content_tag(:li, link_to("View all &raquo;".html_safe, '#', :data => { :behavior => 'show-commits' }))
+          inner_html << content_tag(:li) {
+            link_to("View all &raquo;".html_safe, diff_url)
+          }
         end
 
         inner_html.join("\n").html_safe
@@ -115,7 +116,7 @@ class EventPresenter
     end
 
     def hidden_commits
-      Array(commits[COMMIT_LIMIT, commits.size]).compact
+      Array(commits[COMMIT_LIMIT+1, commits.size]).compact
     end
 
   end
