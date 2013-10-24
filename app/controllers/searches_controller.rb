@@ -36,13 +36,13 @@ class SearchesController < ApplicationController
                                                 :match_mode => :extended})
 
           @all_results.to_a
+        rescue ThinkingSphinx::QueryError, ThinkingSphinx::SyntaxError
+          @all_results = NullSearchResults.new
+          @all_results.to_a
         rescue ThinkingSphinx::SphinxError => e
           # silence the exception if the requested page doesn't exist
           raise e unless e.message =~ /offset out of bounds/
 
-          @all_results = NullSearchResults.new
-          @all_results.to_a
-        rescue ThinkingSphinx::QueryError, ThinkingSphinx::SyntaxError
           @all_results = NullSearchResults.new
           @all_results.to_a
         end
