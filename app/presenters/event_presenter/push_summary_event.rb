@@ -28,9 +28,9 @@ class EventPresenter
 
     def body
       view.content_tag(:ul, :class => 'gts-event-commit-list') {
-        inner_html = visible_commits.map { |commit| render_commit(commit) }
+        inner_html = commits.map { |commit| render_commit(commit) }
 
-        if commits.size > COMMIT_LIMIT
+        if commit_count > COMMIT_LIMIT
           inner_html << content_tag(:li) {
             link_to("View all &raquo;".html_safe, diff_url)
           }
@@ -86,7 +86,7 @@ class EventPresenter
     end
 
     def commit_count
-      commits.size
+      event_data[:commit_count].to_i
     end
 
     def diff_url
@@ -104,11 +104,20 @@ class EventPresenter
     end
 
     def initialize_commits
-      commits = Gitorious::Commit.load_commits_between(
-        repository.git, first_sha, last_sha, id
-      )
+      # FIXME: this won't be needed when we convert old push/commit events to
+      #        push summary events
+      first_commit = fetch_first_commit
 
-      @commits = commits.map { |commit| CommitPresenter.new(repository, commit.id) }
+      @commits =
+        if first_commit
+          [CommitPresenter.new(repository, first_commit)]
+        else
+          []
+        end
+    end
+
+    def fetch_first_commit
+      repository.git.commits_between(first_sha, last_sha).first
     end
 
     def visible_commits
