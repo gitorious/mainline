@@ -133,7 +133,7 @@ class EventPresenter
             }
 
             repository.git.commit(first_commit_sha)
-          rescue Rugged::OdbError
+          rescue Rugged::OdbError, Rugged::OSError
             nil
           end
         }
