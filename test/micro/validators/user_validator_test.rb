@@ -82,6 +82,11 @@ class UserValidatorTest < MiniTest::Spec
     assert_equal 1, result.errors[:email].length
   end
 
+  it "disallows email with new lines" do
+    result = UserValidator.call(User.new(:email => "jane@doe.com\njane@doe.com"))
+    assert_equal 1, result.errors[:email].length
+  end
+
   it "allows emails with aliases and sub-domains" do
     result = UserValidator.call(new_user(:email => "ker+nel.w-t-f@foo-bar.co.uk"))
     assert result.valid?, result.errors.inspect
