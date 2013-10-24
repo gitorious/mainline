@@ -39,20 +39,25 @@ class MergeRequestVersionsController < ApplicationController
 
     commit = merge_request.source_repository.git.commit(merge_request.ending_commit)
 
-    render(:show, :locals => {
-        :project => @project,
-        :repository => RepositoryPresenter.new(merge_request.target_repository),
-        :merge_request => merge_request,
-        :merge_request_version => merge_request_version,
-        :renderer => diff_renderer(params[:diffmode], RepositoryPresenter.new(merge_request.source_repository), commit),
-        :commit => commit,
-        :diffs => diffs,
-        :timeout => timeout,
-        :user => merge_request.user,
-        :source_repo => RepositoryPresenter.new(merge_request.source_repository),
-        :target_repo => RepositoryPresenter.new(merge_request.target_repository),
-        :range => commit_range(params[:commit_shas])
-      })
+    if commit
+      render(:show, :locals => {
+          :project => @project,
+          :repository => RepositoryPresenter.new(merge_request.target_repository),
+          :merge_request => merge_request,
+          :merge_request_version => merge_request_version,
+          :renderer => diff_renderer(params[:diffmode], RepositoryPresenter.new(merge_request.source_repository), commit),
+          :commit => commit,
+          :diffs => diffs,
+          :timeout => timeout,
+          :user => merge_request.user,
+          :source_repo => RepositoryPresenter.new(merge_request.source_repository),
+          :target_repo => RepositoryPresenter.new(merge_request.target_repository),
+          :range => commit_range(params[:commit_shas])
+        })
+    else
+      flash[:warning] = 'Diff is no longer availabe for this Merge Request'
+      redirect_to(:back) and return
+    end
   end
 
   private
