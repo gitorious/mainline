@@ -6,15 +6,8 @@ class EventPresenter
     :repo_path, :repo_title, :sanitize, :content_tag, :to => :view
 
   def self.build(event, view)
-    begin
-      name  = "#{self.name}::#{event.action_name.split.join('_').classify}Event"
-      klass = name.constantize
-    rescue NameError => e
-      Rails.logger.error "AAA: #{event.inspect}"
-      Rails.logger.error "AAA: #{e.message}"
-      klass = self
-    end
-
+    name  = "#{self.name}::#{event.action_name.split.join('_').classify}Event"
+    klass = name.constantize
     klass.new(event, view)
   end
 

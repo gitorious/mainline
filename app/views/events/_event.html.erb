@@ -37,7 +37,6 @@
       <%= event.action.html_safe %>
     </div>
     <div class="gts-event-body muted">
-      <% Rails.logger.debug "AAA NO BODY: #{event.class}" unless event.body %>
       <%= event.body.html_safe %>
     </div>
   </div>
