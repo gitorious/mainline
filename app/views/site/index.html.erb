@@ -29,30 +29,28 @@
 <% end %>
 
 <div class="container gts-container">
-  <div class="container-fluid">
-    <div class="row-fluid">
-      <% if Gitorious.public? || logged_in? %>
-        <div class="span7">
-          <%= render "site/index/activities", :events => @latest_events %>
-        </div>
-        <div class="span5">
-          <%= cache_in_private([:site_index, :active_projects_recently], :expires_in => 1.hour) do %>
-            <%= render "site/index/active_projects", :projects => @active_projects %>
-          <% end %>
-          <%= cache_in_private([:site_index, :active_clones], :expires_in => 25.minutes) do %>
-            <%= render "site/index/active_clones", :repositories => @top_repository_clones %>
-          <% end %>
-          <%= cache_in_private([:site_index, :active_users], :expires_in => 20.minutes) do %>
-            <%= render "site/index/active_users", :users => @active_users %>
-          <% end %>
-          <%= cache_in_private([:site_index, :active_teams], :expires_in => 15.minutes) do %>
-            <%= render "site/index/active_teams", :teams => @active_groups %>
-          <% end %>
-          <%= cache_in_private([:site_index, :newest_projects], :expires_in => 5.minutes) do %>
-            <%= render "site/index/new_projects", :projects => @projects %>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
+  <div class="row-fluid">
+    <% if Gitorious.public? || logged_in? %>
+      <div class="span7">
+        <%= render "site/index/activities", :events => @latest_events %>
+      </div>
+      <div class="span5">
+        <%= cache_in_private([:site_index, :active_projects_recently], :expires_in => 1.hour) do %>
+          <%= render "site/index/active_projects", :projects => @active_projects %>
+        <% end %>
+        <%= cache_in_private([:site_index, :active_clones], :expires_in => 25.minutes) do %>
+          <%= render "site/index/active_clones", :repositories => @top_repository_clones %>
+        <% end %>
+        <%= cache_in_private([:site_index, :active_users], :expires_in => 20.minutes) do %>
+          <%= render "site/index/active_users", :users => @active_users %>
+        <% end %>
+        <%= cache_in_private([:site_index, :active_teams], :expires_in => 15.minutes) do %>
+          <%= render "site/index/active_teams", :teams => @active_groups %>
+        <% end %>
+        <%= cache_in_private([:site_index, :newest_projects], :expires_in => 5.minutes) do %>
+          <%= render "site/index/new_projects", :projects => @projects %>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 </div>
