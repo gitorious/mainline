@@ -22,17 +22,17 @@
   #++
   %>
 
+<% unless logged_in? %>
+  <%= site_header do %>
+    <%= render 'site/index/intro_box' %>
+  <% end %>
+<% end %>
+
 <div class="container gts-container">
   <div class="container-fluid">
-    <% unless logged_in? %>
-      <div id="site_intro">
-        <p><%= t("views.site.description").html_safe %></p>
-      </div>
-    <% end %>
     <div class="row-fluid">
       <% if Gitorious.public? || logged_in? %>
         <div class="span7">
-          <%= render "site/index/intro_box" unless logged_in? %>
           <%= render "site/index/activities", :events => @latest_events %>
         </div>
         <div class="span5">
