@@ -117,7 +117,11 @@ class EventPresenter
     end
 
     def fetch_first_commit
-      repository.git.commits_between(first_sha, last_sha).first
+      if commit_count > 1
+        repository.git.commits_between(first_sha, last_sha).first
+      else
+        repository.git.commit(last_sha)
+      end
     end
 
     def visible_commits
