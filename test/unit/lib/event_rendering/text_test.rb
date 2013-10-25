@@ -104,7 +104,8 @@ class TextEventRenderingTest < ActiveSupport::TestCase
   context "delete repo" do
     setup do
       @event.action = Action::DELETE_REPOSITORY
-      @event.target = users(:johan)
+      @event.user   = users(:johan)
+      @event.target = projects(:johans)
       @event.data = "old-repo-name"
     end
 

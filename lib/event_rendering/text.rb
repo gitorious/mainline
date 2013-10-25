@@ -133,7 +133,7 @@ module EventRendering
 
     def render_delete_repo
       add_from_template("{user} deleted repository {name}", {
-          :user => @event.target.login,
+          :user => @event.user.login,
           :name => @event.data
         })
     end
