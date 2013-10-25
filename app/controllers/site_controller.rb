@@ -59,12 +59,17 @@ class SiteController < ApplicationController
   # Render a Site-specific index template
   def render_site_index
     projects = filter(current_site.projects.order("created_at asc"))
-    render("site/#{current_site.subdomain}/index", :locals => {
-        :projects => projects,
-        :teams => Group.all_participating_in_projects(projects),
-        :top_repository_clones => filter(Repository.most_active_clones_in_projects(projects)),
-        :latest_events => filter(Event.latest_in_projects(25, projects.map { |p| p.id }))
-      })
+
+    respond_to do |format|
+      format.html do
+        render "site/#{current_site.subdomain}/index", :locals => {
+          :projects => projects,
+            :teams => Group.all_participating_in_projects(projects),
+            :top_repository_clones => filter(Repository.most_active_clones_in_projects(projects)),
+            :latest_events => filter(Event.latest_in_projects(25, projects.map { |p| p.id }))
+        }
+      end
+    end
   end
 
   def render_public_timeline
@@ -74,7 +79,12 @@ class SiteController < ApplicationController
     @active_users = User.most_active
     @active_groups = Group.most_active
     @latest_events = filter(Event.latest(25))
-    render :template => "site/index"
+
+    respond_to do |format|
+      format.html do
+        render :template => "site/index"
+      end
+    end
   end
 
   def render_dashboard
@@ -84,15 +94,20 @@ class SiteController < ApplicationController
     dashboard_presenter = DashboardPresenter.new(current_dashboard, authorized_filter, self)
 
     paginate(page_free_redirect_options) do
-      render :template => "site/dashboard", :locals => {
-        :user => dashboard_presenter.user,
-        :events => dashboard_presenter.events(params[:page]),
-        :user_events => dashboard_presenter.user_events(params[:page]),
-        :projects => dashboard_presenter.projects,
-        :repositories => dashboard_presenter.repositories,
-        :favorites => dashboard_presenter.favorites,
-        :atom_auto_discovery_url => dashboard_presenter.atom_auto_discovery_url
-      }
+
+      respond_to do |format|
+        format.html do
+          render :template => "site/dashboard", :locals => {
+            :user => dashboard_presenter.user,
+            :events => dashboard_presenter.events(params[:page]),
+            :user_events => dashboard_presenter.user_events(params[:page]),
+            :projects => dashboard_presenter.projects,
+            :repositories => dashboard_presenter.repositories,
+            :favorites => dashboard_presenter.favorites,
+            :atom_auto_discovery_url => dashboard_presenter.atom_auto_discovery_url
+          }
+        end
+      end
     end
   end
 
