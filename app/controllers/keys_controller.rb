@@ -37,11 +37,7 @@ class KeysController < ApplicationController
   end
 
   def new
-    if pjax_request?
-      render :partial => 'keys/form', :ssh_key => ssh_key
-    else
-      render_form
-    end
+    render_form
   end
 
   def create
