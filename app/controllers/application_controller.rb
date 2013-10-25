@@ -175,7 +175,7 @@ class ApplicationController < ActionController::Base
 
   def render_git_timeout
     layout = (request.xhr? ? false : "application")
-    render(:file => 'shared/_git_timeout', :layout => layout)
+    render(:file => 'shared/_git_timeout.erb.html', :layout => layout, :format => 'html')
     return false
   end
 
