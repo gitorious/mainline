@@ -15,11 +15,13 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
+%>
+
 <% @title = "#{project.title} community" %>
+
 <% content_for(:head) do %>
   <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url,
-        :title => atom_auto_discovery_title) -%>
+        :title => atom_auto_discovery_title) %>
 <% end %>
 
 <%= partial("projects/header", {
@@ -33,33 +35,35 @@
   <div class="row-fluid">
     <div class="span7">
       <span class="fluid-row">
-        <% if !group_clones.empty? -%>
+        <% if group_clones.present? %>
           <span class="span6">
-            <h3><%= t("views.repos.by_teams") -%> (<%= group_clones.count -%>)</h3>
-            <ul class="repository_list">
-              <% group_clones.each do |repo| -%>
-                <%= render :partial => "repositories/repository_sidebar",
-                    :locals => { :repository => repo } -%>
-              <% end -%>
+            <h3 class="gts-legend">
+              <%= t("views.repos.by_teams") %> (<%= group_clones.count %>)
+            </h3>
+            <ul class="unstyled">
+              <% group_clones.each do |repo| %>
+                <%= render 'repositories/repository_sidebar', :repository => repo %>
+              <% end %>
             </ul>
           </span>
-        <% end -%>
-        <% if !user_clones.empty? -%>
+        <% end %>
+        <% if user_clones.present? %>
           <span class="span6">
-            <h3><%= t("views.repos.by_users") -%> (<%= user_clones.count -%>)</h3>
-            <ul class="repository_list">
-              <% user_clones.each do |repo|-%>
-                <%= render :partial => "repositories/repository_sidebar",
-                    :locals => { :repository => repo } -%>
-              <% end -%>
+            <h3 class="gts-legend">
+              <%= t("views.repos.by_users") %> (<%= user_clones.count %>)
+            </h3>
+            <ul class="unstyled">
+              <% user_clones.each do |repo|%>
+                <%= render 'repositories/repository_sidebar', :repository => repo %>
+              <% end %>
               <ul>
           </span>
-        <% end -%>
-        <% if user_clones.empty? && !group_clones.empty? -%>
+        <% end %>
+        <% if user_clones.empty? && !group_clones.empty? %>
           <ul>
-            <li class="hint"><%= t("views.projects.no_clones_yet") -%></li>
+            <li class="hint"><%= t("views.projects.no_clones_yet") %></li>
           </ul>
-        <% end -%>
+        <% end %>
       </span>
     </div>
     <div class="span5">
@@ -68,46 +72,46 @@
           <tr>
             <th><%= t("views.repos.owner") %></th>
             <td>
-              <%= link_to h(project.owner_to_param_with_prefix), project.owner -%>
-              <% if project.owned_by_group? -%>
+              <%= link_to h(project.owner_to_param_with_prefix), project.owner %>
+              <% if project.owned_by_group? && project.user %>
                 <small class="hint">
-                  (through <%= link_to h(project.user_to_param_with_prefix), project.user -%>)
+                  (through <%= link_to h(project.user_to_param_with_prefix), project.user %>)
                 </small>
-              <% end -%>
+              <% end %>
             </td>
           </tr>
           <tr>
             <th><%= t("views.repos.created") %></th>
-            <td><%= project.short_created_at -%></td>
+            <td><%= project.short_created_at %></td>
           </tr>
-          <% if !project.tag_list.blank? %>
+          <% if project.tag_list.present? %>
             <tr>
               <th>Tags</th>
-              <td><%= linked_tag_list_as_sentence(project.tags) -%></td>
+              <td><%= linked_tag_list_as_sentence(project.tags) %></td>
             </tr>
           <% end %>
-          <% if !project.license.blank? %>
+          <% if project.license.present? %>
             <tr>
               <th><%= license_label("views.projects") %></th>
-              <td><%= project.license -%></td>
+              <td><%= project.license %></td>
             </tr>
           <% end %>
-          <% if !project.home_url.blank? %>
+          <% if project.home_url.present? %>
             <tr>
               <th><%= t("views.projects.website") %></th>
-              <td><a href="<%= project.home_url -%>"><%= project.home_url -%></a></td>
+              <td><a href="<%= project.home_url %>"><%= project.home_url %></a></td>
             </tr>
           <% end %>
-          <% if !project.mailinglist_url.blank? %>
+          <% if project.mailinglist_url.present? %>
             <tr>
               <th><%= t("views.projects.mailing") %></th>
-              <td><a href="<%= project.mailinglist_url -%>"><%= project.mailinglist_url -%></a></td>
+              <td><a href="<%= project.mailinglist_url %>"><%= project.mailinglist_url %></a></td>
             </tr>
           <% end %>
-          <% if !project.bugtracker_url.blank? %>
+          <% if project.bugtracker_url.present? %>
             <tr>
               <th><%= t("views.projects.bugtracker") %></th>
-              <td><a href="<%= project.bugtracker_url -%>"><%= project.bugtracker_url -%></a></td>
+              <td><a href="<%= project.bugtracker_url %>"><%= project.bugtracker_url %></a></td>
             </tr>
           <% end %>
         </tbody>

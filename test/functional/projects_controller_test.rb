@@ -21,7 +21,7 @@ require "test_helper"
 
 class ProjectsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
-  should_render_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
+  should_render_in_global_context :except => [:show, :edit, :update, :confirm_delete]
 
   def setup
     setup_ssl_from_config
@@ -52,17 +52,6 @@ class ProjectsControllerTest < ActionController::TestCase
       should "render private repo for owner" do
         login_as :johan
         get :show, :id => projects(:johans).to_param
-        assert_response 200
-      end
-
-      should "not render clones for private repo for unauthorized user" do
-        get :clones, :id => projects(:johans).to_param
-        assert_response 403
-      end
-
-      should "render private repo clones for owner" do
-        login_as :johan
-        get :clones, :id => projects(:johans).to_param, :format => "js"
         assert_response 200
       end
 
@@ -424,14 +413,6 @@ class ProjectsControllerTest < ActionController::TestCase
       get :edit, :id => projects(:johans).slug
       assert_response :success
       assert_equal projects(:johans), assigns(:project)
-    end
-
-    should "render all the clone repositories" do
-      get :clones, :id => projects(:johans).slug, :format => "js"
-      assert_response :success
-      assert_not_nil assigns(:group_clones)
-      assert_not_nil assigns(:user_clones)
-      assert_template "_repositories"
     end
 
     context "project event pagination" do

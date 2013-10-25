@@ -16,19 +16,22 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
+%>
+
 <li class="clone">
+  <% if repository.owned_by_group? %>
+    <span class="group">
+      <%= image_tag(repository.owner.avatar.url(:thumb), :size => '16x16', :class => 'gts-avatar') %>
+      <%= link_to h(repository.owner_to_param_with_prefix), repository.owner %>
+    </span>
+  <% else %>
+    <span class="user">
+      <%= avatar(repository.user, :size => 16) %>
+      <%= link_to h(repository.user_to_param_with_prefix), repository.user %>
+    </span>
+  <% end %>
+  &raquo;
   <span class="name">
-    <%= link_to h(repository.name), [repository.project, repository] -%>
-  <% if repository.owned_by_group? -%>
-    (<span class="group">
-      <%= image_tag(repository.owner.avatar.url(:thumb), :width => "16", :height => "16") %>
-      <%= link_to h(repository.owner.name), repository.owner -%>
-    </span>)
-  <% else -%>
-    (<span class="user">
-      <%= avatar(repository.user, :size => 16, :version => "tiny") %>
-      <%= link_to h(repository.user.title), repository.user -%>
-    </span>)
-  <% end -%>
+    <%= link_to h(repository.name), [repository.project, repository] %>
+  </span>
 </li>

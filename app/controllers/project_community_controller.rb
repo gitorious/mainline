@@ -21,13 +21,15 @@ class ProjectCommunityController < ApplicationController
 
   def index
     project = authorize_access_to(Project.find_by_slug!(params[:project_id]))
+    group_clones = RepositoryPresenter.load(filter(project.recently_updated_group_repository_clones))
+    user_clones = RepositoryPresenter.load(filter(project.recently_updated_user_repository_clones))
 
     render(:action => :index, :locals => {
         :project => ProjectPresenter.new(project),
         :atom_auto_discovery_url => project_path(project, :format => :atom),
         :atom_auto_discovery_title => "#{project.title} ATOM feed",
-        :group_clones => filter(project.recently_updated_group_repository_clones),
-        :user_clones => filter(project.recently_updated_user_repository_clones)
+        :group_clones => group_clones,
+        :user_clones => user_clones
       })
   end
 end

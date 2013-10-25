@@ -29,11 +29,11 @@ class ProjectsController < ApplicationController
   before_filter :login_required,
     :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
   before_filter :find_project,
-    :only => [:show, :clones, :edit, :update, :confirm_delete, :destroy, :edit_slug]
+    :only => [:show, :edit, :update, :confirm_delete, :destroy, :edit_slug]
   before_filter :require_admin, :only => [:edit, :update, :edit_slug]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
   renders_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
-  renders_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
+  renders_in_global_context :except => [:show, :edit, :update, :confirm_delete]
 
   def index
     begin
@@ -100,15 +100,6 @@ class ProjectsController < ApplicationController
             :events => events
           })
       end
-    end
-  end
-
-  def clones
-    @owner = @project
-    @group_clones = filter(@project.repositories.by_groups)
-    @user_clones = filter(@project.repositories.by_users)
-    respond_to do |format|
-      format.js { render :partial => "repositories" }
     end
   end
 

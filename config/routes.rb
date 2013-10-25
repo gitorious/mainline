@@ -223,7 +223,6 @@ Gitorious::Application.routes.draw do
       put :preview
       get :edit_slug
       put :edit_slug
-      get :clones
       get :confirm_delete
       get "/ownership/edit" => "project_ownerships#edit", :as => :transfer_ownership
       put "/ownership/edit" => "project_ownerships#update", :as => :transfer_ownership

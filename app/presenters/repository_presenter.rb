@@ -22,6 +22,13 @@ require "presenters/project_presenter"
 # specific logic from the model, and provide a clear, explicit contract between
 # the view and the model.
 class RepositoryPresenter
+  attr_reader :repository
+  private :repository
+
+  def self.load(collection)
+    collection.map { |repository| RepositoryPresenter.new(repository) }
+  end
+
   def initialize(repository)
     @repository = repository
   end
@@ -55,28 +62,24 @@ class RepositoryPresenter
   def is_a?(thing); thing == Repository; end
   def project_repo?; repository.project_repo?; end
 
-  def show_clone_list_search?
-    group_clone_count >= 5 || user_clone_count >= 5
-  end
-
   def has_group_clones?
-    !repository.clones.by_groups.blank?
+    group_clones.any?
   end
 
   def has_user_clones?
-    !repository.clones.by_users.blank?
+    user_clones.any?
   end
 
   def group_clone_count
-    repository.clones.by_groups.size
+    group_clones.count
   end
 
   def user_clone_count
-    repository.clones.by_users.size
+    user_clones.count
   end
 
   def user_clones
-    repository.clones.by_users.fresh
+    @user_clones ||= repository.clones.by_users.fresh.map { |repo| self.class.new(repo) }
   end
 
   def owner_to_param_with_prefix
@@ -108,7 +111,7 @@ class RepositoryPresenter
   end
 
   def group_clones
-    repository.clones.by_groups.fresh
+    @group_clones ||= repository.clones.by_groups.fresh.map { |repo| self.class.new(repo) }
   end
 
   def open_merge_request_count
@@ -126,7 +129,4 @@ class RepositoryPresenter
   def project
     @project ||= ProjectPresenter.new(@repository.project)
   end
-
-  private
-  def repository; @repository; end
 end

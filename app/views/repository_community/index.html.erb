@@ -34,26 +34,24 @@
       <span class="fluid-row">
         <% if repository.has_group_clones? %>
           <span class="span6">
-            <h2 class="gts-legend">
+            <h3 class="gts-legend">
               <%= t("views.repos.by_teams") %> (<%= repository.group_clone_count %>)
-            </h2>
-            <ul class="repository_list">
-              <% repository.group_clones.each do |repo| %>
-                <%= render :partial => "repositories/repository_sidebar",
-                    :locals => {:repository => repo} %>
+            </h3>
+            <ul class="unstyled">
+              <% repository.group_clones do |repo| %>
+                <%= render 'repositories/repository_sidebar', :repository => repo %>
               <% end %>
             </ul>
           </span>
         <% end %>
         <% if repository.has_user_clones? %>
           <span class="span6">
-            <h2 class="gts-legend">
+            <h3 class="gts-legend">
               <%= t("views.repos.by_users") %> (<%= repository.user_clone_count %>)
             </h3>
-            <ul class="repository_list">
-              <% repository.user_clones.each do |repo|%>
-                <%= render :partial => "repositories/repository_sidebar",
-                    :locals => {:repository => repo} %>
+            <ul class="unstyled">
+              <% repository.user_clones.each do |repo| %>
+                <%= render 'repositories/repository_sidebar', :repository => repo %>
               <% end %>
               <ul>
           </span>
@@ -72,7 +70,7 @@
             <th><%= t("views.repos.owner") %></th>
             <td>
               <%= link_to h(repository.owner_to_param_with_prefix), repository.owner %>
-              <% if repository.owned_by_group? %>
+              <% if repository.owned_by_group? && repository.user %>
                 <small class="hint">
                   (through <%= link_to h(repository.user_to_param_with_prefix), repository.user %>)
                 </small>
