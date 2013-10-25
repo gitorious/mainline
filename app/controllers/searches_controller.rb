@@ -52,6 +52,12 @@ class SearchesController < ApplicationController
       filtered_results_length = @results.length
       @total_entries = @all_results.total_entries - (unfiltered_results_length - filtered_results_length)
     end
+
+    respond_to do |format|
+      format.html do
+        render
+      end
+    end
   end
 
   private
