@@ -335,7 +335,7 @@ Gitorious::Application.routes.draw do
       # "real" URLs, redirect these temps to the proper ones.
       get "/archive-tarball/*branch" => (redirect do |params, request|
         prefix = request.fullpath.split("/archive-tarball").first
-        "#{prefix}/archive/#{params[:branch]}.tar.gz"
+        "#{prefix}/archive/#{URI.encode(params[:branch])}.tar.gz"
       end)
 
       match "/archive/*branch.tar.gz" => "trees#archive", :as => :archive_tar
