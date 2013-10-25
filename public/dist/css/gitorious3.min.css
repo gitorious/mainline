@@ -148,6 +148,10 @@ ol.linenums li.focus .line {
   box-shadow: none;
 }
 
+a.loading > span {
+  margin-left: 10px;
+}
+
 .navbar-search .search-query {
   box-shadow: none;
 }
