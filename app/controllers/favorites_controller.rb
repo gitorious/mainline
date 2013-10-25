@@ -53,6 +53,17 @@ class FavoritesController < ApplicationController
           :location => polymorphic_path(@favorite)
       end
     end
+  rescue ActiveRecord::RecordInvalid
+    respond_to do |wants|
+      wants.html do
+        flash[:error] = "Failed to watch the object"
+        redirect_to :back
+      end
+
+      wants.js do
+        render :status => :unprocessable_entity, :nothing => true
+      end
+    end
   end
 
   def destroy
