@@ -15,6 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+#
+#
 require "fast_test_helper"
 require "validators/ssh_key_validator"
 
@@ -50,6 +52,9 @@ class SshKeyValidatorTest < MiniTest::Spec
     validator = SshKeyValidator.new(ssh_key)
     validator.stubs(:valid_key_using_ssh_keygen?).returns(true)
     refute validator.valid?
+
+    ssh_key.key = 'żółć'
+    refute validator.valid?, 'is not valid when key format cannot be matched'
 
     ssh_key.key = "foo bar@baz"
     refute validator.valid?

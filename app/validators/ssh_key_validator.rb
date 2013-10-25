@@ -25,13 +25,17 @@ SshKeyValidator = UseCase::Validator.define do
   validate :valid_ssh_key
   validates_presence_of :user_id, :key
 
+  def self.model_name
+    SshKey.model_name
+  end
+
   def valid_ssh_key
     if key =~ PRIVATE_KEY_FORMAT
       errors.add(:key, I18n.t("ssh_key.private_key_validation_message")) and return
     end
 
     if key !~ KEY_FORMAT
-      errors.add(:key, I18n.t("ssh_key.key_format_validation_message")) and return
+      invalid_format! and return
     end
 
     if !uniq?
@@ -42,6 +46,8 @@ SshKeyValidator = UseCase::Validator.define do
     if errors.count == 0 && !valid_key_using_ssh_keygen?
       errors.add(:key, "is not recognized as a valid public key")
     end
+  rescue Encoding::CompatibilityError
+    invalid_format! and return
   end
 
   def valid_key_using_ssh_keygen?
@@ -53,7 +59,7 @@ SshKeyValidator = UseCase::Validator.define do
     return $?.success?
   end
 
-  def self.model_name
-    SshKey.model_name
+  def invalid_format!
+    errors.add(:key, I18n.t("ssh_key.key_format_validation_message"))
   end
 end
