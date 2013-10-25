@@ -28,7 +28,7 @@ class UpdateUserTest < ActiveSupport::TestCase
     @user.update_attribute(:avatar_updated_at, 2.days.ago)
 
     assert_avatars_expired(@user) do
-      avatar = Paperclip::Attachment.new(:avatar, @user)
+      avatar = File.new(Rails.root + 'test/fixtures/avatars/git.png')
       outcome = UpdateUser.new(@user).execute(:avatar => avatar)
 
       assert outcome.success?, outcome.to_s
