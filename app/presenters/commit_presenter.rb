@@ -18,7 +18,7 @@
 require "repository_presenter"
 
 class CommitPresenter
-  attr_reader :repository, :commit, :id
+  attr_reader :repository, :commit
 
   # FIXME: this is a trick to maintain backward compatibility
   def self.new(repository, commit)
@@ -26,6 +26,12 @@ class CommitPresenter
       repository.is_a?(RepositoryPresenter) ? repository : RepositoryPresenter.new(repository),
       commit.is_a?(String) ? repository.git.commit(commit) : commit
     )
+  rescue RuntimeError => e
+    if e.message == 'invalid string: nil'
+      super(repository, nil)
+    else
+      raise e
+    end
   end
 
   def initialize(repository, commit)

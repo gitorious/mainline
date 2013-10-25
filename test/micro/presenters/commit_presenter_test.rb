@@ -46,6 +46,14 @@ class CommitPresenterTest < MiniTest::Spec
     @repository = Repository.new(:project => @project, :git => @git)
   end
 
+  describe "#exists?" do
+    it "returns false if commit oid is invalid" do
+      @git.stubs(:commit).with('totally-not-valid-sha') { raise RuntimeError, 'invalid string: nil' }
+      @commit = CommitPresenter.new(@repository, 'totally-not-valid-sha')
+      refute @commit.exists?
+    end
+  end
+
   describe "commit presenter" do
     before do
       @commit = CommitPresenter.new(@repository, "0123456789012345678901234567890123456789")
