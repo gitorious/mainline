@@ -21,10 +21,17 @@ require "timeout"
 class MergeRequestVersionsController < ApplicationController
   include Gitorious::View::DoltUrlHelper
   include ParamsModelResolver
+
   before_filter :find_project_and_repository
   renders_in_site_specific_context
 
+  DiffNotAvailable = Class.new(StandardError)
+
+  rescue_from DiffNotAvailable, :with => :rescue_from_diff_not_available
+
   def show
+    raise DiffNotAvailable unless merge_request_version
+
     diffs = []
 
     begin
@@ -39,23 +46,28 @@ class MergeRequestVersionsController < ApplicationController
 
     commit = merge_request.source_repository.git.commit(merge_request.ending_commit)
 
-    render(:show, :locals => {
-        :project => @project,
-        :repository => RepositoryPresenter.new(merge_request.target_repository),
-        :merge_request => merge_request,
-        :merge_request_version => merge_request_version,
-        :renderer => diff_renderer(params[:diffmode], RepositoryPresenter.new(merge_request.source_repository), commit),
-        :commit => commit,
-        :diffs => diffs,
-        :timeout => timeout,
-        :user => merge_request.user,
-        :source_repo => RepositoryPresenter.new(merge_request.source_repository),
-        :target_repo => RepositoryPresenter.new(merge_request.target_repository),
-        :range => commit_range(params[:commit_shas])
-      })
+    if commit
+      render(:show, :locals => {
+          :project => @project,
+          :repository => RepositoryPresenter.new(merge_request.target_repository),
+          :merge_request => merge_request,
+          :merge_request_version => merge_request_version,
+          :renderer => diff_renderer(params[:diffmode], RepositoryPresenter.new(merge_request.source_repository), commit),
+          :commit => commit,
+          :diffs => diffs,
+          :timeout => timeout,
+          :user => merge_request.user,
+          :source_repo => RepositoryPresenter.new(merge_request.source_repository),
+          :target_repo => RepositoryPresenter.new(merge_request.target_repository),
+          :range => commit_range(params[:commit_shas])
+        })
+    else
+      raise DiffNotAvailable
+    end
   end
 
   private
+
   def diff_renderer(mode, repository, commit)
     klass = mode == "sidebyside" ? Gitorious::Diff::SidebysideRenderer : Gitorious::Diff::InlineRenderer
     klass.new(self, repository, commit)
@@ -66,7 +78,7 @@ class MergeRequestVersionsController < ApplicationController
   end
 
   def extract_range_from_parameter(param)
-    sha_range = if match = /^([a-z0-9]*)-([a-z0-9]*)$/.match(param)
+    if match = /^([a-z0-9]*)-([a-z0-9]*)$/.match(param)
       Range.new(match[1], match[2])
     else
       param
@@ -75,5 +87,10 @@ class MergeRequestVersionsController < ApplicationController
 
   def commit_range(range)
     range || "#{merge_request_version.merge_base_sha}-#{merge_request.ending_commit}"
+  end
+
+  def rescue_from_diff_not_available
+    flash[:warning] = 'Diff is no longer availabe for this Merge Request'
+    redirect_to(:back) and return
   end
 end

@@ -69,6 +69,10 @@ class Event < ActiveRecord::Base
       limit(count)
   end
 
+  def action_name
+    Action.name(action)
+  end
+
   def build_commit(options={})
     e = self.class.new(options.merge({
                                        :action => Action::COMMIT,

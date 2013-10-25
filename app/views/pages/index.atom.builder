@@ -22,8 +22,11 @@ namespaced_atom_feed do |feed|
   feed.updated((commits.blank? ? nil : commits.first.committed_date))
 
   commits.each do |commit|
+    diffs = commit.diffs
+    next if diffs.blank?
+
     # TODO: we only find the first page changed for now:
-    first_page = commit.diffs.first.a_path.split(".").first
+    first_page = diffs.first.a_path.split(".").first
     item_url = page_history_path(owner, first_page, :html) rescue wiki_index_path(owner, :html)
     feed.entry(commit, {
       :url => item_url,

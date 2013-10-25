@@ -22,15 +22,21 @@ namespaced_atom_feed do |feed|
   feed.title("Gitorious: #{user.login}'s activity")
   feed.updated((events.blank? ? Time.now : events.first.created_at))
 
-  events.each do |event|
+  events.map { |event| EventPresenter.build(event, self) }.each do |event|
     user_title = !event.user.nil? ? event.user.login : mangled_mail(event.user_email)
-    action, body, category = action_and_body_for_event(event)
+
     feed.entry(event, :url => Gitorious.url(user_path(user))) do |entry|
-      entry.title("#{h(user_title)} #{strip_tags(action)}")
-      content = event.user.nil? ? "" : "<p>#{link_to event.user.login, user_path(event.user)} #{action}</p>"
+      entry.title("#{h(user_title)} #{strip_tags(event.action)}")
+      content =
+        if event.user.nil?
+          ""
+        else
+          "<p>#{link_to event.user.login, user_path(event.user)} #{event.action}</p>"
+        end
+
       entry.content(<<-EOS, :type => 'html')
 #{content}
-<p>#{body}<p>
+<p>#{event.body}<p>
 EOS
       entry.author do |author|
         author.name(user_title)

@@ -23,7 +23,7 @@
       <% users.each do |user| %>
         <tr>
           <td>
-            <%= avatar(user, { :size => 16 }) %>
+            <%= avatar(user, :class => 'gts-avatar', :size => 16) %>
             <%= link_to h(user.title), user %>
           </td>
         </tr>

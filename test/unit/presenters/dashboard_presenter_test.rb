@@ -32,7 +32,6 @@ class DashboardPresenterTest < ActiveSupport::TestCase
   should "not return unauthenticated repositories" do
     user = users(:mike)
     repositories(:johans).make_private
-    user.commit_repositories << repositories(:johans)
 
     dashboard = Dashboard.new(user)
     authorized_filter = Gitorious::AuthorizedFilter.new(user)

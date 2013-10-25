@@ -174,8 +174,8 @@ class ApplicationController < ActionController::Base
   end
 
   def render_git_timeout
-    render("/shared/_git_timeout",
-           :layout => (request.xhr? ? false : "application"))
+    layout = (request.xhr? ? false : "application")
+    render(:file => 'shared/_git_timeout.erb.html', :layout => layout, :format => 'html')
     return false
   end
 
@@ -376,7 +376,7 @@ class ApplicationController < ActionController::Base
       if commit = @git.commit(@ref)
         return Grit::Head.new(commit.id_abbrev, @git, commit.id)
       end
-    rescue Errno::EISDIR => err
+    rescue Errno::EISDIR
     end
 
     nil

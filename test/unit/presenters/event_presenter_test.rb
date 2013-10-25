@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,23 +16,20 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require "test_helper"
+require 'test_helper'
+require 'minitest/spec'
 
-class EventRenderingHelperTest < ActionView::TestCase
-  include ApplicationHelper
-  include ERB::Util
+require 'event_presenter'
+require 'event_presenter/create_project_event'
 
-  context "create tag events" do
-    should "link to the tag tree" do
-      repository = repositories(:johans)
-      event = Event.new
-      event.target = repository
-      event.data = "v2.19-rc3"
-      event.body = "Created tag v2.19-rc3"
+describe EventPresenter do
+  let(:view)  { mock }
+  let(:event) { stub(:action_name => 'create project', :data => '') }
+  let(:event_presenter) { EventPresenter.build(event, view) }
 
-      action, body, category = render_event_create_tag(event)
-
-      assert_equal "<a href=\"/johans-project/johansprojectrepos/source/v2.19-rc3:\"><code>v2.19-rc3</code></a>", body
+  describe 'build' do
+    it 'creates instance using correct class derived from "action"' do
+      assert_instance_of EventPresenter::CreateProjectEvent, event_presenter
     end
   end
 end

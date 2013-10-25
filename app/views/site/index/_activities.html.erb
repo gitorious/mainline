@@ -20,7 +20,7 @@
 <%= cache_in_private([:site_index, :recent_activities], :expires_in => 10.minutes) do %>
   <%= tabbable %w(latest-activities), :active => 'latest-activities' do %>
     <%= tab_pane :latest_activities, :active => true do %>
-      <%= render "users/events", :events => events %>
+      <%= render 'events/events', :events => events %>
     <% end %>
   <% end %>
 <% end %>
