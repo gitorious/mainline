@@ -21,7 +21,8 @@
   <div class="control-group">
     <%= label_tag :openid_url, t("views.sessions.openid"), :class => "control-label" %>
     <div class="controls">
-      <%= text_field_tag "openid_url", params[:openid_url] || Gitorious::OpenID.default_provider_url, :class => "input-xlarge" -%>
+      <%= text_field_tag "openid_url", params[:openid_url] || Gitorious::OpenID.default_provider_url,
+        :class => "input-xlarge", :required => true -%>
     </div>
   </div>
   <div class="control-group">

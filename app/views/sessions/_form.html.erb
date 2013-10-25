@@ -24,13 +24,13 @@
   <div class="control-group">
     <label class="control-label" for="email"><%= login_field_label %></label>
     <div class="controls">
-      <%= text_field_tag "email", params[:email], :class => "input-xlarge" %>
+      <%= text_field_tag "email", params[:email], :class => "input-xlarge", :required => true %>
     </div>
   </div>
   <div class="control-group">
     <label class="control-label" for="password"><%= t("views.sessions.passwd") %></label>
     <div class="controls">
-      <%= password_field_tag "password", "", :class => "input-xlarge" %>
+      <%= password_field_tag "password", "", :class => "input-xlarge", :required => true %>
     </div>
   </div>
   <div class="control-group">
