@@ -91,6 +91,11 @@ class MergeRequestVersionsController < ApplicationController
 
   def rescue_from_diff_not_available
     flash[:warning] = 'Diff is no longer availabe for this Merge Request'
-    redirect_to(:back) and return
+
+    redirect_back_or_default(
+      project_repository_merge_request_path(
+        merge_request.project, merge_request.target_repository, merge_request
+      )
+    ) and return
   end
 end
