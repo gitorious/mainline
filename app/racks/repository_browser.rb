@@ -53,7 +53,7 @@ module Gitorious
       path.force_encoding('ascii-8bit')
       safe_action(repo, ref) do
         configure_env(repo)
-        dolt.tree_entry(repo, ref, path, env_data)
+        dolt.tree_entry(repo, ref, path, env_data).sub(/class="container gts-body"/, "class=\"container gts-body\" id=\"gts-pjax-container\"")
       end
     end
 

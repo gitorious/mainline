@@ -54,11 +54,8 @@ module Gitorious
 
       def header_navigation(items, options = {})
         items.inject("") do |html, item|
-          if item[0] == options[:active]
-            "#{html}<li class=\"active\"><a>#{item[2]}</a></li>"
-          else
-            "#{html}<li><a href=\"#{item[1]}\">#{item[2]}</a></li>"
-          end
+          active_class = item[0] == options[:active] ? " class=\"active\"" : ""
+          "#{html}<li#{active_class}><a href=\"#{item[1]}\">#{item[2]}</a></li>"
         end.html_safe
       end
 

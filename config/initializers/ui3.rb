@@ -77,6 +77,7 @@ else
       "/ui3/js/src/components/select-details.js",
       "/ui3/js/src/components/login-button.js",
       "/ui3/js/src/components/comments.js",
+      "/ui3/js/src/components/pjax.js",
       "/ui3/js/src/gitorious.js",
     ])
     Gitorious::View.stylesheets.concat([

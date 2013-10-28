@@ -97,7 +97,7 @@ git push</pre>
 
         active_attr = active.nil? ? "" : " data-gts-active=\"#{active}\""
         <<-HTML.html_safe
-          <ul class="nav nav-tabs gts-header-nav"#{active_attr}>
+          <ul class="nav nav-tabs gts-header-nav gts-pjax"#{active_attr}>
             #{navigation}
             <li class="gts-repository-admin-ph gts-placeholder"></li>
             <li class="gts-request-merge-ph gts-placeholder"></li>

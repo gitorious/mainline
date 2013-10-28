@@ -22,7 +22,7 @@
   <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url, :title => "Atom") -%>
 <% end %>
 
-<div class="container">
+<div class="container" id="gts-pjax-container">
   <h2 class="gts-legend">
     Merge requests for <%= target.slug %>
     <%= link_to_help 'merge-request' %>
