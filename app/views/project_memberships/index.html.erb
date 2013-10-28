@@ -23,7 +23,7 @@
         :header_level => 2
       }) %>
 
-<div class="container">
+<div class="container" id="gts-pjax-container">
   <h1><%= @title = "User & team access to #{project.slug}" %></h1>
   <%= render("content_memberships/memberships", {
           :public => project.public?,

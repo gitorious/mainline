@@ -24,7 +24,7 @@
 
 <% @title = "Services for #{repository.slug}" %>
 
-<div class="container">
+<div class="container" id="gts-pjax-container">
   <div class="services-admin">
     <%= tabbable({ 'services' => project_repository_services_path(repository.project, repository) },
       { :active => 'services' }) %>

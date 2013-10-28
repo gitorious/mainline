@@ -29,7 +29,7 @@ header_level = defined?(header_level) && header_level || 2
   <div class="gts-markup">
     <%= render_markdown(project.description).html_safe %>
   </div>
-  <ul class="nav nav-tabs gts-header-nav" <%= "data-gts-active=#{defined?(active) && active.to_s}" %>>
+  <ul class="nav nav-tabs gts-header-nav gts-pjax" <%= "data-gts-active=#{defined?(active) && active.to_s}" %>>
     <%= options = [[:activities, project_path(project), "Activities"]]
         options << [:merge_requests, project_merge_requests_path(project), "Merge Requests <span class=\"count\">(#{project.open_merge_request_count})</span>"]
         options << [:wiki, project_page_path(project, "Home"), "Wiki"] if project.wiki_enabled?

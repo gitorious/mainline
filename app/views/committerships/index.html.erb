@@ -17,10 +17,9 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
+<%= repo_header repository, :current_user => current_user, :active => :admin, :header_level => 2 %>
 
-  <%= repo_header repository, :current_user => current_user, :active => :admin, :header_level => 2 %>
-
-<div class="container">
+<div class="container" id="gts-pjax-container">
   <h1><%= @title = "Users & teams collaborating on #{repository.slug}" %></h1>
   <%= render(:partial => "committerships/committerships", :locals => {
           :committerships => committerships,

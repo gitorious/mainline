@@ -24,7 +24,7 @@
       }) %>
 
 <% @page_title = "Add new repository to #{h(project.title)}" %>
-<div class="container">
+<div class="container" id="gts-pjax-container">
   <%= error_messages(repository) -%>
   <%= form_for(repository, :as => :repository, :url => project_repositories_url(repository.project), :html => { :class => "form-horizontal" }) do |f| -%>
     <fieldset>

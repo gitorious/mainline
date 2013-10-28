@@ -30,7 +30,7 @@
 <% action = page.new? ? t("views.common.creating") : t("views.common.editing") + " #{t("views.pages.page")}" %>
 
 <% @title = "#{action} #{page.title}" %>
-<div class="container">
+<div class="container" id="gts-pjax-container">
   <h2 class="gts-legend">
     <%= action %> <%= link_to(h(page.title), wiki_page_path(owner, page.title)) %>
   </h2>
