@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121130094633) do
+ActiveRecord::Schema.define(:version => 20130827094635) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(:version => 20121130094633) do
     t.string   "content_type"
   end
 
-  add_index "content_memberships", ["content_id", "member_id", "member_type"], :name => "project_memberships_index"
+  add_index "content_memberships", ["content_id", "member_id", "member_type"], :name => "content_memberships_index"
 
   create_table "emails", :force => true do |t|
     t.integer  "user_id"
@@ -156,19 +156,6 @@ ActiveRecord::Schema.define(:version => 20121130094633) do
   add_index "groups", ["name"], :name => "index_groups_on_name_and_public"
   add_index "groups", ["user_id"], :name => "index_groups_on_user_id"
 
-  create_table "hooks", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "repository_id"
-    t.string   "url"
-    t.string   "last_response"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "failed_request_count",     :default => 0
-    t.integer  "successful_request_count", :default => 0
-  end
-
-  add_index "hooks", ["repository_id"], :name => "index_hooks_on_repository_id"
-
   create_table "ldap_groups", :force => true do |t|
     t.string   "name"
     t.integer  "user_id"
@@ -178,8 +165,8 @@ ActiveRecord::Schema.define(:version => 20121130094633) do
     t.string   "avatar_file_size"
     t.datetime "avatar_updated_at"
     t.text     "member_dns"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
   end
 
   create_table "memberships", :force => true do |t|
@@ -237,7 +224,7 @@ ActiveRecord::Schema.define(:version => 20121130094633) do
     t.integer  "sequence_number"
   end
 
-  add_index "merge_requests", ["sequence_number", "target_repository_id"], :name => "index_merge_requests_on_sequence_number_and_target_repository_id", :unique => true
+  add_index "merge_requests", ["sequence_number", "target_repository_id"], :name => "index_merge_requests_on_sequence_number", :unique => true
   add_index "merge_requests", ["source_repository_id"], :name => "index_merge_requests_on_source_repository_id"
   add_index "merge_requests", ["status"], :name => "index_merge_requests_on_status"
   add_index "merge_requests", ["target_repository_id"], :name => "index_merge_requests_on_target_repository_id"
@@ -281,6 +268,17 @@ ActiveRecord::Schema.define(:version => 20121130094633) do
     t.string  "server_url"
     t.string  "salt",       :null => false
   end
+
+  create_table "project_memberships", :force => true do |t|
+    t.integer  "project_id"
+    t.string   "member_type"
+    t.integer  "member_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+    t.string   "content_type"
+  end
+
+  add_index "project_memberships", ["project_id", "member_id", "member_type"], :name => "project_memberships_index"
 
   create_table "project_proposals", :force => true do |t|
     t.string   "title"
@@ -359,6 +357,20 @@ ActiveRecord::Schema.define(:version => 20121130094633) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "services", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "repository_id"
+    t.string   "last_response"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "failed_request_count",     :default => 0
+    t.integer  "successful_request_count", :default => 0
+    t.string   "service_type",             :default => "web_hook", :null => false
+    t.text     "data",                                             :null => false
+  end
+
+  add_index "services", ["repository_id"], :name => "index_hooks_on_repository_id"
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false

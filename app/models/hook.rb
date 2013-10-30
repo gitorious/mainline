@@ -17,11 +17,13 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "yaml"
 
 class Hook < ActiveRecord::Base
   include Gitorious::Authorization
   belongs_to :repository
   belongs_to :user
+  set_table_name "services"
 
   validates_presence_of :user, :url
   validates_presence_of :repository, :unless => Proc.new { |hook| hook.user && hook.site_admin?(hook.user) }, :message => "is required for non admins"
@@ -45,6 +47,23 @@ class Hook < ActiveRecord::Base
 
   def global?
     repository.nil?
+  end
+
+  def data=(data)
+    @data = nil
+    super(YAML.dump(data))
+  end
+
+  def data
+    @data ||= YAML.load(self[:data]) || {}
+  end
+
+  def url
+    data[:url]
+  end
+
+  def url=(url)
+    self.data = data.merge(:url => url)
   end
 
   def valid_url_format
