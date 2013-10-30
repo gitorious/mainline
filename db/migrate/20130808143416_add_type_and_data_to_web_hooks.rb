@@ -1,7 +1,7 @@
 class AddTypeAndDataToWebHooks < ActiveRecord::Migration
   def up
-    add_column :hooks, :service_type, :string, null: false, default: 'web_hook'
-    add_column :hooks, :data, :text, null: false
+    add_column :hooks, :service_type, :string, :null => false, :default => 'web_hook'
+    add_column :hooks, :data, :text, :null => false
 
     data_template = {url: "<URL>"}.to_yaml
     execute <<-SQL
