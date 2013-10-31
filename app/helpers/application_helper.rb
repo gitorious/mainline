@@ -184,7 +184,7 @@ module ApplicationHelper
   end
 
   def logo_link
-    logo = Gitorious::Configuration.get("logo_url", "/ui3/images/gitorious2013.png")
+    logo = Gitorious::Configuration.get("logo_url", "/dist/images/gitorious2013.png")
     link_to(logo.blank? ? "Gitorious" : image_tag(logo), root_path)
   end
 

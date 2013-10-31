@@ -20,19 +20,11 @@ require "pathname"
 module Gitorious
   module View
     module UIHelper
-      def asset_url(asset)
-        "/ui3#{asset}"
-      end
-
       def site_logo(site)
         logo = Gitorious::Configuration.group_get(
           ["sites", site.subdomain], "logo_url", "/dist/images/gitorious2013.png"
           )
         "<img src=\"#{logo}\" alt=\"#{site.title}\" title=\"#{site.title}\">"
-      end
-
-      def img_url(url)
-        asset_url("/images#{url}")
       end
 
       def favicon

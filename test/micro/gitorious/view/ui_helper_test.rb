@@ -20,16 +20,4 @@ require "gitorious/view/ui_helper"
 
 class Gitorious::View::UIHelperTest < MiniTest::Spec
   include Gitorious::View::UIHelper
-
-  describe "#assert_url" do
-    it "returns namespaced link" do
-      assert_equal "/ui3/css/gts.css", asset_url("/css/gts.css")
-    end
-  end
-
-  describe "#img_url" do
-    it "returns namespaced link" do
-      assert_equal "/ui3/images/logo.png", img_url("/logo.png")
-    end
-  end
 end
