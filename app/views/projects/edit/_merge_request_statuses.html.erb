@@ -1,3 +1,22 @@
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
 <div class="gts-merge-request-statuses">
   <table class="table table-striped">
     <thead>
@@ -15,8 +34,8 @@
         <%= render "merge_request_status_form", :form => status_form, :project_form => f %>
       <% end %>
     <% end %>
-    <% content_for(:footer) do %>
-      <script src="/ui3/js/src/components/merge-request.js"></script>
+    <% content_for(:javascripts) do %>
+      <script src="/dist/js/merge-request.js"></script>
       <script>
         gts.app.env("merge-request-status-template", "<%= escape_javascript(f.fields_for(:merge_request_statuses, MergeRequestStatus.new, :child_index => "MRSID") do |f|
                 render(:partial => "merge_request_status_form", :locals => { :form => f, :project_form => nil })

@@ -33,13 +33,15 @@
   </div>
 </div>
 
-<script type="text/javascript">
-  $(function() {
-    var active = $('.nav[data-active]').data('active');
-    var $nav   = $('a[data-target="#'+active+'"]');
+<% content_for(:javascripts) do %>
+  <script type="text/javascript">
+    $(function() {
+        var active = $('.nav[data-active]').data('active');
+        var $nav   = $('a[data-target="#'+active+'"]');
 
-    $nav.tab('show');
+        $nav.tab('show');
 
-    $('.nav').pjax('a', '.tab-pane');
-  });
-</script>
+        $('.nav').pjax('a', '.tab-pane');
+    });
+  </script>
+<% end %>

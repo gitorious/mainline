@@ -25,6 +25,12 @@
       Select the range of commits you want to be included in the merge request
     </p>
 
+    <div id="large_selection_warning" style="display: none">
+      <strong>Note:</strong> You have selected a large amounts of commits,
+      make sure that you have selected the correct target and source branch you intend to
+      merge with and from respectively.
+    </div>
+
     <table class="table" id="commit_table">
       <tr>
         <th>To</th>
@@ -73,12 +79,3 @@
   Please select which commit to start from and which to end at. The last
   commit needs to be after the first one.
 </div>
-
-<!-- Note: Temporary hack ahead, remove during merge request page redesign.
-  Having to select a range of commits is mandatory but not checked
-  by default and not obvious to users. The merge request page needs
-  overall redesign, until then we'll just select the whole commit by default
-  after the commit-list table has finished rendering and initalizing. -->
-<script type="text/javascript">
-  $(function() { $("#commit_table").find("input[type=radio]").first().click(); });
-</script>

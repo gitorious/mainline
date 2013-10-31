@@ -40,11 +40,3 @@
     <% end %>
   </div>
 </div>
-
-<script type="text/javascripts">
-  $(function() {
-    $(document).on('submit', '.service-admin form', function(event) {
-      $.pjax.submit(event, $(this).parents('.tab-content'));
-    });
-  });
-</script>

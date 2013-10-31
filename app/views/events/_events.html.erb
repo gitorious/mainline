@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
   #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -39,14 +39,3 @@
 <% if events.respond_to?(:current_page) %>
   <%= raw JustPaginate.page_navigation(events.current_page.to_i, events.total_pages) { |page_no| "?page=#{page_no}" } -%>
 <% end %>
-
-<script type="text/javascript">
-  $(function() {
-    $('.gts-events').on('click', 'a[data-behavior="show-commits"]', function() {
-      $this = $(this);
-      $this.parents('ul').find('.hide').removeClass('hide');
-      $this.remove();
-      return false;
-    });
-  });
-</script>
