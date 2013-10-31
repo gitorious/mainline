@@ -40,6 +40,7 @@
       <meta class="csrf-param" content="authenticity_token" name="csrf-param" data-gts-env-csrf-param="authenticity_token">
       <meta class="csrf-token" content="<%= session[:_csrf_token] %>" name="csrf-token" data-gts-env-csrf-token="<%= session[:_csrf_token] %>">
     <% end %>
+    <%= favicon.html_safe %>
   </head>
   <body<%= " class=\"#{@body_class}\"".html_safe if @body_class %>>
     <div class="page-wrapper">

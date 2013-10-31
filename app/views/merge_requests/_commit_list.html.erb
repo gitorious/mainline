@@ -25,15 +25,6 @@
       Select the range of commits you want to be included in the merge request
     </p>
 
-    <%= help_box(:middle, :error, {
-                   :id => "large_selection_warning",
-                   :style => "display: none;"
-                 }) do %>
-      <strong>Note:</strong> You have selected a large amounts of commits,
-      make sure that you have selected the correct target and source branch you intend to
-      merge with and from respectively.
-    <% end %>
-
     <table class="table" id="commit_table">
       <tr>
         <th>To</th>

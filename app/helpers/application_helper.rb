@@ -44,26 +44,10 @@ module ApplicationHelper
   include Gitorious::View::AvatarHelper
   include Gitorious::Encoding
 
-  GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
-
   STYLESHEETS = {
     :common => ["content", "sidebar", "forms", "buttons", "base"],
     :external => ["external"]
   }
-
-  def random_greeting
-    GREETINGS[rand(GREETINGS.length)]
-  end
-
-  def help_box(style = :side, icon = :help, options = {}, &block)
-    raw <<-HTML
-      <div id="#{options.delete(:id)}" style="#{options.delete(:style)}"
-           class="help-box #{style} #{icon} round-5">
-        <div class="icon #{icon}"></div>
-        #{capture(&block)}
-      </div>
-    HTML
-  end
 
   def link_to_help(id)
     link_to(
@@ -129,10 +113,6 @@ module ApplicationHelper
             :alt => alt_title, :title => alt_title)
   end
 
-  def default_css_tag_sizes
-    %w(tag_size_1 tag_size_2 tag_size_3 tag_size_4)
-  end
-
   def linked_tag_list_as_sentence(tags)
     tags.map do |tag|
       link_to(h(tag.name), search_path(:q => "@category #{h(tag.name)}"))
@@ -161,60 +141,6 @@ module ApplicationHelper
     end
   end
 
-  def selected_if_current_page(url_options, slack = false)
-    if slack
-      if controller.request.fullpath.index(CGI.escapeHTML(url_for(url_options))) == 0
-        "selected"
-      end
-    else
-      "selected" if current_page?(url_options)
-    end
-  end
-
-  def submenu_selected_class_if_current?(section)
-    case section
-    when :overview
-     if %w[projects].include?(controller.controller_name )
-       return "selected"
-     end
-    when :repositories
-      if %w[repositories trees logs commits comitters comments merge_requests
-            blobs committers].include?(controller.controller_name )
-        return "selected"
-      end
-    when :pages
-      if %w[pages].include?(controller.controller_name )
-        return "selected"
-      end
-    end
-  end
-
-  def link_to_with_selected(name, options = {}, html_options = nil)
-    html_options = current_page?(options) ? {:class => "selected"} : nil
-    link_to(name, options = {}, html_options)
-  end
-
-  def syntax_themes_css
-    out = []
-    if @load_syntax_themes
-      # %w[ active4d all_hallows_eve amy blackboard brilliance_black brilliance_dull
-      #     cobalt dawn eiffel espresso_libre idle iplastic lazy mac_classic
-      #     magicwb_amiga pastels_on_dark slush_poppies spacecadet sunburst
-      #     twilight zenburnesque
-      # ].each do |syntax|
-      #   out << stylesheet_link_tag("syntax_themes/#{syntax}")
-      # end
-      return stylesheet_link_tag("syntax_themes/idle")
-    end
-    out.join("\n").html_safe
-  end
-
-  def flashes
-    flash.map do |type, content|
-      content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")
-    end.join("\n").html_safe
-  end
-
   def action_and_body_for_event(event)
     target = event.target
     if target.nil?
@@ -230,111 +156,8 @@ module ApplicationHelper
     [action, body, category]
   end
 
-  def link_to_remote_if(condition, name, options, html_options = {})
-    if condition
-      link_to_remote(name, options, html_options)
-    else
-      content_tag(:span, name)
-    end
-  end
-
-  def render_readme(repository)
-    possibilities = []
-    repository.git.git.ls_tree({:name_only => true}, "master").each do |line|
-      possibilities << line[0, line.length-1] if line =~ /README.*/
-    end
-
-    return "" if possibilities.empty?
-    text = repository.git.git.show({}, "master:#{possibilities.first}")
-    markdown(text) rescue simple_format(sanitize(text))
-  end
-
-  def render_markdown_help
-    render(:partial => "/site/markdown_help")
-  end
-
-  def link_to_help_toggle(dom_id, style = :image)
-    if style == :image
-      link_to_function(image_tag("help_grey.png", {
-        :alt => t("application_helper.more_info")
-      }), "$('##{dom_id}').toggle()", :class => "more_info")
-    else
-      %Q{<span class="hint">(} +
-      link_to_function("?", "$('##{dom_id}').toggle()", :class => "more_info") +
-      ")</span>"
-    end
-  end
-
-  FILE_EXTN_MAPPINGS = {
-    ".cpp" => "cplusplus-file",
-    ".c" => "c-file",
-    ".h" => "header-file",
-    ".java" => "java-file",
-    ".sh" => "exec-file",
-    ".exe"  => "exec-file",
-    ".rb" => "ruby-file",
-    ".png" => "image-file",
-    ".jpg" => "image-file",
-    ".gif" => "image-file",
-    "jpeg" => "image-file",
-    ".zip" => "compressed-file",
-    ".gz" => "compressed-file"}
-
-  def class_for_filename(filename)
-    return FILE_EXTN_MAPPINGS[File.extname(filename)] || "file"
-  end
-
-  def render_download_links(project, repository, head, options={})
-    head = desplat_path(head) if head.is_a?(Array)
-
-    (["tar.gz", "zip"].map do |extension|
-      link_html = link_to("Download #{refname(head)} as #{extension}",
-                          archive_url(repository.path_segment, head, extension),
-                          :title => "Download #{refname(head)} as #{extension}",
-                          :class => "download-link")
-      content_tag(:li, link_html, :class => extension.split('.').last)
-    end).join("\n").html_safe
-  end
-
-  def paragraphs_with_more(text, identifier)
-    return if text.blank?
-    first, rest = text.split("</p>", 2)
-    if rest.blank?
-      (first + "</p>").html_safe
-    else
-      (<<-HTML).html_safe
-        #{first}
-        <a href="#more"
-           onclick="$('#description-rest-#{identifier}').toggle(); $(this).hide()">more&hellip;</a></p>
-        <div id="description-rest-#{identifier}" style="display:none;">#{rest}</div>
-      HTML
-    end
-  end
-
-  def markdown_hint
-    t("views.common.format_using_markdown",
-      :markdown => %(<a href="http://daringfireball.net/projects/markdown/">Markdown</a>)).html_safe
-  end
-
   def current_site
     controller.current_site
-  end
-
-  # Creates a CSS styled <button>.
-  #
-  #  <%= styled_button :big, "Create user" %>
-  #  <%= styled_button :medium, "Do something!", :class => "foo", :id => "bar" %>
-  def styled_button(size_identifier, label, options = {})
-    options.reverse_merge!(:type => "submit", :class => size_identifier.to_s)
-    content_tag(:button, content_tag(:span, label), options)
-  end
-
-  # Similar to styled_button, but creates a link_to <a>, not a <button>.
-  #
-  #  <%= button_link :big, "Sign up", new_user_path %>
-  def button_link(size_identifier, label, url, options = {})
-    options[:class] = "#{size_identifier} button_link"
-    link_to(%{<span>#{label}</span>}, url, options)
   end
 
   # Array => HTML list. The option hash is applied to the <ul> tag.
@@ -344,63 +167,6 @@ module ApplicationHelper
   def list(items, options = {})
     list_items = items.map {|i| %{<li>#{block_given? ? yield(i) : i}</li>} }.join("\n")
     content_tag(:ul, list_items, options)
-  end
-
-  def summary_box(title, content, image)
-    %{
-      <div class="summary_box">
-        <div class="summary_box_image">
-          #{image}
-        </div>
-
-        <div class="summary_box_content">
-          <strong>#{title}</strong>
-          #{content}
-        </div>
-
-        <div class="clear"></div>
-      </div>
-    }.html_safe
-  end
-
-  def project_summary_box(project)
-    summary_box link_to(project.title, project),
-      truncate(project.descriptions_first_paragraph, 80),
-      glossy_homepage_avatar(default_avatar)
-  end
-
-  def team_summary_box(team)
-    text = list([
-      "Created: #{team.created_at.strftime("%B #{team.created_at.strftime("%d").to_i.ordinalize} %Y")}",
-      "Total activities: #{team.event_count}"
-    ], :class => "simple")
-
-    summary_box link_to(team.name, group_path(team)),
-      text,
-      glossy_homepage_avatar(team.avatar? ? image_tag(team.avatar.url(:thumb), :width => 30, :height => 30) : default_avatar)
-  end
-
-  def user_summary_box(user)
-    text = text = list([
-      "Projects: #{user.projects.count}",
-      "Total activities: #{user.events.count}"
-    ], :class => "simple")
-
-    summary_box link_to(user.login, user),
-      text,
-      glossy_homepage_avatar_for_user(user)
-  end
-
-  def glossy_homepage_avatar(avatar)
-    content_tag(:div, avatar + "<span></span>", :class => "glossy_avatar_wrapper")
-  end
-
-  def glossy_homepage_avatar_for_user(user)
-    glossy_homepage_avatar(avatar(user, :size => 30, :default => "images/icon_default.png"))
-  end
-
-  def default_avatar
-    image_tag("icon_default.png", :width => 30, :height => 30)
   end
 
   def comment_applies_to_merge_request?(parent)
@@ -415,49 +181,6 @@ module ApplicationHelper
         [h("#{status.name} - #{status.description}"), h(status.name)]
       end
     end
-  end
-
-  def include_stylesheets(group)
-    stylesheets = STYLESHEETS[group]
-    cache_name = "gts-#{group}"
-    additional = Gitorious::Configuration.get("#{group}_stylesheets")
-
-    unless additional.nil?
-      additional = [additional] unless Array === additional
-      stylesheets.concat(additional)
-      cache_name << "-#{additional.join('-').gsub(/[^a-z0-9_\-]/, '-')}"
-      cache_name = cache_name.gsub(/-+/, '-')
-    end
-
-    stylesheet_link_tag stylesheets, :cache => cache_name
-  end
-
-  # The javascripts to be included in all layouts
-  def include_javascripts
-    jquery = ["", "/autocomplete", "/cookie", "/color_picker", "/cycle.all.min",
-              "/scrollto", "/expander", "/timeago", "-migrate"].
-              collect do |f|
-                "lib/jquery#{f}"
-              end
-
-    gitorious = ["", "/observable", "/application", "/resource_toggler", "/jquery",
-                 "/merge_requests", "/diff_browser", "/messages", "/live_search",
-                 "/repository_search"].collect { |f| "gitorious#{f}" }
-
-    scripts = jquery + ["core_extensions"] + gitorious + ["lib/spin.js/spin.js", "application"]
-
-    %w(core widget mouse selectable).each do |name|
-      scripts << "/ui3/jquery-ui/ui/jquery.ui.#{name}.js"
-    end
-
-    scripts << 'jquery_ujs.js' << 'lib/jquery.pjax.js'
-
-    javascript_include_tag(scripts, :cache => true)
-  end
-
-  def favicon_link_tag
-    url = Gitorious::Configuration.get("favicon_url", "/favicon.ico")
-    "<link rel=\"shortcut icon\" href=\"#{url}\" type=\"image/x-icon\">".html_safe
   end
 
   def logo_link
@@ -477,26 +200,6 @@ module ApplicationHelper
     content_tag(:abbr, time.to_s, options.merge(:title => time.getutc.iso8601))
   end
 
-  def white_button_link_to(label, url, options = {})
-    size = options.delete(:size) || "small"
-    css_classes = ["white-button", "#{size}-button"]
-    if extra_class = options.delete(:class)
-      css_classes << extra_class
-    end
-    content_tag(:div, link_to(label, url, :class => "round-10"),
-        :id => options.delete(:id), :class => css_classes.flatten.join(" "))
-  end
-
-  def link_button_link_to(label, url, options = {})
-    size = options.delete(:size) || "small"
-    css_classes = ["button", "#{size}-button"]
-    if extra_class = options.delete(:class)
-      css_classes << extra_class
-    end
-    content_tag(:div, link_to(label, url, :class => "", :confirm => options[:confirm]),
-        :id => options.delete(:id), :class => css_classes.flatten.join(" "))
-  end
-
   def render_pagination_links(collection, options = {})
     default_options = {
       :previous_label => "Previous",
@@ -511,10 +214,6 @@ module ApplicationHelper
     port = Gitorious.port
     port = port.to_i != 80 ? ":#{port}" : ""
     "#{host}#{port}"
-  end
-
-  def fq_root_link
-    Gitorious.url("/")
   end
 
   def url?(setting)
@@ -542,7 +241,7 @@ module ApplicationHelper
   end
 
   def vcs_link_tag(options)
-    content_for :extra_head do
+    content_for(:head) do
       (<<-HTML).html_safe
         <link rel="vcs-git" href="#{h(options[:href])}" title="#{h(options[:title])}">
       HTML
@@ -582,5 +281,4 @@ module ApplicationHelper
       content_tag(:div, :class => 'container', &block)
     }
   end
-
 end

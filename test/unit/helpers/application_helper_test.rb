@@ -79,11 +79,6 @@ class ApplicationHelperTest < ActionView::TestCase
     assert url.include?("default=https://")
   end
 
-  should "render correct css classes for filenames" do
-    assert_equal 'ruby-file', class_for_filename('foo.rb')
-    assert_equal 'cplusplus-file', class_for_filename('main.cpp')
-  end
-
   context "to_utf8" do
     if RUBY_VERSION > '1.9'
       should "replace unknown chars with a question mark" do
@@ -94,19 +89,6 @@ class ApplicationHelperTest < ActionView::TestCase
       should "not replace valid utf chars" do
         s = "Süd"
         assert_equal "Süd", force_utf8(s)
-      end
-    end
-  end
-
-  context "favicon link tag" do
-    should "return markup with default URL when no URL is configured" do
-      assert_match /"\/favicon.ico"/, favicon_link_tag
-    end
-
-    should "return link tag for configured favicon url" do
-      Gitorious::Configuration.override("favicon_url" => "http://myserver.com/favicon.ico") do |c|
-        assert_match "myserver.com/favicon", favicon_link_tag
-        assert_match "shortcut", favicon_link_tag
       end
     end
   end

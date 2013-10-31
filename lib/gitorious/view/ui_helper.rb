@@ -35,6 +35,11 @@ module Gitorious
         asset_url("/images#{url}")
       end
 
+      def favicon
+        url = Gitorious::Configuration.get("favicon_url", "/favicon.ico")
+        "<link rel=\"shortcut icon\" href=\"#{url}\" type=\"image/x-icon\">"
+      end
+
       def alerts(flash)
         types = {
           :notice => "alert-info",
