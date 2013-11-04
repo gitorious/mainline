@@ -122,7 +122,7 @@ GEM
       thor (>= 0.13.6)
     formatador (0.2.4)
     geoip (0.8.9)
-    github-linguist (2.9.4)
+    github-linguist (2.9.5)
       charlock_holmes (~> 0.6.6)
       escape_utils (~> 0.3.1)
       mime-types (~> 1.19)
@@ -154,7 +154,8 @@ GEM
     json (1.7.7)
     just_paginate (0.2.2)
     kgio (2.8.0)
-    libdolt (0.33.5)
+    libdolt (0.33.6)
+      force_utf8
       htmlentities (~> 4.3)
       json (~> 1.7)
       makeup (~> 0.4.1)
@@ -389,7 +390,7 @@ DEPENDENCIES
   jruby-openssl
   json (>= 1.7.7, < 1.8)
   just_paginate (= 0.2.2)
-  libdolt (~> 0.33.4)
+  libdolt (~> 0.33)
   memcache-client (~> 1.8)
   mime-types (~> 1.16)
   minitest (= 4.2.0)
