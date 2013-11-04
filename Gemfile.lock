@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/wrozka/grit.git
-  revision: 2d43c4eb977fa22ae8300566944927605fc6373b
+  revision: b8a6e359a81918368a053131cf2a3ea16ee41e20
   specs:
     gitlab-grit (2.6.0)
       charlock_holmes (~> 0.6.9)
