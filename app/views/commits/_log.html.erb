@@ -31,11 +31,11 @@
         <% else %>
           <strong><%= h(commit.id_abbrev) -%></strong>:
         <% end %>
-        <%= force_utf8(commit.short_message) -%>
+        <%= commit.short_message.force_utf8 -%>
       </p>
       <p>
         <%= avatar_from_email(commit.author.email, :size => 16)  %>
-        <%= user ? link_to(user.fullname || user.login, user_path(user)) : h(force_utf8(commit.author.name)) -%>
+        <%= user ? link_to(user.fullname || user.login, user_path(user)) : h(commit.author.name.force_utf8) -%>
         <span class="event-time"><%= l(commit.committed_date, :format => :short_time) %></span>
       </p>
       <% if defined?(display_diffs) && display_diffs %>

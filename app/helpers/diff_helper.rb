@@ -28,7 +28,7 @@ module DiffHelper
   # Supply a block that fetches an array of comments with the file path as parameter
   def render_inline_diffs_with_stats(file_diffs, state = :closed)
     file_diffs.map do |file|
-      a_path = force_utf8(file.a_path)
+      a_path = file.a_path.force_utf8
       diff_renderer = Diff::Display::Unified.new(file.diff)
       out =  %Q{<div class="file-diff" data-diff-path="#{a_path}">}
       out << %Q{<div class="header round-top-10 #{state == :closed ? 'closed' : 'open'}">}
@@ -50,7 +50,7 @@ module DiffHelper
         diff_options[:comments] = if block_given?
                                     yield(file)
                 end
-        out << force_utf8(render_inline_diff(file.diff, diff_renderer, diff_options))
+        out << render_inline_diff(file.diff, diff_renderer, diff_options).force_utf8
       end
       out << "</div></div>"
       out

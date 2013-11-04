@@ -28,6 +28,7 @@ gem "rake", "~> 10.0"
 gem "gitlab-grit", :require => "grit", :git => "https://github.com/wrozka/grit.git"
 gem "airbrake", "~> 3.1.14", :require => false
 gem "simple_form", "~> 2.1"
+gem "force_utf8"
 
 group :openid do
   gem "ruby-openid", :require => "openid"

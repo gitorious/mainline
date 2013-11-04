@@ -42,7 +42,6 @@ module ApplicationHelper
   include Gitorious::CacheInPrivateHelper
   include DoltViewHelpers
   include Gitorious::View::AvatarHelper
-  include Gitorious::Encoding
 
   STYLESHEETS = {
     :common => ["content", "sidebar", "forms", "buttons", "base"],

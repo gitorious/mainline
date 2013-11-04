@@ -40,7 +40,7 @@
     <div class="span7">
       <% if @results.blank? -%>
         <p class="well no-results-box">
-          <%= t("views.searches.no_results", :term => h(force_utf8(params[:q]))) %>
+          <%= t("views.searches.no_results", :term => h(params[:q].to_s.force_utf8)) %>
         </p>
       <% else -%>
         <dl class="search-results">

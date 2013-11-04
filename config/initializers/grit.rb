@@ -44,15 +44,13 @@ end
 
 module Grit
   class Diff
-    include Gitorious::Encoding
-
     def diff
       if @diff.nil?
         @diff = ""
       else
         lines = @diff.lines.to_a
-        path = force_utf8(lines.shift(2).join)
-        body = force_utf8(lines.join)
+        path = lines.shift(2).join.force_utf8
+        body = lines.join.force_utf8
         @diff = path + body
       end
     end

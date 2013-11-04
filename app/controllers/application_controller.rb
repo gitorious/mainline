@@ -22,7 +22,6 @@ require "gitorious/view"
 require "gitorious/view/site_helper"
 require "open_id_authentication"
 require "gitorious/view/ui_helper"
-require "gitorious/encoding"
 
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
@@ -33,7 +32,6 @@ class ApplicationController < ActionController::Base
   include Gitorious::Authorization
   include Gitorious::View::SiteHelper
   include Gitorious::View::UIHelper
-  include Gitorious::Encoding
   protect_from_forgery
 
   before_filter :public_and_logged_in

@@ -79,20 +79,6 @@ class ApplicationHelperTest < ActionView::TestCase
     assert url.include?("default=https://")
   end
 
-  context "to_utf8" do
-    if RUBY_VERSION > '1.9'
-      should "replace unknown chars with a question mark" do
-        s = "S\xFCd"
-        assert_equal "S?d", force_utf8(s)
-      end
-
-      should "not replace valid utf chars" do
-        s = "Süd"
-        assert_equal "Süd", force_utf8(s)
-      end
-    end
-  end
-
   context "logo link tag" do
     should "return linked default logo no url is configured" do
       assert_match /img[^>]*src=/, logo_link

@@ -28,7 +28,6 @@ class Mailer < ActionMailer::Base
   include ActionView::Helpers::SanitizeHelper
   extend ActionView::Helpers::SanitizeHelper::ClassMethods
   include Rails.application.routes.url_helpers
-  include Gitorious::Encoding
 
   default({
       :from => lambda { Gitorious.email_sender },
@@ -62,8 +61,8 @@ class Mailer < ActionMailer::Base
     @recipient = recipient.title.to_s
     @sender = sender.title.to_s
 
-    @recipient = force_utf8(@recipient)
-    @sender = force_utf8(@sender)
+    @recipient = @recipient.force_utf8
+    @sender = @sender.force_utf8
 
     @notifiable_url = build_notifiable_url(notifiable) if notifiable
     mail(:to => format_address(recipient),

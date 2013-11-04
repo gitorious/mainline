@@ -39,7 +39,7 @@ module Api
       end
 
       parser = Capillary::LogParser.new
-      data = force_utf8(data)
+      data = data.force_utf8
       data.split("\n").each { |line| parser << line }
 
       respond_to do |wants|

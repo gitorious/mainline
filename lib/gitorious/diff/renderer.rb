@@ -19,8 +19,6 @@
 module Gitorious
   module Diff
     class Renderer
-      include Gitorious::Encoding
-
       def initialize(app, repository, commit)
         @app = app
         @repository = repository
@@ -29,7 +27,7 @@ module Gitorious
 
       def render(file)
         diff = ::Diff::Display::Unified.new(file.diff)
-        a_path = force_utf8(file.a_path)
+        a_path = file.a_path.force_utf8
         class_name = respond_to?(:table_class) ? " " + table_class : ""
         <<-HTML
 <div class="gts-file">
@@ -40,7 +38,7 @@ module Gitorious
     </li>
   </ul>
   <table class="gts-code-listing#{class_name}">
-#{force_utf8(diff.render(callback_class.new))}
+#{diff.render(callback_class.new).force_utf8}
   </table>
 </div>
         HTML
@@ -60,10 +58,6 @@ module Gitorious
 
       private
       attr_reader :app, :repository, :commit
-
-      def force_utf8(str)
-        app.force_utf8(str)
-      end
     end
   end
 end

@@ -27,7 +27,7 @@ module CommitsHelper
 
   def format_commit_message(message)
     return nil if message.nil?
-    force_utf8(message).gsub(/\b[a-z0-9]{40}\b/) do |match|
+    message.force_utf8.gsub(/\b[a-z0-9]{40}\b/) do |match|
       link_to(match, project_repository_commit_path(@project, @repository, match), :class => "sha")
     end.html_safe
   end

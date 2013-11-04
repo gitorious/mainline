@@ -24,12 +24,12 @@ module Gitorious
       BRACKETED_WIKI_WORD = /\[\[([A-Za-z0-9_\-]+)\]\]/
 
       def wikize(content)
-        content = Encoding.force_utf8(content)
+        content = content.force_utf8
         content = wiki_link(content)
         rd = MarkupRenderer.new(content, :markdown => [:smart, :generate_toc])
         content = content_tag(:div, rd.to_html.html_safe, :class => "page-content")
         toc_content = rd.markdown.toc_content.html_safe
-        toc_content = Encoding.force_utf8(toc_content)
+        toc_content = toc_content.force_utf8
         if !toc_content.blank?
           toc = content_tag(:div, toc_content, :class => "toc")
         else

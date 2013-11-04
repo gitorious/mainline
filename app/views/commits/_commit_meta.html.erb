@@ -46,11 +46,11 @@
   <p class="gts-commit-meta">
     <% if committer_user -%>
       <%= link_to(avatar_from_email(commit.committer.email, { :size => 24 }), committer_user) %>
-      <%= link_to(force_utf8(commit.committer.name), committer_user) %>
+      <%= link_to(commit.committer.name.force_utf8, committer_user) %>
     <% else -%>
       <%= avatar_from_email(commit.committer.email, { :size => 24 }) %>
       <a>
-        <%=h force_utf8(commit.committer.name) -%>
+        <%=h commit.committer.name.force_utf8 -%>
         <%= render_email(commit.committer.email) -%>
       </a>
     <% end -%>
@@ -63,11 +63,11 @@
     <p class="gts-commit-meta">
       <% if author_user -%>
         <%= link_to(avatar_from_email(commit.author.email, { :size => 24 }), author_user) %>
-        <%= link_to(force_utf8(commit.author.name), author_user) -%>
+        <%= link_to(commit.author.name.force_utf8, author_user) -%>
       <% else -%>
         <%= avatar_from_email(commit.author.email, { :size => 24 }) %>
         <a>
-          <%=h force_utf8(commit.author.name) -%>
+          <%=h commit.author.name.force_utf8 -%>
           <%= render_email(commit.author.email) -%>
         </a>
       <% end -%>
