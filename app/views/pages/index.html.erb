@@ -31,6 +31,10 @@
   <%= render('pages/actions', :owner => owner, :active => :index) %>
   <h2 class="gts-legend">
     <%= @title = "#{owner.title} Wiki pages" %>
+
+    <div class="pull-right">
+      <%= feed_icon atom_auto_discovery_url %>
+    </div>
   </h2>
   <ul>
     <% tree_nodes.each do |node| %>
