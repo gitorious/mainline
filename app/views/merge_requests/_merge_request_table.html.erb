@@ -26,6 +26,10 @@
   <h2 class="gts-legend">
     Merge requests for <%= target.slug %>
     <%= link_to_help 'merge-request' %>
+
+    <div class="pull-right">
+      <%= feed_icon atom_auto_discovery_url %>
+    </div>
   </h2>
   <%= modal_box("What's a merge request?", 'merge-request') do %>
     <%= t("views.merges.hint") %>
