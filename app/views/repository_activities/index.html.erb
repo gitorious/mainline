@@ -35,6 +35,14 @@
         }) %>
 
   <div class="container gts-body" id="gts-pjax-container">
+    <h2 class="gts-legend">
+      <%= t("views.events.repo_title", :repo_url => h(repository.url_path)) %>
+
+      <div class="pull-right">
+        <%= feed_icon atom_auto_discovery_url %>
+      </div>
+    </h2>
+
     <%= render 'events/events', :events => events %>
   </div>
 <% end %>
