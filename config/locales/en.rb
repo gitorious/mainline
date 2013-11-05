@@ -250,7 +250,7 @@
         },
       },
       :events => {
-        :repo_title => "Activities for %{repo_url}",
+        :title => "Activities for %{name}",
         :page_title => "Events",
         :activities => "Gitorious activities",
         :system_activities => "System Activities",
