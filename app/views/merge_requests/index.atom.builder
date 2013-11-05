@@ -18,11 +18,11 @@
 #++
 
 namespaced_atom_feed do |feed|
-  feed.title("Gitorious: #{@repository.url_path} merge requests")
-  feed.updated((@open_merge_requests.blank? ? Time.now : @open_merge_requests.first.created_at))
+  feed.title(title)
+  feed.updated((merge_requests.blank? ? Time.now : merge_requests.first.created_at))
 
-  @open_merge_requests.each do |mr|
-    item_url = url_for(:action => "show", :id => mr.to_param, :only_path => false)
+  merge_requests.each do |mr|
+    item_url = project_repository_merge_request_url(mr.project, mr.target_repository, mr)
     feed.entry(mr, :url => item_url) do |entry|
       entry.title("##{h(mr.id)}: " + h(mr.summary))
       entry.content((<<-EOS), :type => "html")

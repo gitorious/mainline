@@ -29,13 +29,18 @@ class ProjectMergeRequestsController < ApplicationController
         render(:action => "index", :locals => {
             :project => ProjectPresenter.new(project),
             :merge_request_statuses => project.merge_request_statuses,
-            :atom_auto_discovery_url => url_for(:overwrite_params => { :format => "atom" }),
+            :atom_auto_discovery_url => project_merge_requests_path(project, :format => :atom),
             :merge_requests => merge_requests,
             :status => status
           })
       end
       wants.xml { render :xml => merge_requests.to_xml }
-      wants.atom {  }
+      wants.atom {
+        render :file => "merge_requests/index.atom", :locals => {
+          :title => "Gitorious: #{project.title} merge requests",
+          :merge_requests => merge_requests
+        }
+      }
     end
   end
 end

@@ -51,7 +51,12 @@ class MergeRequestsController < ApplicationController
           })
       end
       wants.xml  { render :xml => @open_merge_requests.to_xml }
-      wants.atom {  }
+      wants.atom {
+        render :file => "merge_requests/index.atom", :locals => {
+          :title => "Gitorious: #{@repository.url_path} merge requests",
+          :merge_requests => @open_merge_requests
+        }
+      }
     end
   end
 
