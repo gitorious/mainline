@@ -89,6 +89,14 @@ if !defined?(Rails)
     end
   end
 
+  class FakeAttachment
+    private
+
+    def flush_errors
+      {}
+    end
+  end
+
   class User < TestHelper::Model
     attr_accessor :login, :fullname, :email, :password, :password_confirmation, :activation_code,
     :terms_of_use, :aasm_state, :activated_at, :avatar_file_name, :identity_url, :crypted_password,
@@ -109,6 +117,7 @@ if !defined?(Rails)
     def self.find(id); new({:id => id});end
     def self.generate_random_password; "rAnD0mZ!"; end
     def accept_terms!; end
+    def avatar; FakeAttachment.new; end
 
     def self.find_by_email_with_aliases(email)
       @@users ||= {}

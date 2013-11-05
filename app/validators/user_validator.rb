@@ -34,6 +34,7 @@ UserValidator = UseCase::Validator.define do
   validates_format_of :avatar_file_name, :with => /\.(jpe?g|gif|png|bmp|svg|ico)$/i, :allow_blank => true
   validate :normalized_openid_identifier
   validate :uniqueness
+  validate :avatar_is_valid
 
   # Helps validations not raise errors on Ruby 1.8.7
   def self.model_name
@@ -62,6 +63,10 @@ UserValidator = UseCase::Validator.define do
     end
   end
 
+  def avatar_is_valid
+    errors.add(:avatar, I18n.t("user.avatar_invalid")) if avatar_has_processing_errors?
+  end
+
   protected
 
   def password_required?
@@ -70,5 +75,9 @@ UserValidator = UseCase::Validator.define do
 
   def openid?
     !identity_url.blank?
+  end
+
+  def avatar_has_processing_errors?
+    avatar.send(:flush_errors).present?
   end
 end

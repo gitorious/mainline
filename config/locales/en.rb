@@ -174,6 +174,7 @@
     },
     :user => {
       :invalid_url => "Invalid url",
+      :avatar_invalid => "could not be processed",
     },
     :membership => {
       :notification_subject => "You have been added to a team",
