@@ -22,12 +22,7 @@ namespaced_atom_feed do |feed|
   feed.updated((@open_merge_requests.blank? ? Time.now : @open_merge_requests.first.created_at))
 
   @open_merge_requests.each do |mr|
-    item_url = url_for(:overwrite_params => {
-                         :action => "show",
-                         :id => mr.to_param,
-                         :format => nil
-                       }, :only_path => false)
-
+    item_url = url_for(:action => "show", :id => mr.to_param, :only_path => false)
     feed.entry(mr, :url => item_url) do |entry|
       entry.title("##{h(mr.id)}: " + h(mr.summary))
       entry.content((<<-EOS), :type => "html")
