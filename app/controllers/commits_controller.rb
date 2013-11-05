@@ -23,46 +23,23 @@ require "gitorious/view/dolt_url_helper"
 
 class CommitsController < ApplicationController
   include Gitorious::View::DoltUrlHelper
-  REF_TYPE = :project_repository_commits_in_ref_path
+  include CommitAction
+
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
   renders_in_site_specific_context
 
   def index
-    if params[:branch].blank?
-      redirect_to_ref(@repository.head_candidate.name, REF_TYPE) and return
-    end
+    commit_action do |ref, head, render_index|
+      page = JustPaginate.page_value(params[:page])
+      total_pages = @repository.git_derived_total_commit_count(ref) / 30
+      @commits = @repository.paginated_commits(ref, page, 30)
 
-    @git = @repository.git
-    @ref, @path = branch_and_path(params[:branch], @git)
-
-    head = get_head(@ref)
-
-    return handle_unknown_ref(@ref, @git, REF_TYPE) if head.nil?
-
-    if params[:branch].length < 40
-      redirect_to_ref(head.commit.id, REF_TYPE, :status => 307) and return
-    end
-
-    if stale_conditional?(head.commit.id, head.commit.committed_date.utc)
-      @page = JustPaginate.page_value(params[:page])
-      @total_pages = @repository.git_derived_total_commit_count(@ref) / 30
-      @commits = @repository.paginated_commits(@ref, @page, 30)
-
-      ref_name = Gitorious::RefNameResolver.sha_to_ref_name(@git, head.commit.id)
-      atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, ref_name, :format => :atom)
-      respond_to do |format|
-        format.html do
-          render(:action => :index, :locals => {
-            :repository => RepositoryPresenter.new(@repository),
-            :ref => head.commit.id,
-            :commits => @commits,
-            :page => @page,
-            :total_pages => @total_pages,
-            :atom_auto_discovery_url => atom_auto_discovery_url,
-            :atom_auto_discovery_title => "#{@repository.title} ATOM feed"})
-        end
-      end
+      render_index.call(
+        :ref => head.commit.id,
+        :commits => @commits,
+        :page => page,
+        :total_pages => total_pages)
     end
   end
 
@@ -108,8 +85,13 @@ class CommitsController < ApplicationController
   end
 
   private
+
   def diff_renderer(mode, repository, commit)
     klass = mode == "sidebyside" ? Gitorious::Diff::SidebysideRenderer : Gitorious::Diff::InlineRenderer
     klass.new(self, repository, commit)
+  end
+
+  def ref_type
+    :project_repository_commits_in_ref_path
   end
 end

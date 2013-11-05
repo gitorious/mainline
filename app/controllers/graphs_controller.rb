@@ -17,34 +17,22 @@
 #++
 
 class GraphsController < ApplicationController
-  REF_TYPE = :project_repository_graph_in_ref_path
+  include CommitAction
+
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
   renders_in_site_specific_context
 
   def index
-    if params[:branch].blank?
-      redirect_to_ref(@repository.head_candidate.name, REF_TYPE) and return
-    end
-
-    @git = @repository.git
-    @ref, @path = branch_and_path(params[:branch], @git)
-
-    head = get_head(@ref)
-    return handle_unknown_ref(@ref, @git, REF_TYPE) if head.nil?
-
-    if stale_conditional?(head.commit.id, head.commit.committed_date.utc)
+    commit_action do |head, ref, render_index|
       @commits = @repository.cached_paginated_commits(@ref, params[:page])
-      @atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, params[:branch], :atom)
-      respond_to do |format|
-        format.html do
-          render(:action => :index, :locals => {
-            :repository => RepositoryPresenter.new(@repository),
-            :ref => @repository.head_candidate_name,
-            :atom_auto_discovery_url => project_repository_path(@repository.project, @repository, :format => :atom),
-            :atom_auto_discovery_title => "#{@repository.title} ATOM feed"})
-        end
-      end
+      render_index.call(:ref => @repository.head_candidate_name)
     end
+  end
+
+  private
+
+  def ref_type
+    :project_repository_graph_in_ref_path
   end
 end
