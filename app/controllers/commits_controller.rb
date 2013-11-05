@@ -49,7 +49,8 @@ class CommitsController < ApplicationController
       @total_pages = @repository.git_derived_total_commit_count(@ref) / 30
       @commits = @repository.paginated_commits(@ref, @page, 30)
 
-      @atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, params[:branch], :atom)
+      ref_name = Gitorious::RefNameResolver.sha_to_ref_name(@git, head.commit.id)
+      atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, ref_name, :format => :atom)
       respond_to do |format|
         format.html do
           render(:action => :index, :locals => {
@@ -58,7 +59,7 @@ class CommitsController < ApplicationController
             :commits => @commits,
             :page => @page,
             :total_pages => @total_pages,
-            :atom_auto_discovery_url => project_repository_path(@repository.project, @repository, :format => :atom),
+            :atom_auto_discovery_url => atom_auto_discovery_url,
             :atom_auto_discovery_title => "#{@repository.title} ATOM feed"})
         end
       end

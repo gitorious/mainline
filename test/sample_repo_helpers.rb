@@ -16,6 +16,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require 'grit'
+
 module SampleRepoHelpers
   def sample_repo_path(name)
     tmp_dir = Dir::Tmpname.create("repos") {}
@@ -45,9 +47,8 @@ module SampleRepoHelpers
   end
 
   def self.included(context)
-    context.teardown do
-      cleanup_sample_repos
-    end
+    context.teardown { cleanup_sample_repos } if context.respond_to?(:teardown)
+    context.after { cleanup_sample_repos } if context.respond_to?(:after)
   end
 end
 

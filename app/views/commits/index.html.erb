@@ -36,6 +36,10 @@
   </ul>
   <h2 class="gts-legend">
     <%= t("views.logs.title", :repo_url => h(repository.url_path), :ref => h(ref)).html_safe %>
+
+    <div class="pull-right">
+      <%= feed_icon atom_auto_discovery_url %>
+    </div>
   </h2>
 
   <%= cache([[repository.project, repository], :commits, ref, commits.current_page], { :expires_in => 10.minutes }) do %>
