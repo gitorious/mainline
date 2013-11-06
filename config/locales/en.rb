@@ -323,7 +323,9 @@
           :thanks => "We look forward to seeing you use Gitorious!"
         },
         :favorites_action => "Your favorites",
-        :delete_account => "Delete account"
+        :delete_account => "Delete account",
+        :delete_account_description => "Once you delete your account, there is no going back. Please be sure this is what you really want.",
+        :delete_account_confirmation => "This will remove your current Gitorious account permanently! Are you really sure about this?"
       },
       :logs => {
         :title_clean => "Commits in %{repo_url}:%{ref}",

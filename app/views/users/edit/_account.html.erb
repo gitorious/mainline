@@ -23,4 +23,12 @@
   <div class="form-actions">
     <%= button_tag t("views.common.save"), :type => 'submit', :class => 'btn btn-primary' %>
   </div>
+
+  <fieldset>
+    <legend>Delete account</legend>
+    <div>
+      <p><%= t('views.users.delete_account_description') %></p>
+      <%= link_to t("views.users.delete_account"), user_delete_current_path(current_user), :confirm => t('views.users.delete_account_confirmation'), :class => "delete_account btn btn-danger" -%>
+    </div>
+  </fieldset>
 <% end -%>
