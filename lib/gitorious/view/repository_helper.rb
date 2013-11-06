@@ -91,7 +91,7 @@ git push</pre>
             [:source, url_for(File.join("/", project.to_param, repository.to_param, "source", "#{repository.head_candidate_name}:")), "Source code"],
             [:activities, activities_project_repository_path(project, repository), "Activities"],
             [:commits, project_repository_commits_in_ref_path(project, repository, ref), "Commits"],
-            [:merge_requests, project_repository_merge_requests_path(project, repository), "Merge requests <span class=\"count\">(#{repository.open_merge_request_count})</span>"],
+            [:merge_requests, project_repository_merge_requests_path(project, repository), "Merge requests <span class=\"count gts-mr-count-ph\"></span>"],
             [:community, url_for(File.join("/", project.to_param, repository.to_param, "community")), "Community"]
           ], :active => active)
 

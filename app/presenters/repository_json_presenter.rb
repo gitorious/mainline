@@ -36,7 +36,8 @@ class RepositoryJSONPresenter
         "watch" => user && watch(user),
         "cloneProtocols" => clone_protocols(user),
         "clonePath" => clone_path(user),
-        "requestMergePath" => request_merge_path(user)
+        "requestMergePath" => request_merge_path(user),
+        "openMergeRequestCount" => repository.open_merge_requests.count
       }.merge(is_admin ? repo_admin_hash: {})
     }
   end

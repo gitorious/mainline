@@ -156,6 +156,7 @@ if !defined?(Rails)
     def tracking_repo?; false; end
     def real_gitdir; ""; end
     def set_repository_path; end
+    def open_merge_requests; @open_merge_requests || []; end
     def self.reserved_names; []; end
     def self.private_on_create?(repo); false; end
     def self.find_by_path(path);new;end

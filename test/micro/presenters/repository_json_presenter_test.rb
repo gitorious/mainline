@@ -171,5 +171,13 @@ class RepositoryJSONPresenterTest < MiniTest::Spec
       assert_equal ["git", "http"], protocols["protocols"]
       assert_equal "git", protocols["default"]
     end
+
+    it "includes count of the open merge requests" do
+      @repository.open_merge_requests = ['mr1', 'mr2', 'mr3']
+      presenter = RepositoryJSONPresenter.new(App.new, @repository)
+
+      repository = presenter.hash_for(@user)["repository"]
+      assert_equal 3, repository["openMergeRequestCount"]
+    end
   end
 end
