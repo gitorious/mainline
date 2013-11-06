@@ -2,12 +2,12 @@ module TabsHelper
 
   def user_edit_tabbable(options, &block)
     tabbable({
-      'my-details'       => edit_user_path(current_user),
+      'account'          => edit_user_path(current_user),
       'email-aliases'    => user_edit_email_aliases_path(current_user),
       'change-password'  => user_edit_password_path(current_user),
       'ssh-keys'         => user_edit_ssh_keys_path(current_user),
       'manage-favorites' => user_edit_favorites_path(current_user) },
-      options.reverse_merge(:active => 'my-details'), &block
+      options.reverse_merge(:active => 'account'), &block
     )
   end
 

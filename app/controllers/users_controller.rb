@@ -67,7 +67,7 @@ class UsersController < ApplicationController
   end
 
   EDIT_VIEWS = {
-    'my-details'       => 'users/edit/my_details',
+    'account'          => 'users/edit/account',
     'email-aliases'    => 'users/edit/email_aliases',
     'ssh-keys'         => 'users/edit/ssh_keys',
     'change-password'  => 'users/edit/change_password',
@@ -75,7 +75,7 @@ class UsersController < ApplicationController
   }
 
   def edit
-    active_tab = params.fetch(:tab, 'my-details')
+    active_tab = params.fetch(:tab, 'account')
     locals = { :user => current_user, :active_tab => active_tab }
 
     if pjax_request?
@@ -92,7 +92,7 @@ class UsersController < ApplicationController
 
     outcome.failure do |user|
       flash[:error] = "Failed to save your details"
-      render(:edit, :locals => { :user => user, :active_tab => "my-details" })
+      render(:edit, :locals => { :user => user, :active_tab => 'account' })
     end
 
     outcome.success do
