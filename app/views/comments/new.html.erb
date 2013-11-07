@@ -40,7 +40,7 @@
             <div id="<%= id %>" class="gts-markdown-preview help-block">
               <div></div>
               <p>
-                <%= avatar(user, :version => :thumb, :size => "24", :class => "gts-avatar") %>
+                <%= avatar(user, :version => :thumb, :size => "24") %>
                 <a href="<%= user_path(user) %>"><%= user.fullname %></a>
                 <%= Time.now.strftime("%H:%M") %>.
               </p>

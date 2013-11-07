@@ -54,10 +54,13 @@ module Gitorious
       # - Pass on :size for the height+width of the image in pixels
       # - Pass on :version for a named version/style of the avatar
       def avatar(user, options={})
+        class_names = Array(options.fetch(:class, []))
+        class_names << 'gts-avatar'
+
         if user.avatar?
           avatar_style = options.delete(:version) || :thumb
           image_options = { :alt => 'avatar'}.merge(:width => options[:size], :height => options[:size])
-          image_options.update(:class => options[:class]) if options.key?(:class)
+          image_options.update(:class => class_names)
           image_tag(user.avatar.url(avatar_style), image_options)
         else
           gravatar(user.email, options)
