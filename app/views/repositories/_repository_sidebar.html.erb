@@ -21,7 +21,7 @@
 <li class="clone">
   <% if repository.owned_by_group? %>
     <span class="group">
-      <%= image_tag(repository.owner.avatar.url(:thumb), :size => '16x16', :class => 'gts-avatar') %>
+      <%= group_avatar(repository.owner, :size => 16) %>
       <%= link_to h(repository.owner_to_param_with_prefix), repository.owner %>
     </span>
   <% else %>

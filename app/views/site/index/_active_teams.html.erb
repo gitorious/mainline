@@ -22,7 +22,7 @@
     <% teams.each do |group| %>
       <tr>
         <td>
-          <%= group_avatar(group, :size => :thumb, :alt => "Avatar", :width => "16") %>
+          <%= group_avatar(group, :size => :thumb) %>
           &nbsp;
           <%= link_to h(group.title), group %>
         </td>

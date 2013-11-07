@@ -45,6 +45,7 @@ module Gitorious
 
       def group_avatar(group, options = {})
         options = options.dup
+        options.update(:class => 'gts-avatar')
         size = options.delete(:size) || :medium
         image_tag(group.avatar.url(size), options) if group.avatar?
       end
