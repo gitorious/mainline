@@ -83,7 +83,7 @@ class CommentPresenterTest < ActiveSupport::TestCase
       comment = Comment.new
       presenter = CommentPresenter.new(comment, view_context)
 
-      assert_include presenter.avatar, Gitorious::View::AvatarHelper::DEFAULT_AVATAR_FILE
+      assert_include presenter.avatar, Gitorious::View::AvatarHelper::DEFAULT_USER_AVATAR_FILE
     end
   end
 

@@ -55,7 +55,7 @@ class CommentPresenter
   end
 
   def avatar
-    default_url = Gitorious::View::AvatarHelper::DEFAULT_AVATAR_FILE
+    default_url = Gitorious::View::AvatarHelper::DEFAULT_USER_AVATAR_FILE
     url = comment.user ? v.avatar_url(comment.user, :size => 24) : default_url
     v.image_tag url, :size => '24x24', :alt => "avatar", :class => "gts-avatar"
   end
