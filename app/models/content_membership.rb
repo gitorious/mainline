@@ -19,4 +19,9 @@
 class ContentMembership < ActiveRecord::Base
   belongs_to :content, :polymorphic => true
   belongs_to :member, :polymorphic => true
+
+  validates_presence_of :member_id, :content_id
+
+  validates_uniqueness_of :member_id, :scope => [:content_id],
+    :message => "is already a member"
 end

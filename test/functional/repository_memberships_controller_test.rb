@@ -37,26 +37,17 @@ class RepositoryMembershipsControllerTest < ActionController::TestCase
         assert_response 302
       end
 
-      should "explicitly add owner as collaborator" do
-        login = @user.login
+      should "add user as a memeber" do
         login_as :johan
 
         assert_difference("@repository.reload.content_memberships.count") do
-          post :create, params(:user => { :login => login })
-        end
-      end
-
-      should "default to adding owner if no parameters" do
-        login_as :johan
-
-        assert_difference("@repository.reload.content_memberships.count") do
-          post :create, params
+          post :create, params(:user => { :login => users(:moe).login })
         end
 
         assert_equal @user, @repository.content_memberships.first.member
       end
 
-      should "add group as collaborator" do
+      should "add group as member" do
         team = groups(:a_team)
         login_as :johan
 
