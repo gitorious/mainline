@@ -1,11 +1,6 @@
 <div class="pull-right">
   <%= feed_icon atom_auto_discovery_url %>
 </div>
-<%= tabbable %w(activities my-activities), :active => 'activities' do %>
-  <%= tab_pane :activities, :active => true do %>
-    <%= render 'events/events', :events => events %>
-  <% end %>
-  <%= tab_pane :my_activities do %>
-    <%= render 'events/events', :events => user_events %>
-  <% end %>
+<%= activity_tabbable :active => active_tab do %>
+  <%= render 'events/events', :events => events %>
 <% end %>

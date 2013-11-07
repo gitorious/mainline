@@ -141,6 +141,7 @@ Gitorious::Application.routes.draw do
   ### R7. Site controller, various loose pages
   get "/activities" => "site#public_timeline", :as => :activity
   get "/dashboard" => "site#dashboard", :as => :dashboard
+  get "/my-activities" => "site#my_activities", :as => :dashboard_my_activities
   get "/about" => "site#about", :as => :about
   get "/about/:action" => "site#index", :as => :about_page
   get "/contact" => "site#contact", :as => :contact

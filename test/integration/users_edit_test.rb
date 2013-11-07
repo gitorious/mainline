@@ -49,7 +49,7 @@ class UserEditTest < ActionDispatch::IntegrationTest
   end
 
   should "update user details" do
-    assert_active_tab 'My details'
+    assert_active_tab 'Account'
     fill_in 'Full name', :with => 'Johan Johanson'
     click_on 'Save'
     page.must_have_content 'Your account details were updated'
