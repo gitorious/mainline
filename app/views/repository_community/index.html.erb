@@ -38,7 +38,7 @@
               <%= t("views.repos.by_teams") %> (<%= repository.group_clone_count %>)
             </h3>
             <ul class="unstyled">
-              <% repository.group_clones do |repo| %>
+              <% repository.group_clones.each do |repo| %>
                 <%= render 'repositories/repository_sidebar', :repository => repo %>
               <% end %>
             </ul>
