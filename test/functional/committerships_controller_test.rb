@@ -108,6 +108,17 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert Committership.last.committer?
       assert !Committership.last.admin?
     end
+
+    should "not fail when the same user is added twice" do
+      assert_no_difference("@repository.committerships.count") do
+        post :create, params(
+          :group => {},
+          :user => { :login => users(:johan).login},
+          :permissions => ["review"]
+        )
+      end
+      assert_response :success
+    end
   end
 
   should "GET edit" do
