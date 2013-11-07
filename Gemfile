@@ -100,7 +100,7 @@ platform :ruby_18 do
 end
 
 group :dolt do
-  gem "libdolt", "~> 0.33"
+  gem "libdolt", "~> 0.33.7"
   gem "dolt", "~> 0.30.0"
   gem "tiltout", "~> 1.4"
 
