@@ -30,7 +30,8 @@ module TabsHelper
 
       opts = {
         :active => active,
-        :class  => options.fetch(:nav, classes)
+        :class  => options.fetch(:nav, classes),
+        :pjax   => options[:pjax]
       }
 
       html =  nav_tabs(tabs, opts)
@@ -51,16 +52,16 @@ module TabsHelper
       tabs.map { |name, path|
         class_names = []
         class_names << 'active' if name == active
-        content_tag(:li, nav_link(name, path), :class => class_names)
+        content_tag(:li, nav_link(name, path, opts), :class => class_names)
       }.join("\n").html_safe
     }
   end
 
-  def nav_link(name, path)
+  def nav_link(name, path, options = {})
     path ||= "##{name}"
+    data = options[:pjax] ? {} : { :toggle => 'tab', :target => "##{name.to_s.dasherize}" }
 
-    link_to(t("views.tabs.#{name.underscore}"), path,
-      :data => { :toggle => 'tab', :target => "##{name.to_s.dasherize}" })
+    link_to(t("views.tabs.#{name.underscore}"), path, :data => data)
   end
 
   def tab_content(options = {}, &block)
