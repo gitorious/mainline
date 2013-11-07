@@ -23,9 +23,14 @@
 
 class SiteController < ApplicationController
   skip_before_filter :public_and_logged_in, :only => [:index, :about, :faq, :contact, :tos, :privacy_policy]
-  before_filter :login_required, :only => [:dashboard]
+
+  before_filter :login_required, :only => [:dashboard, :my_activities]
+  before_filter :load_dashboard, :only => [:index, :my_activities]
+
   renders_in_site_specific_context :except => [:about, :faq, :contact, :tos, :privacy_policy]
   renders_in_global_context :only => [:about, :faq, :contact, :tos, :privacy_policy]
+
+  attr_reader :dashboard_presenter
 
   def index
     if !current_site.subdomain.blank?
@@ -55,7 +60,12 @@ class SiteController < ApplicationController
     render :contact
   end
 
+  def my_activities
+    render_dashboard('my-activities')
+  end
+
   protected
+
   # Render a Site-specific index template
   def render_site_index
     projects = filter(current_site.projects.order("created_at asc"))
@@ -87,25 +97,32 @@ class SiteController < ApplicationController
     end
   end
 
-  def render_dashboard
+  def render_dashboard(active_tab = 'activities')
     @user = current_user
 
-    current_dashboard = Dashboard.new(current_user)
-    dashboard_presenter = DashboardPresenter.new(current_dashboard, authorized_filter, self)
+    events =
+      if active_tab == 'my-activities'
+        dashboard_presenter.user_events(params[:page])
+      else
+        dashboard_presenter.events(params[:page])
+      end
 
-    paginate(page_free_redirect_options) do
-
-      respond_to do |format|
-        format.html do
-          render :template => "site/dashboard", :locals => {
-            :user => dashboard_presenter.user,
-            :events => dashboard_presenter.events(params[:page]),
-            :user_events => dashboard_presenter.user_events(params[:page]),
-            :projects => dashboard_presenter.projects,
-            :repositories => dashboard_presenter.repositories,
-            :favorites => dashboard_presenter.favorites,
-            :atom_auto_discovery_url => dashboard_presenter.atom_auto_discovery_url
-          }
+    if pjax_request?
+      render :partial => 'events/events', :locals => { :events => events }
+    else
+      paginate(page_free_redirect_options) do
+        respond_to do |format|
+          format.html do
+            render :template => 'site/dashboard', :locals => {
+              :active_tab => active_tab,
+              :user => dashboard_presenter.user,
+              :events => events,
+              :projects => dashboard_presenter.projects,
+              :repositories => dashboard_presenter.repositories,
+              :favorites => dashboard_presenter.favorites,
+              :atom_auto_discovery_url => dashboard_presenter.atom_auto_discovery_url
+            }
+          end
         end
       end
     end
@@ -132,4 +149,10 @@ class SiteController < ApplicationController
       render_public_timeline
     end
   end
+
+  def load_dashboard
+    @current_dashboard = Dashboard.new(current_user)
+    @dashboard_presenter = DashboardPresenter.new(@current_dashboard, authorized_filter, self)
+  end
+
 end

@@ -11,21 +11,36 @@ module TabsHelper
     )
   end
 
+  def activity_tabbable(options = {}, &block)
+    pjax_tabbable({
+      'activities'    => root_path,
+      'my-activities' => dashboard_my_activities_path },
+      options.reverse_merge(:active => 'activities'), &block
+    )
+  end
+
   def tabbable(tabs, options = {}, &block)
     position = options.fetch(:position, 'top')
     names    = tabs.is_a?(Hash) ? tabs.keys : tabs
     active   = (names.include?(params[:tab]) && params[:tab]) || options[:active]
 
     content_tag(:div, :class => "tabbable tabs-#{position}") {
+      classes = %w(nav nav-tabs)
+      classes << 'gts-pjax' if options[:pjax]
+
       opts = {
         :active => active,
-        :class  => options.fetch(:nav, %w(nav nav-tabs))
+        :class  => options.fetch(:nav, classes)
       }
 
       html =  nav_tabs(tabs, opts)
-      html << tab_content(&block) if block
+      html << tab_content(options, &block) if block
       html
     }.html_safe
+  end
+
+  def pjax_tabbable(tabs, options = {}, &block)
+    tabbable(tabs, options.merge(:pjax => true), &block)
   end
 
   def nav_tabs(tabs, opts = {})
@@ -48,8 +63,11 @@ module TabsHelper
       :data => { :toggle => 'tab', :target => "##{name.to_s.dasherize}" })
   end
 
-  def tab_content(&block)
-    content_tag(:div, :class => "tab-content") {
+  def tab_content(options = {}, &block)
+    class_names = %w(tab-content)
+    dom_id      = 'gts-pjax-container' if options[:pjax]
+
+    content_tag(:div, :class => class_names, :id => dom_id) {
       capture(&block) if block
     }.html_safe
   end

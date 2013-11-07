@@ -21,7 +21,9 @@
 <div class="container gts-container">
   <div class="row-fluid">
     <div class="span7">
-      <%= render "site/dashboard/activities", :atom_auto_discovery_url => atom_auto_discovery_url, :events => events, :user_events => user_events %>
+      <%= render 'site/dashboard/activities',
+        :atom_auto_discovery_url => atom_auto_discovery_url,
+        :events => events, :active_tab => active_tab %>
     </div>
     <div class="span5">
       <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
