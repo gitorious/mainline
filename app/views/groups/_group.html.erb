@@ -1,7 +1,9 @@
 <li class="gts-listing-item">
-  <div class="gts-group-avatar">
-    <%= group_avatar(group) %>
-  </div>
+  <% if group.avatar? %>
+    <div class="gts-group-avatar">
+      <%= group_avatar(group) %>
+    </div>
+  <% end %>
   <div class="gts-group-body">
     <h2>
       <%= link_to h(group.name), group_path(group.to_param) %>

@@ -19,12 +19,13 @@
 module Gitorious
   module View
     module AvatarHelper
-      DEFAULT_AVATAR_FILE = "default_face.gif"
+      DEFAULT_USER_AVATAR_FILE = "default_face.gif"
+      DEFAULT_GROUP_AVATAR = "default_group_avatar.png"
 
       def gravatar_url_for(email, options = {})
         prefix = request.ssl? ? "https://secure" : "http://www"
         scheme = request.ssl? ? "https" : "http"
-        options.reverse_merge!(:default => "/images/#{DEFAULT_AVATAR_FILE}")
+        options.reverse_merge!(:default => "/images/#{DEFAULT_USER_AVATAR_FILE}")
         port_string = [443, 80].include?(request.port) ? "" : ":#{request.port}"
         "#{prefix}.gravatar.com/avatar/" +
           (email.nil? ? "" : Digest::MD5.hexdigest(email.downcase)) + "&amp;default=" +
@@ -47,7 +48,11 @@ module Gitorious
         options = options.dup
         options.update(:class => 'gts-avatar')
         size = options.delete(:size) || :medium
-        image_tag(group.avatar.url(size), options) if group.avatar?
+        if group.avatar?
+          image_tag(group.avatar.url(size), options)
+        else
+          image_tag("/images/#{DEFAULT_GROUP_AVATAR}", options)
+        end
       end
 
       # For a User object, return either his/her avatar or the gravatar for her email address
