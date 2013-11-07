@@ -47,7 +47,7 @@
     <% if committer_user -%>
       <%= link_to(avatar_from_email(commit.committer.email, { :size => 24 }), committer_user) %>
       <%= link_to(commit.committer.name.force_utf8, committer_user) %>
-    <% else -%>
+    <% elsif commit.committer.email.present? -%>
       <%= avatar_from_email(commit.committer.email, { :size => 24 }) %>
       <a>
         <%=h commit.committer.email.force_utf8 -%>
