@@ -107,22 +107,18 @@ class SiteController < ApplicationController
         dashboard_presenter.events(params[:page])
       end
 
-    if pjax_request?
-      render :partial => 'events/events', :locals => { :events => events }
-    else
-      paginate(page_free_redirect_options) do
-        respond_to do |format|
-          format.html do
-            render :template => 'site/dashboard', :locals => {
-              :active_tab => active_tab,
-              :user => dashboard_presenter.user,
-              :events => events,
-              :projects => dashboard_presenter.projects,
-              :repositories => dashboard_presenter.repositories,
-              :favorites => dashboard_presenter.favorites,
-              :atom_auto_discovery_url => dashboard_presenter.atom_auto_discovery_url
-            }
-          end
+    paginate(page_free_redirect_options) do
+      respond_to do |format|
+        format.html do
+          render :template => 'site/dashboard', :locals => {
+            :active_tab => active_tab,
+            :user => dashboard_presenter.user,
+            :events => events,
+            :projects => dashboard_presenter.projects,
+            :repositories => dashboard_presenter.repositories,
+            :favorites => dashboard_presenter.favorites,
+            :atom_auto_discovery_url => dashboard_presenter.atom_auto_discovery_url
+          }, :layout => !pjax_request?
         end
       end
     end
