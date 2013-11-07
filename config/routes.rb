@@ -326,8 +326,7 @@ Gitorious::Application.routes.draw do
       match "/graph/*branch" => "graphs#index", :as => :graph_in_ref, :branch => /.*/
 
       match "/trees/" => "trees#index", :as => :trees
-      match "/trees/*branch_and_path" => "trees#show", :as => :tree
-      match "/trees/*branch_and_path.:format" => "trees#show", :as => :formatted_tree
+      match "/trees/*branch_and_path" => "trees#show", :as => :tree, :format => false
 
       # These URLs were introduced as a work-around for a Rails bug that
       # prevented URLs like /archive/:branch.:format. Now we can use the
@@ -340,10 +339,10 @@ Gitorious::Application.routes.draw do
       match "/archive/*branch.tar.gz" => "trees#archive", :as => :archive_tar
       match "/archive/*branch.:archive_format" => "trees#archive", :as => :archive
 
-      match "/blobs/raw/*branch_and_path" => "blobs#raw", :as => :raw_blob
-      match "/blobs/history/*branch_and_path" => "blobs#history", :as => :blob_history
-      match "/blobs/blame/*branch_and_path" => "blobs#blame", :as => :blame
-      match "/blobs/*branch_and_path" => "blobs#show", :as => :blob, :branch_and_path => /.*/
+      match "/blobs/raw/*branch_and_path" => "blobs#raw", :as => :raw_blob, :format => false
+      match "/blobs/history/*branch_and_path" => "blobs#history", :as => :blob_history, :format => false
+      match "/blobs/blame/*branch_and_path" => "blobs#blame", :as => :blame, :format => false
+      match "/blobs/*branch_and_path" => "blobs#show", :as => :blob, :format => false
     end
   end
 end
