@@ -35,7 +35,13 @@
       </p>
       <p>
         <%= avatar_from_email(commit.author.email, :size => 16)  %>
-        <%= user ? link_to(user.fullname || user.login, user_path(user)) : h(commit.author.name.force_utf8) -%>
+        <% if user %>
+          <%= link_to(user.fullname || user.login, user_path(user)) %>
+        <% elsif commit.author.name %>
+          <%= h(commit.author.name.force_utf8) -%>
+        <% else %>
+          <%= h(commit.author.email.force_utf8) -%>
+        <% end %>
         <span class="event-time"><%= l(commit.committed_date, :format => :short_time) %></span>
       </p>
       <% if defined?(display_diffs) && display_diffs %>

@@ -50,7 +50,7 @@
     <% else -%>
       <%= avatar_from_email(commit.committer.email, { :size => 24 }) %>
       <a>
-        <%=h commit.committer.name.force_utf8 -%>
+        <%=h commit.committer.email.force_utf8 -%>
         <%= render_email(commit.committer.email) -%>
       </a>
     <% end -%>
