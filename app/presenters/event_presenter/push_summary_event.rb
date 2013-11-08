@@ -90,13 +90,21 @@ class EventPresenter
     end
 
     def diff_url
-      view.project_repository_commit_compare_path(
-        target.project, target, :from_id => first_sha, :id => last_sha
-      )
+      if commit_count > 1
+        view.project_repository_commit_compare_path(
+          project, repository, first_sha, last_sha
+        )
+      else
+        view.project_repository_commit_path(project, repository, last_sha)
+      end
     end
 
     def repository
       target
+    end
+
+    def project
+      repository.project
     end
 
     def initialize_event_data
