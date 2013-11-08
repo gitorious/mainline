@@ -132,7 +132,10 @@ class SiteController < ApplicationController
         []
       end
     end
-    render :template => "site/public_index"
+
+    respond_to do |format|
+      format.html { render :template => "site/public_index" }
+    end
   end
 
   # Render the global index template
