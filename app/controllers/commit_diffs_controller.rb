@@ -38,13 +38,17 @@ class CommitDiffsController < ApplicationController
     repository = RepositoryPresenter.new(@repository)
     range      = CommitRangePresenter.build(params[:from_id], params[:id], @repository)
 
-    render("show", :locals => {
-        :renderer => diff_renderer(params[:diffmode], repository, commit),
-        :range => range,
-        :repository => repository,
-        :commit => commit,
-        :diffs => Grit::Commit.diff(@repository.git, params[:from_id], params[:id])
-      })
+    if range.any?
+      render("show", :locals => {
+          :renderer => diff_renderer(params[:diffmode], repository, commit),
+          :range => range,
+          :repository => repository,
+          :commit => commit,
+          :diffs => Grit::Commit.diff(@repository.git, params[:from_id], params[:id])
+        })
+    else
+      render_not_found
+    end
   end
 
   private
