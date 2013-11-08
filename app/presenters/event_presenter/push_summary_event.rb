@@ -30,7 +30,7 @@ class EventPresenter
       view.content_tag(:ul, :class => 'gts-event-commit-list') {
         inner_html = commits.map { |commit| render_commit(commit) }
 
-        if commit_count > COMMIT_LIMIT
+        if commit_count >= COMMIT_LIMIT
           inner_html << content_tag(:li) {
             link_to("View all &raquo;".html_safe, diff_url)
           }
