@@ -32,6 +32,7 @@ class ProjectsController < ApplicationController
     :only => [:show, :edit, :update, :confirm_delete, :destroy, :edit_slug]
   before_filter :require_admin, :only => [:edit, :update, :edit_slug]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
+
   renders_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
   renders_in_global_context :except => [:show, :edit, :update, :confirm_delete]
 
@@ -230,4 +231,5 @@ class ProjectsController < ApplicationController
     projects = filter(projects) if Gitorious.private_repositories?
     [projects, pages, page]
   end
+
 end
