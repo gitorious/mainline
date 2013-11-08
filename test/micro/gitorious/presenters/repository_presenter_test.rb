@@ -71,4 +71,12 @@ class RepositoryPresenterTest < MiniTest::Spec
       assert_equal ProjectPresenter, RepositoryPresenter.new(@repo).project.class
     end
   end
+
+  describe "#internal?" do
+    it "returns underlying model internal?" do
+      internal = mock('internal')
+      @repo.stubs(:internal?).returns(internal)
+      assert_equal internal, RepositoryPresenter.new(@repo).internal?
+    end
+  end
 end
