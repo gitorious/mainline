@@ -19,19 +19,21 @@
 require "test_helper"
 
 class CommitDiffsControllerTest < ActionController::TestCase
+  include SampleRepoHelpers
+
   def setup
     @project = projects(:johans)
     @repository = @project.repositories.mainlines.first
     @repository.update_attribute(:ready, true)
-    @sha = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
-    Repository.any_instance.stubs(:full_repository_path).returns(grit_test_repo("dot_git"))
-    @grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+    @grit = sample_repo('test_repo')
+    @from_id = @grit.commits.last.id
+    @id = @grit.commits.first.id
     Repository.any_instance.stubs(:git).returns(@grit)
   end
 
   context "Comparing arbitrary commits" do
     should "pick the correct commits" do
-      Grit::Commit.expects(:diff).with(@repository.git, OTHER_SHA, @sha).returns([])
+      Grit::Commit.expects(:diff).with(@repository.git, @from_id, @id).returns([])
       get :show, params
       assert_response :success
     end
@@ -77,11 +79,12 @@ class CommitDiffsControllerTest < ActionController::TestCase
   end
 
   private
+
   def params
     { :project_id => @project.slug,
       :repository_id => @repository.name,
-      :from_id => OTHER_SHA,
-      :id => @sha,
+      :from_id => @from_id,
+      :id => @id,
       :fragment => "true" }
   end
 end

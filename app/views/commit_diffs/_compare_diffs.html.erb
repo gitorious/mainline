@@ -21,7 +21,11 @@
 <% if diffs.blank? -%>
   <p><%= t("views.commits.message", :path => tree_path(commit.id)) %></p>
 <% else -%>
-  <%= render_diff_stats(commit.stats) if sidebyside_diff? -%>
+  <% if sidebyside_diff? %>
+    <%= pull_box 'Summary' do %>
+      <%= render_diff_stats(commit.stats) %>
+    <% end %>
+  <% end %>
   <%= render_diffmode_selector :url => url_for(:controller => :commit_diffs, :action => :compare) -%>
   <%= render :partial => "commits/diffs" -%>
 <% end -%>

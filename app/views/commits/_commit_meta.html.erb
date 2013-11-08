@@ -35,7 +35,7 @@
     <div class="gts-commit-message">
       <% summary, message = parse_commit_message(commit.message) %>
       <% if summary %>
-        <h1><%= @title = summary %></h1>
+        <h2><%= @title = summary %></h2>
       <% end %>
       <% if message != "" %>
         <%= message.split("\n\n").map { |p| "<p>#{p}</p>" }.join("").html_safe %>
@@ -57,7 +57,9 @@
     <% if !committer_is_author -%>
       <span class="muted">(<%= t("views.commits.committer") %>)</span>
     <% end -%>
-    <span class="datetime" data-timestamp="<%= (commit.committed_date.to_f * 1000).floor %>"><%= commit.committed_date.strftime("%Y-%m-%d %H:%M") %></span>
+    <span class="datetime" title="<%= commit.committed_date.utc %>">
+      <%= time_ago_in_words(commit.committed_date) %> ago
+    </span>
   </p>
   <% if !committer_is_author -%>
     <p class="gts-commit-meta">

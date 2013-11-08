@@ -117,18 +117,18 @@ module DiffHelper
   end
 
   def render_diff_stats(stats)
-    out = "<h3>Summary</h3><ul class=\"gts-diff-summary\">"
-
-    stats.files.each do |filename, adds, deletes, total|
-      del = (0...deletes).map { |i| "-" }.join
-      ins = (0...adds).map{ |i| "+" }.join
-      out << "<li><a href=\"##{h(filename)}\">#{h(filename)}</a> (#{total}) "
-      out << "<span class=\"gts-diff-rm\">#{del}</span>"
-      out << "<span class=\"gts-diff-add\">#{ins}</span>"
-      out << "</li>"
-    end
-
-    (out + "</ul>\n").html_safe
+    content_tag(:ul, :class => 'gts-diff-summary') {
+      stats.files.map { |filename, adds, deletes, total|
+        del = (0...deletes).map { |i| "-" }.join
+        ins = (0...adds).map{ |i| "+" }.join
+        content_tag(:li) {
+          inner =  "<a href=\"##{h(filename)}\">#{h(filename)}</a> (#{total}) "
+          inner << "<span class=\"gts-diff-rm\">#{del}</span>"
+          inner << "<span class=\"gts-diff-add\">#{ins}</span>"
+          inner.html_safe
+        }
+      }.join.html_safe
+    }.html_safe
   end
 
   def render_compact_diff_stats(stats)

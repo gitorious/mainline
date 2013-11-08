@@ -27,18 +27,20 @@ class CommitDiffsController < ApplicationController
   include Gitorious::View::DoltUrlHelper
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
+  before_filter :load_commit
   skip_session
   after_filter :cache_forever
   renders_in_site_specific_context
 
+  attr_reader :commit
+
   def show
-    commit = @repository.git.commit(params[:id])
-    render_not_found and return if !commit
     repository = RepositoryPresenter.new(@repository)
+    range      = CommitRangePresenter.build(params[:from_id], params[:id], @repository)
 
     render("show", :locals => {
         :renderer => diff_renderer(params[:diffmode], repository, commit),
-        :range => [params[:from_id], params[:id]],
+        :range => range,
         :repository => repository,
         :commit => commit,
         :diffs => Grit::Commit.diff(@repository.git, params[:from_id], params[:id])
@@ -46,8 +48,14 @@ class CommitDiffsController < ApplicationController
   end
 
   private
+
   def diff_renderer(mode, repository, commit)
     klass = mode == "sidebyside" ? Gitorious::Diff::SidebysideRenderer : Gitorious::Diff::InlineRenderer
     klass.new(self, repository, commit)
+  end
+
+  def load_commit
+    @commit = @repository.git.commit(params[:id])
+    render_not_found and return false unless @commit
   end
 end

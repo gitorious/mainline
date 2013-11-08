@@ -20,6 +20,10 @@ require "repository_presenter"
 class CommitPresenter
   attr_reader :repository, :commit
 
+  def self.build(*args)
+    new(*args)
+  end
+
   # FIXME: this is a trick to maintain backward compatibility
   def self.new(repository, commit)
     super(

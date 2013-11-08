@@ -1,0 +1,31 @@
+<%= pull_box 'Commits' do %>
+  <table class="table gts-commits-table">
+    <colgroup>
+      <col class="commit-author-col"/>
+      <col class="commit-msg-col"/>
+      <col class="sha-col"/>
+      <col class="commit-date-col"/>
+    </colgroup>
+    <% range.each do |commit| %>
+      <tr>
+        <td>
+          <% if commit.committer_user %>
+            <%= avatar(commit.committer_user, :size => 16) %>
+            <%= link_to commit.actor_display, commit.committer_user %>
+          <% else %>
+            <%= commit.actor_display %>
+          <% end %>
+        </td>
+        <td>
+          <%= commit.short_message %>
+        </td>
+        <td>
+          <%= link_to(commit.short_oid, project_repository_commit_path(repository.project, repository, commit.id)) %>
+        </td>
+        <td title="<%= commit.committed_date.utc %>">
+          <%= time_ago_in_words(commit.committed_date) %> ago
+        </td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

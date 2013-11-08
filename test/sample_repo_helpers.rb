@@ -30,9 +30,9 @@ module SampleRepoHelpers
     Grit::Repo.new(sample_repo_path(name), :is_bare => true)
   end
 
-  def repository_with_working_git
+  def repository_with_working_git(name = 'sample_repo')
     repository = Repository.new
-    git = sample_repo
+    git = sample_repo(name)
     repository.stubs(:git => git)
     repository
   end
