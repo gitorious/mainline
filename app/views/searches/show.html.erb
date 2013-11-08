@@ -48,7 +48,9 @@
             <%= render "result", :result => presenter(result) %>
           <% end -%>
         </dl>
-        <%= render_pagination_links (@results) -%>
+        <div class="will-paginate-pager">
+          <%= render_pagination_links (@results) -%>
+        </div>
       <% end -%>
     </div>
     <% if @results.blank? %>
