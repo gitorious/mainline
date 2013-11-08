@@ -37,7 +37,9 @@ module Gitorious
       (<span class="gts-diff-add">+#{adds(diff)}</span>/<span class="gts-diff-rm">-#{rms(diff)}</span>)
     </li>
   </ul>
-  <table class="gts-code-listing#{class_name}">
+  <div class="gts-code-listing-wrapper">
+    <table class="gts-code-listing#{class_name}">
+  </div>
 #{diff.render(callback_class.new).force_utf8}
   </table>
 </div>
