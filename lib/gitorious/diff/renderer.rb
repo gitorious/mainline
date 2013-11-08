@@ -39,9 +39,9 @@ module Gitorious
   </ul>
   <div class="gts-code-listing-wrapper">
     <table class="gts-code-listing#{class_name}">
-  </div>
 #{diff.render(callback_class.new).force_utf8}
-  </table>
+    </table>
+  </div>
 </div>
         HTML
       end

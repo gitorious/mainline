@@ -201,7 +201,7 @@ module ApplicationHelper
 
   def render_pagination_links(collection, options = {})
     default_options = {
-      :previous_label => "Previous",
+      :previous_label => '',
       :next_label => "Next",
       :container => "True"
     }
