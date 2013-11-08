@@ -50,6 +50,10 @@ class Group < ActiveRecord::Base
 
   # Finds the most active groups by activity in repositories they're committers in
   def self.most_active(limit = 10, cutoff = 5)
+    active(cutoff).limit(limit)
+  end
+
+  def self.active(cutoff = 30)
     # FIXME: there's a certain element of approximation in here
     where("committerships.repository_id = events.target_id and " +
           "events.target_type = ? AND events.created_at > ?",
@@ -57,8 +61,7 @@ class Group < ActiveRecord::Base
           cutoff.days.ago).
       joins(:committerships => { :repository => :events }).
       group("groups.id").
-      order("count(events.id) desc").
-      limit(limit)
+      order("count(events.id) desc")
   end
 
   def all_related_project_ids
