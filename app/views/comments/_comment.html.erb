@@ -29,7 +29,7 @@ comment = CommentPresenter.new(comment, self)
     <%= comment.line_number %>
     <%= comment.state_changed %>
     <div class="gts-comment-meta">
-      <%= comment.timestamp %>
+      <%= link_to comment.timestamp, "#comment-#{comment.id}" %>
       <%= comment.edit_link %>
     </div>
   </div>
