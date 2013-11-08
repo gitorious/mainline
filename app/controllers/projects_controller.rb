@@ -226,7 +226,9 @@ class ProjectsController < ApplicationController
   def paginated_projects
     page = (params[:page] || 1).to_i
     projects, pages = JustPaginate.paginate(page, Project.per_page, Project.count) do |range|
-      Project.offset(range.first).limit(range.count).includes(:tags, { :repositories => :project })
+      Project.
+        active.offset(range.first).limit(range.count).
+        includes(:tags, { :repositories => :project })
     end
     projects = filter(projects) if Gitorious.private_repositories?
     [projects, pages, page]
