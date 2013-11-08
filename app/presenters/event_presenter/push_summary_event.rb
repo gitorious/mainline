@@ -92,7 +92,7 @@ class EventPresenter
     def diff_url
       if commit_count > 1
         view.project_repository_commit_compare_path(
-          project, repository, first_sha, last_sha
+          project, repository, :from_id => first_sha, :id => last_sha
         )
       else
         view.project_repository_commit_path(project, repository, last_sha)
