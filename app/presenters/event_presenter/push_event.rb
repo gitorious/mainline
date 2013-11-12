@@ -6,6 +6,14 @@ class EventPresenter
       action_for_event(:event_pushed, :link => repository_link)
     end
 
+    def body
+      if commits
+        super
+      else
+        ''
+      end
+    end
+
     def repository_link
       link_to("#{repo_title(repository, project)}", [project, repository])
     end
