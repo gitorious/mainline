@@ -17,9 +17,7 @@
   #++
 %>
 
-<% timestamp = l(event.created_at, :format => :short) %>
-
-<div class="gts-event" title="<%= timestamp %>">
+<div class="gts-event">
   <% if event.has_avatar? %>
     <div class="gts-event-actor-avatar">
       <%= avatar(event.user, :size => 24) %>
