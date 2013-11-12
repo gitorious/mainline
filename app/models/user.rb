@@ -1,4 +1,4 @@
-# encoding: utf-8
+#.present encoding: utf-8
 #--
 #   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)

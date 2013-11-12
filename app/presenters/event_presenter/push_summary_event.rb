@@ -15,11 +15,8 @@ class EventPresenter
     end
 
     def action
-      link_title = commit_count > 1 ? "#{commit_count} commits" : "1 commit"
-      diff_link = link_to(link_title, diff_url)
-      action_for_event(:event_pushed_n, :commit_link => diff_link) {
-        ['to', commit_link(h("#{title}:#{branch}"))].join(' ')
-      }
+      link = commit_link(h("#{title}:#{branch}"))
+      action_for_event(:event_pushed, :link => link)
     end
 
     def category
@@ -31,8 +28,8 @@ class EventPresenter
         inner_html = commits.map { |commit| render_commit(commit) }
 
         if commit_count >= COMMIT_LIMIT
-          inner_html << content_tag(:li) {
-            link_to("View all &raquo;".html_safe, diff_url)
+          inner_html << content_tag(:li, :class => 'gts-view-all-commits') {
+            link_to("View all #{commit_count} commits &raquo;".html_safe, diff_url)
           }
         end
 
@@ -51,7 +48,8 @@ class EventPresenter
 
       content =
         if user
-          "#{view.avatar(user, :size => 16, :class => 'gts-avatar')} #{link} #{message}"
+          user_presenter = UserPresenter.new(user, view)
+          "#{user_presenter.avatar_link} #{link} #{message}"
         else
           "#{commit.actor_display} #{link} #{message}"
         end

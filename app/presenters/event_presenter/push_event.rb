@@ -1,29 +1,9 @@
 class EventPresenter
 
   class PushEvent < PushSummaryEvent
-    COMMIT_LIMIT = 3
 
     def action
-      if single_commit? || commit_count == 0
-        commit = first_sha || data
-
-        commit_link = link_to(
-          commit[0,8],
-          view.project_repository_commit_path(project, repository, commit)
-        )
-      else
-        commit_link = link_to("#{commit_count} commits", diff_url)
-      end
-
-      action_for_event(:event_pushed_n, :commit_link => commit_link) { "to #{repository_link}" }
-    end
-
-    def body
-      if commit_count > 0
-        super
-      else
-        ''
-      end
+      action_for_event(:event_pushed, :link => repository_link)
     end
 
     def repository_link

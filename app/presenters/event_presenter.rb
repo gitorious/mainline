@@ -31,8 +31,10 @@ class EventPresenter
   private
 
   def action_for_event(key, options = {}, &block)
-    header = I18n.t("application_helper.#{key}", options)
-    [header, block.call].join(' ')
+    parts = [I18n.t("application_helper.#{key}", options)]
+    parts << block.call if block
+    parts << view.time_ago(created_at)
+    parts.join(' ')
   end
 
   def method_missing(name, *args, &block)

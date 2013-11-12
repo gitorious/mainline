@@ -159,6 +159,7 @@
       :event_status_pushed => 'pushed some commits',
       :event_status_committed => 'committed',
       :event_pushed_n => "pushed %{commit_link}",
+      :event_pushed => 'pushed to %{link}',
       :more_info => "More info…"
     },
     :project => {
