@@ -33,7 +33,12 @@ class LicensesController < ApplicationController
       flash[:notice] = t("views.license.terms_already_accepted")
       redirect_to(:action => :show) and return
     end
-    render("edit", :locals => { :user => current_user })
+
+    respond_to do |format|
+      format.html do
+        render 'edit', :locals => { :user => current_user }
+      end
+    end
   end
 
   def update
