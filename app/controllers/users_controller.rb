@@ -82,7 +82,11 @@ class UsersController < ApplicationController
       partial = EDIT_VIEWS.fetch(active_tab)
       render :partial => partial, :locals => locals
     else
-      render(:edit, :locals => locals)
+      respond_to do |format|
+        format.html do
+          render :edit, :locals => locals
+        end
+      end
     end
   end
 
