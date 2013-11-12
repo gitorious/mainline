@@ -65,6 +65,10 @@ class Page
     @blob.id.nil?
   end
 
+  def binary?
+    @blob.binary?
+  end
+
   def new_record?
     # always false as a easy hack around rails' form handling
     false

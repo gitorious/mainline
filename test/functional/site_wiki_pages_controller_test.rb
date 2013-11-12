@@ -28,11 +28,9 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
   context "show" do
     should "redirects to edit if the page is new, and user is logged in" do
       logout
-      page_stub = mock("page stub")
-      page_stub.expects(:new?).returns(true)
-      page_stub.expects(:title).at_least_once.returns("Home")
-      Site.any_instance.expects(:wiki).returns(mock("git"))
-      Page.expects(:find).returns(page_stub)
+      page_stub = stub("page stub", :new? => true, :title => "Home", :binary? => false)
+      Site.any_instance.stubs(:wiki).returns(mock("git"))
+      Page.stubs(:find).returns(page_stub)
 
       get :show, :id => "Home"
       assert_response :success

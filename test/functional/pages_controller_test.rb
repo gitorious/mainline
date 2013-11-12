@@ -62,11 +62,10 @@ class PagesControllerTest < ActionController::TestCase
   context "show" do
     should "render error page if the page is new, and no user is logged in" do
       logout
-      page_stub = mock("page stub")
-      page_stub.expects(:new?).returns(true)
-      page_stub.expects(:title).at_least_once.returns("Home")
-      Repository.any_instance.expects(:git).returns(mock("git"))
-      Page.expects(:find).returns(page_stub)
+      page_stub = stub("page stub", :binary? => false,
+                       :new? => true, :title => "Home")
+      Repository.any_instance.stubs(:git => mock("git"))
+      Page.stubs(:find).returns(page_stub)
 
       get :show, :project_id => @project.to_param, :id => "Home"
 
@@ -139,6 +138,29 @@ class PagesControllerTest < ActionController::TestCase
         assert_raise Grit::NoSuchPathError do
           get :show, :project_id => @project.to_param, :id => "Home"
         end
+      end
+    end
+
+    context "get show" do
+      include SampleRepoHelpers
+
+      setup do
+        repo = sample_repo('sample_wiki')
+        Repository.any_instance.stubs(:git).returns(repo)
+
+        login_as :johan
+      end
+
+      should "render images uploaded to the wiki" do
+        get :show, :project_id => @project.to_param, :id => "foo", :format => "gif"
+
+        assert_response 200
+      end
+
+      should "return 404 for unknown images" do
+        get :show, :project_id => @project.to_param, :id => "no_such_image", :format => "gif"
+
+        assert_response 404
       end
     end
 

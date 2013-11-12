@@ -39,7 +39,12 @@ class WikiController < ApplicationController
   end
 
   def render_show(owner, page)
+    if page.binary?
+      return render :text => page.content
+    end
+
     if page.new?
+      return render_not_found unless default_format?
       redirect_to(edit_wiki_page_path(owner, params[:id])) and return if logged_in?
       render("pages/no_page", :locals => { :owner => owner, :page => page }) and return
     end
@@ -80,6 +85,10 @@ class WikiController < ApplicationController
     wiki.tree.contents.select do |n|
       n.name =~ /\.#{Page::DEFAULT_FORMAT}$/
     end
+  end
+
+  def default_format?
+    params[:format].blank?
   end
 
   helper_method :page_history_path

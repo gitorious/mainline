@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 f84e0d74aab9553dcb2a384fac9fff218352d662 Adam Pohorecki <adam@pohorecki.pl> 1384253784 +0100	clone: from vagrant@vagrant:asdadasdasd/asdadasdasd-gitorious-wiki.git
+f84e0d74aab9553dcb2a384fac9fff218352d662 aa1a39d2edeba3fd2cac8247012940f9cf3efd17 Adam Pohorecki <adam@pohorecki.pl> 1384253819 +0100	commit: Add foo.png
+aa1a39d2edeba3fd2cac8247012940f9cf3efd17 45e6d0af9d8b320f400e41a3a773fde7932d4f5e Adam Pohorecki <adam@pohorecki.pl> 1384254401 +0100	commit (amend): Add foo.gif
+45e6d0af9d8b320f400e41a3a773fde7932d4f5e 58cbe20caa506c79a8fa5d577eb405c4c7145cef Adam Pohorecki <adam@pohorecki.pl> 1384254416 +0100	commit (amend): Add foo.gif

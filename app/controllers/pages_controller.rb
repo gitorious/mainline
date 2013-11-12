@@ -35,7 +35,8 @@ class PagesController < WikiController
   end
 
   def show
-    page = Page.find(params[:id], @project.wiki_repository.git)
+    format = default_format? ? Page::DEFAULT_FORMAT : params[:format]
+    page = Page.find(params[:id], @project.wiki_repository.git, format)
     render_show(ProjectPresenter.new(@project), page)
   end
 
