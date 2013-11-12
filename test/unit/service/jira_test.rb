@@ -71,7 +71,7 @@ class Service::JiraTest < ActiveSupport::TestCase
           :update => {
             :comment => [{
               :add => {
-                :body => "#{@commit['message']}\n#{@commit['url']}"
+                :body => "#{@commit['message']}\n\nvia #{@commit['url']}"
               }
             }]
           },

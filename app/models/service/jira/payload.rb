@@ -52,7 +52,15 @@ class Service::Jira < Service::Adapter
     end
 
     def comment
-      payload.values_at('message', 'url').join("\n")
+      "#{message}\n\nvia #{commit_url}"
+    end
+
+    def message
+      payload['message']
+    end
+
+    def commit_url
+      payload['url']
     end
 
     def id_or_name(input)
