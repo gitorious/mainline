@@ -19,7 +19,7 @@ class EventPresenter
 
     def body
       link_to(
-        truncate(h(target.proposal), :length => 100),
+        truncate(h(target.summary), :length => 100),
         [project, target.target_repository, target]
       )
     end
