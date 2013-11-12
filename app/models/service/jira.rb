@@ -33,17 +33,19 @@ class Service::Jira < Service::Adapter
   end
 
   def notify(http_client, payload)
-    data = Service::Jira::Payload.new(payload)
+    payload['commits'].each do |commit|
+      data = Service::Jira::Payload.new(commit)
 
-    return unless data.any?
+      return unless data.any?
 
-    url  = service_url(data.issue_id)
-    body = data.to_json
+      url  = service_url(data.issue_id)
+      body = data.to_json
 
-    http_client.post(url,
-      :body         => body,
-      :content_type => "application/json",
-      :basic_auth   => { :user => username, :password => password }
-    )
+      http_client.post(url,
+        :body         => body,
+        :content_type => "application/json",
+        :basic_auth   => { :user => username, :password => password }
+      )
+    end
   end
 end

@@ -51,9 +51,12 @@ class Service::JiraTest < ActiveSupport::TestCase
     %w(transition status).each do |keyword|
       setup do
         @payload = {
-          "url"     => "http://some.commit",
-          "message" => "hello world [#123 #{keyword}:yo resolution:oh-hai]"
+          "commits" => [
+            "url"     => "http://some.commit",
+            "message" => "hello world [#123 #{keyword}:yo resolution:oh-hai]"
+          ]
         }
+        @commit = @payload["commits"].first
 
         @http = mock
       end
@@ -68,7 +71,7 @@ class Service::JiraTest < ActiveSupport::TestCase
           :update => {
             :comment => [{
               :add => {
-                :body => "#{@payload['message']}\n#{@payload['url']}"
+                :body => "#{@commit['message']}\n#{@commit['url']}"
               }
             }]
           },
@@ -86,7 +89,7 @@ class Service::JiraTest < ActiveSupport::TestCase
       end
 
       should "do nothing if message doesn't include #{keyword} info" do
-        payload = { "message" => "hello world [#123 foo:bar]" }
+        payload = { "commits" => [ { "message" => "hello world [#123 foo:bar]" } ] }
         http    = mock
 
         assert_nil jira.notify(http, payload)
@@ -94,7 +97,7 @@ class Service::JiraTest < ActiveSupport::TestCase
     end
 
     should "do nothing if message doesn't include issue id" do
-      payload = { "message" => "hello world [123 transition:oh-hai]" }
+      payload = { "commits" => [ { "message" => "hello world [123 transition:oh-hai]" } ] }
       http    = mock
 
       assert_nil jira.notify(http, payload)
