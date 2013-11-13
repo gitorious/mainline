@@ -27,7 +27,7 @@ task :fix_dangling_repositories do
       joins("LEFT OUTER JOIN #{table_name} ON #{table_name}.id = repositories.owner_id").
       where(:owner_type => name, table_name => { :id => nil })
 
-    Rails.logger.debug "[fix_dangling_repositories] removing #{repositories.count} orphaned repositories"
+    puts "[fix_dangling_repositories] removing #{repositories.count} orphaned repositories"
 
     repositories.each do |repository|
       begin

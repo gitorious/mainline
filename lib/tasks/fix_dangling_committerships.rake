@@ -7,7 +7,7 @@ task :fix_dangling_committerships do
       joins("LEFT OUTER JOIN #{table_name} ON #{table_name}.id = committerships.committer_id").
       where(:committer_type => owner.name, table_name => { :id => nil })
 
-    Rails.logger.debug "[fix_dangling_committerships] removing #{committerships.count} orphaned committerships"
+    puts "[fix_dangling_committerships] removing #{committerships.count} orphaned committerships"
 
     committerships.each do |committership|
       begin
