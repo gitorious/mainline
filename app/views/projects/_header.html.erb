@@ -17,14 +17,13 @@
   #++
 %>
 
-<%
-@body_class = "gts-private" if project.private?
-%>
+<% @body_class = "gts-private" if project.private?  %>
 
 <%= site_header :data => { 'gts-env-project-view-state-path' => project_view_state_users_path(project, :format => "json") } do %>
   <h2>
     <%= link_to(project.title, project) %>
   </h2>
+  <%= render "projects/links", :project => project %>
   <div class="gts-markup">
     <%= render_markdown(project.description).html_safe %>
   </div>

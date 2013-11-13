@@ -1,0 +1,17 @@
+<ul class="gts-project-links">
+  <% if project.home_url.present? %>
+    <li>
+      <%= link_to 'Home page', project.home_url %>
+    </li>
+  <% end %>
+  <% if project.mailinglist_url.present? %>
+    <li>
+      <%= link_to 'Mailing list', project.mailinglist_url %>
+    </li>
+  <% end %>
+  <% if project.bugtracker_url.present? %>
+    <li>
+      <%= link_to 'Bug tracker', project.bugtracker_url %>
+    </li>
+  <% end %>
+</ul>
