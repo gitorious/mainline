@@ -39,7 +39,7 @@
   <% else %>
     <%= render "commit_list", :range => range, :repository => @repository %>
     <%= pull_box 'Summary' do %>
-      <%= render_diff_stats(commit.stats) %>
+      <%= render_diff_stats(stats) %>
     <% end %>
     <%= render_diffmode_selector(repository, commit, renderer.mode) %>
     <% diffs.each do |diff| %>

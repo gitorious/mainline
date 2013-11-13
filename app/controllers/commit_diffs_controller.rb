@@ -35,8 +35,11 @@ class CommitDiffsController < ApplicationController
   attr_reader :commit
 
   def show
+    from = params[:from_id]
+    to = params[:id]
     repository = RepositoryPresenter.new(@repository)
-    range      = CommitRangePresenter.build(params[:from_id], params[:id], @repository)
+    range = CommitRangePresenter.build(from, to, @repository)
+    stats = Gitorious::DiffStats.for(from, to, @repository.git)
 
     if range.any?
       render("show", :locals => {
@@ -44,7 +47,8 @@ class CommitDiffsController < ApplicationController
           :range => range,
           :repository => repository,
           :commit => commit,
-          :diffs => Grit::Commit.diff(@repository.git, params[:from_id], params[:id])
+          :stats => stats,
+          :diffs => Grit::Commit.diff(@repository.git, from, to)
         })
     else
       render_not_found
