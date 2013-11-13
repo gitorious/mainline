@@ -24,12 +24,7 @@
         :title => atom_auto_discovery_title) %>
 <% end %>
 
-<%= partial("projects/header", {
-        :project => project,
-        :app => Gitorious,
-        :active => :community,
-        :header_level => 2
-      }) %>
+<%= render "projects/header", :project => project, :active => :community %>
 
 <div class="container" id="gts-pjax-container">
   <div class="row-fluid">

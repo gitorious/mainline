@@ -24,19 +24,13 @@
 
 <% @title = project.title -%>
 
-<%= partial("projects/header", {
-        :project => project,
-        :app => Gitorious,
-        :active => :activities,
-        :header_level => 1
-      }) %>
+<%= render "projects/header", :project => project, :active => :activities %>
 
 <div class="container" id="gts-pjax-container">
   <div class="row-fluid">
     <div class="span8">
       <h2 class="gts-legend">
         <%= t("views.events.title", :name => h(project.name)) %>
-
         <div class="pull-right">
           <%= feed_icon atom_auto_discovery_url %>
         </div>

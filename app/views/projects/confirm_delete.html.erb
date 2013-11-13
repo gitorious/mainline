@@ -21,19 +21,16 @@
   #++
   %>
 
-<%= partial("projects/header", {
-        :project => project,
-        :app => Gitorious,
-        :active => :admin,
-        :header_level => 2
-      }) %>
+<%= render "projects/header", :project => project, :active => :admin %>
 
 <div class="container" id="gts-pjax-container">
   <div class="alert alert-error">
     <%= form_for project, :html => { :method => :delete, :class => "form-horizontal" } do |f| -%>
       <fieldset>
-        <h1><%= @title = "Permanently delete project #{project.name}?" %></h1>
-        <p>
+        <legend>
+          <%= @title = "Permanently delete #{project.name}?" %>
+        </legend>
+        <p class="well">
           Are you sure you want to delete this project? There is no going back.
           The project, all its repositories along with all their meta data will
           be irrevocably removed.

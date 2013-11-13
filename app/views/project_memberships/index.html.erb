@@ -15,16 +15,14 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
-<%= partial("projects/header", {
-        :project => ProjectPresenter.new(project),
-        :app => Gitorious,
-        :active => :admin,
-        :header_level => 2
-      }) %>
+%>
+
+<%= render "projects/header", :project => ProjectPresenter.new(project), :active => :admin %>
 
 <div class="container" id="gts-pjax-container">
-  <h1><%= @title = "User & team access to #{project.slug}" %></h1>
+  <h2 class="gts-legend">
+    <%= @title = "User & team access to #{project.slug}" %>
+  </h2>
   <%= render("content_memberships/memberships", {
           :public => project.public?,
           :project => project,

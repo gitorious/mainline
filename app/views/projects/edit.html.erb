@@ -20,15 +20,11 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
-<%= partial("projects/header", {
-        :project => ProjectPresenter.new(project),
-        :app => Gitorious,
-        :active => :admin,
-        :header_level => 2
-      }) %>
+%>
 
 <% @title = "Edit #{project.title}" %>
+
+<%= render "projects/header", :project => ProjectPresenter.new(project), :active => :admin  %>
 
 <div class="container" id="gts-pjax-container">
   <%= simple_form_for(project, :builder => Gitorious::View::FormBuilder, :method => project.persisted? ? :put : :post, :html => { :class => "form form-horizontal" }) do |f| %>
