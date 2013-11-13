@@ -557,6 +557,10 @@ input[type=url].gts-current-repo-url {
   margin-top: -1px;
 }
 
+.gts-event-commit-list .gts-view-all-commits {
+  margin-top: 5px;
+}
+
 .gts-avatar {
   margin: 0 6px;
   -webkit-border-radius: 3px;
@@ -1460,4 +1464,21 @@ table td .gts-committer-list {
 }
 
 /* ~ listings */
+
+/* projects */
+
+.gts-project-links {
+  margin: -10px 0 10px 0;
+}
+
+.gts-project-links li {
+  display: inline-block;
+  padding-right: 10px;
+}
+
+.gts-project-links li a {
+  color: #5396D5;
+}
+
+/* ~ projects */
 
