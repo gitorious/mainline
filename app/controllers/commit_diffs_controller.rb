@@ -22,6 +22,7 @@
 require "gitorious/diff/inline_renderer"
 require "gitorious/diff/sidebyside_renderer"
 require "gitorious/view/dolt_url_helper"
+require "gitorious/diff_stats"
 
 class CommitDiffsController < ApplicationController
   include Gitorious::View::DoltUrlHelper
