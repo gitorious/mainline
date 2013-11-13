@@ -20,12 +20,7 @@
 
 <% type = owner.class.model_name.underscore %>
 
-<%= partial("#{type.pluralize}/header", {
-        type.to_sym => owner,
-        :app => Gitorious,
-        :active => :wiki,
-        :header_level => 2
-      }) %>
+<%= render "#{type.pluralize}/header", type.to_sym => owner, :active => :wiki %>
 
 <% @title = h(owner.title) + " - " + h(page.title) + " - " + t("views.layout.pages") %>
 
