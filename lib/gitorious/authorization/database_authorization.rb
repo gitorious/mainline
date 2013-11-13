@@ -119,7 +119,7 @@ module Gitorious
       end
 
       def can_edit_comment?(user, comment)
-        comment.creator?(user) && comment.recently_created?
+        comment.editable? && comment.creator?(user) && comment.recently_created?
       end
 
       def can_grant_access_project?(candidate, project)

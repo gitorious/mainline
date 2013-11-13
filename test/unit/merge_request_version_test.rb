@@ -187,6 +187,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
 
     should "create a comment when created" do
       assert_not_nil @comment
+      refute @comment.editable?
       assert @comment.body =~ /Pushed new version [\d]+/
     end
   end

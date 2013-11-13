@@ -141,6 +141,7 @@ class MergeRequestVersion < ActiveRecord::Base
   def add_creation_comment
     comment = comments.build(:user => merge_request.user,
       :body => "Pushed new version #{version}",
+      :editable => false,
       :project => merge_request.project)
     comment.save!
   end

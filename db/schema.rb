@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130827094635) do
+ActiveRecord::Schema.define(:version => 20131113123654) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -40,8 +40,8 @@ ActiveRecord::Schema.define(:version => 20130827094635) do
   add_index "cloners", ["repository_id"], :name => "index_cloners_on_repository_id"
 
   create_table "comments", :force => true do |t|
-    t.integer  "user_id",           :null => false
-    t.integer  "target_id",         :null => false
+    t.integer  "user_id",                             :null => false
+    t.integer  "target_id",                           :null => false
     t.string   "sha1"
     t.text     "body"
     t.datetime "created_at"
@@ -54,6 +54,7 @@ ActiveRecord::Schema.define(:version => 20130827094635) do
     t.integer  "number_of_lines"
     t.text     "context"
     t.string   "last_line_number"
+    t.boolean  "editable",          :default => true
   end
 
   add_index "comments", ["project_id"], :name => "index_comments_on_project_id"
