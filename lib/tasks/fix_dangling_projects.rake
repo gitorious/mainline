@@ -7,7 +7,7 @@ task :fix_dangling_projects do
       joins("LEFT OUTER JOIN #{table_name} ON #{table_name}.id = projects.owner_id").
       where(:owner_type => owner.name, table_name => { :id => nil })
 
-    Rails.logger.debug "[fix_dangling_projects] removing #{projects.count} orphaned projects"
+    puts "[fix_dangling_projects] removing #{projects.count} orphaned projects"
 
     projects.each do |project|
       begin

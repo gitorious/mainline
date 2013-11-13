@@ -8,7 +8,7 @@ task :fix_dangling_repositories do
       joins("LEFT OUTER JOIN #{table_name} ON #{table_name}.id = repositories.#{name.underscore}_id").
       where(table_name => { :id => nil })
 
-    Rails.logger.debug "[fix_dangling_repositories] removing #{repositories.count} orphaned repositories"
+    puts "[fix_dangling_repositories] removing #{repositories.count} orphaned repositories"
 
     repositories.each do |repository|
       begin

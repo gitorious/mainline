@@ -7,7 +7,7 @@ task :fix_dangling_comments do
       joins("LEFT OUTER JOIN #{table_name} ON #{table_name}.id = comments.target_id").
       where(:target_type => target.name, table_name => { :id => nil })
 
-    Rails.logger.debug "[fix_dangling_comments] removing #{comments.count} orphaned comments"
+    puts "[fix_dangling_comments] removing #{comments.count} orphaned comments"
 
     comments.each do |comment|
       begin
