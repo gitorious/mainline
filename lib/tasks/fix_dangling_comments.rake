@@ -9,11 +9,13 @@ task :fix_dangling_comments do
 
     puts "[fix_dangling_comments] removing #{comments.count} orphaned comments"
 
-    comments.each do |comment|
-      begin
-        comment.destroy
-      rescue => e
-        comment.delete
+    comments.find_in_batches(:batch_size => 100) do |comment_batch|
+      comment_batch.each do |comment|
+        begin
+          comment.destroy
+        rescue => e
+          comment.delete
+        end
       end
     end
   end
