@@ -27,7 +27,7 @@ module Gitorious
 
       def render(file)
         diff = ::Diff::Display::Unified.new(file.diff)
-        a_path = file.a_path.force_utf8
+        a_path = file.a_path && file.a_path.force_utf8
         class_name = respond_to?(:table_class) ? " " + table_class : ""
         <<-HTML
 <div class="gts-file">
