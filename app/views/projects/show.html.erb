@@ -35,7 +35,11 @@
           <%= feed_icon atom_auto_discovery_url %>
         </div>
       </h2>
-      <%= render 'events/events', :events => events %>
+      <%= render 'events/events', {
+            :events       => events,
+            :current_page => current_page,
+            :total_pages  => total_pages
+          } %>
     </div>
     <div class="span4">
       <%= render "repositories/repositories", {

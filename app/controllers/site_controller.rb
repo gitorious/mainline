@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -114,6 +114,8 @@ class SiteController < ApplicationController
             :active_tab => active_tab,
             :user => dashboard_presenter.user,
             :events => events,
+            :current_page => events.current_page,
+            :total_pages => events.total_pages,
             :projects => dashboard_presenter.projects,
             :repositories => dashboard_presenter.repositories,
             :favorites => dashboard_presenter.favorites,

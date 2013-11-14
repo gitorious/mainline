@@ -34,7 +34,7 @@ class RepositoryActivitiesController < ApplicationController
       format.html do
         render(:action => :index, :locals => locals(repository, events).merge({
               :ref => repository.head_candidate_name,
-              :page => page,
+              :current_page => page,
               :total_pages => total_pages,
               :atom_auto_discovery_url => activities_project_repository_path(repository.project, repository, :format => :atom),
               :atom_auto_discovery_title => "#{repository.title} ATOM feed"

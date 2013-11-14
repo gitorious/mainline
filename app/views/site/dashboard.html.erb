@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2013 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,13 @@
 <div class="container gts-container">
   <div class="row-fluid">
     <div class="span7">
-      <%= render 'site/dashboard/activities',
+      <%= render 'site/dashboard/activities', {
         :atom_auto_discovery_url => atom_auto_discovery_url,
-        :events => events, :active_tab => active_tab %>
+        :events => events,
+        :current_page => current_page,
+        :total_pages => total_pages,
+        :active_tab => active_tab
+      } %>
     </div>
     <div class="span5">
       <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
