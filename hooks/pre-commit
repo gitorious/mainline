@@ -1,0 +1,20 @@
+#!/bin/bash
+
+year=$(date '+%Y')
+IFS=$'\r\n' files=($(git diff --cached --name-only --diff-filter=ACM | egrep "\.e?rb\$"))
+bad=""
+
+for filename in ${files[*]}
+do
+  head -n 10 $filename | grep "Copyright.*$year" >/dev/null || bad="$bad$filename\n"
+done
+
+if [ -n "$bad" ]
+then
+  echo -e "Following files don't include the copyright line for year $year:\n"
+  echo -e $bad
+  echo "Add/update the copyright lines before commiting."
+  exit 1
+else
+  exit 0
+fi
