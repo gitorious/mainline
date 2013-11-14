@@ -26,6 +26,6 @@ class DiffStatsTests < MiniTest::Spec
     from = "b3f9782d5dc0b97b1efcccb1da651af3f646bf4a"
     to = "976587e5dcd6dddebf0bd3b1c51f68853ac8ac64"
     stats = Gitorious::DiffStats.for(from, to, sample_repo)
-    assert_equal ['readme.text', 'installation.txt'], stats.files.map(&:first)
+    assert_equal ['installation.txt', 'readme.txt'], stats.files.map(&:first).sort
   end
 end
