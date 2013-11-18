@@ -16,11 +16,16 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
+%>
+
+<% @title = "Users & teams collaborating on #{repository.slug}" %>
+
 <%= repo_header repository, :current_user => current_user, :active => :admin, :header_level => 2 %>
 
 <div class="container" id="gts-pjax-container">
-  <h1><%= @title = "Users & teams collaborating on #{repository.slug}" %></h1>
+  <h2 class="gts-legend">
+    <%= @title %>
+  </h2>
   <%= render(:partial => "committerships/committerships", :locals => {
           :committerships => committerships,
           :repository => repository
