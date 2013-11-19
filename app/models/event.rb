@@ -197,6 +197,10 @@ class Event < ActiveRecord::Base
     result
   end
 
+  def diff_body(start_sha, end_sha)
+    target.git.git.show({}, [start_sha, end_sha].join(".."))
+  end
+
   protected
   def user_email_set?
     !user_email.blank?

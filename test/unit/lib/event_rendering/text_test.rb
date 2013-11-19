@@ -404,7 +404,7 @@ class TextEventRenderingTest < ActiveSupport::TestCase
       data = [@first_sha, @last_sha, "master", "10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
       @event.data = data
       @event.target = repositories(:johans)
-      mock_git_git_show_call
+      stub_git_git_show_call
     end
 
     should "include the ref change" do
@@ -425,6 +425,12 @@ class TextEventRenderingTest < ActiveSupport::TestCase
       assert res.include?("#{@repository.name}/commit/#{@first_sha}/diffs/#{@last_sha}")
     end
 
+    should "not include the diff, if it's too large" do
+      @event.stubs(:diff_body).raises(Grit::Git::GitTimeout)
+      res = render(@event)
+      assert_include res, "too large to be displayed"
+    end
+
    should "include the diff body" do
       res = render(@event)
       assert res.include?("Diff: \n\ndiff body")
@@ -436,11 +442,11 @@ class TextEventRenderingTest < ActiveSupport::TestCase
     ::EventRendering::Text.render(event)
   end
 
-  def mock_git_git_show_call
+  def stub_git_git_show_call
     @git = mock
-    @git.expects(:show).with({}, [@first_sha, @last_sha].join("..")).returns("diff body")
+    @git.stubs(:show).with({}, [@first_sha, @last_sha].join("..")).returns("diff body")
     @git_git = mock
-    @git_git.expects(:git).returns(@git)
-    @repository.expects(:git).returns(@git_git)
+    @git_git.stubs(:git).returns(@git)
+    @repository.stubs(:git).returns(@git_git)
   end
 end
