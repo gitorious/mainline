@@ -21,7 +21,7 @@ require "action_view"
 module Gitorious
   module Wiki
     module Content
-      BRACKETED_WIKI_WORD = /\[\[([A-Za-z0-9_\-]+)\]\]/
+      BRACKETED_WIKI_WORD = /\[\[([A-Za-z0-9_\- ]+)\]\]/
 
       def wikize(content)
         content = content.force_utf8
