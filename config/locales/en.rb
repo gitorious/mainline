@@ -199,7 +199,7 @@
         :manage_favorites => 'Manage favorites',
         :activities => 'News feed',
         :user_activities => 'Activities',
-        :my_activities => 'Your activities',
+        :my_activities => 'My activities',
         :sprintly => 'Sprint.ly',
         :web_hook => 'Web hooks'
       },
