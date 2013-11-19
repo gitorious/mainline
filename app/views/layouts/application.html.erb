@@ -31,7 +31,7 @@
       <meta class="csrf-token" content="<%= session[:_csrf_token] %>" name="csrf-token" data-gts-env-csrf-token="<%= session[:_csrf_token] %>">
     <% end %>
     <%= favicon.html_safe %>
-    <%= render "layouts/extra_html_head_data" %>
+    <%= partial "layouts/extra_html_head_data" %>
   </head>
   <body<%= " class=\"#{@body_class}\"".html_safe if @body_class %>>
     <div class="page-wrapper">
