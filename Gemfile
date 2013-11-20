@@ -40,14 +40,14 @@ group :test do
   gem "factory_girl_rails", "~> 1.7"
   gem "shoulda", "~> 3.3"
   gem "shoulda-matchers", "~> 1.4", :platforms => :ruby_18
-  gem "minitest", "4.2.0"
+  gem "minitest", "~> 4.7"
   gem "ci_reporter"
   gem "rcov", :platforms => :ruby_18
   gem "simplecov", :platforms => [:ruby_19, :ruby_20], :require => false
   gem "simplecov-rcov", :platforms => [:ruby_19, :ruby_20], :require => false
   gem "guard-minitest"
   gem "guard-ctags-bundler"
-  gem "zeus", "0.13.4.pre2"
+  gem "zeus", "0.14.0.rc1"
   gem "webmock"
   gem "capybara", "~> 2.1"
   gem "capybara_minitest_spec", "~> 1.0"
