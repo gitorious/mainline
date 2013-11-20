@@ -1,4 +1,12 @@
 GIT
+  remote: git://gitorious.org/gitorious/gitorious-issues.git
+  revision: 452118a3f2971858598e5fdf662e725a69f025d6
+  branch: master
+  specs:
+    gitorious-issues (0.0.1)
+      rails (~> 3.2.15)
+
+GIT
   remote: https://github.com/wrozka/grit.git
   revision: b8a6e359a81918368a053131cf2a3ea16ee41e20
   specs:
@@ -382,6 +390,7 @@ DEPENDENCIES
   foreman (~> 0.41)
   geoip (= 0.8.9)
   gitlab-grit!
+  gitorious-issues!
   gitorious_openid_auth (~> 1.1)
   guard-ctags-bundler
   guard-minitest
