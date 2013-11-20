@@ -346,4 +346,7 @@ Gitorious::Application.routes.draw do
       match "/blobs/*branch_and_path" => "blobs#show", :as => :blob, :format => false
     end
   end
+
+  # engines
+  mount Issues::Engine => "/"
 end
