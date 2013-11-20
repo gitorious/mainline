@@ -21,10 +21,10 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
 require "digest/sha1"
 require_dependency "event"
 require "open_id_authentication"
-require "create_openid_user"
 
 class User < ActiveRecord::Base
   include UrlLinting
