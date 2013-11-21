@@ -80,6 +80,7 @@ class ProjectsController < ApplicationController
     respond_to do |format|
       format.html do
         render(:show, :locals => {
+            :active => :activities,
             :project => ProjectPresenter.new(@project),
             :events => events,
             :current_page => page,
@@ -88,7 +89,7 @@ class ProjectsController < ApplicationController
             :mainlines => mainlines,
             :group_clones => group_clones,
             :user_clones => user_clones
-          })
+          }, :layout => 'project')
       end
 
       format.xml do

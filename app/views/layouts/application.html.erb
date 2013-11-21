@@ -34,32 +34,37 @@
     <%= partial "layouts/extra_html_head_data" %>
   </head>
   <body<%= " class=\"#{@body_class}\"".html_safe if @body_class %>>
+    <% if !defined?(main_app) %>
+      <% @main_app = self %>
+    <% else %>
+      <% @main_app = main_app %>
+    <% end %>
     <div class="page-wrapper">
       <div class="page-content">
         <div class="gts-masthead navbar">
           <div class="navbar-inner">
             <div class="container">
-              <a href="<%= root_path %>" class="gts-logo"><%= site_logo(current_site).html_safe %></a>
+              <a href="<%= @main_app.root_path %>" class="gts-logo"><%= site_logo(current_site).html_safe %></a>
               <ul class="nav">
                 <li>
-                  <a href="<%= activity_path %>">Activities</a>
+                  <a href="<%= @main_app.activity_path %>">Activities</a>
                 </li>
                 <li>
-                  <a href="<%= projects_path %>">Projects</a>
+                  <a href="<%= @main_app.projects_path %>">Projects</a>
                 </li>
                 <li>
-                  <a href="<%= groups_path %>">Teams</a>
+                  <a href="<%= @main_app.groups_path %>">Teams</a>
                 </li>
                 <li>
-                  <a href="<%= about_path %>">About</a>
+                  <a href="<%= @main_app.about_path %>">About</a>
                 </li>
               </ul>
               <div class="pull-right">
-                <form action="<%= search_path %>" class="navbar-search pull-left" method="get">
+                <form action="<%= @main_app.search_path %>" class="navbar-search pull-left" method="get">
                   <input type="search" placeholder="Search" class="search-query span2" name="q">
                 </form>
                 <div class="pull-right btn-group login_button">
-                  <a href="<%= login_path %>" class="btn btn-inverse">
+                  <a href="<%= @main_app.login_path %>" class="btn btn-inverse">
                     <i class="icon-user icon-white"></i> Sign in
                   </a>
                 </div>
@@ -79,13 +84,17 @@
                   :header_level => 2
                 }) %>
         <% end %>
-        <%= yield %>
+        <% if defined?(content_for?) %>
+          <%= content_for?(:content) ? yield(:content) : yield %>
+        <% else %>
+          <%= yield %>
+        <% end %>
       </div>
     </div>
     <div class="footer">
       <%= partial("layouts/footer", :current_site => current_site) %>
     </div>
-    <script data-gts-env-user-view-state-path="<%= view_state_users_path(:format => "json") %>"></script>
+    <script data-gts-env-user-view-state-path="<%= @main_app.view_state_users_path(:format => "json") %>"></script>
     <% repo = defined?(repository_meta) ? repository_meta : (defined?(repository) ? repository : nil) %>
     <% if repo %>
       <script

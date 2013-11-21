@@ -24,7 +24,7 @@
     </a>
   </p>
   <div class="row-fluid">
-    <% links = Gitorious::View.footer_links(self, current_site)
+    <% links = Gitorious::View.footer_links(defined?(main_app) ? main_app : self, current_site)
        links.each_slice((links.length / 3.0).ceil) do |slice| %>
       <div class="span3">
         <ul>

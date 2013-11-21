@@ -20,44 +20,38 @@
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
-  %>
+%>
 
-<% @title = project.title -%>
-
-<%= render "projects/header", :project => project, :active => :activities %>
-
-<div class="container" id="gts-pjax-container">
-  <div class="row-fluid">
-    <div class="span8">
-      <h2 class="gts-legend">
-        <%= t("views.events.title", :name => h(project.name)) %>
-        <div class="pull-right">
-          <%= feed_icon atom_auto_discovery_url %>
-        </div>
-      </h2>
-      <%= render 'events/events', {
-            :events       => events,
-            :current_page => current_page,
-            :total_pages  => total_pages
-          } %>
-    </div>
-    <div class="span4">
-      <%= render "repositories/repositories", {
-            :repositories => mainlines,
-            :hint => "This project does not yet have any repositories.",
-            :heading => "Repositories",
-            :footer => '<div class="pull-box-header-action">' +
-            "<a class=\"btn btn-primary\" href=\"#{new_project_repository_path(project)}\">" +
-            "<i class=\"icon-plus-sign icon-white\"></i> Add new</a></div>"
-          } %>
-      <%= render "repositories/repositories", {
-            :repositories => group_clones,
-            :heading => "Team clones"
-          } %>
-      <%= render "repositories/repositories", {
-            :repositories => user_clones,
-            :heading => "User clones"
-          } %>
-    </div>
+<div class="row-fluid">
+  <div class="span8">
+    <h2 class="gts-legend">
+      <%= t("views.events.title", :name => h(project.name)) %>
+      <div class="pull-right">
+        <%= feed_icon atom_auto_discovery_url %>
+      </div>
+    </h2>
+    <%= render 'events/events', {
+          :events       => events,
+          :current_page => current_page,
+          :total_pages  => total_pages
+        } %>
+  </div>
+  <div class="span4">
+    <%= render "repositories/repositories", {
+          :repositories => mainlines,
+          :hint => "This project does not yet have any repositories.",
+          :heading => "Repositories",
+          :footer => '<div class="pull-box-header-action">' +
+          "<a class=\"btn btn-primary\" href=\"#{new_project_repository_path(project)}\">" +
+          "<i class=\"icon-plus-sign icon-white\"></i> Add new</a></div>"
+        } %>
+    <%= render "repositories/repositories", {
+          :repositories => group_clones,
+          :heading => "Team clones"
+        } %>
+    <%= render "repositories/repositories", {
+          :repositories => user_clones,
+          :heading => "User clones"
+        } %>
   </div>
 </div>
