@@ -154,7 +154,7 @@ GEM
     json (1.7.7)
     just_paginate (0.2.2)
     kgio (2.8.0)
-    libdolt (0.33.9)
+    libdolt (0.33.10)
       force_utf8
       htmlentities (~> 4.3)
       json (~> 1.7)
@@ -390,7 +390,7 @@ DEPENDENCIES
   jruby-openssl
   json (>= 1.7.7, < 1.8)
   just_paginate (= 0.2.2)
-  libdolt (~> 0.33.9)
+  libdolt (~> 0.33.10)
   memcache-client (~> 1.8)
   mime-types (~> 1.16)
   minitest (~> 4.7)
