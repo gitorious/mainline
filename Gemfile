@@ -30,7 +30,9 @@ gem "airbrake", "~> 3.1.14", :require => false
 gem "simple_form", "~> 2.1"
 gem "force_utf8"
 
-gem "gitorious-issues", :git => "git://gitorious.org/gitorious/gitorious-issues.git", :branch => 'master'
+unless ENV['GTS_ENGINE']
+  gem "gitorious-issues", :git => "git://gitorious.org/gitorious/gitorious-issues.git", :branch => 'master'
+end
 
 group :openid do
   gem "ruby-openid", :require => "openid"

@@ -348,5 +348,5 @@ Gitorious::Application.routes.draw do
   end
 
   # engines
-  mount Issues::Engine => "/"
+  mount Issues::Engine => "/", :as => 'issues'
 end
