@@ -113,6 +113,9 @@ module Gitorious
 
     # require (Rails.root + "app/middlewares/git_http_cloner.rb").realpath
     # config.middleware.insert_before ActionDispatch::Cookies, ::GitHttpCloner
+
+    # Enable the asset pipeline
+    config.assets.enabled = true
   end
 end
 

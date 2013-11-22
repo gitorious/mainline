@@ -116,3 +116,7 @@ group :dolt do
   gem "creole"
   gem "wikicloth"
 end
+
+group :assets do
+  gem "sass-rails", "~> 3.2"
+end

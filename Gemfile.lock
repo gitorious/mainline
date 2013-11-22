@@ -1,6 +1,6 @@
 GIT
   remote: git://gitorious.org/gitorious/gitorious-issues.git
-  revision: d2a6b3d8735d691aa84aeda20914cbcb3486729a
+  revision: d952811b6a255ca4214886adaf6d6ca69558f897
   branch: master
   specs:
     gitorious-issues (0.0.1)
@@ -285,6 +285,11 @@ GEM
     rubypants (0.2.0)
     rugged (0.18.0.gh.de28323)
     safe_yaml (0.9.5)
+    sass (3.2.12)
+    sass-rails (3.2.6)
+      railties (~> 3.2.0)
+      sass (>= 3.1.10)
+      tilt (~> 1.3)
     shoulda (3.5.0)
       shoulda-context (~> 1.0, >= 1.0.1)
       shoulda-matchers (>= 1.4.1, < 3.0)
@@ -427,6 +432,7 @@ DEPENDENCIES
   resque-job-stats (~> 0.3.0)
   ruby-hmac (= 0.4.0)
   ruby-openid
+  sass-rails (~> 3.2)
   shoulda (~> 3.3)
   shoulda-matchers (~> 1.4)
   simple_form (~> 2.1)
