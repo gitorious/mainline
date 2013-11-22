@@ -10,6 +10,7 @@ coverage/*
 config/authentication.yml
 config/database.yml
 config/gitorious.yml
+config/gitorious.overrides.yml
 config/memcache.yml
 config/resque.yml
 config/unicorn.rb
