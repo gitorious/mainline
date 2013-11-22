@@ -22,12 +22,10 @@
   #++
 %>
 
-<% content_for :content do %>
+<%= inside_layout :application do %>
   <% @title = project.title -%>
   <%= render "projects/header", :project => project, :active => active %>
   <div class="container" id="gts-pjax-container">
     <%= yield %>
   </div>
 <% end %>
-
-<%= render :template => 'layouts/application' %>

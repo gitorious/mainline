@@ -280,4 +280,9 @@ module ApplicationHelper
       content_tag(:div, :class => 'container', &block)
     }
   end
+
+  def inside_layout(name, locals = {})
+    view_flow.set :layout, capture { yield }
+    render template: "layouts/#{name}", :locals => locals
+  end
 end
