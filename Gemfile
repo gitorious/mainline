@@ -51,7 +51,7 @@ group :test do
   gem "simplecov-rcov", :platforms => [:ruby_19, :ruby_20], :require => false
   gem "guard-minitest"
   gem "guard-ctags-bundler"
-  gem "zeus", "0.14.0.rc1"
+  gem "zeus", "0.13.4.pre2"
   gem "webmock"
   gem "capybara", "~> 2.1"
   gem "capybara_minitest_spec", "~> 1.0"
@@ -104,7 +104,7 @@ platform :ruby_18 do
 end
 
 group :dolt do
-  gem "libdolt", "~> 0.33.8"
+  gem "libdolt", "~> 0.33.10"
   gem "dolt", "~> 0.30.0"
   gem "tiltout", "~> 1.4"
 

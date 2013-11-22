@@ -162,11 +162,11 @@ GEM
     json (1.7.7)
     just_paginate (0.2.2)
     kgio (2.8.0)
-    libdolt (0.33.8)
+    libdolt (0.33.10)
       force_utf8
       htmlentities (~> 4.3)
       json (~> 1.7)
-      makeup (~> 0.4.1)
+      makeup (~> 0.4.2)
       mime-types (~> 1.19)
       rugged (= 0.18.0.gh.de28323)
       tzinfo (~> 0.3)
@@ -178,11 +178,11 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    makeup (0.4.1)
+    makeup (0.4.2)
       github-linguist (~> 2.8)
       github-markup (~> 0.7)
       htmlentities (~> 4.3)
-      pygments.rb (~> 0.4)
+      pygments.rb (~> 0.4, <= 0.5.2)
     memcache-client (1.8.5)
     metaclass (0.0.1)
     method_source (0.8.2)
@@ -222,7 +222,7 @@ GEM
       slop (~> 3.4)
     pry-rails (0.2.2)
       pry (>= 0.9.10)
-    pygments.rb (0.5.4)
+    pygments.rb (0.5.2)
       posix-spawn (~> 0.3.6)
       yajl-ruby (~> 1.1.0)
     rack (1.4.5)
@@ -365,7 +365,7 @@ GEM
     xpath (2.0.0)
       nokogiri (~> 1.3)
     yajl-ruby (1.1.0)
-    zeus (0.14.0.rc1)
+    zeus (0.13.4.pre2)
       method_source (>= 0.6.7)
 
 PLATFORMS
@@ -404,7 +404,7 @@ DEPENDENCIES
   jruby-openssl
   json (>= 1.7.7, < 1.8)
   just_paginate (= 0.2.2)
-  libdolt (~> 0.33.8)
+  libdolt (~> 0.33.10)
   memcache-client (~> 1.8)
   mime-types (~> 1.16)
   minitest (~> 4.7)
@@ -450,4 +450,4 @@ DEPENDENCIES
   webmock
   wikicloth
   will_paginate (~> 3.0)
-  zeus (= 0.14.0.rc1)
+  zeus (= 0.13.4.pre2)
