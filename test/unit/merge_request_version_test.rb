@@ -38,7 +38,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       tracking_repo.stubs(:git).returns(repo)
       @merge_request.stubs(:tracking_repository).returns(tracking_repo)
       @first_version.stubs(:merge_request).returns(@merge_request)
-      result = @first_version.affected_commits
+      @first_version.affected_commits
     end
 
     should 'cache affected_commits' do
@@ -64,17 +64,17 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
 
     should 'handle a range' do
       @diff_backend.expects(:commit_diff).with("ffc","ccf", true)
-      result = @version.diffs("ffc".."ccf")
+      @version.diffs("ffc".."ccf")
     end
 
     should 'handle a single commit' do
       @diff_backend.expects(:single_commit_diff).with("ffc")
-      result = @version.diffs("ffc")
+      @version.diffs("ffc")
     end
 
     should 'handle all commits' do
       @diff_backend.expects(:commit_diff).with(@version.merge_base_sha, @merge_request.ending_commit)
-      result = @version.diffs
+      @version.diffs
     end
   end
 
