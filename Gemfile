@@ -36,15 +36,14 @@ group :openid do
 end
 
 group :test do
-  gem "minitest", "~> 4.7"
-  gem "minitest-rails", "~> 0.9.2"
-  gem "minitest-rails-capybara", "~> 0.10"
-  gem "minitest-reporters", "~> 0.14"
+  gem "minitest", "~> 4.7", :require => false
+  gem "minitest-rails-capybara", "~> 0.10", :require => false
+  gem "minitest-reporters", "~> 0.14", :require => false
 
-  gem "capybara", "~> 2.1"
-  gem "capybara_minitest_spec", "~> 1.0"
-  gem "capybara-screenshot"
-  gem "poltergeist", "~> 1.4"
+  gem "capybara", "~> 2.1", :require => false
+  gem "capybara_minitest_spec", "~> 1.0", :require => false
+  gem "capybara-screenshot", :require => false
+  gem "poltergeist", "~> 1.4", :require => false
 
   gem "shoulda", "~> 3.3"
   gem "shoulda-matchers", "~> 1.4", :platforms => :ruby_18
