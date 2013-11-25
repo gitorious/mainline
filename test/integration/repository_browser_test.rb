@@ -32,6 +32,18 @@ class RepositoryBrowserTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  should "render source of the requested file" do
+    get "/johans-project/johansprojectrepos/source/ec433174463a9d0dd32700ffa5bbb35cfe2a4530:README"
+
+    assert_response :success
+  end
+
+  should "render 404 repository page when requested file doesn't exist" do
+    get "/johans-project/johansprojectrepos/source/ec433174463a9d0dd32700ffa5bbb35cfe2a4530:nonexistent.txt"
+
+    assert_response :not_found
+  end
+
   should "redirect to sha download url when ref (branch/tag) requested" do
     get "/johans-project/johansprojectrepos/archive/master.tgz"
 
