@@ -27,7 +27,7 @@ class EventPresenter
       project = target.project
 
       action_for_event(:event_status_cloned) {
-        link_to(h(original_repo.url_path), [project, original_repo])
+        link_to(h(original_repo.url_path), view.project_repository_url(project, original_repo))
       }
     end
 
@@ -36,7 +36,7 @@ class EventPresenter
     end
 
     def body
-      'New repository is in ' + link_to(h(target.name), [project, target])
+      'New repository is in ' + link_to(h(target.name), view.project_repository_url(project, target))
     end
 
   end

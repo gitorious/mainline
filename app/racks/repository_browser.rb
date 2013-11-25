@@ -166,6 +166,7 @@ module Gitorious
         render_too_big_to_tarball(repo, ref)
       rescue StandardError => err
         raise err if !Rails.env.production?
+        status 500
         renderer.render({ :file => (Rails.root + "public/500.html").to_s }, {}, :layout => nil)
       end
     end
@@ -192,6 +193,7 @@ module Gitorious
       pid, rid = repository.split("/")
       @template ||= (Rails.root + "app/views/repositories/_non_existent_refspec.html.erb").to_s
       repo = Project.find_by_slug!(pid).repositories.find_by_name!(rid)
+      status 404
       render({ :file => @template }, {
           :repository => RepositoryPresenter.new(repo),
           :ref => ref,

@@ -24,7 +24,7 @@ class EventPresenter
 
       action_for_event(:event_committer_added, :collaborator => collaborator) {
         " to " +
-        view.link_to(view.repo_title(repo, project), [project, repo])
+        view.link_to(view.repo_title(repo, project), view.project_repository_url(project, repo))
       }
     end
 

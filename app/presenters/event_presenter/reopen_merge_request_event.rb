@@ -25,7 +25,7 @@ class EventPresenter
 
       action_for_event(:event_reopened_merge_request) {
         "in " +
-        link_to(h(project.title), view.project_path(project)) + "/" +
+        link_to(h(project.title), view.project_url(project)) + "/" +
         link_to(h(source_repository.name), view.project_repository_url(project, source_repository))
       }
     end
@@ -33,7 +33,7 @@ class EventPresenter
     def body
       link_to(
         truncate(h(event.target.proposal), :length => 100),
-        [project, target_repository, event.target]
+        view.polymorphic_url([project, target_repository, event.target])
       )
     end
 

@@ -41,25 +41,25 @@ class EventPresenter
             " on merge request " +
               link_to(h(repo.url_path) +
                       " " + h("##{event.target.to_param}"),
-                      view.project_repository_merge_request_path(project, repo, event.target) +
+                      view.project_repository_merge_request_url(project, repo, event.target) +
                       "##{dom_id(comment)}")
           }
         else
           action_for_event(:event_commented) do
-            " on " +  link_to(h(repo.url_path), [project, repo])
+            " on " +  link_to(h(repo.url_path), view.project_repository_url(project, repo))
           end
         end
       else
         if comment.sha1.blank? # old-world repo comments
           action_for_event(:event_commented) do
             " on " +  link_to(h(repo.url_path),
-                              view.project_repository_comments_path(project, repo) +
+                              view.project_repository_comments_url(project, repo) +
                               "##{dom_id(comment)}")
           end
         else
           action_for_event(:event_commented) do
             " on " +  link_to(h(repo.url_path + '/' + comment.sha1[0,7]),
-                              view.project_repository_commit_path(project, repo, comment.sha1) +
+                              view.project_repository_commit_url(project, repo, comment.sha1) +
                               "##{dom_id(comment)}")
           end
         end

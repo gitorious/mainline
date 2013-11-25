@@ -59,14 +59,14 @@ module FavoritesHelper
     case watchable
     when Repository
       link_to(repo_title(watchable, watchable.project),
-        [watchable.project, watchable])
+        polymorphic_url([watchable.project, watchable]))
     when MergeRequest
       link_to(h(truncate("##{watchable.to_param}: #{watchable.summary}", :length => 65)),
-        [watchable.source_repository.project,
+        polymorphic_url([watchable.source_repository.project,
          watchable.target_repository,
-         watchable])
+         watchable]))
     else
-      link_to(h(watchable.title), watchable)
+      link_to(h(watchable.title), polymorphic_url(watchable))
     end
   end
 

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -22,3 +22,11 @@ ActionMailer::Base.default_url_options[:port]     = Gitorious.port unless Gitori
 
 # Can intercept and override emails like this
 # Mail.register_interceptor(DevelopmentMailInterceptor) if Rails.env.development?
+
+smtp_config_path = (Rails.root + 'config' + 'smtp.yml').to_s
+if File.exist?(smtp_config_path)
+  smtp_settings = YAML.load_file(smtp_config_path)
+  if smtp_settings && smtp_settings[Rails.env]
+    ActionMailer::Base.smtp_settings = smtp_settings[Rails.env].symbolize_keys
+  end
+end

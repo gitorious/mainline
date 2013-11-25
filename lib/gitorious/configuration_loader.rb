@@ -113,9 +113,11 @@ module Gitorious
     private
     def load(env)
       return @configs[env] if @configs[env]
-      cfg = YAML::load_file(File.join(@root, "config/gitorious.yml"))
 
-      if cfg.key?("test")
+      settings, groups            = load_config_file("config/gitorious.yml")
+      overrides, overrides_groups = load_config_file("config/gitorious.overrides.yml", true)
+
+      if groups.key?("test") || overrides_groups.key?("test")
         log_error(<<-EOF)
 Your config/gitorious.yml file contains settings for the test
 environment. As of Gitorious 3 this is deprecated - test settings have
@@ -126,8 +128,9 @@ surprises.
       end
 
       if env == "test"
-        cfg = YAML::load_file(File.join(@root, "test/gitorious.yml"))
-        if cfg.key?("production") || cfg.key?("development") || cfg.key?("test")
+        settings, groups = load_config_file("test/gitorious.yml")
+
+        if groups.any?
           log_error(<<-EOF)
 The test configuration file test/gitorious.yml is not
 supposed to contain settings groups - it should just contain top-level
@@ -136,20 +139,35 @@ Tests may not work as intended.
       EOF
         end
 
-        return (@configs[env] = [cfg])
+        return (@configs[env] = [settings])
       end
 
-      config = {
-        "production" => cfg.delete("production"),
-        "development" => cfg.delete("development")
-      }
-      @configs[env] = [config[env] || {}, cfg]
+      @configs[env] = [
+        overrides_groups[env] || {},
+        overrides,
+        groups[env] || {},
+        settings
+      ]
+    end
+
+    def load_config_file(path, allow_missing = false)
+      full_path = File.join(@root, path)
+      return [{}, {}] if allow_missing && !File.exist?(full_path)
+
+      settings = YAML.load_file(full_path) || {}
+
+      groups = {}
+      groups['production']  = settings.delete('production') if settings.key?('production')
+      groups['development'] = settings.delete('development') if settings.key?('development')
+      groups['test']        = settings.delete('test') if settings.key?('test')
+
+      [settings, groups]
     end
 
     def log_error(message)
       message = "WARNING!\n========\n#{message}\n"
 
-      if defined?(Rails) && Rails.respond_to?(:logger)
+      if defined?(Rails) && Rails.respond_to?(:logger) && Rails.logger
         Rails.logger.error(message)
       else
         puts message

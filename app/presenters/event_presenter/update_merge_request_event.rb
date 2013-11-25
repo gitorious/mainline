@@ -26,7 +26,7 @@ class EventPresenter
 
       action_for_event(:event_updated_merge_request) {
         link_to(h(target_repository.url_path) + " " + h("##{target.to_param}"),
-          view.project_repository_merge_request_path(project, target_repository, target))
+          view.project_repository_merge_request_url(project, target_repository, target))
       }
     end
 

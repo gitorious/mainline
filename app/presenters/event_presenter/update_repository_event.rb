@@ -24,7 +24,7 @@ class EventPresenter
         if repository
           link_to(
             h(repository.url_path),
-            view.project_repository_path(project, repository)
+            view.project_repository_url(project, repository)
           )
         else
           'repository was deleted'
