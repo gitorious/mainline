@@ -32,7 +32,7 @@ class EventPresenter
     end
 
     def repository_link
-      link_to("#{repo_title(repository, project)}", [project, repository])
+      link_to("#{repo_title(repository, project)}", view.project_repository_url(project, repository))
     end
 
     def commit_count

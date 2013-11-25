@@ -27,7 +27,7 @@ namespaced_atom_feed do |feed|
     feed.entry(event, :url => events_url) do |entry|
       entry.title("#{h(event.user.login)} #{strip_tags(action)}")
       entry.content(<<-EOS, :type => 'html')
-<p>#{link_to event.user.login, user_path(event.user)} #{action}</p>
+<p>#{link_to event.user.login, user_url(event.user)} #{action}</p>
 <p>#{body}</p>
 EOS
       entry.author do |author|

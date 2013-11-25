@@ -60,7 +60,7 @@ class EventPresenter
 
       link = link_to(
         view.content_tag('code', commit.short_oid).html_safe,
-        view.project_repository_commit_path(project, repository, commit.id)
+        view.project_repository_commit_url(project, repository, commit.id)
       )
 
       content =
@@ -79,7 +79,7 @@ class EventPresenter
     end
 
     def commit_link(title)
-      url = view.project_repository_commits_in_ref_path(
+      url = view.project_repository_commits_in_ref_url(
         repository.project, repository, ensplat_path(branch)
       )
 
@@ -106,11 +106,11 @@ class EventPresenter
 
     def diff_url
       if commit_count > 1
-        view.project_repository_commit_compare_path(
+        view.project_repository_commit_compare_url(
           project, repository, :from_id => first_sha, :id => last_sha
         )
       else
-        view.project_repository_commit_path(project, repository, last_sha)
+        view.project_repository_commit_url(project, repository, last_sha)
       end
     end
 

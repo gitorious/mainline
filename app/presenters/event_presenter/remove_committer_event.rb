@@ -21,7 +21,7 @@ class EventPresenter
 
     def action
       action_for_event(:event_committer_removed, :collaborator => collaborator) {
-        " from " + view.link_to(repo_title(target, project), [project, target]) }
+        " from " + view.link_to(repo_title(target, project), view.project_repository_url(project, target)) }
     end
 
     def category

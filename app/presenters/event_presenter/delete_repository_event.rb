@@ -21,7 +21,7 @@ class EventPresenter
 
     def action
       action_for_event(:event_status_deleted) do
-        link_to(h(target.title), target) + "/" + h(repository_name)
+        link_to(h(target.title), view.polymorphic_url(target)) + "/" + h(repository_name)
       end
     end
 

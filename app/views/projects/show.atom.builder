@@ -28,14 +28,14 @@ namespaced_atom_feed do |feed|
       if event.user
         entry.title("#{h(event.user.login)} #{strip_tags(event.action)}")
         entry_content = <<-EOS
-  <p>#{link_to event.user.login, user_path(event.user)} #{event.action}</p>
+  <p>#{link_to event.user.login, user_url(event.user)} #{event.action}</p>
   <p>#{event.body}<p>
   EOS
         if event.has_commits?
           entry_content << "<ul>"
           event.events.commits.each do |commit_event|
             entry_content << %Q{<li>#{h(commit_event.git_actor.name)} }
-            commit_url = project_repository_commit_path(event.target.project, event.target, commit_event.data)
+            commit_url = project_repository_commit_url(event.target.project, event.target, commit_event.data)
             entry_content << %Q{#{link_to(h(commit_event.data[0,7]), commit_url)}}
             entry_content << %Q{: #{truncate(h(commit_event.body), :length => 75)}</li>}
           end

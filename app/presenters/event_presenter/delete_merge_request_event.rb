@@ -23,7 +23,7 @@ class EventPresenter
       project = target.project
 
       action_for_event(:event_deleted_merge_request) {
-        "from " + link_to(h(project.slug), view.project_path(project)) + "/" +
+        "from " + link_to(h(project.slug), view.project_url(project)) + "/" +
         link_to(h(target.name), view.project_repository_url(project, target))
       }
     end

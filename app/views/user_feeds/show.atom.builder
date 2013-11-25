@@ -31,7 +31,7 @@ namespaced_atom_feed do |feed|
         if event.user.nil?
           ""
         else
-          "<p>#{link_to event.user.login, user_path(event.user)} #{event.action}</p>"
+          "<p>#{link_to event.user.login, user_url(event.user)} #{event.action}</p>"
         end
 
       entry.content(<<-EOS, :type => 'html')

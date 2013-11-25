@@ -26,7 +26,7 @@ class EventPresenter
 
       action_for_event(:event_resolved_merge_request) {
         link_to(h(target_repository.url_path) + " " + h("##{target.to_param}"),
-          view.project_repository_merge_request_path(project, target_repository, target)) +
+          view.project_repository_merge_request_url(project, target_repository, target)) +
         " as " + "<em>#{state}</em>"
       }
     end
@@ -38,7 +38,7 @@ class EventPresenter
     def body
       link_to(
         truncate(h(event.target.proposal), :length => 100),
-        [project, target.target_repository, target]
+        view.polymorphic_url([project, target.target_repository, target])
       )
     end
 
