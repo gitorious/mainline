@@ -25,7 +25,7 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
     setup do
       @merge_request = merge_requests(:moes_to_johans)
       @merge_request.status = MergeRequest::STATUS_OPEN
-      @merge_request..status_tag = "Open"
+      @merge_request.status_tag = "Open"
       @merge_request.save
       @merge_request.stubs(:calculate_merge_base).returns("ffac0")
       @version = @merge_request.create_new_version
