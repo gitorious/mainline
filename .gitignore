@@ -39,3 +39,6 @@ tmp/ownership
 
 # Bundled gems
 vendor/bundle/
+
+.sass-cache
+engines
