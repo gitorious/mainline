@@ -24,6 +24,7 @@ ENV["RAILS_ENV"] = "test"
 require File.join(File.dirname(__FILE__), "../config/environment")
 
 require "rails/test_help"
+
 require "ssl_requirement_macros"
 require "messaging_test_helper"
 require "data_builder_helpers"
@@ -31,11 +32,20 @@ require "sample_repo_helpers"
 require "shoulda"
 require "mocha/setup"
 require "fast_test_helper"
+
+require "database_cleaner"
+
+require "minitest/reporters"
+require "minitest-rails"
+require "minitest-rails-capybara"
+
 require "capybara/rails"
 require "capybara/poltergeist"
-require "capybara-screenshot/minitest"
-require "database_cleaner"
+require "capybara-screenshot"
+require "capybara_minitest_spec"
 require "capybara_test_case"
+
+Minitest::Reporters.use!(Minitest::Reporters::DefaultReporter.new)
 
 cache_dir = "#{Rails.root}/tmp/cache"
 FileUtils.mkdir(cache_dir) unless File.directory?(cache_dir)
@@ -56,9 +66,6 @@ Capybara.configure do |config|
 end
 
 DatabaseCleaner.strategy = :truncation
-
-class ActionDispatch::IntegrationTest
-end
 
 WebMock.disable_net_connect!(:allow_localhost => true)
 

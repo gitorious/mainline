@@ -40,24 +40,32 @@ group :openid do
 end
 
 group :test do
-  gem "mocha", "0.13.3", :require => false
-  gem "factory_girl_rails", "~> 1.7"
+  gem "minitest", "~> 4.7", :require => false
+  gem "minitest-rails-capybara", "~> 0.10", :require => false
+  gem "minitest-reporters", "~> 0.14", :require => false
+
+  gem "capybara", "~> 2.1", :require => false
+  gem "capybara_minitest_spec", "~> 1.0", :require => false
+  gem "capybara-screenshot", :require => false
+  gem "poltergeist", "~> 1.4", :require => false
+
   gem "shoulda", "~> 3.3"
   gem "shoulda-matchers", "~> 1.4", :platforms => :ruby_18
-  gem "minitest", "~> 4.7"
+  gem "database_cleaner"
+
+  gem "guard-minitest"
+  gem "guard-ctags-bundler"
+
+  gem "mocha", "0.13.3", :require => false
+  gem "webmock", "~> 1.13"
+  gem "factory_girl_rails", "~> 1.7"
+
   gem "ci_reporter"
   gem "rcov", :platforms => :ruby_18
   gem "simplecov", :platforms => [:ruby_19, :ruby_20], :require => false
   gem "simplecov-rcov", :platforms => [:ruby_19, :ruby_20], :require => false
-  gem "guard-minitest"
-  gem "guard-ctags-bundler"
+
   gem "zeus", "0.13.4.pre2"
-  gem "webmock"
-  gem "capybara", "~> 2.1"
-  gem "capybara_minitest_spec", "~> 1.0"
-  gem "capybara-screenshot"
-  gem "poltergeist", "~> 1.4"
-  gem "database_cleaner"
 end
 
 group :postgres do
