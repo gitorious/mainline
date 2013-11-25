@@ -130,7 +130,7 @@ surprises.
       if env == "test"
         settings, groups = load_config_file("test/gitorious.yml")
 
-        if groups.present?
+        if groups.any?
           log_error(<<-EOF)
 The test configuration file test/gitorious.yml is not
 supposed to contain settings groups - it should just contain top-level
