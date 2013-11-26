@@ -1,6 +1,6 @@
 GIT
   remote: git://gitorious.org/gitorious/gitorious-issues.git
-  revision: 8d65960f8ab5b0d8bbf36be90e2df71dc1d9e888
+  revision: 42efd442e3e52858ee3f4edf9d6453e6a914a4ac
   branch: master
   specs:
     gitorious-issues (0.0.1)
