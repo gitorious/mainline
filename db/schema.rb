@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131125194449) do
+ActiveRecord::Schema.define(:version => 20131126113614) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -179,6 +179,16 @@ ActiveRecord::Schema.define(:version => 20131125194449) do
 
   add_index "issues_comments", ["issue_id"], :name => "index_issues_comments_on_issue_id"
 
+  create_table "issues_issue_labels", :force => true do |t|
+    t.integer  "issue_id"
+    t.integer  "label_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "issues_issue_labels", ["issue_id", "label_id"], :name => "index_issues_issue_labels_on_issue_id_and_label_id", :unique => true
+  add_index "issues_issue_labels", ["issue_id"], :name => "index_issues_issue_labels_on_issue_id"
+
   create_table "issues_issue_users", :force => true do |t|
     t.integer  "user_id",    :null => false
     t.integer  "issue_id",   :null => false
@@ -202,6 +212,17 @@ ActiveRecord::Schema.define(:version => 20131125194449) do
 
   add_index "issues_issues", ["issue_id", "project_id"], :name => "index_issues_issues_on_issue_id_and_project_id", :unique => true
   add_index "issues_issues", ["user_id", "project_id"], :name => "index_issues_issues_on_user_id_and_project_id"
+
+  create_table "issues_labels", :force => true do |t|
+    t.integer  "project_id", :null => false
+    t.string   "name",       :null => false
+    t.string   "color",      :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "issues_labels", ["project_id", "name"], :name => "index_issues_labels_on_project_id_and_name", :unique => true
+  add_index "issues_labels", ["project_id"], :name => "index_issues_labels_on_project_id"
 
   create_table "ldap_groups", :force => true do |t|
     t.string   "name"
