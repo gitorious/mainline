@@ -29,6 +29,7 @@ gem "gitlab-grit", :require => "grit", :git => "https://github.com/wrozka/grit.g
 gem "airbrake", "~> 3.1.14", :require => false
 gem "simple_form", "~> 2.1"
 gem "force_utf8"
+gem "rugged", "~> 0.19.0"
 
 group :openid do
   gem "ruby-openid", :require => "openid"
@@ -108,7 +109,7 @@ platform :ruby_18 do
 end
 
 group :dolt do
-  gem "libdolt", "~> 0.33.10"
+  gem "libdolt", "~> 0.33.11"
   gem "dolt", "~> 0.30.0"
   gem "tiltout", "~> 1.4"
 
