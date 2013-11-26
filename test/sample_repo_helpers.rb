@@ -19,11 +19,15 @@
 require 'grit'
 
 module SampleRepoHelpers
-  def sample_repo_path(name)
+  def sample_repo_path(name = 'sample_repo')
     tmp_dir = Dir::Tmpname.create("repos") {}
     sample_repos << tmp_dir
     FileUtils.cp_r("#{Rails.root}/test/fixtures/#{name}", tmp_dir)
     tmp_dir
+  end
+
+  def sample_rugged_repo(name = 'sample_repo')
+    Rugged::Repository.new(sample_repo_path(name))
   end
 
   def sample_repo(name = 'sample_repo')
