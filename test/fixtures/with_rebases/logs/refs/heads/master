@@ -1,0 +1,6 @@
+0000000000000000000000000000000000000000 38bb17fb766bfd3a17730c348ce3483b88843bb8 Adam Pohorecki <adam@pohorecki.pl> 1385479301 +0100	commit (initial): initial commit
+38bb17fb766bfd3a17730c348ce3483b88843bb8 7244cac54016d696d82215683b0dae34cb74ba48 Adam Pohorecki <adam@pohorecki.pl> 1385479414 +0100	cherry-pick: changed readme in branch
+7244cac54016d696d82215683b0dae34cb74ba48 a0fbcce2d2926d66a51c8a2c0ab326230b835ccc Adam Pohorecki <adam@pohorecki.pl> 1385479460 +0100	commit (amend): changed readme in branch (same content, different message)
+a0fbcce2d2926d66a51c8a2c0ab326230b835ccc 38bb17fb766bfd3a17730c348ce3483b88843bb8 Adam Pohorecki <adam@pohorecki.pl> 1385479853 +0100	reset: moving to HEAD^
+38bb17fb766bfd3a17730c348ce3483b88843bb8 cf122c88efa59437f80df593af4e062be96debaa Adam Pohorecki <adam@pohorecki.pl> 1385479883 +0100	commit: Add foo
+cf122c88efa59437f80df593af4e062be96debaa 1402946025f7dbd377a92d92199cf4a90305bdad Adam Pohorecki <adam@pohorecki.pl> 1385479892 +0100	cherry-pick: changed readme in branch

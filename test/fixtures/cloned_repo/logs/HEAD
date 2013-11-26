@@ -1,0 +1,3 @@
+0000000000000000000000000000000000000000 ef2330837c14ced60c7a88bec8996220decce59b Adam Pohorecki <adam@pohorecki.pl> 1385462458 +0100	clone: from vagrant@vagrant:sandbox2/psyhos-sandbox2.git
+ef2330837c14ced60c7a88bec8996220decce59b 4b10896a795d33701b44548f1a9ef3eef594a64f Adam Pohorecki <adam@pohorecki.pl> 1385462736 +0100	merge psyho/third-branch: Merge made by the 'recursive' strategy.
+4b10896a795d33701b44548f1a9ef3eef594a64f a48cd3b5ca9dc459e2fa53b1a6ef8c105cf7ee84 Adam Pohorecki <adam@pohorecki.pl> 1385462758 +0100	commit: Changed readme in clone

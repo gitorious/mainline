@@ -1,0 +1,7 @@
+0000000000000000000000000000000000000000 b057108f8d95395a89128198c2b2d3f725900248 Adam Pohorecki <adam@pohorecki.pl> 1385462445 +0100	clone: from vagrant@vagrant:sandbox2/sandbox2.git
+b057108f8d95395a89128198c2b2d3f725900248 b057108f8d95395a89128198c2b2d3f725900248 Adam Pohorecki <adam@pohorecki.pl> 1385462486 +0100	checkout: moving from master to third-branch
+b057108f8d95395a89128198c2b2d3f725900248 f83a7006c53a87f323d5db437d021387a5d3bf07 Adam Pohorecki <adam@pohorecki.pl> 1385462505 +0100	reset: moving to HEAD^
+f83a7006c53a87f323d5db437d021387a5d3bf07 fda0e8cd42b96fb9e3b92f7cc70e2a0b1524336e Adam Pohorecki <adam@pohorecki.pl> 1385462532 +0100	commit: Add foo
+fda0e8cd42b96fb9e3b92f7cc70e2a0b1524336e b057108f8d95395a89128198c2b2d3f725900248 Adam Pohorecki <adam@pohorecki.pl> 1385462610 +0100	checkout: moving from third-branch to master
+b057108f8d95395a89128198c2b2d3f725900248 7a81cc287f6b5d174c2ac53fc656869fe3c8b454 Adam Pohorecki <adam@pohorecki.pl> 1385462621 +0100	merge third-branch: Merge made by the 'recursive' strategy.
+7a81cc287f6b5d174c2ac53fc656869fe3c8b454 bc4feafacd8aaec5ba1c4e05943e45741f3d3c06 Adam Pohorecki <adam@pohorecki.pl> 1385462645 +0100	commit: Changed readme
