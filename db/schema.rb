@@ -189,6 +189,20 @@ ActiveRecord::Schema.define(:version => 20131125194449) do
   add_index "issues_issue_users", ["issue_id"], :name => "index_issues_issue_users_on_issue_id"
   add_index "issues_issue_users", ["user_id", "issue_id"], :name => "index_issues_issue_users_on_user_id_and_issue_id", :unique => true
 
+  create_table "issues_issues", :force => true do |t|
+    t.string   "state",       :null => false
+    t.integer  "issue_id",    :null => false
+    t.integer  "project_id",  :null => false
+    t.integer  "user_id",     :null => false
+    t.string   "title",       :null => false
+    t.text     "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "issues_issues", ["issue_id", "project_id"], :name => "index_issues_issues_on_issue_id_and_project_id", :unique => true
+  add_index "issues_issues", ["user_id", "project_id"], :name => "index_issues_issues_on_user_id_and_project_id"
+
   create_table "ldap_groups", :force => true do |t|
     t.string   "name"
     t.integer  "user_id"
