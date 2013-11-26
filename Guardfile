@@ -1,10 +1,11 @@
 # A sample Guardfile
 # More info at https://github.com/guard/guard#readme
 
-guard :minitest, include: %w(. app app/presenters lib test), test_folders: %w(test/micro) do
+guard :minitest, include: %w(. app app/presenters app/git lib test), test_folders: %w(test/micro) do
   watch(%r{^test/micro.*\.rb})
   watch(%r{^test/fast_test_helper\.rb}) { "test/micro" }
   watch(%r{^app/presenters/(.*)\.rb}) { |m| "test/micro/presenters/#{m[1]}_test.rb" }
+  watch(%r{^app/git/(.*)\.rb}) { |m| "test/micro/git/#{m[1]}_test.rb" }
   watch(%r{^app/validators/(.*)\.rb}) { |m| "test/micro/validators/#{m[1]}_test.rb" }
   watch(%r{^app/commands/(.*)\.rb}) { |m| "test/micro/commands/#{m[1]}_test.rb" }
   watch(%r{^lib/(.*)\.rb}) { |m| "test/micro/#{m[1]}_test.rb" }
