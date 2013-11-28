@@ -21,6 +21,7 @@ class ProjectPresenter
     @project = project
   end
 
+  def id; project.id; end
   def title; project.title; end
   def name; project.title; end
   def slug; project.slug; end
