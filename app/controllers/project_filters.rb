@@ -32,7 +32,7 @@ module ProjectFilters
   def require_admin
     if !admin?(current_user, @project)
       flash[:error] = I18n.t "projects_controller.update_error"
-      redirect_to(project_path(@project)) and return
+      redirect_to(main_app.root_path) and return
     end
   end
 end
