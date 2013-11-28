@@ -42,3 +42,5 @@ vendor/bundle/
 
 .sass-cache
 engines
+
+test/fixtures/issues
