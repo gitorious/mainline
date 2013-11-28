@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/libgit2/rugged.git
+  revision: 177ccb4be2bf92e521b0f95461a4a5b48f7e70b7
+  branch: development
+  submodules: true
+  specs:
+    rugged (0.19.0)
+
+GIT
   remote: https://github.com/wrozka/grit.git
   revision: b8a6e359a81918368a053131cf2a3ea16ee41e20
   specs:
@@ -299,7 +307,6 @@ GEM
     ruby-hmac (0.4.0)
     ruby-openid (2.2.3)
     rubypants (0.2.0)
-    rugged (0.19.0)
     safe_yaml (0.9.5)
     shoulda (3.5.0)
       shoulda-context (~> 1.0, >= 1.0.1)
@@ -444,7 +451,7 @@ DEPENDENCIES
   resque-job-stats (~> 0.3.0)
   ruby-hmac (= 0.4.0)
   ruby-openid
-  rugged (~> 0.19.0)
+  rugged!
   shoulda (~> 3.3)
   shoulda-matchers (~> 1.4)
   simple_form (~> 2.1)
