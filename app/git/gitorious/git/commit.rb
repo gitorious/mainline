@@ -27,6 +27,10 @@ module Gitorious
         rugged_commit.oid
       end
 
+      def id_abbrev
+        id[0...7]
+      end
+
       def changeset
         rugged_commit.diff({}).patch
       end

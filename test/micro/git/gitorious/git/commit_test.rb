@@ -31,6 +31,22 @@ module Gitorious
         Commit.new(repo.lookup(sha))
       end
 
+      describe "#id" do
+        let(:repo) { sample_rugged_repo }
+
+        it "is equal to the sha hash" do
+          commit("20ea396").id.must_equal "20ea396ef7b00bd0bb5589c8da4f3f4d157d4934"
+        end
+      end
+
+      describe "#id_abbrev" do
+        let(:repo) { sample_rugged_repo }
+
+        it "is equal to the abbreviated sha hash of length 7" do
+          commit("20ea396ef7b00bd0bb5589c8da4f3f4d157d4934").id_abbrev.must_equal "20ea396"
+        end
+      end
+
       describe "#short_message" do
         let(:repo) { sample_rugged_repo('with_long_commit_message') }
 
