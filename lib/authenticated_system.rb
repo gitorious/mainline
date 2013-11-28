@@ -104,7 +104,7 @@ module AuthenticatedSystem
         accepts.html do
           store_location
           flash[:error] = "Action requires login"
-          redirect_to :controller => '/sessions', :action => 'new'
+          redirect_to(main_app.new_sessions_path)
         end
         accepts.xml do
           headers["Status"]           = "Unauthorized"
