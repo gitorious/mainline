@@ -1,10 +1,18 @@
 GIT
   remote: git://gitorious.org/gitorious/gitorious-issues.git
-  revision: 5181e2d89aca91ac202ac4e5d76ab82e4e4bb761
+  revision: e8a9b3977bdd7c2d3191f12c1c65bea0491bcff4
   branch: master
   specs:
     gitorious-issues (0.0.1)
       rails (~> 3.2.15)
+
+GIT
+  remote: https://github.com/libgit2/rugged.git
+  revision: ef9398129e26a4bea09309a0361089bc01132165
+  branch: development
+  submodules: true
+  specs:
+    rugged (0.19.0)
 
 GIT
   remote: https://github.com/wrozka/grit.git
@@ -109,7 +117,7 @@ GEM
     debugger-ruby_core_source (1.2.4)
     descendants_tracker (0.0.3)
     diff-lcs (1.1.2)
-    docile (1.1.0)
+    docile (1.1.1)
     dolt (0.30.0)
       json (~> 1.5)
       libdolt (~> 0.31)
@@ -171,7 +179,7 @@ GEM
     json (1.7.7)
     just_paginate (0.2.2)
     kgio (2.8.1)
-    launchy (2.4.1)
+    launchy (2.4.2)
       addressable (~> 2.3)
     libdolt (0.33.11)
       force_utf8
@@ -314,7 +322,6 @@ GEM
     ruby-hmac (0.4.0)
     ruby-openid (2.3.0)
     rubypants (0.2.0)
-    rugged (0.19.0)
     safe_yaml (0.9.7)
     sass (3.2.12)
     sass-rails (3.2.6)
@@ -468,7 +475,7 @@ DEPENDENCIES
   resque-job-stats (~> 0.3.0)
   ruby-hmac (= 0.4.0)
   ruby-openid
-  rugged (~> 0.19.0)
+  rugged!
   sass-rails (~> 3.2)
   shoulda (~> 3.3)
   shoulda-matchers (~> 1.4)

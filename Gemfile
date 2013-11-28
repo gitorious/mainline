@@ -29,7 +29,7 @@ gem "gitlab-grit", :require => "grit", :git => "https://github.com/wrozka/grit.g
 gem "airbrake", "~> 3.1.14", :require => false
 gem "simple_form", "~> 2.1"
 gem "force_utf8"
-gem "rugged", "~> 0.19.0"
+gem 'rugged', git: 'https://github.com/libgit2/rugged.git', branch: 'development', submodules: true
 
 if ENV['GTS_ENGINE'].to_s != 'true'
   gem "gitorious-issues", :git => "git://gitorious.org/gitorious/gitorious-issues.git", :branch => 'master'

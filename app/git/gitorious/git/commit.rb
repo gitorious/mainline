@@ -27,6 +27,10 @@ module Gitorious
         rugged_commit.oid
       end
 
+      def id_abbrev
+        id[0...7]
+      end
+
       def changeset
         rugged_commit.diff({}).patch
       end
@@ -35,8 +39,27 @@ module Gitorious
         rugged_commit.message.lines.first.strip
       end
 
+      def author
+        Actor.new(author_hash[:name], author_hash[:email])
+      end
+
+      def committer
+        Actor.new(committer_hash[:name], committer_hash[:email])
+      end
+
+      private
+
       attr_reader :rugged_commit
-      private :rugged_commit
+
+      def author_hash
+        rugged_commit.author
+      end
+
+      def committer_hash
+        rugged_commit.committer
+      end
+
+      Actor = Struct.new(:name, :email)
     end
   end
 end
