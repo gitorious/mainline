@@ -34,7 +34,7 @@ module Gitorious
         walker = Rugged::Walker.new(rugged_repository)
         walker.sorting(Rugged::SORT_TOPO)
         walker.push(rugged_branch.tip.oid)
-        walker.map{ |c| Commit.new(c) }
+        walker.map { |c| Commit.new(c) }
       end
 
       def commits_not_merged_upstream(upstream_branch)
