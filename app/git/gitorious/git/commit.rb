@@ -63,7 +63,11 @@ module Gitorious
         rugged_commit.committer
       end
 
-      Actor = Struct.new(:name, :email)
+      Actor = Struct.new(:name, :email) do
+        def to_s
+          name
+        end
+      end
     end
   end
 end
