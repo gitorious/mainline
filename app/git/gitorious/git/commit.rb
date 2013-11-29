@@ -47,6 +47,10 @@ module Gitorious
         Actor.new(committer_hash[:name], committer_hash[:email])
       end
 
+      def time
+        rugged_commit.time
+      end
+
       private
 
       attr_reader :rugged_commit

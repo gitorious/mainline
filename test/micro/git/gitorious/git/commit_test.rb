@@ -89,7 +89,14 @@ module Gitorious
           commit.author.email.must_equal('pawelpierzchala@gmail.com')
         end
       end
+
+      describe "#time" do
+        let(:repo) { sample_rugged_repo }
+
+        it "is equal to the commit time" do
+          lookup_commit("20ea396").time.must_equal Time.parse('2013-11-13 16:15:23 +0100')
+        end
+      end
     end
   end
 end
-
