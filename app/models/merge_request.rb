@@ -249,12 +249,10 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def lookup_commits_for_selection
-    source_repo = Gitorious::Git::Repository.new(source_repository.full_repository_path)
-    target_repo = Gitorious::Git::Repository.new(target_repository.full_repository_path)
-    source = source_repo.branch(source_branch)
-    target = target_repo.branch(target_branch)
-
-    source.commits_not_merged_upstream(target)
+    start_at = head_commit_id(target_repository, target_branch)
+    end_at = head_commit_id(source_repository, source_branch)
+    return [] unless start_at && end_at
+    source_repository.git.commits_between(start_at, end_at).reverse
   end
 
   def head_commit_id(repository, branch)
