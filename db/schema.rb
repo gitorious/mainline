@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131201232200) do
+ActiveRecord::Schema.define(:version => 20131202175633) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -395,6 +395,7 @@ ActiveRecord::Schema.define(:version => 20131201232200) do
     t.string   "oauth_path_prefix"
     t.text     "merge_request_custom_states"
     t.datetime "suspended_at"
+    t.string   "features",                    :default => "--- []\n\n", :null => false
   end
 
   add_index "projects", ["owner_type", "owner_id"], :name => "index_projects_on_owner_type_and_owner_id"

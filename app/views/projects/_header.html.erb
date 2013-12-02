@@ -30,7 +30,9 @@
   <ul class="nav nav-tabs gts-header-nav gts-pjax" <%= "data-gts-active=#{defined?(active) && active.to_s}" %>>
     <%= options = [[:activities, main_app.project_path(project), "Activities"]]
         options << [:merge_requests, main_app.project_merge_requests_path(project), "Merge Requests <span class=\"count\">(#{project.open_merge_request_count})</span>"]
-        options << [:issues, issues_app.project_issues_path(project), "Issues"]
+        if project.feature_enabled?(:issues)
+          options << [:issues, issues_app.project_issues_path(project), "Issues"]
+        end
         options << [:wiki, main_app.project_page_path(project, "Home"), "Wiki"] if project.wiki_enabled?
         options << [:community, main_app.project_community_path(project), "Community"]
         header_navigation(options, :active => defined?(active) ? active : nil) %>

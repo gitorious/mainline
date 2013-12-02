@@ -47,6 +47,10 @@ class ProjectPresenter
   def user; project.user; end
   def to_key; project.to_key; end
 
+  def feature_enabled?(name)
+    project.features.include?(name)
+  end
+
   def owner_to_param_with_prefix
     project.owner.to_param_with_prefix
   end

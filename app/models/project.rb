@@ -55,6 +55,8 @@ class Project < ActiveRecord::Base
     :owner_type, :tag_list, :merge_request_statuses_attributes,
     :wiki_permissions, :default_merge_request_status_id, :owner_id)
 
+  serialize :features, Array
+
   def self.human_name
     I18n.t("activerecord.models.project")
   end
