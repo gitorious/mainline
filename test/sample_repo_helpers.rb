@@ -37,7 +37,7 @@ module SampleRepoHelpers
   def repository_with_working_git(name = 'sample_repo')
     repository = Repository.new
     git = sample_repo(name)
-    repository.stubs(:git => git)
+    repository.stubs(:git => git, :full_repository_path => sample_repo_path(name))
     repository
   end
 

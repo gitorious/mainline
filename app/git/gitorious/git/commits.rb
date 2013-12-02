@@ -22,9 +22,13 @@ module Gitorious
   module Git
     class Commits
       def self.not_merged_upstream(source_commits, upstream_commits)
-        set = Set.new(upstream_commits.map(&:changeset))
+        upstream_id_set = Set.new(upstream_commits.map(&:id))
+        source_id_set = Set.new(source_commits.map(&:id))
+        source_commits = source_commits.reject { |commit| upstream_id_set.include?(commit.id) }
+        upstream_commits = upstream_commits.reject { |commit| source_id_set.include?(commit.id) }
+        upstream_changeset_set = Set.new(upstream_commits.map(&:changeset))
 
-        source_commits.reject{ |commit| set.include?(commit.changeset) }
+        source_commits.reject{ |commit| upstream_changeset_set.include?(commit.changeset) }
       end
     end
   end

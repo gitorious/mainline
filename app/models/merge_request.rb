@@ -254,6 +254,8 @@ class MergeRequest < ActiveRecord::Base
     source = source_repo.branch(source_branch)
     target = target_repo.branch(target_branch)
 
+    return [] unless source && target
+
     source.commits_not_merged_upstream(target)
   end
 

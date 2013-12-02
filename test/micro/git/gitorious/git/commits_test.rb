@@ -23,13 +23,23 @@ module Gitorious
   module Git
     class CommitsTest < MiniTest::Spec
       def commits(changesets)
-        changesets.map { |changeset| stub(changeset: changeset) }
+        changesets.map { |commit| stub(id: commit[:id], changeset: commit[:changeset]) }
       end
 
       describe ".not_merged_upstream" do
         it "returns all the commits which don't have a corresponding changeset upstream" do
-          source_commits = commits(%w[foo bar baz bam])
-          upstream_commits = commits(%w[123 foo 256 baz])
+          source_commits = commits([
+            { id: 1, changeset: 'foo' },
+            { id: 2, changeset: 'bar' },
+            { id: 3, changeset: 'baz' },
+            { id: 4, changeset: 'bam' }
+          ])
+          upstream_commits = commits([
+            { id: 5, changeset: '123' },
+            { id: 1, changeset: 'foo' },
+            { id: 6, changeset: '256' },
+            { id: 7, changeset: 'baz' }
+          ])
 
           commits = Commits.not_merged_upstream(source_commits, upstream_commits)
 
