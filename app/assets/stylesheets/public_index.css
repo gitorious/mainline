@@ -73,27 +73,27 @@
 }
 
 .features-container li .project-hosting {
-  background-image: url(/img/external/icons/server_database.png);
+  background-image: url(external/icons/server_database.png);
 }
 
 .features-container li .activity-monitoring {
-  background-image: url(/img/external/icons/feed.png);
+  background-image: url(external/icons/feed.png);
 }
 
 .features-container li .public-merge-requests {
-  background-image: url(/img/external/icons/arrow_in.png);
+  background-image: url(external/icons/arrow_in.png);
 }
 
 .features-container li .project-centric {
-  background-image: url(/img/external/icons/database.png);
+  background-image: url(external/icons/database.png);
 }
 
 .features-container li .team-contributions {
-  background-image: url(/img/external/icons/team-contributions.png);
+  background-image: url(external/icons/team-contributions.png);
 }
 
 .features-container li .project-wikis {
-  background-image: url(/img/external/icons/project-wikis.png);
+  background-image: url(external/icons/project-wikis.png);
 }
 
 .promo-container {
@@ -155,6 +155,6 @@
   text-indent: -9999px;
   float: left;
   display: block;
-  background: url(../img/external/screens-nav.png) no-repeat;
+  background: url(external/screens-nav.png) no-repeat;
   margin: 0px 4px;
 }
