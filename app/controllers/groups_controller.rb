@@ -122,7 +122,7 @@ class GroupsController < ApplicationController
   def paginated_groups
     page = (params[:page] || 1).to_i
     groups, pages = JustPaginate.paginate(page, 50, Team.count) do |range|
-      Team.offset(range.first).limit(range.count).active
+      Team.offset(range.first).limit(range.count)
     end
     [groups, pages, page]
   end

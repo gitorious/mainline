@@ -74,9 +74,16 @@ module Gitorious
         let(:repo) { sample_rugged_repo }
         let(:commit) { lookup_commit("91c2430892b8f1736d84d3418259317793bb1903") }
 
-        it "is an object with a name and email" do
+        it "has a name of the committer" do
           commit.committer.name.must_equal('Marcin Kulik')
+        end
+
+        it "has an email of the committer" do
           commit.committer.email.must_equal('m@ku1ik.com')
+        end
+
+        it "returns a name as its string representation" do
+          commit.committer.to_s.must_equal('Marcin Kulik')
         end
       end
 
@@ -84,12 +91,26 @@ module Gitorious
         let(:repo) { sample_rugged_repo }
         let(:commit) { lookup_commit("91c2430892b8f1736d84d3418259317793bb1903") }
 
-        it "is an object with a name and email" do
+        it "has a name of the author" do
           commit.author.name.must_equal('Paweł Pierzchała')
+        end
+
+        it "has an email of the author" do
           commit.author.email.must_equal('pawelpierzchala@gmail.com')
+        end
+
+        it "returns a name as its string representation" do
+          commit.author.to_s.must_equal('Paweł Pierzchała')
+        end
+      end
+
+      describe "#time" do
+        let(:repo) { sample_rugged_repo }
+
+        it "is equal to the commit time" do
+          lookup_commit("20ea396").time.must_equal Time.parse('2013-11-13 16:15:23 +0100')
         end
       end
     end
   end
 end
-

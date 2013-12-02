@@ -25,6 +25,7 @@ class RepositoryCloningProcessor
     logger.info("Processing new repository clone: #<Repository id: #{repository.id}, :parent: #{repository.parent.repository_plain_path}, path: #{repository.repository_plain_path}>")
     RepositoryCloner.clone_with_hooks(repository.parent.real_gitdir, repository.real_gitdir)
     repository.ready = true
+    repository.disk_usage = repository.parent.disk_usage
     repository.save!
   end
 end
