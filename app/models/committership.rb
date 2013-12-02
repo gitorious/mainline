@@ -123,7 +123,7 @@ class Committership < ActiveRecord::Base
     return unless creator
     recipients = repository.owners
     recipients.each do |r|
-      message = Message.new({
+      SendMessage.call(
         :sender => creator,
         :recipient => r,
         :subject => I18n.t("committership.notification_subject"),
@@ -133,9 +133,7 @@ class Committership < ActiveRecord::Base
           :repository => repository.name,
           :project => repository.project.title
         }),
-        :notifiable => self
-      })
-      message.save
+        :notifiable => self)
     end
   end
 

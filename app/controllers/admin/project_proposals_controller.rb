@@ -72,19 +72,19 @@ module Admin
     protected
     def notify_site_admins(subject, body, proposal)
       User.admins.each do |admin|
-        Message.new({:sender => current_user,
-                      :recipient => admin,
-                      :subject => subject,
-                      :notifiable => proposal,
-                      :body => body }).save
+        SendMessage.call(:sender => current_user,
+                         :recipient => admin,
+                         :subject => subject,
+                         :notifiable => proposal,
+                         :body => body)
       end
     end
 
     def notify_creator(subject, recipient, body)
-      Message.new({:sender => current_user,
-                    :recipient => recipient,
-                    :subject => subject,
-                    :body => body }).save
+      SendMessage.call(:sender => current_user,
+                       :recipient => recipient,
+                       :subject => subject,
+                       :body => body)
     end
   end
 end

@@ -221,14 +221,12 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def deliver_status_update(a_user)
-    message = Message.new({
+    SendMessage.call(
       :sender => a_user,
       :recipient => user,
       :subject => "Your merge request was updated",
       :body => "The merge request is now #{status_tag}.",
-      :notifiable => self,
-    })
-    message.save
+      :notifiable => self)
   end
 
   def source_name

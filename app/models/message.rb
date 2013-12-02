@@ -75,7 +75,7 @@ class Message < ActiveRecord::Base
   end
 
   def recipient_name
-    recipient.title
+   recipient.title
   end
 
   def sender_name

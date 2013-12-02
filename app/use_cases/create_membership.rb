@@ -41,17 +41,16 @@ class CreateMembershipCommand
 
   private
   def send_notification(membership)
-    Message.create!({
-        :sender => membership.inviter,
-        :recipient => membership.user,
-        :subject => I18n.t("membership.notification_subject"),
-        :body => I18n.t("membership.notification_body", {
-            :inviter => membership.inviter.title,
-            :group => membership.group.title,
-            :role => membership.role.admin? ? "administrator" : "member"
-          }),
-        :notifiable => membership
-      })
+    SendMessage.call(
+      :sender => membership.inviter,
+      :recipient => membership.user,
+      :subject => I18n.t("membership.notification_subject"),
+      :body => I18n.t("membership.notification_body", {
+          :inviter => membership.inviter.title,
+          :group => membership.group.title,
+          :role => membership.role.admin? ? "administrator" : "member"
+        }),
+      :notifiable => membership)
   end
 
   def user(params)

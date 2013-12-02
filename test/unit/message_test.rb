@@ -117,8 +117,8 @@ class MessageTest < ActiveSupport::TestCase
 
   context "Last updated on" do
     setup do
-      @message = Message.new(:sender => users(:johan), :recipient => users(:moe),
-                             :subject => "Hey", :body => "thanks")
+      @message = SendMessage.call(:sender => users(:johan), :recipient => users(:moe),
+                                  :subject => "Hey", :body => "thanks")
       @message.save
     end
 

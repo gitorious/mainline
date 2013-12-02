@@ -42,7 +42,7 @@ class MessagesControllerTest < ActionController::TestCase
     should "not display messages from self as new" do
       Message.destroy_all
       moe = users(:moe)
-      Message.create!(:recipient => moe, :sender => moe, :subject => "Yo", :body => "Mama")
+      SendMessage.call(:recipient => moe, :sender => moe, :subject => "Yo", :body => "Mama")
 
       get :index
 

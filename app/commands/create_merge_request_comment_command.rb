@@ -59,13 +59,12 @@ class CreateMergeRequestCommentCommand < CreateCommentCommand
       message_body << " is now #{comment.state_changed_to}"
     end
 
-    Message.create!({
-        :sender => comment.user,
-        :recipient => owner,
-        :subject => "#{user.title} commented on your merge request",
-        :body => message_body,
-        :notifiable => comment.target,
-      })
+    SendMessage.call(
+      :sender => comment.user,
+      :recipient => owner,
+      :subject => "#{user.title} commented on your merge request",
+      :body => message_body,
+      :notifiable => comment.target)
   end
 
   def update_merge_request_state(comment)
