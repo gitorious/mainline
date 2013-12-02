@@ -44,4 +44,12 @@ class RepositoryCloningProcessorTest < ActiveSupport::TestCase
 
     assert @repository.reload.ready?
   end
+
+  should "copy disk usage information from the parent repository" do
+    @parent.disk_usage = 123456
+    @parent.save!
+    @processor.on_message("id" => @repository.id)
+
+    assert_equal 123456, @repository.reload.disk_usage
+  end
 end
