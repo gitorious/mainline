@@ -67,16 +67,27 @@ module ApplicationHelper
     }.html_safe
   end
 
+  # TODO: refactor this and make it more flexible - solnic
   def pull_box(title, options = {}, &block)
-    title_html = title.nil? ? "" : "<div class=\"pull-box-header\"><h3>#{title}</h3></div>"
-    raw <<-HTML
-      <div class="pull-box-container #{options.delete(:class)}">
-        #{title_html}
-        <div class="pull-box-content">
-          #{capture(&block)}
-        </div>
-      </div>
-    HTML
+    dom_id  = options[:id]
+    opened  = options.fetch(:opened, true)
+
+    classes = %w(pull-box-container).concat(Array(options.fetch(:class, [])).compact)
+    classes << 'closed' unless opened
+
+    title_html =
+      if title
+        content_tag(:div, "<h3>#{title}</h3>".html_safe, :class => 'pull-box-header')
+      else
+        ""
+      end
+
+    tag_opts = { :class => classes }
+    tag_opts.update(:id => dom_id) if dom_id
+
+    content_tag(:div, tag_opts) {
+      title_html + content_tag(:div, capture(&block), :class => 'pull-box-content')
+    }.html_safe
   end
 
   def dialog_box(title, options = {}, &block)
