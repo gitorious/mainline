@@ -19,6 +19,12 @@
 require "test_helper"
 
 class CommentPresenterTest < ActiveSupport::TestCase
+  def view_context_with_current_user(user)
+    v = view_context
+    v.stubs(:current_user => user)
+    v
+  end
+
   context "#context" do
     should "render context" do
       comment = Comment.new(:context => "the foo")
@@ -106,11 +112,6 @@ class CommentPresenterTest < ActiveSupport::TestCase
   end
 
   context "#edit_link" do
-    def view_context_with_current_user(user)
-      v = view_context
-      v.stubs(:current_user => user)
-      v
-    end
 
     should "render edit link to the author" do
       comment = comments(:first_merge_request_version_comment)

@@ -25,6 +25,15 @@ class EventsControllerTest < ActionController::TestCase
     @repository = repositories(:johans)
   end
 
+  def fake_commit
+    grit_commit = stub(
+      :id => "sha123",
+      :committer => stub(:email => "foo@bar.com", :name => "Foo"),
+      :committed_date => Time.now,
+      :message => "initial commit")
+    Gitorious::Commit.new(grit_commit)
+  end
+
   context "commits" do
     setup do
       @push_event = create_push_event
@@ -59,15 +68,6 @@ class EventsControllerTest < ActionController::TestCase
 
       get :commits, :id => @push_event.to_param, :format => "js"
       assert_response :success
-    end
-
-    def fake_commit
-      grit_commit = stub(
-        :id => "sha123",
-        :committer => stub(:email => "foo@bar.com", :name => "Foo"),
-        :committed_date => Time.now,
-        :message => "initial commit")
-      Gitorious::Commit.new(grit_commit)
     end
   end
 

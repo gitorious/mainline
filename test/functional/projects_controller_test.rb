@@ -305,7 +305,7 @@ class ProjectsControllerTest < ActionController::TestCase
       login_as :moe
       get :edit, :id => projects(:johans).to_param
       assert_match(/you are not the owner of this project/i, flash[:error])
-      assert_redirected_to(project_path(projects(:johans)))
+      assert_redirected_to(root_path)
     end
 
     should "allow project owner to PUT projects/update" do
@@ -516,7 +516,7 @@ class ProjectsControllerTest < ActionController::TestCase
       get :show, :id => projects(:johans).to_param
 
       assert_response :success
-      assert @layouts.include?("layouts/application")
+      assert @layouts.key?("layouts/project")
       assert_not_nil assigns(:current_site)
       assert_not_nil @controller.send(:current_site)
       assert_equal Site.default.title, @controller.send(:current_site).title

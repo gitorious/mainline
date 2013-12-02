@@ -19,6 +19,8 @@
 require "test_helper"
 
 class RoutingTest < ActionController::TestCase
+  fixtures :all
+
   context "User routing" do
     should "recognize ~username" do
       assert_generates("/~zmalltalker", {

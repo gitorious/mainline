@@ -25,6 +25,19 @@ class UserTest < ActiveSupport::TestCase
     @user = User.new
   end
 
+  def user_without_projects_and_repos
+    user = users(:johan)
+    user.repositories.destroy_all
+    user.projects.destroy_all
+    user
+  end
+
+  def group_created_by_other_user
+    group = FactoryGirl.create(:group)
+    group.add_member(group.creator, Role.admin)
+    group
+  end
+
   should have_many(:email_aliases)
   should have_many(:committerships).dependent(:destroy)
   should have_many(:memberships).dependent(:destroy)
@@ -434,10 +447,10 @@ class UserTest < ActiveSupport::TestCase
       u1 = create_user(:login => "joe", :email => "joe@hepp.com")
       u2 = create_user(:login => "jane", :email => "jane@hepp.com")
 
-      e1 = create_event(:action => Action::COMMIT, :user => u1, :body => "12")
-      e2 = create_event(:action => Action::PUSH_SUMMARY, :user => u1, :body => "34")
-      e3 = create_event(:action => Action::PUSH_SUMMARY, :user => u1, :body => "56")
-      e4 = create_event(:action => Action::PUSH_SUMMARY, :user => u2, :body => "78")
+      create_event(:action => Action::COMMIT, :user => u1, :body => "12")
+      create_event(:action => Action::PUSH_SUMMARY, :user => u1, :body => "34")
+      create_event(:action => Action::PUSH_SUMMARY, :user => u1, :body => "56")
+      create_event(:action => Action::PUSH_SUMMARY, :user => u2, :body => "78")
 
       assert_not_nil User.most_active
       assert_equal 2, User.most_active.all.count
@@ -447,13 +460,6 @@ class UserTest < ActiveSupport::TestCase
   end
 
   context "user deletion" do
-    def user_without_projects_and_repos
-      user = users(:johan)
-      user.repositories.destroy_all
-      user.projects.destroy_all
-      user
-    end
-
     should "be possible if user has no repos or projects" do
       u = User.new
       assert u.deletable?
@@ -492,11 +498,6 @@ class UserTest < ActiveSupport::TestCase
       assert Group.exists?(member_group.id)
     end
 
-    def group_created_by_other_user
-      group = FactoryGirl.create(:group)
-      group.add_member(group.creator, Role.admin)
-      group
-    end
   end
 
   should "mass assign public_email" do

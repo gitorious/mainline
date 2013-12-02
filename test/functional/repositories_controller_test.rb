@@ -33,18 +33,18 @@ class RepositoriesControllerTest < ActionController::TestCase
     Gitorious::Configuration.prune(@settings)
   end
 
+  def ready_repository
+    head = Object.new
+    def head.commit; "abcdef"; end
+    Repository.any_instance.stubs(:head).returns(head)
+    @repo.update_attribute(:ready, true)
+    @repo.save
+    @repo
+  end
+
   should_render_in_site_specific_context
 
   context "#show" do
-    def ready_repository
-      head = Object.new
-      def head.commit; "abcdef"; end
-      Repository.any_instance.stubs(:head).returns(head)
-      @repo.update_attribute(:ready, true)
-      @repo.save
-      @repo
-    end
-
     should "temporarily redirect to the repository browser" do
       get :show, :project_id => @project.to_param, :id => ready_repository.to_param
 

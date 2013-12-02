@@ -35,9 +35,8 @@ require "fast_test_helper"
 
 require "database_cleaner"
 
-require "minitest/reporters"
-require "minitest-rails"
 require "minitest-rails-capybara"
+require "minitest/reporters"
 
 require "capybara/rails"
 require "capybara/poltergeist"
