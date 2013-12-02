@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131128081747) do
+ActiveRecord::Schema.define(:version => 20131201232200) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -200,15 +200,16 @@ ActiveRecord::Schema.define(:version => 20131128081747) do
   add_index "issues_issue_users", ["user_id", "issue_id"], :name => "index_issues_issue_users_on_user_id_and_issue_id", :unique => true
 
   create_table "issues_issues", :force => true do |t|
-    t.string   "state",        :null => false
-    t.integer  "issue_id",     :null => false
-    t.integer  "project_id",   :null => false
-    t.integer  "user_id",      :null => false
-    t.string   "title",        :null => false
+    t.string   "state",                       :null => false
+    t.integer  "issue_id",                    :null => false
+    t.integer  "project_id",                  :null => false
+    t.integer  "user_id",                     :null => false
+    t.string   "title",                       :null => false
     t.text     "description"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at",                  :null => false
+    t.datetime "updated_at",                  :null => false
     t.integer  "milestone_id"
+    t.integer  "priority",     :default => 0, :null => false
   end
 
   add_index "issues_issues", ["issue_id", "project_id"], :name => "index_issues_issues_on_issue_id_and_project_id", :unique => true
