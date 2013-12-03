@@ -19,8 +19,6 @@
 module Gitorious
   module Git
     class Commit
-      alias_method :committed_date, :time
-
       def initialize(rugged_commit)
         @rugged_commit = rugged_commit
       end
@@ -52,6 +50,8 @@ module Gitorious
       def time
         rugged_commit.time
       end
+
+      alias_method :committed_date, :time
 
       private
 
