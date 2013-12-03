@@ -116,6 +116,7 @@ module Gitorious
 
     # Enable the asset pipeline
     config.assets.enabled = true
+    config.assets.precompile += %w(public_index.css)
   end
 end
 
