@@ -34,8 +34,6 @@
 <%= form.input :target_repository_id, :as => :select, :label => t(:target_repository_id, :scope => 'activerecord.attributes.merge_request'),
   :hint => t("views.merges.info.target_repos"), :collection => @repositories %>
 
-<span id="spinner" style="display:none;"><%= image_tag("spinner.gif") %></span>
-
 <div id="target_branch_selection">
   <%= render "target_branches" %>
 </div>
