@@ -91,7 +91,7 @@ group :messaging do
 end
 
 group :resque do
-  gem "resque", "~> 1.23"
+  gem "resque", "1.24.1"
   gem "resque-cleaner", "~> 0.2.11"
   gem "resque-job-stats", "~> 0.3.0"
 end
