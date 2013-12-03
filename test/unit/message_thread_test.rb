@@ -44,9 +44,17 @@ class MessageThreadTest < ActiveSupport::TestCase
       assert_equal(2, @thread.messages.size)
     end
 
-    should 'return a boolean indicating whether all messages were saved' do
+    should 'return a truthy indicating whether all messages were saved' do
       assert_incremented_by Message, :count, 2 do
-        assert @thread.save
+        assert @thread.save!
+      end
+    end
+
+    should 'raise an error indicating a problem with sending some of the messages' do
+      thread = MessageThread.new(subject: 'Test', body: 'Test', recipients: 'unknown-user', sender: @sender)
+
+      assert_raise SendMessage::InvalidMessage do
+        thread.save!
       end
     end
 

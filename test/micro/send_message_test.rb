@@ -16,16 +16,38 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-module SendMessage
-  def self.call(opts = {})
-    message = Message.build(opts)
-    send_message(message)
+require 'fast_test_helper'
+
+require 'send_message'
+
+class SendMessageTest < MiniTest::Spec
+  let(:opts) {{
+    sender: User.new,
+    recipient: User.new,
+    subject: "This is the message subject",
+    body: "This is the message body"
+  }}
+
+  let(:sent_message) { :the_message }
+
+  before do
+    Message.stubs(:build).with(opts).returns(sent_message)
+    Message.stubs(:persist).with(sent_message)
   end
 
-  def self.send_message(message)
-    Message.persist(message)
-    message
+  def send_message
+    SendMessage.call(opts)
   end
 
-  InvalidMessage = ActiveRecord::RecordInvalid
+  it "saves the message to be viewed online" do
+    Message.expects(:persist).with(sent_message)
+
+    send_message
+  end
+
+  it "returns the sent message" do
+    send_message.must_equal(sent_message)
+  end
+
+  it "sends an email with the message"
 end

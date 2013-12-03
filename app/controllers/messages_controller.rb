@@ -97,18 +97,12 @@ class MessagesController < ApplicationController
     )
 
     @messages = MessageThread.new(thread_options)
-
-    if @messages.save
-      flash[:notice] = "#{@messages.title} sent"
-      redirect_to :action => :index
-    else
-      @message = @messages.message
-      @message.valid?
-      if @message.recipients.blank?
-        @message.errors.add(:recipients, "can't be blank")
-      end
-      render :new
-    end
+    @messages.save!
+    flash[:notice] = "#{@messages.title} sent"
+    redirect_to :action => :index
+  rescue SendMessage::InvalidMessage
+    @message = @messages.validated_message
+    render :new
   end
 
   def new
@@ -118,15 +112,12 @@ class MessagesController < ApplicationController
   # POST /messages/<id>/reply
   def reply
     original_message = current_user.received_messages.find(params[:id])
-    @message = original_message.build_reply(params[:message])
-    original_message.read! unless original_message.read?
-    if @message.save
-      flash[:notice] = "Your reply was sent"
-      redirect_to :action => :show, :id => original_message
-    else
-      flash[:error] = "Your message could not be sent"
-      redirect_to :action => :index
-    end
+    @message = SendReply.call(original_message, params[:message])
+    flash[:notice] = "Your reply was sent"
+    redirect_to :action => :show, :id => original_message
+  rescue SendMessage::InvalidMessage
+    flash[:error] = "Your message could not be sent"
+    redirect_to :action => :index
   end
 
   def auto_complete_for_message_recipients

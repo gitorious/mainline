@@ -30,6 +30,7 @@ require "pathname"
 require((defined?(Rails) ? Rails.root : "") + "config/gitorious_config")
 
 $: << File.expand_path('../../app/git', __FILE__)
+$: << File.expand_path('../../app/services', __FILE__)
 
 class MiniTest::Spec
   def assert_cache_header(cache_control, rack_response)
@@ -223,6 +224,9 @@ if !defined?(Rails)
     end
   end
 
+  class Message < TestHelper::Model
+  end
+
   class Role
     def self.member; :member; end
     def self.admin; :admin; end
@@ -325,6 +329,11 @@ if !defined?(Rails)
     def days; self * 24 * 60 * 60; end
     def day; days; end
     def ago; Time.now - self; end
+  end
+
+  module ActiveRecord
+    class RecordInvalid
+    end
   end
 end
 

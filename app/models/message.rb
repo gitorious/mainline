@@ -50,6 +50,14 @@ class Message < ActiveRecord::Base
     end
   end
 
+  def self.build(opts = {})
+    new(opts)
+  end
+
+  def self.persist(message)
+    message.save!
+  end
+
   def build_reply(options={})
     reply_options = {:sender => recipient, :recipient => sender, :subject => "Re: #{subject}"}.with_indifferent_access
     reply = Message.new(reply_options.merge(options))

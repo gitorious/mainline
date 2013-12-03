@@ -52,13 +52,19 @@ class MessageThread
     Message.new(:sender => @sender, :subject => @subject, :body => @body, :recipients => recipients.join(','))
   end
 
-  def save
-    all_ok = nil
-    messages.each{|msg|
-      all_ok = true if all_ok.nil?
-      all_ok = false unless msg.save
-    }
-    return all_ok
+  def validated_message
+    msg = message
+    msg.valid?
+    if msg.recipients.blank?
+      msg.errors.add(:recipients, "can't be blank")
+    end
+    msg
+  end
+
+  def save!
+    messages.each do |msg|
+      SendMessage.call(sender: msg.sender, subject: msg.subject, body: msg.body, recipient: msg.recipient)
+    end
   end
 
   protected

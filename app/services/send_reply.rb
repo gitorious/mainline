@@ -16,16 +16,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-module SendMessage
-  def self.call(opts = {})
-    message = Message.build(opts)
-    send_message(message)
+module SendReply
+  def self.call(original_message, reply_opts = {})
+    reply = original_message.build_reply(reply_opts)
+    original_message.read! unless original_message.read?
+    SendMessage.send_message(reply)
   end
-
-  def self.send_message(message)
-    Message.persist(message)
-    message
-  end
-
-  InvalidMessage = ActiveRecord::RecordInvalid
 end

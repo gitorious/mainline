@@ -16,16 +16,37 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-module SendMessage
-  def self.call(opts = {})
-    message = Message.build(opts)
-    send_message(message)
+require 'fast_test_helper'
+
+require 'send_reply'
+require 'send_message'
+
+class SendReplyTest < MiniTest::Spec
+  let(:reply) { :the_reply }
+  let(:original_message) { stub(read?: true, build_reply: reply) }
+
+  before do
+    SendMessage.stubs(:send_message).with(reply).returns(reply)
   end
 
-  def self.send_message(message)
-    Message.persist(message)
-    message
+  def send_reply
+    SendReply.call(original_message, subject: "Test")
   end
 
-  InvalidMessage = ActiveRecord::RecordInvalid
+  it "builds the reply and sends it" do
+    SendMessage.expects(:send_message).with(reply)
+
+    send_reply
+  end
+
+  it "returns the sent reply" do
+    send_reply.must_equal reply
+  end
+
+  it "marks the original message as read if it wasn't read before" do
+    original_message.stubs(read?: false)
+    original_message.expects(:read!)
+
+    send_reply.must_equal reply
+  end
 end
