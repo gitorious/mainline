@@ -68,8 +68,6 @@ GEM
       descendants_tracker (~> 0.0.1)
       ice_nine (~> 0.9)
     backports (3.3.5)
-    binding_of_caller (0.7.2)
-      debug_inspector (>= 0.0.1)
     bourne (1.5.0)
       mocha (>= 0.13.2, < 0.15)
     builder (3.0.4)
@@ -108,7 +106,6 @@ GEM
     creole (0.5.0)
     daemons (1.1.0)
     database_cleaner (1.2.0)
-    debug_inspector (0.0.2)
     debugger (1.6.2)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.2.0)
@@ -418,7 +415,6 @@ DEPENDENCIES
   activerecord-jdbcmysql-adapter
   acts-as-taggable-on (~> 2.3)
   airbrake (~> 3.1.14)
-  binding_of_caller
   capillary (~> 1.0.1)
   capybara (~> 2.1)
   capybara-screenshot
