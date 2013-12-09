@@ -26,6 +26,7 @@ require "gitorious/authentication/ldap_authentication"
 require "makeup/markup"
 set :run, true
 set :port, 1337
+set :bind, '0.0.0.0'
 
 class ConfigurationError < StandardError
 end
