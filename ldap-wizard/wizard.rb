@@ -2,10 +2,11 @@ require "pathname"
 
 
 RAILS_ENV = ENV["RAILS_ENV"] || "development"
-RAILS_ROOT = Pathname(File.dirname(__FILE__) + "/../")
+WIZARD_ROOT = File.dirname(__FILE__)
+RAILS_ROOT = Pathname(WIZARD_ROOT + "/../")
 ENV["BUNDLE_GEMFILE"] = (RAILS_ROOT + "Gemfile").to_s
 
-$LOAD_PATH << File.dirname(__FILE__) + "/lib"
+$LOAD_PATH << WIZARD_ROOT + "/lib"
 $LOAD_PATH << (RAILS_ROOT + "lib").to_s
 $LOAD_PATH << (RAILS_ROOT + "app").to_s
 
@@ -36,7 +37,7 @@ class ConfigurationError < StandardError
 end
 
 get "/" do
-  readme_file = Pathname("README.md")
+  readme_file = Pathname(WIZARD_ROOT + "/README.md")
   @readme = Makeup::Markup.new.render("README.md", readme_file.read)
   erb :readme
 end
