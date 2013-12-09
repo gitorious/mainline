@@ -25,7 +25,7 @@
     <div class="row-fluid">
       <div class="span8">
         <ul class="gts-listing">
-          <%= render groups %>
+          <%= render partial: 'group', collection: groups %>
         </ul>
         <%= raw JustPaginate.page_navigation(page, total_pages) { |n| groups_path(:page => n) } %>
       </div>
