@@ -33,7 +33,11 @@ module Gitorious
               yield BoundConnection.new(connection)
             end
           rescue Net::LDAP::LdapError => e
-            raise LdapError, "Unable to connect to the LDAP server on #{options[:host]}:#{options[:port]}. Are you sure the LDAP server is running?"
+            if e.message =~ /Invalid binding information/
+              raise LdapError, "Invalid LDAP binding information. Make sure bind_user setting in authentication.yml is correct."
+            else
+              raise LdapError, "Unable to connect to the LDAP server on #{options[:host]}:#{options[:port]}. Are you sure the LDAP server is running?"
+            end
           end
         end
 
