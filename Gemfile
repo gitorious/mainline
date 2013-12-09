@@ -76,9 +76,13 @@ end
 group :development do
   gem "foreman", "~> 0.41"
   gem "thin", "~> 1.2"
-  gem "sinatra-contrib"
   gem "pry-rails"
   gem "debugger"
+end
+
+group :ldap_wizard do
+  gem "sinatra-contrib"
+  gem "makeup"
 end
 
 group :git_proxy do

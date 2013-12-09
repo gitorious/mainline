@@ -8,7 +8,10 @@ ENV["BUNDLE_GEMFILE"] = (RAILS_ROOT + "Gemfile").to_s
 $LOAD_PATH << File.dirname(__FILE__) + "/lib"
 $LOAD_PATH << (RAILS_ROOT + "lib").to_s
 $LOAD_PATH << (RAILS_ROOT + "app").to_s
-require "bundler/setup"
+
+require "bundler"
+Bundler.setup(:default, :ldap_wizard)
+
 require "net/ldap"
 
 # Out libs
@@ -24,6 +27,7 @@ require "gitorious/authentication"
 require "gitorious/authentication/ldap_configurator"
 require "gitorious/authentication/ldap_authentication"
 require "makeup/markup"
+
 set :run, true
 set :port, 1337
 set :bind, '0.0.0.0'
