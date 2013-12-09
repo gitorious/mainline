@@ -187,22 +187,27 @@ class MessageTest < ActiveSupport::TestCase
       assert @email_lover.wants_email_notifications?
       @message.sender = @privacy_lover
       @message.recipient = @email_lover
-      @message.expects(:schedule_email_delivery).once
-      @message.save
+
+      @message.deliver_email
+
+      assert_messages_published("/queue/GitoriousEmailNotifications", 1)
     end
 
     should "not fire a notification event for opt-out users" do
       assert !@privacy_lover.wants_email_notifications?
       @message.sender = @email_lover
       @message.recipient = @privacy_lover
-      @message.expects(:schedule_email_delivery).never
-      @message.save
+
+      @message.deliver_email
+
+      assert_messages_published("/queue/GitoriousEmailNotifications", 0)
     end
 
     should "actually send the message to the queue" do
       @message.sender = @privacy_lover
       @message.recipient = @email_lover
-      @message.save
+
+      @message.deliver_email
 
       assert_published("/queue/GitoriousEmailNotifications", {
                          "sender_id" => @privacy_lover.id,
@@ -214,8 +219,10 @@ class MessageTest < ActiveSupport::TestCase
     should "not send a notification when the sender and recipient is the same person" do
       @message.sender = @message.recipient = @email_lover
       assert @message.recipient.wants_email_notifications?
-      @message.expects(:schedule_email_delivery).never
-      @message.save
+
+      @message.deliver_email
+
+      assert_messages_published("/queue/GitoriousEmailNotifications", 0)
     end
   end
 

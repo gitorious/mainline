@@ -28,10 +28,11 @@ class SendMessageTest < MiniTest::Spec
     body: "This is the message body"
   }}
 
-  let(:sent_message) { :the_message }
+  let(:sent_message) { Message.new }
 
   before do
     Message.stubs(:build).with(opts).returns(sent_message)
+    sent_message.stubs(:deliver_email)
     Message.stubs(:persist).with(sent_message)
   end
 
@@ -49,5 +50,9 @@ class SendMessageTest < MiniTest::Spec
     send_message.must_equal(sent_message)
   end
 
-  it "sends an email with the message"
+  it "sends an email with the message" do
+    sent_message.expects(:deliver_email)
+
+    send_message
+  end
 end

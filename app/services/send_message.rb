@@ -24,6 +24,7 @@ module SendMessage
 
   def self.send_message(message)
     Message.persist(message)
+    message.deliver_email
     message
   end
 

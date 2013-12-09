@@ -28,7 +28,6 @@ class Message < ActiveRecord::Base
   belongs_to :recipient, :class_name => "User", :foreign_key => :recipient_id
   belongs_to :in_reply_to, :class_name => 'Message', :foreign_key => :in_reply_to_id
   belongs_to :root_message, :class_name => 'Message', :foreign_key => :root_message_id
-  after_create :send_email_notification_if_required
   before_create :flag_root_message_if_required
 
   has_many :replies, :class_name => 'Message', :foreign_key => :in_reply_to_id
@@ -64,6 +63,13 @@ class Message < ActiveRecord::Base
     reply.in_reply_to = self
     reply.root_message_id = root_message_id || id
     return reply
+  end
+
+  def deliver_email
+    return unless recipient.wants_email_notifications?
+    return if recipient == sender
+
+    schedule_email_delivery
   end
 
   def to_xml(options = {})
@@ -179,43 +185,38 @@ class Message < ActiveRecord::Base
   end
 
   protected
-    def send_email_notification_if_required
-      if recipient.wants_email_notifications? and (recipient != sender)
-        schedule_email_delivery
-      end
+
+  def schedule_email_delivery
+    options = {
+      :sender_id => sender.id,
+      :recipient_id => recipient.id,
+      :subject => subject,
+      :body => body,
+      :created_at => created_at,
+      :identifier => "email_delivery",
+      :message_id => self.id,
+    }
+    if notifiable && notifiable.id
+      options.merge!({
+        :notifiable_type => notifiable.class.name,
+        :notifiable_id => notifiable.id,
+      })
     end
 
-    def schedule_email_delivery
-      options = {
-        :sender_id => sender.id,
-        :recipient_id => recipient.id,
-        :subject => subject,
-        :body => body,
-        :created_at => created_at,
-        :identifier => "email_delivery",
-        :message_id => self.id,
-      }
-      if notifiable && notifiable.id
-        options.merge!({
-            :notifiable_type => notifiable.class.name,
-            :notifiable_id => notifiable.id,
-        })
-      end
+    publish("/queue/GitoriousEmailNotifications", options)
+  end
 
-      publish("/queue/GitoriousEmailNotifications", options)
-    end
-
-    def flag_root_message_if_required
-      self.last_activity_at = current_time_from_proper_timezone
-      if root_message
-        if root_message.sender == recipient
-          root_message.has_unread_replies = true
-          root_message.archived_by_sender = false
-        else
-          root_message.archived_by_recipient = false
-        end
-        root_message.touch!
-        root_message.save
+  def flag_root_message_if_required
+    self.last_activity_at = current_time_from_proper_timezone
+    if root_message
+      if root_message.sender == recipient
+        root_message.has_unread_replies = true
+        root_message.archived_by_sender = false
+      else
+        root_message.archived_by_recipient = false
       end
+      root_message.touch!
+      root_message.save
     end
+  end
 end
