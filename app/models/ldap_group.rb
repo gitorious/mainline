@@ -42,7 +42,7 @@ class LdapGroup < ActiveRecord::Base
         :host => configurator.server,
         :port => configurator.port,
         :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
-      Array(member_dns).each do |dn|
+      member_dns.each do |dn|
         if ldap_dn_in_base?(dn, configurator.group_search_dn)
           errors.add(:member_dns, "LDAP DN #{dn} is part of the LDAP search base #{configurator.group_search_dn}")
         end
@@ -53,6 +53,11 @@ class LdapGroup < ActiveRecord::Base
         errors.add(:member_dns, "#{dn} not found") if result.empty?
       end
     end
+  end
+
+  def member_dns
+    value = super
+    value.is_a?(String) ? value.split("\n").map(&:strip) : value
   end
 
   # We don't want member DNs to contain the base DN to search
@@ -71,7 +76,7 @@ class LdapGroup < ActiveRecord::Base
   end
 
   def ldap_group_names
-    Array(member_dns).join("\n")
+    member_dns.join("\n")
   end
 
   def ldap_group_names=(newline_separated_list)
