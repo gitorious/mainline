@@ -173,59 +173,6 @@ class MessageTest < ActiveSupport::TestCase
     end
   end
 
-  context "Email notifications" do
-    setup do
-      @privacy_lover = FactoryGirl.create(:user, :wants_email_notifications => false)
-      @email_lover = FactoryGirl.create(:user, :wants_email_notifications => true)
-      # @moe = users(:moe)
-      # @mike = users(:mike)
-      @message = Message.new(:subject => "Hello", :body => "World")
-      clear_message_queue
-    end
-
-    should "fire a notification event on message creation" do
-      assert @email_lover.wants_email_notifications?
-      @message.sender = @privacy_lover
-      @message.recipient = @email_lover
-
-      @message.deliver_email
-
-      assert_messages_published("/queue/GitoriousEmailNotifications", 1)
-    end
-
-    should "not fire a notification event for opt-out users" do
-      assert !@privacy_lover.wants_email_notifications?
-      @message.sender = @email_lover
-      @message.recipient = @privacy_lover
-
-      @message.deliver_email
-
-      assert_messages_published("/queue/GitoriousEmailNotifications", 0)
-    end
-
-    should "actually send the message to the queue" do
-      @message.sender = @privacy_lover
-      @message.recipient = @email_lover
-
-      @message.deliver_email
-
-      assert_published("/queue/GitoriousEmailNotifications", {
-                         "sender_id" => @privacy_lover.id,
-                         "recipient_id" => @email_lover.id,
-                         "subject" => @message.subject
-                       })
-    end
-
-    should "not send a notification when the sender and recipient is the same person" do
-      @message.sender = @message.recipient = @email_lover
-      assert @message.recipient.wants_email_notifications?
-
-      @message.deliver_email
-
-      assert_messages_published("/queue/GitoriousEmailNotifications", 0)
-    end
-  end
-
   should "be readable by the sender" do
     message = Message.new(:subject => "Hello", :body => "World")
     message.sender = users(:johan)

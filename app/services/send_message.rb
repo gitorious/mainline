@@ -15,7 +15,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
 module SendMessage
   def self.call(opts = {})
     message = Message.build(opts)
@@ -24,8 +23,66 @@ module SendMessage
 
   def self.send_message(message)
     Message.persist(message)
-    message.deliver_email
+    EmailNotification.deliver(message)
     message
+  end
+
+  class EmailNotification
+    QUEUE = "/queue/GitoriousEmailNotifications"
+
+    def self.deliver(message)
+      new(message).deliver
+    end
+
+    def initialize(message)
+      @message = message
+    end
+
+    def deliver
+      return unless recipient_wants_email_notifications?
+      return if recipient_is_the_sender?
+
+      enqueue
+    end
+
+    private
+
+    def recipient_wants_email_notifications?
+      message.recipient.wants_email_notifications?
+    end
+
+    def recipient_is_the_sender?
+      message.recipient == message.sender
+    end
+
+    def job_params
+      {
+        sender_id: message.sender.id,
+        recipient_id: message.recipient.id,
+        subject: message.subject,
+        body: message.body,
+        created_at: message.created_at,
+        identifier: "email_delivery",
+        message_id: message.id
+      }.merge(notifiable_params)
+    end
+
+    def notifiable_params
+      notifiable = message.notifiable
+
+      return {} unless notifiable && notifiable.id
+
+      { notifiable_type: notifiable.class.name,
+        notifiable_id: notifiable.id }
+    end
+
+    def enqueue
+      publish(QUEUE, job_params)
+    end
+
+    attr_reader :message
+
+    include Gitorious::Messaging::Publisher
   end
 
   InvalidMessage = ActiveRecord::RecordInvalid

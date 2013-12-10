@@ -65,13 +65,6 @@ class Message < ActiveRecord::Base
     return reply
   end
 
-  def deliver_email
-    return unless recipient.wants_email_notifications?
-    return if recipient == sender
-
-    schedule_email_delivery
-  end
-
   def to_xml(options = {})
     options[:indent] ||= 2
     xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
@@ -185,26 +178,6 @@ class Message < ActiveRecord::Base
   end
 
   protected
-
-  def schedule_email_delivery
-    options = {
-      :sender_id => sender.id,
-      :recipient_id => recipient.id,
-      :subject => subject,
-      :body => body,
-      :created_at => created_at,
-      :identifier => "email_delivery",
-      :message_id => self.id,
-    }
-    if notifiable && notifiable.id
-      options.merge!({
-        :notifiable_type => notifiable.class.name,
-        :notifiable_id => notifiable.id,
-      })
-    end
-
-    publish("/queue/GitoriousEmailNotifications", options)
-  end
 
   def flag_root_message_if_required
     self.last_activity_at = current_time_from_proper_timezone
