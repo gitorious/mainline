@@ -61,7 +61,7 @@ development:
       # Specify a username/password to use for authenticated bind
       # NOTE: This is required when using LDAP for authorization
       #bind_user:
-      #  username: boss
+      #  username: CN=boss,DC=gitorious,DC=org
       #  password: sikret
 
       # When using LDAP authorization: which attribute in a user
