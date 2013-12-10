@@ -219,19 +219,16 @@ class LdapGroup < ActiveRecord::Base
     [user_spec, ldap_configurator.group_search_dn].compact.join(",")
   end
 
-  def self.groups_for_user(user)
-    ldap_group_names = ldap_group_names_for_user(user)
-    return [] if ldap_group_names.blank?
-    result = []
-    all.each do |group|
-      dns_in_group = group.member_dns.map {|dn| build_qualified_dn(dn)}
-      ldap_group_names.map do |name|
-        if dns_in_group.include?(name)
-          result << group
-        end
-      end
-    end
+  def self.group_matches_dns?(group, user_group_dns)
+    group_dns = group.member_dns.map { |dn| build_qualified_dn(dn).downcase }
+    user_group_dns = user_group_dns.map(&:downcase)
+    (group_dns & user_group_dns).size > 0
+  end
 
-    result.compact
+  def self.groups_for_user(user)
+    user_group_dns = ldap_group_names_for_user(user)
+    return [] if user_group_dns.blank?
+
+    all.select { |group| group_matches_dns?(group, user_group_dns) }.compact
   end
 end

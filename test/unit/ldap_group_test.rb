@@ -59,6 +59,12 @@ class LdapGroupTest < ActiveSupport::TestCase
       end
     end
 
+    should "list filter LDAP groups, ignoring letter case" do
+      stub_ldap_groups(["cn=managers", "cn=admins","CN=developers"]) do
+        assert_equal([@group], LdapGroup.groups_for_user(@user))
+      end
+    end
+
     should "return an empty list if no matches are found" do
       stub_ldap_groups(["cn=managers","cn=temps"]) do
         assert_equal([], LdapGroup.groups_for_user(@user))
