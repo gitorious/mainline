@@ -32,6 +32,6 @@
  </div>
 </div>
 <% if group.is_a?(LdapGroup) %>
-  <%= form.input(:ldap_group_names, :hint => "Enter LDAP group DNs, one per line "+
+  <%= form.input(:ldap_group_names, :as => :text, :hint => "Enter LDAP group RDNs (Relative DN), one per line "+
         "<strong>Note:</strong> entries should be relative to the LDAP base DN") %>
 <% end %>
