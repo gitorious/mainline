@@ -106,12 +106,10 @@ class LdapGroup < ActiveRecord::Base
   end
 
   def self.ldap_configurator
-    auth_configuration_path = File.join(Rails.root, "config", "authentication.yml")
-    configuration = YAML::load_file(auth_configuration_path)[Rails.env]["methods"].detect do |m|
-      m["adapter"] == "Gitorious::Authentication::LDAPAuthentication"
-    end
-    raise Gitorious::Authorization::LDAP::LdapError, "No LDAP configuration found for current environment (#{Rails.env}) in #{auth_configuration_path}" unless configuration
-    Gitorious::Authentication::LDAPConfigurator.new(configuration)
+    method = Gitorious::Authentication::Configuration.authentication_method('LDAP')
+    raise Gitorious::Authorization::LDAP::Connection::LdapError, "LDAP was not enabled in authentication.yml" unless method
+
+    method.configurator
   end
 
   def self.ldap_group_names_for_user(user)

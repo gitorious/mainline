@@ -60,6 +60,12 @@ module Gitorious
       def self.authentication_methods
         @authentication_methods ||= []
       end
+
+      def self.authentication_method(name)
+        authentication_methods.detect do |method|
+          method.class.name == "Gitorious::Authentication::#{name}Authentication"
+        end
+      end
     end
 
     class ConfigurationError < StandardError

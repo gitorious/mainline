@@ -23,9 +23,9 @@ require "use_cases/create_activated_user"
 module Gitorious
   module Authentication
     class LDAPAuthentication
-      attr_reader(:server, :port, :encryption, :attribute_mapping, :base_dn,
-                  :connection_type, :distinguished_name_template, :connection, :login_attribute,
-                  :bind_user, :bind_password)
+      attr_reader :server, :port, :encryption, :attribute_mapping, :base_dn,
+        :connection_type, :distinguished_name_template, :connection,
+        :login_attribute, :bind_user, :bind_password, :configurator
 
       def initialize(options)
         validate_requirements(options)
@@ -39,7 +39,7 @@ module Gitorious
       end
 
       def setup_attributes(options)
-        configurator = LDAPConfigurator.new(options)
+        @configurator = LDAPConfigurator.new(options)
         @login_attribute               = configurator.login_attribute
         @server                        = configurator.server
         @port                          = configurator.port
