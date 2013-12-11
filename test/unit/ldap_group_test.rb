@@ -103,6 +103,12 @@ class LdapGroupTest < ActiveSupport::TestCase
     end
   end
 
+  context "Modifying memberships" do
+    should "not be possible" do
+      refute Group.new.memberships_modifiable?
+    end
+  end
+
   context "LDAP filters" do
     setup do
       @group = ldap_groups(:first_ldap_group)

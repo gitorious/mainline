@@ -116,6 +116,12 @@ class GroupTest < ActiveSupport::TestCase
     end
   end
 
+  context "Modifying memberships" do
+    should "be possible" do
+      assert Group.new.memberships_modifiable?
+    end
+  end
+
   context "validations" do
     setup {@existing_group = FactoryGirl.create(:group)}
 

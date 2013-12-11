@@ -52,5 +52,9 @@ module GroupBehavior
     def downcase_name
       name.downcase! if name
     end
+
+    def memberships_modifiable?
+      true
+    end
   end
 end

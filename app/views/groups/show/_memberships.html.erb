@@ -18,12 +18,14 @@
 %>
 
 <%= pull_box("Members") do %>
-  <div class="pull-box-header-action">
-    <%= link_to new_group_membership_path(group), :class => 'btn btn-primary' do %>
-      <i class="icon-plus-sign icon-white"></i>
-      Add member
-    <% end %>
-  </div>
+  <% if group.memberships_modifiable? %>
+    <div class="pull-box-header-action">
+      <%= link_to new_group_membership_path(group), :class => 'btn btn-primary' do %>
+        <i class="icon-plus-sign icon-white"></i>
+        Add member
+      <% end %>
+    </div>
+  <% end %>
   <% if memberships.blank? %>
       <p class="hint muted">Team has no members</p>
   <% else %>

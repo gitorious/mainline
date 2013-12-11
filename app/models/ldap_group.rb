@@ -99,6 +99,10 @@ class LdapGroup < ActiveRecord::Base
     projects.empty?
   end
 
+  def memberships_modifiable?
+    false
+  end
+
   def user_role(candidate)
     if candidate == creator
       Role.admin
