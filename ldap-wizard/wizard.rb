@@ -1,7 +1,5 @@
 require "pathname"
 
-
-RAILS_ENV = ENV["RAILS_ENV"] || "development"
 WIZARD_ROOT = File.dirname(__FILE__)
 RAILS_ROOT = Pathname(WIZARD_ROOT + "/../")
 ENV["BUNDLE_GEMFILE"] = (RAILS_ROOT + "Gemfile").to_s

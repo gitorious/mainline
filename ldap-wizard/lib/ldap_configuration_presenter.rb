@@ -38,7 +38,6 @@ class LdapConfigurationPresenter
   end
 
   def to_yaml
-    result = {}
     ldap_conf = {
       "adapter" => "Gitorious::Authentication::LDAPAuthentication",
       "host" => host,
@@ -55,7 +54,7 @@ class LdapConfigurationPresenter
         ldap_conf
       ]
     }
-    result[RAILS_ENV]= config
-    result.to_yaml
+
+    config.to_yaml
   end
 end

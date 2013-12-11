@@ -62,16 +62,6 @@ curl -X POST localhost:1337/check -d "username=john&password=sikret"
 and the app will respond with a HTTP 200 if authentication succeeded,
 otherwise a HTTP 403.
 
-## A word about RAILS_ENV
-
-This wizard respects the `RAILS_ENV` environment variable, and uses it
-to find the provided authentication setup in your configuration
-file. By default, the `development` `RAILS_ENV` is used.
-
-The generated authentication file will use the specified `RAILS_ENV`,
-so if you're using `development` from the wizard there will be a
-`development` section in the resulting YAML file.
-
 ## What isn't supported yet
 
 There are a few things planned for this wizard which aren't quite done
