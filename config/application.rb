@@ -94,7 +94,6 @@ module Gitorious
 
       OAuth::Consumer::CA_FILE = nil
       Gitorious::Plugin::post_load
-      Grit::Git.git_binary = Gitorious.git_binary
 
       require "gitorious/reservations"
       Rails.application.reload_routes!

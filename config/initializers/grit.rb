@@ -1,6 +1,7 @@
 require "grit"
 
 Grit.logger = Rails.logger
+Grit::Git.git_binary = Gitorious.git_binary
 
 class Grit::Ref
   def ==(other)
