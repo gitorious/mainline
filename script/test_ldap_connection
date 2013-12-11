@@ -9,9 +9,7 @@ require "./config/environment"
 
 username = ARGV[0]
 password = ARGV[1]
-ldap = Gitorious::Authentication::Configuration.authentication_methods.detect do |m|
-  Gitorious::Authentication::LDAPAuthentication === m
-end
+ldap = Gitorious::Authentication::Configuration.authentication_method('LDAP')
 
 abort "You need to configure LDAP autentication in config/authentication.yml" unless ldap
 
