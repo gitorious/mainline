@@ -117,6 +117,8 @@ module Gitorious
     # Enable the asset pipeline
     config.assets.enabled = true
     config.assets.precompile += %w(public_index.css)
+
+    I18n.enforce_available_locales = true
   end
 end
 
