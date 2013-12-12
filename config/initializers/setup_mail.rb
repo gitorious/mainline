@@ -26,7 +26,7 @@ ActionMailer::Base.default_url_options[:port]     = Gitorious.port unless Gitori
 smtp_config_path = (Rails.root + 'config' + 'smtp.yml').to_s
 if File.exist?(smtp_config_path)
   smtp_settings = YAML.load_file(smtp_config_path)
-  if smtp_settings && smtp_settings[Rails.env]
-    ActionMailer::Base.smtp_settings = smtp_settings[Rails.env].symbolize_keys
+  if smtp_settings
+    ActionMailer::Base.smtp_settings = smtp_settings.symbolize_keys
   end
 end
