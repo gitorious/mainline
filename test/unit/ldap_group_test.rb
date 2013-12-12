@@ -105,7 +105,7 @@ class LdapGroupTest < ActiveSupport::TestCase
 
   context "Modifying memberships" do
     should "not be possible" do
-      refute Group.new.memberships_modifiable?
+      refute LdapGroup.new.memberships_modifiable?
     end
   end
 
