@@ -15,18 +15,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "fast_test_helper"
+
 require "project_presenter"
 
 class ProjectPresenterTest < Minitest::Spec
   before do
-    @project = ProjectPresenter.new(Project.new({
+    @project = ProjectPresenter.new(Project.new(
           :id => 13,
           :title => "Gitorious",
           :slug => "gitorious",
-          :description => "Hmm, yeah",
-          :to_param => "gitorious"
-        }))
+          :wiki_enabled => false,
+          :description => "Hmm, yeah"))
   end
 
   it "exposes title as name" do
