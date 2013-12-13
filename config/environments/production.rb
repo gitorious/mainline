@@ -1,8 +1,7 @@
 Gitorious::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
-  # Required for the async Dolt integration to work properly
-  config.threadsafe!
+  # config.threadsafe!
 
   # The production environment is meant for finished, "live" apps.
   # Code is not reloaded between requests
