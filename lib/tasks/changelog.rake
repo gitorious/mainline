@@ -15,8 +15,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.join(File.dirname(__FILE__), "../gitorious")
-
 def each_version
   pattern = /^v(\d+\.\d+\.\d+)/
 
@@ -56,6 +54,8 @@ def describe_version(version)
 end
 
 def show_changelog
+  require File.join(File.dirname(__FILE__), "../gitorious")
+
   system("#{ENV['GIT'] || 'git'} fetch git://gitorious.org/gitorious/mainline.git 2> /dev/null")
 
   if ENV["VERSION"]
