@@ -45,6 +45,11 @@ class LdapGroupTest < ActiveSupport::TestCase
       @group.member_dns = "cn=testers \ncn=hackers"
       assert_equal(["cn=testers", "cn=hackers"], @group.member_dns)
     end
+
+    should "handle legacy (nil) list of member DNs" do
+      @group.member_dns = nil
+      assert_equal([], @group.member_dns)
+    end
   end
 
   context "Membership" do

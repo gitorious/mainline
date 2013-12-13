@@ -57,7 +57,7 @@ class LdapGroup < ActiveRecord::Base
 
   def member_dns
     value = super
-    value.is_a?(String) ? value.split("\n").map(&:strip) : value
+    value.is_a?(String) ? value.split("\n").map(&:strip) : [*value]
   end
 
   # We don't want member DNs to contain the base DN to search
