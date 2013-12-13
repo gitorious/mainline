@@ -88,6 +88,7 @@ GEM
       minitest (>= 2)
     celluloid (0.15.2)
       timers (~> 1.1.0)
+    charlatan (0.0.1)
     charlock_holmes (0.6.9.4)
     ci_reporter (1.9.0)
       builder (>= 2.1.2)
@@ -418,6 +419,7 @@ DEPENDENCIES
   capybara (~> 2.1)
   capybara-screenshot
   capybara_minitest_spec (~> 1.0)
+  charlatan (~> 0.0.1)
   ci_reporter
   creole
   daemons (= 1.1.0)

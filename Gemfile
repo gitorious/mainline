@@ -24,6 +24,7 @@ gem "mysql2", :platforms => :ruby
 gem "highline"
 gem "use_case"
 gem "virtus", '~> 1.0.1'
+gem "charlatan", '~> 0.0.1'
 gem "rake", "~> 10.0"
 gem "gitlab-grit", :require => "grit", :git => "https://github.com/wrozka/grit.git"
 gem "airbrake", "~> 3.1.14", :require => false
