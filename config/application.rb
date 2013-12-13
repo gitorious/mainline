@@ -123,5 +123,3 @@ module Gitorious
     I18n.enforce_available_locales = true
   end
 end
-
-require File.expand_path("../gitorious_config", __FILE__)
