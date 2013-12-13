@@ -20,6 +20,7 @@
 require "coverage_helper"
 
 ENV["RAILS_ENV"] = "test"
+ENV["GTS_AUTHENTICATION_YML"] = File.join(File.dirname(__FILE__), "authentication.yml")
 
 require File.join(File.dirname(__FILE__), "../config/environment")
 
