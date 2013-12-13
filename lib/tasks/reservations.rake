@@ -16,12 +16,13 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "gitorious/reservations"
 
 namespace :routes do
   desc "List reserved project and repository names"
 
   task :reservations => :environment do
+    require "gitorious/reservations"
+
     puts "Reserved project names"
     puts "  " + Gitorious::Reservations.project_names.join("\n  ")
 
