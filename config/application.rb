@@ -117,6 +117,9 @@ module Gitorious
     config.assets.enabled = true
     config.assets.precompile += %w(public_index.css)
 
+    # Don't initialize the app during assets compilation
+    config.assets.initialize_on_precompile = false
+
     I18n.enforce_available_locales = true
   end
 end
