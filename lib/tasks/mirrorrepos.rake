@@ -15,8 +15,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.join(File.dirname(__FILE__), "../gitorious")
-
 namespace :mirror do
 
   # Creating/synching symlinks to all repos in a separate folder
@@ -36,6 +34,8 @@ namespace :mirror do
 
   desc "Create mirror directory with symlinks to all current regular repository paths"
   task :symlinkedrepos => :environment do
+    require File.join(File.dirname(__FILE__), "../gitorious")
+
     base = Gitorious::Configuration.get("repository_base_path")
     default_mirror_base_path = "#{base}/../mirrored-public-repos"
     mirror_base = ENV["MIRROR_BASEDIR"]
