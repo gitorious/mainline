@@ -1,9 +1,10 @@
 GIT
-  remote: git://gitorious.org/gitorious/gitorious-issues.git
+  remote: https://git.gitorious.org/gitorious/gitorious-issues.git
   revision: 03206cf4a9feb516a21fcc40a38591f50ae899cf
   branch: master
   specs:
     gitorious-issues (0.0.1)
+      charlatan (~> 0.0.1)
       rails (~> 3.2.15)
 
 GIT
