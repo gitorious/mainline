@@ -22,7 +22,7 @@ class ProjectPresenter
   include Charlatan.new(:project)
   private :project
 
-  delegate :to_param, :to => :project
+  undef_method :to_param # thank you AS for adding Object#to_param
 
   def self.model_name
     Project.model_name
