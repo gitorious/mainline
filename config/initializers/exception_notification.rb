@@ -29,12 +29,14 @@ if airbrake_api_key
   end
 
 elsif exception_recipients.present?
-  require "exception_notifier"
+  require "exception_notification"
 
-  Gitorious::Application.config.middleware.use(ExceptionNotifier, {
-    :email_prefix => "[Gitorious] ",
-    :sender_address => Gitorious.email_sender,
-    :exception_recipients => exception_recipients
+  Gitorious::Application.config.middleware.use(ExceptionNotification::Rack, {
+    :email => {
+      :email_prefix => "[Gitorious] ",
+      :sender_address => Gitorious.email_sender,
+      :exception_recipients => exception_recipients
+    }
   })
 else
   if Rails.env.production?
