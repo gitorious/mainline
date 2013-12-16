@@ -16,7 +16,7 @@
 #++
 
 desc 'Removes events with missing targets'
-task :fix_dangling_events do
+task :fix_dangling_events => :environment do
   [Project, User, Group, MergeRequest, Repository].each do |target|
     table_name = target.table_name.to_sym
 

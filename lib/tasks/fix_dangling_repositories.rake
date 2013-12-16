@@ -16,7 +16,7 @@
 #++
 
 desc 'Removes repositories with missing projects'
-task :fix_dangling_repositories do
+task :fix_dangling_repositories => :environment do
   [User, Project].each do |model|
     table_name = model.table_name.to_sym
     name       = model.name

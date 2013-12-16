@@ -16,7 +16,7 @@
 #++
 
 desc 'Removes committerships with missing committer users'
-task :fix_dangling_committerships do
+task :fix_dangling_committerships => :environment do
   [User, Group].each do |owner|
     table_name = owner.table_name.to_sym
 

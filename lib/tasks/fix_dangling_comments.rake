@@ -16,7 +16,7 @@
 #++
 
 desc 'Removes comments with missing targets'
-task :fix_dangling_comments do
+task :fix_dangling_comments => :environment do
   [MergeRequest, MergeRequestVersion].each do |target|
     table_name = target.table_name.to_sym
 

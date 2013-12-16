@@ -16,7 +16,7 @@
 #++
 
 desc 'Removes projects with missing owners'
-task :fix_dangling_projects do
+task :fix_dangling_projects => :environment do
   [User, Group].each do |owner|
     table_name = owner.table_name.to_sym
 
