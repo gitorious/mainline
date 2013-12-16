@@ -8,7 +8,7 @@ gem "mime-types", "~> 1.16", :require => "mime/types"
 gem "diff-lcs", "1.1.2", :require => "diff/lcs"
 gem "oauth", "0.4.4"
 gem "paperclip", "~> 3.5.2"
-gem "state_machine", "~> 1.1", :git => "https://github.com/wrozka/state_machine.git"
+gem "state_machine", "~> 1.1", :git => "https://github.com/gitorious/state_machine.git"
 gem "acts-as-taggable-on", "~> 2.3"
 gem "will_paginate", "~>3.0"
 gem "just_paginate", "0.2.2"
@@ -26,7 +26,7 @@ gem "use_case"
 gem "virtus", '~> 1.0.1'
 gem "charlatan", '~> 0.0.1'
 gem "rake", "~> 10.0"
-gem "gitlab-grit", :require => "grit", :git => "https://github.com/wrozka/grit.git"
+gem "gitlab-grit", :require => "grit", :git => "https://github.com/gitorious/grit.git"
 gem "airbrake", "~> 3.1.14", :require => false
 gem "simple_form", "~> 2.1"
 gem "force_utf8"
