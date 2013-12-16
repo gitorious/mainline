@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131210111917) do
+ActiveRecord::Schema.define(:version => 20131216131457) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -342,6 +342,9 @@ ActiveRecord::Schema.define(:version => 20131210111917) do
     t.integer "message_id",   :null => false
     t.integer "recipient_id", :null => false
   end
+
+  add_index "messages_users", ["message_id"], :name => "index_messages_users_on_message_id"
+  add_index "messages_users", ["recipient_id"], :name => "index_messages_users_on_recipient_id"
 
   create_table "open_id_authentication_associations", :force => true do |t|
     t.integer "issued"
