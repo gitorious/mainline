@@ -23,6 +23,7 @@ class MessageThread
     @subject    = options[:subject]
     @body       = options[:body]
     @sender     = options[:sender]
+    @recipient_logins = options[:recipients]
     @recipients = extract_recipients(options[:recipients])
     Rails.logger.debug("MessageThread for #{@recipients.join(',')}")
   end
@@ -49,7 +50,7 @@ class MessageThread
 
   # Returns a message object, used in views etc
   def message
-    Message.new(:sender => @sender, :subject => @subject, :body => @body, :recipients => recipients.join(','))
+    Message.new(:sender => @sender, :subject => @subject, :body => @body, :recipient_logins => @recipient_logins)
   end
 
   def validated_message

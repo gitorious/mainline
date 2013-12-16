@@ -25,15 +25,19 @@ class Message < ActiveRecord::Base
 
   belongs_to :notifiable, :polymorphic => true
   belongs_to :sender, :class_name => "User", :foreign_key => :sender_id
-  belongs_to :recipient, :class_name => "User", :foreign_key => :recipient_id
   belongs_to :in_reply_to, :class_name => 'Message', :foreign_key => :in_reply_to_id
   belongs_to :root_message, :class_name => 'Message', :foreign_key => :root_message_id
   before_create :flag_root_message_if_required
 
   has_many :replies, :class_name => 'Message', :foreign_key => :in_reply_to_id
 
+  has_many :message_recipients
+  has_and_belongs_to_many :recipients,
+    :class_name => "User",
+    :association_foreign_key => :recipient_id
+
   validates_presence_of :subject, :body
-  validates_presence_of :recipient, :sender, :allow_blank => false
+  validates_presence_of :recipients, :sender, :allow_blank => false
 
   throttle_records(:create, {
       :limit => 10,
@@ -55,6 +59,11 @@ class Message < ActiveRecord::Base
 
   def self.persist(message)
     message.save!
+  end
+
+  def self.involving_user(user)
+    includes(:message_recipients).
+      where('sender_id = ? OR messages_users.recipient_id = ?', user, user)
   end
 
   def build_reply(options={})
@@ -79,6 +88,23 @@ class Message < ActiveRecord::Base
       xml.tag!(:recipient_name, recipient.title)
       xml.tag!(:sender_name, sender.title)
     end
+  end
+
+  def recipient
+    recipients.first
+  end
+
+  def recipient=(user)
+    self.recipients = [user] if user
+  end
+
+  def recipient_logins
+    recipients.map(&:login).join(', ')
+  end
+
+  def recipient_logins=(str)
+    logins = str.to_s.split(/[,\s]/).map(&:strip)
+    self.recipients = User.where(login: logins)
   end
 
   def recipient_name
@@ -121,14 +147,6 @@ class Message < ActiveRecord::Base
 
   def number_of_messages_in_thread
     messages_in_thread.size
-  end
-
-  def recipients=(recipients_string)
-    @recipients = recipients_string
-  end
-
-  def recipients
-    @recipients || recipient.try{login}
   end
 
   def messages_in_thread

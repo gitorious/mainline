@@ -18,9 +18,6 @@
 
 require 'test_helper'
 
-
-load Rails.root.join("app/services/send_message.rb")
-
 class SendMessageTest < MiniTest::Spec
   describe ".send_message" do
     let(:opts) {{

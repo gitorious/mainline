@@ -23,7 +23,7 @@
     <legend>
       <%= t "views.messages.title_new" %>
     </legend>
-    <%= f.input :recipients, :label => t("views.messages.recipient"), :input_html => { :class => "autocomplete" } %>
+    <%= f.input :recipient_logins, :label => t("views.messages.recipient"), :input_html => { :class => "autocomplete" } %>
     <%= f.input :subject, :label => t("views.messages.subject") %>
     <%= f.input :body, :label => t("views.messages.body"), :input_html => { :class => 'input-xxlarge', :rows => 10 } %>
   </fieldset>

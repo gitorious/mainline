@@ -63,11 +63,11 @@ class User < ActiveRecord::Base
     end
   end
 
-  has_many :received_messages, {
+  has_and_belongs_to_many :received_messages,
     :class_name => "Message",
-    :foreign_key => "recipient_id",
-    :order => "created_at DESC"
-  } do
+    :foreign_key => 'recipient_id',
+    :order => "created_at DESC" do
+
     def unread
       where({ :aasm_state => "unread" })
     end
@@ -77,13 +77,14 @@ class User < ActiveRecord::Base
     end
 
     def unread_count
-      where("aasm_state = ? and archived_by_recipient = ? and sender_id != recipient_id",
+      where("aasm_state = ? and archived_by_recipient = ? and sender_id != messages_users.recipient_id",
             "unread", false).count
     end
   end
 
   def all_messages
-    Message.where("sender_id = ? OR recipient_id = ?", self, self)
+    Message.joins('left outer join messages_users as mu on mu.message_id = messages.id').
+      where("sender_id = ? OR mu.recipient_id = ?", self, self)
   end
 
   Paperclip.interpolates("login") { |attachment, style| attachment.instance.login.downcase }
@@ -96,21 +97,25 @@ class User < ActiveRecord::Base
 
   # Top level messages either from or to me
   def top_level_messages
-    Message.find_by_sql(["SELECT * FROM messages
-      WHERE (has_unread_replies=? AND sender_id=?)
-      OR recipient_id=?
-      AND in_reply_to_id IS NULL
-      ORDER BY last_activity_at DESC", true,self, self])
+    Message.joins('left join messages_users as mu on mu.message_id = messages.id').
+      where('(has_unread_replies=? AND sender_id=?) OR mu.recipient_id=?  AND in_reply_to_id IS NULL', true, self, self).
+      order('last_activity_at DESC')
   end
 
   # Top level messages, excluding message threads that have been archived by me
   def messages_in_inbox(limit=100)
-    Message.find_by_sql(["SELECT * from messages
-        WHERE ((sender_id != :user AND archived_by_recipient = :no AND recipient_id = :user)
-        OR (has_unread_replies = :yes AND archived_by_recipient = :no AND sender_id = :user))
-        AND in_reply_to_id IS NULL
-        ORDER BY last_activity_at DESC LIMIT :limit",
-                         {:user => self.id, :yes => true, :no => false, :limit => limit}])
+    messages = Message.involving_user(self)
+
+    messages = messages.select do |message|
+      unless message.in_reply_to
+        (message.sender != self && !message.archived_by_recipient) ||
+          (message.has_unread_replies && !message.archived_by_recipient && message.sender == self)
+      end
+    end
+
+    messages = messages.sort_by(&:last_activity_at).reverse
+
+    return messages[0..limit]
   end
 
   has_many :sent_messages, {

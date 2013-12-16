@@ -208,7 +208,7 @@ class MessagesControllerTest < ActionController::TestCase
   should "insert the username on GET new if the to querystring param is given" do
     login_as :johan
     get :new, :to => users(:mike).login
-    assert_select "#message_recipients[value=?]", users(:mike).login
+    assert_select "#message_recipient_logins[value=?]", users(:mike).login
   end
 
   should "GET all" do

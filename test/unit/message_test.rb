@@ -21,7 +21,6 @@ require "test_helper"
 
 class MessageTest < ActiveSupport::TestCase
   should belong_to(:sender)
-  should belong_to(:recipient)
   should validate_presence_of(:subject)
   should validate_presence_of(:body)
   should belong_to(:notifiable)

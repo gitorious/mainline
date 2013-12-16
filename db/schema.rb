@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131202175633) do
+ActiveRecord::Schema.define(:version => 20131210111917) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -318,7 +318,6 @@ ActiveRecord::Schema.define(:version => 20131202175633) do
 
   create_table "messages", :force => true do |t|
     t.integer  "sender_id"
-    t.integer  "recipient_id"
     t.string   "subject"
     t.text     "body"
     t.string   "notifiable_type"
@@ -337,8 +336,12 @@ ActiveRecord::Schema.define(:version => 20131202175633) do
   add_index "messages", ["aasm_state"], :name => "index_messages_on_aasm_state"
   add_index "messages", ["in_reply_to_id"], :name => "index_messages_on_in_reply_to_id"
   add_index "messages", ["notifiable_type", "notifiable_id"], :name => "index_messages_on_notifiable_type_and_notifiable_id"
-  add_index "messages", ["recipient_id"], :name => "index_messages_on_recipient_id"
   add_index "messages", ["sender_id"], :name => "index_messages_on_sender_id"
+
+  create_table "messages_users", :force => true do |t|
+    t.integer "message_id",   :null => false
+    t.integer "recipient_id", :null => false
+  end
 
   create_table "open_id_authentication_associations", :force => true do |t|
     t.integer "issued"
