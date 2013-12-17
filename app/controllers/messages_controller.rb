@@ -89,14 +89,16 @@ class MessagesController < ApplicationController
   end
 
   def create
-    thread_options = params[:message].merge(
-      :recipients => params[:message][:recipient_logins],
-      :sender => current_user
+    message_params = params[:message] || {}
+
+    SendMessage.call(
+      sender: current_user,
+      recipient_logins: message_params[:recipient_logins],
+      subject: message_params[:subject],
+      body: message_params[:body]
     )
 
-    @messages = MessageThread.new(thread_options)
-    @messages.save!
-    flash[:notice] = "#{@messages.title} sent"
+    flash[:notice] = "Message sent"
     redirect_to :action => :index
   rescue SendMessage::InvalidMessage => invalid
     @message = invalid.record
