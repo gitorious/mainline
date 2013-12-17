@@ -31,11 +31,14 @@ module SendMessage
     QUEUE = "/queue/GitoriousEmailNotifications"
 
     def self.deliver(message)
-      new(message).deliver
+      message.recipients.each do |recipient|
+        new(message, recipient).deliver
+      end
     end
 
-    def initialize(message)
+    def initialize(message, recipient)
       @message = message
+      @recipient = recipient
     end
 
     def deliver
@@ -48,17 +51,17 @@ module SendMessage
     private
 
     def recipient_wants_email_notifications?
-      message.recipient.wants_email_notifications?
+      recipient.wants_email_notifications?
     end
 
     def recipient_is_the_sender?
-      message.recipient == message.sender
+      recipient == message.sender
     end
 
     def job_params
       {
         sender_id: message.sender.id,
-        recipient_id: message.recipient.id,
+        recipient_id: recipient.id,
         subject: message.subject,
         body: message.body,
         created_at: message.created_at,
@@ -80,7 +83,7 @@ module SendMessage
       publish(QUEUE, job_params)
     end
 
-    attr_reader :message
+    attr_reader :message, :recipient
 
     include Gitorious::Messaging::Publisher
   end

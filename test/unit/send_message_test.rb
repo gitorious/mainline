@@ -115,8 +115,22 @@ class SendMessageTest < MiniTest::Spec
         "message_id" => 256)
     end
 
+    it "sends multiple email notifications with more than one recipient" do
+      other_recipient = FactoryGirl.create(:user)
+      the_message.recipients = [other_recipient, recipient]
+
+      SendMessage::EmailNotification.deliver(the_message)
+
+      messages.size.must_equal(2)
+      messages.map{|m| m["recipient_id"] }.sort.must_equal [other_recipient.id, recipient.id].sort
+    end
+
     def last_message
-      Gitorious::Messaging::TestAdapter.messages_on(SendMessage::EmailNotification::QUEUE).last
+      messages.last
+    end
+
+    def messages
+      Gitorious::Messaging::TestAdapter.messages_on(SendMessage::EmailNotification::QUEUE)
     end
   end
 end
