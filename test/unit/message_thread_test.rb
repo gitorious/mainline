@@ -37,15 +37,15 @@ class MessageThreadTest < ActiveSupport::TestCase
     end
 
     should 'have a size accessor' do
-      assert_equal 2, @thread.size
+      assert_equal 1, @thread.size
     end
 
-    should 'generate n messages' do
-      assert_equal(2, @thread.messages.size)
+    should 'generate 1 message' do
+      assert_equal(1, @thread.messages.size)
     end
 
     should 'return a truthy indicating whether all messages were saved' do
-      assert_incremented_by Message, :count, 2 do
+      assert_incremented_by Message, :count, 1 do
         assert @thread.save!
       end
     end
@@ -59,7 +59,7 @@ class MessageThreadTest < ActiveSupport::TestCase
     end
 
     should 'have a title' do
-      assert_equal("2 messages", @thread.title)
+      assert_equal("1 message", @thread.title)
     end
 
     should 'behave like an enumerable' do

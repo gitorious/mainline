@@ -103,7 +103,7 @@ class Message < ActiveRecord::Base
   end
 
   def recipient_logins=(str)
-    logins = str.to_s.split(/[,\s]/).map(&:strip)
+    logins = str.to_s.split(/[\.,\s]/).map(&:strip)
     self.recipients = User.where(login: logins)
   end
 

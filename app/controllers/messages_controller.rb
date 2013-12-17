@@ -98,8 +98,8 @@ class MessagesController < ApplicationController
     @messages.save!
     flash[:notice] = "#{@messages.title} sent"
     redirect_to :action => :index
-  rescue SendMessage::InvalidMessage
-    @message = @messages.validated_message
+  rescue SendMessage::InvalidMessage => invalid
+    @message = invalid.record
     render :new
   end
 

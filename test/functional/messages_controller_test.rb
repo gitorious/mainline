@@ -149,7 +149,7 @@ class MessagesControllerTest < ActionController::TestCase
 
     context "separating user names with tokens" do
       should "support a comma" do
-        assert_incremented_by Message, :count, 2 do
+        assert_incremented_by Message, :count, 1 do
           post :create, :message => {
             :subject => "Hello",
             :body => "This is for several recipients",
@@ -159,7 +159,7 @@ class MessagesControllerTest < ActionController::TestCase
       end
 
       should "support a whitespace character" do
-        assert_incremented_by Message, :count, 2 do
+        assert_incremented_by Message, :count, 1 do
           post :create, :message => {
             :subject => "Hello",
             :body => "This is for several recipients",
@@ -169,7 +169,7 @@ class MessagesControllerTest < ActionController::TestCase
       end
 
       should "support a period" do
-        assert_incremented_by Message, :count, 2 do
+        assert_incremented_by Message, :count, 1 do
           post :create, :message => {
             :subject => "Hello",
             :body => "This is for several recipients",

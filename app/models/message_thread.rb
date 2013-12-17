@@ -16,28 +16,29 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 class MessageThread
-  attr_reader :recipients, :sender
+  attr_reader :message
   include Enumerable
 
   def initialize(options)
-    @subject    = options[:subject]
-    @body       = options[:body]
-    @sender     = options[:sender]
-    @recipient_logins = options[:recipients]
-    @recipients = extract_recipients(options[:recipients])
-    Rails.logger.debug("MessageThread for #{@recipients.join(',')}")
+    subject    = options[:subject]
+    body       = options[:body]
+    sender     = options[:sender]
+    recipient_logins = options[:recipients]
+
+    @message = Message.new(:sender => sender,
+                           :subject => subject,
+                           :body => body,
+                           :recipient_logins => recipient_logins)
+
+    Rails.logger.debug("MessageThread for #{recipient_logins}")
   end
 
   def each
     messages.each{|m| yield m}
   end
 
-  def extract_recipients(recipient_string)
-    recipient_string.split(/[,\s\.]/).map(&:strip)
-  end
-
   def messages
-    @messages ||= initialize_messages
+    [message]
   end
 
   def size
@@ -48,31 +49,20 @@ class MessageThread
     "#{size} " + ((size == 1) ? 'message' : 'messages')
   end
 
-  # Returns a message object, used in views etc
-  def message
-    Message.new(:sender => @sender, :subject => @subject, :body => @body, :recipient_logins => @recipient_logins)
+  def validated_message
+    message.valid?
+    message
   end
 
-  def validated_message
-    msg = message
-    msg.valid?
-    if msg.recipients.blank?
-      msg.errors.add(:recipients, "can't be blank")
-    end
-    msg
+  def recipients
+    message.recipient_logins.split(', ')
+  end
+
+  def sender
+    message.sender
   end
 
   def save!
-    messages.each do |msg|
-      SendMessage.call(sender: msg.sender, subject: msg.subject, body: msg.body, recipient: msg.recipient)
-    end
-  end
-
-  protected
-
-  def initialize_messages
-    recipients.inject([]) do |result, recipient_name|
-      result << Message.new(:sender => @sender, :subject => @subject, :body => @body, :recipient => User.find_by_login(recipient_name))
-    end
+    SendMessage.send_message(message)
   end
 end
