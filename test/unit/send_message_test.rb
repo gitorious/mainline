@@ -110,7 +110,7 @@ class SendMessageTest < MiniTest::Spec
         "recipient_id" => 12,
         "subject" => "some subject",
         "body" => "some body",
-        "created_at" => "2013-11-25T17:31:21Z",
+        "created_at" => the_message.created_at.as_json,
         "identifier" => "email_delivery",
         "message_id" => 256)
     end
