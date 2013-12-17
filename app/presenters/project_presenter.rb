@@ -22,7 +22,9 @@ class ProjectPresenter
   include Charlatan.new(:project)
   private :project
 
-  undef_method :to_param # thank you AS for adding Object#to_param
+  if instance_methods.include?(:to_param)
+    undef_method :to_param # thank you AS for adding Object#to_param
+  end
 
   def self.model_name
     Project.model_name
