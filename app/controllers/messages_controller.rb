@@ -90,7 +90,7 @@ class MessagesController < ApplicationController
 
   def create
     thread_options = params[:message].merge(
-      :recipients => params[:message][:recipients],
+      :recipients => params[:message][:recipient_logins],
       :sender => current_user
     )
 
