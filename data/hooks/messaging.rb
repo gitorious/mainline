@@ -53,6 +53,8 @@ require "repository_root"
 
 if !defined?(Gitorious::Configuration)
   conf = YAML::load_file(Rails.root + "config/gitorious.yml")
+  overrides = YAML::load_file(Rails.root + "config/gitorious.overrides.yml") rescue {}
+  conf.merge!(overrides || {})
   Gitorious::Messaging.adapter = (conf[Rails.env.to_s] || {})["messaging_adapter"] || conf["messaging_adapter"]
   Bundler.require(Gitorious::Messaging.adapter.to_sym)
   Gitorious::Messaging.load_adapter(Gitorious::Messaging.adapter)
