@@ -19,16 +19,22 @@
 
 module MessagesHelper
   def sender_and_recipient_display(message)
-    sender_and_recipient_for(message).collect(&:capitalize).join(", ").html_safe
+    sender, recipients = sender_and_recipients_for(message)
+    all = [sender] + recipients
+    all.to_sentence.html_safe
   end
 
-  def sender_and_recipient_for(message)
-    if message.recipient == current_user
-      sender_name = message.sender.nil? ? "[removed]" : message.sender_name
-      [link_to(h(sender_name), message.sender), "me"]
-    else
-      ["me", link_to(h(message.recipient.title), message.recipient)]
-    end
+  def involved_person_name(user)
+    return "me" if user == current_user
+    return "[removed]" if user.nil?
+    link_to(h(user.title), user)
+  end
+
+  def sender_and_recipients_for(message)
+    sender = involved_person_name(message.sender)
+    recipients = message.recipients.map {|user| involved_person_name(user) }
+
+    [sender, recipients]
   end
 
   def other_party(message,user)
@@ -36,16 +42,17 @@ module MessagesHelper
   end
 
   def message_title(message)
-    sender, recipient = sender_and_recipient_for(message)
+    sender, recipients = sender_and_recipients_for(message)
+    formatted_recipients = recipients.map { |r| "<strong>#{r}</strong>".html_safe }.to_sentence
 
     case message.notifiable
     when MergeRequest
       msg_link = link_to('merge request', [message.notifiable.target_repository.project,
                                            message.notifiable.target_repository,
                                            message.notifiable])
-      "From <strong>#{sender}</strong> to <strong>#{recipient}</strong>, about a #{msg_link}"
+      "From <strong>#{sender}</strong> to #{formatted_recipients}, about a #{msg_link}"
     when Membership
-      %Q{<strong>#{sender}</strong> added <strong>#{recipient}</strong> to the } +
+      %Q{<strong>#{sender}</strong> added #{formatted_recipients} to the } +
         %Q{team #{link_to("#{message.notifiable.group.name}", message.notifiable.group)}}
     when Committership
       committership = message.notifiable
@@ -55,7 +62,7 @@ module MessagesHelper
       %Q{<strong>#{sender}</strong> added #{user_link} as committer in } +
         %Q{<strong>#{committership.repository.name}</strong>}
     else
-      "#{link_to('message', message)} from <strong>#{sender}</strong> to <strong>#{recipient}</strong>"
+      "#{link_to('message', message)} from <strong>#{sender}</strong> to #{formatted_recipients}"
     end
   end
 
