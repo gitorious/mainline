@@ -87,7 +87,7 @@ module Gitorious
       end
 
       def can_read_message?(user, message)
-        [message.sender, message.recipient].include?(user)
+        ([message.sender] + message.recipients).include?(user)
       end
 
       def can_read_comment?(user, comment)
