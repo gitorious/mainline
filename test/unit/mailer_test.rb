@@ -49,7 +49,7 @@ class MailerTest < ActiveSupport::TestCase
 
     assert_equal [user.email], mail.to
     assert_equal "[Gitorious] Your account has been activated!", mail.subject
-    assert_match(/your account has been activated/, mail.body.decoded)
+    assert_match(/your account has been activated/i, mail.body.decoded)
 
     mail.deliver
     assert_equal [mail], Mailer.deliveries
