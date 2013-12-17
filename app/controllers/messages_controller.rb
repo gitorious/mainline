@@ -26,7 +26,7 @@ class MessagesController < ApplicationController
 
   def index
     @messages = paginate(page_free_redirect_options) {
-      current_user.messages_in_inbox.paginate(:page => params[:page])
+      user_messages.inbox.paginate(:page => params[:page])
     }
 
     render_index
@@ -60,7 +60,7 @@ class MessagesController < ApplicationController
   def bulk_update
     message_ids = params[:message_ids].to_a
     message_ids.each do |message_id|
-      message = Message.involving_user(current_user).find(message_id)
+      message = user_messages.find(message_id)
       if params[:requested_action] == 'archive'
         message.archived_by(current_user)
         message.save!

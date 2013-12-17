@@ -38,7 +38,47 @@ class UserMessages
     all.select { |msg| msg.sender == user }
   end
 
+  def inbox
+    inbox = remove_replies(messages)
+    inbox = remove_sent_with_all_replies_read(inbox)
+    inbox = remove_archived_with_all_replies_read(inbox)
+    inbox = sort_by_last_activity_time(inbox)
+    inbox
+  end
+
   private
 
-  attr_reader :user
+  def remove_replies(messages)
+    messages.reject{ |msg| msg.in_reply_to }
+  end
+
+  def remove_sent_with_all_replies_read(messages)
+    messages.reject{ |msg| msg.sender == user && all_replies_read?(msg) }
+  end
+
+  def remove_archived_with_all_replies_read(messages)
+    messages.reject { |msg| msg.archived_by?(user) && all_replies_read?(msg) }
+  end
+
+  def sort_by_last_activity_time(messages)
+    messages.sort_by { |msg| last_activity(msg) }.reverse
+  end
+
+  def all_replies_read?(message)
+    replies_to(message).all? { |msg| msg.read_by?(user) }
+  end
+
+  def replies_to(message)
+    children = messages.select { |msg| msg.in_reply_to_id == message.id }
+    nested = children.map{ |msg| replies_to(msg) }.flatten
+    children + nested
+  end
+
+  def last_activity(message)
+    all_in_thread = [message] + replies_to(message)
+    created_times = all_in_thread.map(&:created_at)
+    created_times.max
+  end
+
+  attr_reader :user, :messages
 end

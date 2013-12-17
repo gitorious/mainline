@@ -48,6 +48,64 @@ class UserMessagesTest < Minitest::Spec
     end
   end
 
+  describe "#inbox" do
+    it "returns only top level messages" do
+      top_level = build_message(sender: alice, recipient: bob, id: 1)
+      reply = build_message(in_reply_to: top_level, sender: alice, recipient: bob, id: 2)
+
+      messages = bobs_messages(top_level, reply).inbox
+
+      assert_same(messages, [top_level])
+    end
+
+    it "returns sent messages if they have an unread reply" do
+      sent = build_message(sender: bob, recipient: alice, id: 1)
+      reply = build_message(in_reply_to: sent, sender: alice, recipient: bob, id: 2, read?: true)
+      nested_reply = build_message(in_reply_to: reply, sender: alice, recipient: bob, id: 3, read?: false)
+
+      messages = bobs_messages(sent, reply, nested_reply).inbox
+
+      assert_same(messages, [sent])
+    end
+
+    it "does not return archived messages" do
+      archived = build_message(sender: alice, recipient: bob, id: 1, archived?: true)
+
+      messages = bobs_messages(archived).inbox
+
+      assert_same(messages, [])
+    end
+
+    it "returns archived messages if they have an unread reply" do
+      archived = build_message(sender: alice, recipient: bob, id: 1, archived?: true)
+      reply = build_message(sender: alice, recipient: bob, in_reply_to: archived, id: 2, read?: false)
+
+      messages = bobs_messages(archived, reply).inbox
+
+      assert_same(messages, [archived])
+    end
+
+    it "does not return sent messages" do
+      sent = build_message(sender: bob, recipient: alice, id: 1)
+      reply = build_message(in_reply_to: sent, sender: alice, recipient: bob, id: 2, read?: true)
+
+      messages = bobs_messages(sent, reply).inbox
+
+      assert_same(messages, [])
+    end
+
+    it "sorts the returned messages by last activity, with newest first" do
+      old_message = build_message(sender: bob, recipient: alice, id: 1, created_at: 14.days.ago)
+      new_reply = build_message(sender: alice, recipient: bob, id: 2, created_at: 2.hours.ago, in_reply_to: old_message)
+      new_message = build_message(sender: tom, recipient: bob, id: 3, created_at: 2.days.ago)
+      newer_message = build_message(sender: tom, recipient: bob, id: 4, created_at: 1.day.ago)
+
+      messages = bobs_messages(new_message, new_reply, newer_message, old_message).inbox
+
+      assert_same(messages, [old_message, newer_message, new_message])
+    end
+  end
+
   describe "#find" do
     it "returns sent messages by id" do
       message = build_message(sender: bob)
@@ -82,6 +140,11 @@ class UserMessagesTest < Minitest::Spec
   end
 
   def build_message(attrs = {})
-    FactoryGirl.build(:message, attrs)
+    read = attrs.delete(:read?)
+    archived = attrs.delete(:archived?)
+    message = FactoryGirl.build(:message, attrs)
+    message.stubs(:read_by?).with(bob).returns(read)
+    message.stubs(:archived_by?).with(bob).returns(archived)
+    message
   end
 end

@@ -182,6 +182,16 @@ class Message < ActiveRecord::Base
     end
   end
 
+  def read_by?(user)
+    return true if user == sender
+    return read
+  end
+
+  def archived_by?(user)
+    return archived_by_sender if user == sender
+    archived_by_recipient
+  end
+
   def archived_by(a_user)
     if a_user == sender
       self.archived_by_sender = true
