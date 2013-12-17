@@ -42,14 +42,14 @@ class MessagesController < ApplicationController
 
   def sent
     @messages = paginate(page_free_redirect_options) {
-      current_user.sent_messages.paginate(:page => params[:page])
+      user_messages.sent.paginate(:page => params[:page])
     }
 
     render_index
   end
 
   def read
-    @message = current_user.received_messages.find(params[:id])
+    @message = user_messages.find(params[:id])
     @message.read
 
     respond_to do |wants|
@@ -73,11 +73,7 @@ class MessagesController < ApplicationController
   end
 
   def show
-    @message = Message.find(params[:id])
-
-    if !can_read?(current_user, @message)
-      raise ActiveRecord::RecordNotFound and return
-    end
+    @message = user_messages.find(params[:id])
 
     @message.mark_thread_as_read_by_user(current_user)
 
@@ -111,7 +107,7 @@ class MessagesController < ApplicationController
 
   # POST /messages/<id>/reply
   def reply
-    original_message = current_user.received_messages.find(params[:id])
+    original_message = user_messages.find(params[:id])
     @message = SendReply.call(original_message, params[:message])
     flash[:notice] = "Your reply was sent"
     redirect_to :action => :show, :id => original_message
@@ -134,5 +130,9 @@ class MessagesController < ApplicationController
       wants.html { render "messages/index" }
       wants.xml  { render :xml => @messages }
     end
+  end
+
+  def user_messages
+    @user_messages ||= UserMessages.for(current_user)
   end
 end
