@@ -17,6 +17,7 @@
 #++
 
 require "zlib"
+require "makeup/markup"
 
 class MarkupRenderer
   class NotProcessedYetError < StandardError; end
@@ -69,6 +70,13 @@ class MarkupRenderer
   end
 
   def post_process(text)
+    text = sanitize(text)
+    wrap(text)
+  end
+
+  private
+
+  def wrap(text)
     if @options[:wrapper].blank?
       text
     else
@@ -78,5 +86,9 @@ class MarkupRenderer
         "<div class=\"#{@options[:wrapper]} #{WRAPPER_NAME}\">\n#{text}</div>\n"
       end
     end
+  end
+
+  def sanitize(html)
+    Makeup::Markup.new.sanitize(html)
   end
 end

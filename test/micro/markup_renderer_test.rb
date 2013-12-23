@@ -23,9 +23,9 @@ require "markup_renderer"
 class MarkupRendererTest < MiniTest::Spec
   describe "rendering markdown" do
     it "renders standard markdown" do
-      text = "foo\n\n**bar**\n\n> baz"
-      r = MarkupRenderer.new(text)
-      assert_equal r.to_html, RDiscount.new(text).to_html
+      text = "**bar**"
+      html = MarkupRenderer.new(text).to_html
+      assert_equal %Q{<p><strong>bar</strong></p>}, html
     end
   end
 
@@ -33,12 +33,12 @@ class MarkupRendererTest < MiniTest::Spec
     it "turns a single newline into a br" do
       r = MarkupRenderer.new("foo\nbar")
       assert_equal "foo  \nbar", r.pre_process
-      assert_equal "<p>foo  <br/>\nbar</p>\n", r.to_html
+      assert_equal "<p>foo  <br>\nbar</p>", r.to_html
     end
 
     it "does not both with multiple newlines" do
       r = MarkupRenderer.new("foo\n\nbar")
-      assert_equal "<p>foo</p>\n\n<p>bar</p>\n", r.to_html
+      assert_equal "<p>foo</p>\n\n<p>bar</p>", r.to_html
     end
 
     it "converts windows lineendings" do
@@ -48,32 +48,44 @@ class MarkupRendererTest < MiniTest::Spec
 
     it "does not touch code blocks, built with html tags" do
       r = MarkupRenderer.new("foo\n<pre><code>if (true)\n  return false</code></pre>")
-      exp = "<p>foo</p>\n\n<pre><code>if (true)\n  return false</code></pre>\n\n"
+      exp = "<p>foo</p>\n\n<pre><code>if (true)\n  return false</code></pre>"
       assert_equal exp, r.to_html
     end
 
     it "does not touch code block, built with indentation" do
       r = MarkupRenderer.new("foo\n    if (true)\n      return false")
-      exp = "<p>foo</p>\n\n<pre><code>if (true)  \n  return false\n</code></pre>\n"
+      exp = "<p>foo</p>\n\n<pre><code>if (true)  \n  return false\n</code></pre>"
       assert_equal exp, r.to_html
     end
 
     it "wraps a multi line block in newlines" do
       r = MarkupRenderer.new("foo\nbar\nbaz\nqux")
-      assert_equal "<p>foo<br/>\nbar<br/>\nbaz<br/>\nqux</p>\n", r.to_html
+      assert_equal "<p>foo<br>\nbar<br>\nbaz<br>\nqux</p>", r.to_html
     end
   end
 
   describe "post processing" do
     it "wraps the results in a div with a class if :wrap option is true" do
       r = MarkupRenderer.new("foo", :wrapper => true)
-      assert_equal "<div class=\"markdown-wrapper\">\n<p>foo</p>\n</div>\n", r.to_html
+      assert_equal "<div class=\"markdown-wrapper\">\n<p>foo</p></div>\n", r.to_html
     end
 
     it "wraps the results in a div with the given classname in :wrap" do
       r = MarkupRenderer.new("foo", :wrapper => "myclass")
-      expected = "<div class=\"myclass markdown-wrapper\">\n<p>foo</p>\n</div>\n"
+      expected = "<div class=\"myclass markdown-wrapper\">\n<p>foo</p></div>\n"
       assert_equal expected, r.to_html
+    end
+
+    it "strips unsafe html attributes and elements" do
+      md = <<-MD
+<script>alert("foo")</script>
+<a href="foo" data-destroy="boom" onclick="alert('foo')">link</a>
+*bar*
+      MD
+
+      html = MarkupRenderer.new(md).to_html
+
+      assert_equal %Q{<p>\n<a href="foo">link</a><br><em>bar</em></p>}, html
     end
   end
 

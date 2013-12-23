@@ -115,7 +115,7 @@ module ApplicationHelper
     if auto_link
       markdownized_text = auto_link(markdownized_text, :urls)
     end
-    sanitize(markdownized_text).html_safe
+    markdownized_text.html_safe
   end
 
   def feed_icon(url, alt_title = "Atom feed", size = :small)
