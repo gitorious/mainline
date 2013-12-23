@@ -25,7 +25,7 @@ GIT
 
 GIT
   remote: https://github.com/libgit2/rugged.git
-  revision: ef9398129e26a4bea09309a0361089bc01132165
+  revision: bc2b06c6d499f1ec913de967cfee06842d5177d8
   branch: development
   submodules: true
   specs:
@@ -150,7 +150,7 @@ GEM
       thor (>= 0.13.6)
     formatador (0.2.4)
     geoip (0.8.9)
-    github-linguist (2.9.5)
+    github-linguist (2.9.7)
       charlock_holmes (~> 0.6.6)
       escape_utils (~> 0.3.1)
       mime-types (~> 1.19)
@@ -185,11 +185,11 @@ GEM
     kgio (2.8.1)
     launchy (2.4.2)
       addressable (~> 2.3)
-    libdolt (0.33.11)
+    libdolt (0.33.12)
       force_utf8
       htmlentities (~> 4.3)
       json (~> 1.7)
-      makeup (~> 0.4.2)
+      makeup (~> 0.4.3)
       mime-types (~> 1.19)
       rugged (~> 0.19.0)
       tzinfo (~> 0.3)
@@ -197,14 +197,17 @@ GEM
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
+    loofah (1.2.1)
+      nokogiri (>= 1.4.4)
     lumberjack (1.0.4)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    makeup (0.4.2)
+    makeup (0.4.3)
       github-linguist (~> 2.8)
       github-markup (~> 0.7)
       htmlentities (~> 4.3)
+      loofah (~> 1.2)
       pygments.rb (~> 0.4, <= 0.5.2)
     memcache-client (1.8.5)
     metaclass (0.0.1)
@@ -255,7 +258,7 @@ GEM
       multi_json (~> 1.0)
       websocket-driver (>= 0.2.0)
     polyglot (0.3.3)
-    posix-spawn (0.3.6)
+    posix-spawn (0.3.8)
     powerbar (1.0.11)
       ansi (~> 1.4.0)
       hashie (>= 1.1.0)
