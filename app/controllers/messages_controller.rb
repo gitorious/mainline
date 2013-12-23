@@ -34,7 +34,7 @@ class MessagesController < ApplicationController
 
   def all
     @messages = paginate(page_free_redirect_options) {
-      current_user.top_level_messages.paginate(:page => params[:page])
+      user_messages.all.paginate(:page => params[:page])
     }
 
     render_index

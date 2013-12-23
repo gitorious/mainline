@@ -27,15 +27,17 @@ class UserMessages
   end
 
   def find(id)
-    @messages.find(id)
+    messages.find(id)
   end
 
   def all
-    @messages.sort_by(&:created_at).reverse
+    all = remove_replies(messages)
+    sort_by_last_activity_time(all)
   end
 
   def sent
-    all.select { |msg| msg.sender == user }
+    sent = messages.select { |msg| msg.sender == user }
+    sort_by_last_activity_time(sent)
   end
 
   def inbox

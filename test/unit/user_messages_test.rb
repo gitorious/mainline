@@ -26,12 +26,21 @@ class UserMessagesTest < Minitest::Spec
   describe "#all" do
     it "returns all the messages, newest first" do
       last_week = build_message(created_at: 8.days.ago, id: 1)
-      this_week = build_message(created_at: 3.days.ago, id: 2)
-      yesterday = build_message(created_at: 1.day.ago, id: 3)
+      this_week = build_message(created_at: 3.days.ago, id: 2, read?: true)
+      yesterday = build_message(created_at: 1.day.ago, id: 3, archived?: true)
 
       messages = bobs_messages(last_week, yesterday, this_week).all
 
       assert_same(messages, [yesterday, this_week, last_week])
+    end
+
+    it "does not return the replies" do
+      original_message = build_message(sender: bob, recipient: alice, id: 1)
+      reply = build_message(sender: bob, recipient: alice, id: 2, in_reply_to: original_message)
+
+      messages = bobs_messages(original_message, reply).all
+
+      assert_same(messages, [original_message])
     end
   end
 
