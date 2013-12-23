@@ -35,7 +35,6 @@ class MembershipTest < ActiveSupport::TestCase
 
     should "nullify messages when deleted" do
       @invitee = FactoryGirl.create(:user)
-      @user.received_messages.destroy_all
       membership = Membership.create(:user => @invitee, :group => @group, :role => Role.member)
       Message.create!({
           :sender => @inviter,

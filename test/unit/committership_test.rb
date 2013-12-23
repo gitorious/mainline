@@ -18,6 +18,7 @@
 #++
 
 require "test_helper"
+load Rails.root.join("app/models/committership.rb")
 
 class CommittershipTest < ActiveSupport::TestCase
   should validate_presence_of(:repository_id)
@@ -43,20 +44,18 @@ class CommittershipTest < ActiveSupport::TestCase
   end
 
   should 'notify all admin committers in the repository when a new committership is added' do
-    # raise repositories(:johans).committerships.inspect
-    # Find repository#owner. If group: notify each group member, else notify owner
-    owner = users(:johan)
-    assert_incremented_by(owner.received_messages, :count, 1) do
-      c = new_committership(:committer => groups(:team_thunderbird))
-      c.save
-    end
+    repository = repositories(:johans)
+    c = new_committership(:committer => groups(:team_thunderbird))
+    SendMessage.expects(:call).with(has_entries(sender: c.creator,
+                                                notifiable: c,
+                                                recipients: repository.owners))
+    c.save
   end
 
   should 'nullify notifiable_type and notifiable_id when destroyed' do
-    owner = users(:johan)
     c = new_committership(:committer => groups(:team_thunderbird))
     c.save
-    message = owner.received_messages.last
+    message = c.messages.last
     assert_equal c, message.notifiable
     c.destroy
     message.reload

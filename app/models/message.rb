@@ -47,12 +47,6 @@ class Message < ActiveRecord::Base
       :timeframe => 15.minutes
     })
 
-  state_machine :aasm_state, :initial => :unread do
-    event :read do
-      transition :unread => :read
-    end
-  end
-
   def self.build(opts = {})
     new(opts)
   end
@@ -67,27 +61,11 @@ class Message < ActiveRecord::Base
   end
 
   def build_reply(options={})
-    reply_options = {:sender => recipient, :recipient => sender, :subject => "Re: #{subject}"}.with_indifferent_access
+    reply_options = {:sender => recipient, :recipients => [sender], :subject => "Re: #{subject}"}.with_indifferent_access
     reply = Message.new(reply_options.merge(options))
     reply.in_reply_to = self
     reply.root_message_id = root_message_id || id
     return reply
-  end
-
-  def to_xml(options = {})
-    options[:indent] ||= 2
-    xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
-    xml.instruct! unless options[:skip_instruct]
-    xml.message do
-      xml.tag!(:id, to_param)
-      xml.tag!(:subject, subject)
-      xml.tag!(:body, body)
-      xml.tag!(:read, read?)
-      xml.tag!(:notifiable, notifiable.class.name) if notifiable
-      xml.tag!(:description, description)
-      xml.tag!(:recipient_name, recipient.title)
-      xml.tag!(:sender_name, sender.title)
-    end
   end
 
   def recipient
@@ -159,21 +137,27 @@ class Message < ActiveRecord::Base
     messages_in_thread.select(&:unread?)
   end
 
-  def unread_messages?
-    !unread_messages_in_thread.blank?
+  def unread_messages?(user)
+    UserMessages.for(user).thread_unread?(self)
   end
 
   # Displays whether there are any unread messages in this message's thread for +a_user+
-  def aasm_state_for_user(a_user)
-    if unread_messages_in_thread.any?{|msg|msg.recipient == a_user}
+  def aasm_state_for_user(user)
+    if unread_messages?(user)
       "unread"
     else
       "read"
     end
   end
 
+  def message_recipient(user)
+    message_recipients.detect { |r| r.recipient == user }
+  end
+
   def mark_as_read_by_user(candidate)
-     self.read if self.recipient == candidate
+    recipient = message_recipient(candidate)
+    recipient.read = true
+    recipient.save!
   end
 
   def mark_thread_as_read_by_user(a_user)
@@ -184,7 +168,7 @@ class Message < ActiveRecord::Base
 
   def read_by?(user)
     return true if user == sender
-    return read
+    message_recipient(user).read
   end
 
   def archived_by?(user)

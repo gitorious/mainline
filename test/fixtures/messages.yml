@@ -3,4 +3,3 @@ johans_message_to_moe:
   sender_id: 1
   subject:  Hello
   body: World. This is obviously a test message
-  aasm_state: unread

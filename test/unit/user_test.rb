@@ -19,6 +19,7 @@
 #++
 
 require "test_helper"
+load Rails.root.join("app/models/user.rb")
 
 class UserTest < ActiveSupport::TestCase
   setup do
@@ -274,21 +275,6 @@ class UserTest < ActiveSupport::TestCase
       assert @sender.all_messages.include?(@message)
       assert @recipient.all_messages.include?(@message)
       assert !users(:mike).all_messages.include?(@message)
-    end
-
-    should "know of its sent messages" do
-      assert @recipient.received_messages.include?(@message)
-    end
-
-    should "keep track of the number of unread messages" do
-      assert_equal(1, @recipient.received_messages.unread_count)
-    end
-
-    should "not include archived messages in the unread count" do
-      msg = @recipient.received_messages.unread.first
-      msg.archived_by(@recipient)
-      msg.save!
-      assert_equal(0, @recipient.received_messages.unread_count)
     end
 
     context "Top level messages" do

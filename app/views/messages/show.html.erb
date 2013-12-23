@@ -24,7 +24,7 @@
 <div class="container">
   <h3><%= h(@message.subject) %></h3>
   <%- @message.messages_in_thread.each do |message| -%>
-    <div class="<%= message.aasm_state -%> <%= message.css_class -%> message_full" id="<%= dom_id(message) -%>">
+    <div class="<%= message.read_by?(current_user) ? "read" : "unread" -%> <%= message.css_class -%> message_full" id="<%= dom_id(message) -%>">
       <div class="avatar">
         <%= sender_avatar message -%>
       </div>
@@ -41,7 +41,7 @@
         </p>
         <hr/>
         <ul class="message_actions unstyled">
-          <% if message.unread? and message.recipient == current_user %>
+          <% if !message.read_by?(current_user) and message.recipients.include?(current_user) %>
             <li id="<%= dom_id(message, 'mark_as_read') -%>">
               <a class="mark_as_unread" href="<%= read_message_path(message) -%>">
                 <%= t('views.messages.mark_as_read') -%>

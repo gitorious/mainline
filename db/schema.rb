@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131216131457) do
+ActiveRecord::Schema.define(:version => 20131223102559) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -322,7 +322,6 @@ ActiveRecord::Schema.define(:version => 20131216131457) do
     t.text     "body"
     t.string   "notifiable_type"
     t.integer  "notifiable_id"
-    t.string   "aasm_state"
     t.integer  "in_reply_to_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -333,14 +332,14 @@ ActiveRecord::Schema.define(:version => 20131216131457) do
     t.datetime "last_activity_at"
   end
 
-  add_index "messages", ["aasm_state"], :name => "index_messages_on_aasm_state"
   add_index "messages", ["in_reply_to_id"], :name => "index_messages_on_in_reply_to_id"
   add_index "messages", ["notifiable_type", "notifiable_id"], :name => "index_messages_on_notifiable_type_and_notifiable_id"
   add_index "messages", ["sender_id"], :name => "index_messages_on_sender_id"
 
   create_table "messages_users", :force => true do |t|
-    t.integer "message_id",   :null => false
-    t.integer "recipient_id", :null => false
+    t.integer "message_id",                      :null => false
+    t.integer "recipient_id",                    :null => false
+    t.boolean "read",         :default => false, :null => false
   end
 
   add_index "messages_users", ["message_id"], :name => "index_messages_users_on_message_id"

@@ -63,25 +63,6 @@ class User < ActiveRecord::Base
     end
   end
 
-  has_and_belongs_to_many :received_messages,
-    :class_name => "Message",
-    :foreign_key => 'recipient_id',
-    :order => "created_at DESC" do
-
-    def unread
-      where({ :aasm_state => "unread" })
-    end
-
-    def top_level
-      where({ :in_reply_to_id => nil })
-    end
-
-    def unread_count
-      where("aasm_state = ? and archived_by_recipient = ? and sender_id != messages_users.recipient_id",
-            "unread", false).count
-    end
-  end
-
   def all_messages
     Message.joins('left outer join messages_users as mu on mu.message_id = messages.id').
       where("sender_id = ? OR mu.recipient_id = ?", self, self)
@@ -129,7 +110,7 @@ class User < ActiveRecord::Base
   end
 
   def unread_message_count
-    received_messages.unread_count
+    UserMessages.for(self).unread_count
   end
 
   def self.human_name

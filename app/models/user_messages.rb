@@ -48,6 +48,14 @@ class UserMessages
     inbox
   end
 
+  def unread_count
+    messages.reject { |m| m.read_by?(user) }.count
+  end
+
+  def thread_unread?(message)
+    !all_in_thread(message).all? { |msg| msg.read_by?(user) }
+  end
+
   private
 
   def remove_replies(messages)
@@ -76,9 +84,12 @@ class UserMessages
     children + nested
   end
 
+  def all_in_thread(message)
+    [message] + replies_to(message)
+  end
+
   def last_activity(message)
-    all_in_thread = [message] + replies_to(message)
-    created_times = all_in_thread.map(&:created_at)
+    created_times = all_in_thread(message).map(&:created_at)
     created_times.max
   end
 

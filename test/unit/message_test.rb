@@ -19,48 +19,14 @@
 
 require "test_helper"
 
+load Rails.root.join("app/models/message.rb")
+
 class MessageTest < ActiveSupport::TestCase
   should belong_to(:sender)
   should validate_presence_of(:subject)
   should validate_presence_of(:body)
   should belong_to(:notifiable)
   should have_many(:replies)
-
-  context "The state machine" do
-    setup do
-      @recipient = FactoryGirl.create(:user)
-      @sender = FactoryGirl.create(:user)
-    end
-
-    context "class level" do
-      should "have all the required states" do
-        registered_state_names = Message.state_machines[:aasm_state].states.collect(&:name)
-        [:unread, :read].each do |state|
-          assert registered_state_names.include?(state)
-        end
-      end
-
-      should "have all the required events" do
-        # Yeah, I know this is a bit brute, will refactor once all the models are migrated
-        registered_event_names = Message.state_machines[:aasm_state].events.instance_variable_get("@nodes").collect(&:name)
-        [:read].each {|e| assert registered_event_names.include?(e)}
-      end
-    end
-
-    context "instance level" do
-      setup do
-        @message = FactoryGirl.create(:message, :sender => @sender, :recipient => @recipient)
-        @recipient = @message.recipient
-        assert_not_nil(@recipient)
-      end
-
-      should "transition to read when the user reads it" do
-        unread_message_count = @recipient.received_messages.unread_count
-        @message.read!
-        assert_equal(unread_message_count - 1, @recipient.received_messages.unread_count)
-      end
-    end
-  end
 
   context "Replying to a message" do
     setup do
@@ -160,15 +126,17 @@ class MessageTest < ActiveSupport::TestCase
     end
 
     should "know whether there are any unread messages in the thread" do
-      @message.read!
-      assert !@message.unread_messages?
+      original_recipient = @message.recipient
+      original_sender = @message.sender
+      @message.mark_as_read_by_user(original_recipient)
+      assert !@message.unread_messages?(original_recipient)
       reply = @message.build_reply(:body => "This is not read yet")
-      reply.save
-      @message.replies.reload
-      assert @message.unread_messages?
-      reply.read!
-      @message.replies.reload
-      assert !@message.unread_messages?
+      reply.save!
+      @message.reload
+      assert @message.unread_messages?(original_sender)
+      reply.mark_as_read_by_user(original_sender)
+      @message.reload
+      assert !@message.unread_messages?(original_sender)
     end
   end
 
@@ -182,21 +150,27 @@ class MessageTest < ActiveSupport::TestCase
     assert !can_read?(users(:moe), message)
   end
 
-  should "be marked as read by the recipient" do
-    message = Message.first
-    message.sender = users(:johan)
-    message.recipient = users(:mike)
+  context "marking as read" do
+    setup do
+      @bob, @alice, @tom = FactoryGirl.build_list(:user, 3)
+      @message = FactoryGirl.create(:message, recipients: [@bob, @alice], sender: @tom)
+    end
 
-    assert_equal "unread", message.aasm_state_for_user(users(:mike))
-    message.mark_as_read_by_user(users(:mike))
-    assert_equal "read", message.reload.aasm_state_for_user(users(:mike))
-  end
+    should "be unread by all the recipients" do
+      refute @message.read_by?(@bob)
+      refute @message.read_by?(@alice)
+    end
 
-  context "Rendering XML" do
-    setup {@message = FactoryGirl.create(:message)}
-    should "include required attributes" do
-      result = @message.to_xml
-      assert_match /<recipient_name>#{@message.recipient.title}<\/recipient_name>/, result
+    should "be read by sender" do
+      assert @message.read_by?(@tom)
+    end
+
+    should "be marked as read only by selected recipients" do
+      @message.mark_as_read_by_user(@bob)
+
+      @message.reload
+      assert @message.read_by?(@bob)
+      refute @message.read_by?(@alice)
     end
   end
 

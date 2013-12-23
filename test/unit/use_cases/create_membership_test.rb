@@ -43,13 +43,9 @@ class CreateMembershipTest < ActiveSupport::TestCase
   end
 
   should "message newly added member" do
-    outcome = execute(:role => Role.member.id, :login => "moe")
-    ms = outcome.result
-    message = users(:moe).received_messages.where(:notifiable_id => ms.id, :notifiable_type => ms.class.name).first
+    SendMessage.expects(:call).with(has_entries(sender: @user, recipient: users(:moe)))
 
-    refute_nil message
-    assert_equal @user, message.sender
-    assert_equal ms, message.notifiable
+    execute(:role => Role.member.id, :login => "moe")
   end
 
   should "not message added member if no sender" do

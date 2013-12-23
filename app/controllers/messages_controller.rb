@@ -50,7 +50,7 @@ class MessagesController < ApplicationController
 
   def read
     @message = user_messages.find(params[:id])
-    @message.read
+    @message.mark_as_read_by_user(current_user)
 
     respond_to do |wants|
       wants.js { head :ok }
@@ -66,7 +66,7 @@ class MessagesController < ApplicationController
         message.save!
       else
         logger.info("Marking message #{message_id} as read")
-        message.read
+        message.mark_as_read_by_user(current_user)
       end
     end
     redirect_to :action => :index
@@ -79,7 +79,6 @@ class MessagesController < ApplicationController
 
     respond_to do |wants|
       wants.html { render :show }
-      wants.xml  { render :xml => @message }
       wants.js   { render :partial => "message", :layout => false }
     end
   end
@@ -126,10 +125,7 @@ class MessagesController < ApplicationController
   def render_index
     return if @messages.count == 0 && params.key?(:page)
 
-    respond_to do |wants|
-      wants.html { render "messages/index" }
-      wants.xml  { render :xml => @messages }
-    end
+    render "messages/index"
   end
 
   def user_messages

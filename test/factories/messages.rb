@@ -22,6 +22,5 @@ FactoryGirl.define do
     m.recipient { |u| u.association(:user) }
     m.subject "Hello"
     m.body "Just called to say hi"
-    m.aasm_state "unread"
   end
 end

@@ -501,14 +501,16 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
 
     should "deliver a status update to the user who initiated it" do
-      assert_incremented_by(@merge_request.user.received_messages, :count, 1) do
-        @merge_request.deliver_status_update(users(:moe))
-      end
+      moe = users(:moe)
+      SendMessage.expects(:call).with(has_entries(sender: moe,
+                                                  recipient: @merge_request.user,
+                                                  notifiable: @merge_request))
+      @merge_request.deliver_status_update(moe)
     end
 
     should "nullify associated messages when deleted" do
       @merge_request.deliver_status_update(users(:moe))
-      message = @merge_request.user.received_messages.last
+      message = @merge_request.messages.last
       @merge_request.destroy
       message.reload
       assert_nil message.notifiable

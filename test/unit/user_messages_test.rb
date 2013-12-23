@@ -44,6 +44,35 @@ class UserMessagesTest < Minitest::Spec
     end
   end
 
+  describe "#unread_count" do
+    it "returns the count of unread messages" do
+      read_message = build_message(id: 1, read?: true)
+      unread_message = build_message(id: 2)
+
+      assert_equal 1, bobs_messages(read_message, unread_message).unread_count
+    end
+  end
+
+  describe "thread_unread?" do
+    it "returns false for threads with all messages read" do
+      read_message = build_message(id: 1, read?: true)
+      unread_message = build_message(id: 2, in_reply_to: read_message)
+      another_thread = build_message(id: 3, read?: true)
+
+      messages = bobs_messages(read_message, unread_message, another_thread)
+      assert messages.thread_unread?(read_message)
+    end
+
+    it "returns true for threads with unread messages" do
+      read_message = build_message(id: 1, read?: true)
+      unread_message = build_message(id: 2, in_reply_to: read_message, read?: true)
+      another_thread = build_message(id: 3)
+
+      messages = bobs_messages(read_message, unread_message, another_thread)
+      refute messages.thread_unread?(read_message)
+    end
+  end
+
   describe "#sent" do
     it "returns only the messages sent by user, newest first" do
       older_by_bob = build_message(created_at: 8.days.ago, id: 1, sender: bob)

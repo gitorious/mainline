@@ -54,14 +54,6 @@ class MessagesControllerTest < ActionController::TestCase
     end
   end
 
-  should "GET index with XML" do
-    login_as :moe
-    get :index, :format => "xml"
-
-    assert_response :success
-    assert_not_nil assigns(:messages)
-  end
-
   should "GET sent" do
     login_as :moe
     get :sent
@@ -105,17 +97,8 @@ class MessagesControllerTest < ActionController::TestCase
     should "mark all messages as read when viewing a thread" do
       get :show, :id => @message.to_param
       assert_response :success
-      assert_equal [true]*3, @message.reload.messages_in_thread.map(&:read?)
+      assert_equal [true]*3, @message.reload.messages_in_thread.map { |m| m.read_by?(users(:moe)) }
     end
-  end
-
-  should "GET show as XML" do
-    message = messages(:johans_message_to_moe)
-    login_as :moe
-    get :show, :id => message.to_param, :format => "xml"
-
-    assert_response :success
-    assert_not_nil assigns(:message)
   end
 
   should "not allow peeking at other people's messages" do
@@ -255,13 +238,13 @@ class MessagesControllerTest < ActionController::TestCase
     end
 
     should "mark the selected messages as read when supplying no action" do
-      @request.session[:user_id] = @recipient.id
+      #@request.session[:user_id] = @recipient.id
+      login_as @recipient
       put :bulk_update, :message_ids => @messages.collect(&:id)
       assert_response :redirect
 
-      @messages.each do |msg|
-        assert msg.reload.read?
-      end
+      read = @messages.map{|m| m.reload.read_by?(@recipient)}
+      assert_equal [true] * 4, read
     end
 
     should "archive the selected messages for the current user" do

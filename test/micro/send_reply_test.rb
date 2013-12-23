@@ -22,8 +22,9 @@ require 'send_reply'
 require 'send_message'
 
 class SendReplyTest < MiniTest::Spec
-  let(:reply) { :the_reply }
-  let(:original_message) { stub(read?: true, build_reply: reply) }
+  let(:sender) { :sender }
+  let(:reply) { stub(sender: sender) }
+  let(:original_message) { stub(read_by?: true, build_reply: reply) }
 
   before do
     SendMessage.stubs(:send_message).with(reply).returns(reply)
@@ -44,8 +45,8 @@ class SendReplyTest < MiniTest::Spec
   end
 
   it "marks the original message as read if it wasn't read before" do
-    original_message.stubs(read?: false)
-    original_message.expects(:read!)
+    original_message.stubs(:read_by?).with(sender).returns(false)
+    original_message.expects(:mark_as_read_by_user).with(sender)
 
     send_reply.must_equal reply
   end

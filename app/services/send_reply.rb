@@ -19,7 +19,8 @@
 module SendReply
   def self.call(original_message, reply_opts = {})
     reply = original_message.build_reply(reply_opts)
-    original_message.read! unless original_message.read?
+    sender = reply.sender
+    original_message.mark_as_read_by_user(sender) unless original_message.read_by?(sender)
     SendMessage.send_message(reply)
   end
 end

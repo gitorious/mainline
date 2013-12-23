@@ -121,20 +121,17 @@ class Committership < ActiveRecord::Base
   protected
   def notify_repository_owners
     return unless creator
-    recipients = repository.owners
-    recipients.each do |r|
-      SendMessage.call(
-        :sender => creator,
-        :recipient => r,
-        :subject => I18n.t("committership.notification_subject"),
-        :body => I18n.t("committership.notification_body", {
-          :inviter => creator.title,
-          :user => committer.title,
-          :repository => repository.name,
-          :project => repository.project.title
-        }),
-        :notifiable => self)
-    end
+    SendMessage.call(
+      :sender => creator,
+      :recipients => repository.owners,
+      :subject => I18n.t("committership.notification_subject"),
+      :body => I18n.t("committership.notification_body", {
+        :inviter => creator.title,
+        :user => committer.title,
+        :repository => repository.name,
+        :project => repository.project.title
+      }),
+      :notifiable => self)
   end
 
   def add_new_committer_event
