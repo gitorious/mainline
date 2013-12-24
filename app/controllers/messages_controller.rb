@@ -62,7 +62,7 @@ class MessagesController < ApplicationController
     message_ids.each do |message_id|
       message = user_messages.find(message_id)
       if params[:requested_action] == 'archive'
-        message.archived_by(current_user)
+        message.mark_as_archived_by_user(current_user)
         message.save!
       else
         logger.info("Marking message #{message_id} as read")

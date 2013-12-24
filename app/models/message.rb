@@ -175,7 +175,7 @@ class Message < ActiveRecord::Base
     message_recipient(user).archived?
   end
 
-  def archived_by(user)
+  def mark_as_archived_by_user(user)
     if user == sender
       self.archived_by_sender = true
     else

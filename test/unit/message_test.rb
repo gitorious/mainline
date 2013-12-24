@@ -193,7 +193,7 @@ class MessageTest < ActiveSupport::TestCase
     end
 
     should "be archived by sender" do
-      @message.archived_by(@tom)
+      @message.mark_as_archived_by_user(@tom)
 
       assert @message.archived_by?(@tom)
       refute @message.archived_by?(@bob)
@@ -201,7 +201,7 @@ class MessageTest < ActiveSupport::TestCase
     end
 
     should "be archived by selected recipients" do
-      @message.archived_by(@bob)
+      @message.mark_as_archived_by_user(@bob)
 
       @message.reload
       refute @message.archived_by?(@tom)
@@ -210,13 +210,13 @@ class MessageTest < ActiveSupport::TestCase
     end
 
     should "be reset when a reply is created" do
-      @message.archived_by(@tom)
+      @message.mark_as_archived_by_user(@tom)
       @message.save
       reply = @message.build_reply(:body => "Foo")
       assert reply.save
       assert !@message.reload.archived_by?(@tom)
 
-      @message.archived_by(@bob)
+      @message.mark_as_archived_by_user(@bob)
       @message.save
       reply_to_reply = reply.build_reply(:body => "Kthxbye")
       assert reply_to_reply.save
