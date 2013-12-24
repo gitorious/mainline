@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131223102559) do
+ActiveRecord::Schema.define(:version => 20131224124412) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -326,10 +326,9 @@ ActiveRecord::Schema.define(:version => 20131223102559) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "root_message_id"
-    t.boolean  "has_unread_replies",    :default => false
-    t.boolean  "archived_by_sender",    :default => false
-    t.boolean  "archived_by_recipient", :default => false
+    t.boolean  "has_unread_replies", :default => false
     t.datetime "last_activity_at"
+    t.boolean  "archived_by_sender", :default => false
   end
 
   add_index "messages", ["in_reply_to_id"], :name => "index_messages_on_in_reply_to_id"
@@ -340,6 +339,7 @@ ActiveRecord::Schema.define(:version => 20131223102559) do
     t.integer "message_id",                      :null => false
     t.integer "recipient_id",                    :null => false
     t.boolean "read",         :default => false, :null => false
+    t.boolean "archived",     :default => false, :null => false
   end
 
   add_index "messages_users", ["message_id"], :name => "index_messages_users_on_message_id"

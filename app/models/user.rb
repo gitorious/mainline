@@ -63,11 +63,6 @@ class User < ActiveRecord::Base
     end
   end
 
-  def all_messages
-    Message.joins('left outer join messages_users as mu on mu.message_id = messages.id').
-      where("sender_id = ? OR mu.recipient_id = ?", self, self)
-  end
-
   Paperclip.interpolates("login") { |attachment, style| attachment.instance.login.downcase }
 
   avatar_local_path = "/system/:attachment/:login/:style/:basename.:extension"
@@ -75,29 +70,6 @@ class User < ActiveRecord::Base
     :styles => { :medium => "300x300>", :thumb => "64x64>", :tiny => "24x24>" },
     :url => avatar_local_path,
     :path => ":rails_root/public#{avatar_local_path}"
-
-  # Top level messages either from or to me
-  def top_level_messages
-    Message.joins('left join messages_users as mu on mu.message_id = messages.id').
-      where('(has_unread_replies=? AND sender_id=?) OR mu.recipient_id=?  AND in_reply_to_id IS NULL', true, self, self).
-      order('last_activity_at DESC')
-  end
-
-  # Top level messages, excluding message threads that have been archived by me
-  def messages_in_inbox(limit=100)
-    messages = Message.involving_user(self)
-
-    messages = messages.select do |message|
-      unless message.in_reply_to
-        (message.sender != self && !message.archived_by_recipient) ||
-          (message.has_unread_replies && !message.archived_by_recipient && message.sender == self)
-      end
-    end
-
-    messages = messages.sort_by(&:last_activity_at).reverse
-
-    return messages[0..limit]
-  end
 
   has_many :sent_messages, {
     :class_name => "Message",

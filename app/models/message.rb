@@ -155,9 +155,8 @@ class Message < ActiveRecord::Base
   end
 
   def mark_as_read_by_user(candidate)
-    recipient = message_recipient(candidate)
-    recipient.read = true
-    recipient.save!
+    return if candidate == sender
+    message_recipient(candidate).read!
   end
 
   def mark_thread_as_read_by_user(a_user)
@@ -168,20 +167,19 @@ class Message < ActiveRecord::Base
 
   def read_by?(user)
     return true if user == sender
-    message_recipient(user).read
+    message_recipient(user).read?
   end
 
   def archived_by?(user)
     return archived_by_sender if user == sender
-    archived_by_recipient
+    message_recipient(user).archived?
   end
 
-  def archived_by(a_user)
-    if a_user == sender
+  def archived_by(user)
+    if user == sender
       self.archived_by_sender = true
-    end
-    if a_user == recipient
-      self.archived_by_recipient = true
+    else
+      message_recipient(user).archive!
     end
   end
 
@@ -198,7 +196,7 @@ class Message < ActiveRecord::Base
         root_message.has_unread_replies = true
         root_message.archived_by_sender = false
       else
-        root_message.archived_by_recipient = false
+        root_message.message_recipients.each(&:unarchive!)
       end
       root_message.touch!
       root_message.save

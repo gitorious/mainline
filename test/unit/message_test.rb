@@ -172,6 +172,56 @@ class MessageTest < ActiveSupport::TestCase
       assert @message.read_by?(@bob)
       refute @message.read_by?(@alice)
     end
+
+    should "do nothing if it is marked by the sender" do
+      @message.mark_as_read_by_user(@tom)
+
+      assert @message.read_by?(@tom)
+    end
+  end
+
+  context "marking as archived" do
+    setup do
+      @bob, @alice, @tom = FactoryGirl.build_list(:user, 3)
+      @message = FactoryGirl.create(:message, recipients: [@bob, @alice], sender: @tom)
+    end
+
+    should "not by archived by anyone" do
+      refute @message.archived_by?(@bob)
+      refute @message.archived_by?(@alice)
+      refute @message.archived_by?(@tom)
+    end
+
+    should "be archived by sender" do
+      @message.archived_by(@tom)
+
+      assert @message.archived_by?(@tom)
+      refute @message.archived_by?(@bob)
+      refute @message.archived_by?(@alice)
+    end
+
+    should "be archived by selected recipients" do
+      @message.archived_by(@bob)
+
+      @message.reload
+      refute @message.archived_by?(@tom)
+      assert @message.archived_by?(@bob)
+      refute @message.archived_by?(@alice)
+    end
+
+    should "be reset when a reply is created" do
+      @message.archived_by(@tom)
+      @message.save
+      reply = @message.build_reply(:body => "Foo")
+      assert reply.save
+      assert !@message.reload.archived_by?(@tom)
+
+      @message.archived_by(@bob)
+      @message.save
+      reply_to_reply = reply.build_reply(:body => "Kthxbye")
+      assert reply_to_reply.save
+      assert !@message.reload.archived_by?(@bob)
+    end
   end
 
   context "Thottling" do
@@ -221,59 +271,6 @@ class MessageTest < ActiveSupport::TestCase
           @message.save!
         end
       end
-    end
-  end
-
-  context "Archive state" do
-    setup do
-      @sender = FactoryGirl.create(:user)
-      @recipient = FactoryGirl.create(:user)
-      @message = FactoryGirl.create(:message, :sender => @sender, :recipient => @recipient)
-    end
-
-    should "be marked as archived by both sender and recipient when it is the same user" do
-      @message = FactoryGirl.create(:message, :sender => @sender, :recipient => @sender)
-      @message.archived_by(@sender)
-      assert @message.archived_by_sender?
-      assert @message.archived_by_recipient?
-    end
-
-    should "initially be unread_by_both" do
-      assert !@message.archived_by_sender?
-      assert !@message.archived_by_recipient?
-    end
-
-    should "be archived by sender" do
-      @message.archived_by(@sender)
-      assert @message.archived_by_sender?
-      assert !@message.archived_by_recipient?
-    end
-
-    should "be archived by recipient" do
-      @message.archived_by(@recipient)
-      assert @message.archived_by_recipient?
-      assert !@message.archived_by_sender?
-    end
-
-    should "be archived by both sender and recipient" do
-      @message.archived_by(@sender)
-      @message.archived_by(@recipient)
-      assert @message.archived_by_sender?
-      assert @message.archived_by_recipient?
-    end
-
-    should "be reset when a reply is created" do
-      @message.archived_by(@sender)
-      @message.save
-      reply = @message.build_reply(:body => "Foo")
-      assert reply.save
-      assert !@message.reload.archived_by_sender?
-
-      @message.archived_by(@recipient)
-      @message.save
-      reply_to_reply = reply.build_reply(:body => "Kthxbye")
-      assert reply_to_reply.save
-      assert !@message.reload.archived_by_recipient?
     end
   end
 

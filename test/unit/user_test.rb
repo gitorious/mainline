@@ -260,67 +260,6 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  context "Messages" do
-    setup do
-      @message = messages(:johans_message_to_moe)
-      @sender = users(:johan)
-      @recipient = users(:moe)
-    end
-
-    should "know of its received messages" do
-      assert @sender.sent_messages.include?(@message)
-    end
-
-    should "have an all_messages method that returns all messages to or from self" do
-      assert @sender.all_messages.include?(@message)
-      assert @recipient.all_messages.include?(@message)
-      assert !users(:mike).all_messages.include?(@message)
-    end
-
-    context "Top level messages" do
-      setup do
-        @sender = FactoryGirl.create(:user)
-        @recipient = FactoryGirl.create(:user)
-        @other_user = FactoryGirl.create(:user)
-        @message = Message.create(:sender => @sender, :recipient => @recipient, :subject => "Hello", :body => "World")
-      end
-
-      should "include messages to self" do
-        assert @recipient.top_level_messages.include?(@message)
-        assert_equal @recipient, @message.recipient
-        assert !@message.archived_by_recipient?
-        assert @recipient.messages_in_inbox.include?(@message)
-        @message.archived_by(@recipient)
-        assert @message.save
-        assert !@recipient.messages_in_inbox.include?(@message)
-      end
-
-      should "include messages from self with unread replies" do
-        reply = @message.build_reply(:body => "Thx")
-        assert reply.save
-        assert @sender.top_level_messages.include?(@message)
-        assert @sender.messages_in_inbox.include?(@message)
-        @message.archived_by(@sender)
-        assert @message.save
-        assert @sender.messages_in_inbox.include?(@message)
-      end
-
-      should "not include messages from someone else with unread replies" do
-        another_message = Message.create({
-            :sender => @other_user,
-            :recipient => @recipient,
-            :subject => "Foo",
-            :body => "Bar"
-          })
-        assert @recipient.messages_in_inbox.include?(another_message)
-        another_reply = another_message.build_reply(:body => "Not for you")
-        assert another_reply.save
-        assert !@sender.top_level_messages.include?(another_message)
-        assert !@sender.messages_in_inbox.include?(another_message)
-      end
-    end
-  end
-
   context "Suspension" do
     setup do
       SshKey.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)

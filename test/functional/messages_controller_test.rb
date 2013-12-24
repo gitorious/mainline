@@ -253,7 +253,7 @@ class MessagesControllerTest < ActionController::TestCase
       assert_response :redirect
 
       @messages.each do |msg|
-        assert msg.reload.archived_by_recipient?
+        assert msg.reload.archived_by?(@recipient)
       end
     end
   end
