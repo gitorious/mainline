@@ -71,16 +71,6 @@ class User < ActiveRecord::Base
     :url => avatar_local_path,
     :path => ":rails_root/public#{avatar_local_path}"
 
-  has_many :sent_messages, {
-    :class_name => "Message",
-    :foreign_key => "sender_id",
-    :order => "created_at DESC"
-  } do
-    def top_level
-      where(:in_reply_to_id => nil)
-    end
-  end
-
   def unread_message_count
     UserMessages.for(self).unread_count
   end
