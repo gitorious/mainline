@@ -101,55 +101,6 @@ class Message < ActiveRecord::Base
     notifiable.nil?
   end
 
-  def display_state_for(a_user)
-    if a_user == sender
-      return "not_mine"
-    end
-    if unread?
-      return "unread"
-    end
-    return "read"
-  end
-
-  def description
-    (notifiable || self).class.name.titleize.downcase
-  end
-
-  def css_class
-    (notifiable || self).class.name.underscore
-  end
-
-  def title
-    subject || I18n.t("views.messages.new")
-  end
-
-  def number_of_messages_in_thread
-    messages_in_thread.size
-  end
-
-  def messages_in_thread
-    replies.inject([self]) do |result, message|
-      result << message.messages_in_thread
-    end.flatten
-  end
-
-  def unread_messages_in_thread
-    messages_in_thread.select(&:unread?)
-  end
-
-  def unread_messages?(user)
-    UserMessages.for(user).thread_unread?(self)
-  end
-
-  # Displays whether there are any unread messages in this message's thread for +a_user+
-  def aasm_state_for_user(user)
-    if unread_messages?(user)
-      "unread"
-    else
-      "read"
-    end
-  end
-
   def message_recipient(user)
     message_recipients.detect { |r| r.recipient == user }
   end
@@ -159,9 +110,9 @@ class Message < ActiveRecord::Base
     message_recipient(candidate).read!
   end
 
-  def mark_thread_as_read_by_user(a_user)
-    self.messages_in_thread.each do |msg|
-      msg.mark_as_read_by_user(a_user)
+  def mark_thread_as_read_by_user(user)
+    UserMessages.for(user).all_in_thread(self).each do |msg|
+      msg.mark_as_read_by_user(user)
     end
   end
 

@@ -99,47 +99,6 @@ class MessageTest < ActiveSupport::TestCase
     end
   end
 
-  context "Calculating the number of messages in a thread" do
-    setup do
-      @message = FactoryGirl.create(:message)
-    end
-
-    should "calculate the number of unread messages" do
-      assert_equal(1, @message.number_of_messages_in_thread)
-      reply = @message.build_reply(:body => "Thanks so much")
-      assert reply.save
-      5.times do
-        new_reply = reply.build_reply(:body => "That is nothing")
-        new_reply.save
-        reply = new_reply
-      end
-      @message.replies.reload
-      assert_equal(7, @message.number_of_messages_in_thread)
-    end
-
-    should "know which messages are in the same thread" do
-      reply = @message.build_reply(:body => "Yeah")
-      reply.save
-      reply_to_reply = reply.build_reply(:body=>"Nope")
-      reply_to_reply.save
-      assert @message.messages_in_thread.include?(reply_to_reply)
-    end
-
-    should "know whether there are any unread messages in the thread" do
-      original_recipient = @message.recipient
-      original_sender = @message.sender
-      @message.mark_as_read_by_user(original_recipient)
-      assert !@message.unread_messages?(original_recipient)
-      reply = @message.build_reply(:body => "This is not read yet")
-      reply.save!
-      @message.reload
-      assert @message.unread_messages?(original_sender)
-      reply.mark_as_read_by_user(original_sender)
-      @message.reload
-      assert !@message.unread_messages?(original_sender)
-    end
-  end
-
   should "be readable by the sender" do
     message = Message.new(:subject => "Hello", :body => "World")
     message.sender = users(:johan)

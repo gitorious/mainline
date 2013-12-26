@@ -17,15 +17,16 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #++
   %>
-<tr class="<%= message.aasm_state_for_user(current_user) -%> <%= message.css_class %>" id="<%= dom_id(message) -%>">
+<% message = MessagePresenter.new(message, current_user, self) %>
+<tr class="<%= message.thread_class %>" id="<%= dom_id(message) -%>">
   <td>
     <input type="checkbox" name="message_ids[]" value="<%= message.id -%>" class="select_msg" />
   </td>
   <td class="who">
-    <%= sender_and_recipient_display(message) %> (<%= message.number_of_messages_in_thread %>)
+    <%= message.sender_and_recipients %> (<%= message.number_of_messages_in_thread %>)
   </td>
   <td>
-    <%= link_to(h(message.title), message) %> -
+    <%= link_to(h(message.thread_title), message) %> -
     <span class="preview">
       <%= truncate(h(message.body), :length => 50) %>
     </span>

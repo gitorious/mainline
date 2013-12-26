@@ -44,6 +44,7 @@ require "capybara/poltergeist"
 require "capybara-screenshot"
 require "capybara_minitest_spec"
 require "capybara_test_case"
+require "view_context_helper"
 
 Minitest::Reporters.use!(Minitest::Reporters::DefaultReporter.new)
 
@@ -73,6 +74,7 @@ class ActiveSupport::TestCase
   include AuthenticatedTestHelper
   include Gitorious::Authorization
   include DataBuilderHelpers
+  include ViewContextHelper
 
   # The only drawback to using transactional fixtures is when you actually
   # need to test transactions.  Since your test is bracketed by a transaction,
@@ -102,12 +104,6 @@ class ActiveSupport::TestCase
 
   def push_test_repo_path
     (Rails.root + "test/fixtures/push_test_repo.git").to_s
-  end
-
-  def view_context
-    controller = ApplicationController.new
-    controller.request = ActionController::TestRequest.new
-    controller.view_context
   end
 
   def assert_incremented_by(obj, meth, value)

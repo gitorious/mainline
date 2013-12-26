@@ -56,6 +56,10 @@ class UserMessages
     !all_in_thread(message).all? { |msg| msg.read_by?(user) }
   end
 
+  def all_in_thread(message)
+    [message] + replies_to(message)
+  end
+
   private
 
   def remove_replies(messages)
@@ -82,10 +86,6 @@ class UserMessages
     children = messages.select { |msg| msg.in_reply_to_id == message.id }
     nested = children.map{ |msg| replies_to(msg) }.flatten
     children + nested
-  end
-
-  def all_in_thread(message)
-    [message] + replies_to(message)
   end
 
   def last_activity(message)

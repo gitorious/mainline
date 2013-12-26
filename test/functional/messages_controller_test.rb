@@ -91,13 +91,13 @@ class MessagesControllerTest < ActionController::TestCase
       @message.build_reply({
           :body => "quite", :sender => users(:johan), :recipient => users(:moe)
         }).save!
-      assert @message.messages_in_thread.size >= 2, "msg thread only have one msg"
     end
 
     should "mark all messages as read when viewing a thread" do
       get :show, :id => @message.to_param
       assert_response :success
-      assert_equal [true]*3, @message.reload.messages_in_thread.map { |m| m.read_by?(users(:moe)) }
+      messages_in_thread = UserMessages.for(users(:moe)).all_in_thread(@message)
+      assert_equal [true]*3, messages_in_thread.map { |m| m.read_by?(users(:moe)) }
     end
   end
 

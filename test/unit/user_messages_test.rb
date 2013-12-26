@@ -73,6 +73,17 @@ class UserMessagesTest < Minitest::Spec
     end
   end
 
+  describe "all_in_thread" do
+    it "returns messages from the given thread" do
+      read_message = build_message(id: 1, read?: true)
+      unread_message = build_message(id: 2, in_reply_to: read_message)
+      another_thread = build_message(id: 3, read?: true)
+
+      messages = bobs_messages(read_message, unread_message, another_thread)
+      assert_same(messages.all_in_thread(read_message), [read_message, unread_message])
+    end
+  end
+
   describe "#sent" do
     it "returns only the messages sent by user, newest first" do
       older_by_bob = build_message(created_at: 8.days.ago, id: 1, sender: bob)

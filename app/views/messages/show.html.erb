@@ -20,42 +20,43 @@
   %>
 
 <%= render "header" %>
+<% root_message = MessagePresenter.new(@message, current_user, self) %>
 
 <div class="container">
-  <h3><%= h(@message.subject) %></h3>
-  <%- @message.messages_in_thread.each do |message| -%>
-    <div class="<%= message.read_by?(current_user) ? "read" : "unread" -%> <%= message.css_class -%> message_full" id="<%= dom_id(message) -%>">
+  <h3><%= h(root_message.subject) %></h3>
+  <% root_message.messages_in_thread.each do |message| %>
+    <div class="<%= message.message_class %>" id="<%= dom_id(message) %>">
       <div class="avatar">
-        <%= sender_avatar message -%>
+        <%= message.sender_avatar %>
       </div>
       <div class="message">
-        <% unless message.subject == @message.subject -%>
-          <h2 class="subject"><%=h message.subject -%></h2>
-        <% end -%>
+        <% unless message.subject == root_message.subject %>
+          <h2 class="subject"><%=h message.subject %></h2>
+        <% end %>
         <p class="meta">
-          <%= message_title(message).html_safe %> <%= distance_of_time_in_words_to_now(message.created_at) %> ago
+          <%= message.message_title %> <%= distance_of_time_in_words_to_now(message.created_at) %> ago
         </p>
         <p class="body">
           <%= simple_format h(message.body) %>
-          <%= render(:partial => "notifiable", :locals => {:notifiable => message.notifiable}) -%>
+          <%= render(:partial => "notifiable", :locals => {:notifiable => message.notifiable}) %>
         </p>
         <hr/>
         <ul class="message_actions unstyled">
-          <% if !message.read_by?(current_user) and message.recipients.include?(current_user) %>
-            <li id="<%= dom_id(message, 'mark_as_read') -%>">
-              <a class="mark_as_unread" href="<%= read_message_path(message) -%>">
-                <%= t('views.messages.mark_as_read') -%>
+          <% if message.unread_by_viewer? %>
+            <li id="<%= dom_id(message, 'mark_as_read') %>">
+              <a class="mark_as_unread" href="<%= read_message_path(message) %>">
+                <%= t('views.messages.mark_as_read') %>
               </a>
             </li>
           <% end %>
 
-          <%- if (message.sender != current_user) and message.replies_enabled? -%>
+          <% if message.repliable? %>
             <li>
               <%= link_to_function(t("views.messages.reply"), "$('##{dom_id(message,"reply_to")}').toggle()", :class => 'btn') %>
             </li>
-          <%- end -%>
+          <% end %>
         </ul>
-        <% if (message.sender != current_user) and message.replies_enabled? -%>
+        <% if message.repliable? %>
           <div class="reply" style="display:none" id="<%= dom_id(message,"reply_to") %>">
             <%= simple_form_for(message.build_reply, :url => reply_message_path(message)) do |f| %>
               <%= f.input :subject, :label => t('views.messages.subject') %>
@@ -68,5 +69,5 @@
         <% end %>
       </div>
     </div>
-  <%- end -%>
+  <% end %>
 </div>
