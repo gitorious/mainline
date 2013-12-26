@@ -61,7 +61,8 @@ class Message < ActiveRecord::Base
   end
 
   def build_reply(options={})
-    reply_options = {:sender => recipient, :recipients => [sender], :subject => "Re: #{subject}"}.with_indifferent_access
+    new_sender = options.fetch(:sender)
+    reply_options = {:sender => new_sender, :recipients => [sender], :subject => "Re: #{subject}"}.with_indifferent_access
     reply = Message.new(reply_options.merge(options))
     reply.in_reply_to = self
     reply.root_message_id = root_message_id || id

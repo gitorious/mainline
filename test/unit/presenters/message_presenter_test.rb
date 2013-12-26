@@ -31,7 +31,7 @@ class MessagePresenterTest < MiniTest::Spec
   end
 
   it "delagtes to message" do
-    methods = :id, :to_key, :body, :created_at, :subject, :notifiable, :build_reply, :to_param
+    methods = :id, :to_key, :body, :created_at, :subject, :notifiable, :to_param
     methods.each do |method|
       msg.stubs(method).returns(:delegated)
 

@@ -58,7 +58,7 @@
         </ul>
         <% if message.repliable? %>
           <div class="reply" style="display:none" id="<%= dom_id(message,"reply_to") %>">
-            <%= simple_form_for(message.build_reply, :url => reply_message_path(message)) do |f| %>
+            <%= simple_form_for(@reply, :url => reply_message_path(message)) do |f| %>
               <%= f.input :subject, :label => t('views.messages.subject') %>
               <%= f.input :body, :label => t('views.messages.body'), :input_html => { :class => 'input-xxlarge', :rows => 10 } %>
               <div class="form-actions">

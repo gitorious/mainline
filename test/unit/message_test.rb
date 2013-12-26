@@ -31,7 +31,15 @@ class MessageTest < ActiveSupport::TestCase
   context "Replying to a message" do
     setup do
       @message = FactoryGirl.create(:message)
-      @reply = @message.build_reply(:body => "Thanks. That is much appreciated")
+      @recipient = @message.recipients.first
+      @reply = @message.build_reply(:body => "Thanks. That is much appreciated",
+                                    :sender => @recipient)
+    end
+
+    should "require a sender as an argument" do
+      assert_raises(KeyError) do
+        @message.build_reply(body: "re body")
+      end
     end
 
     should "set the sender and recipient correctly" do
@@ -40,7 +48,9 @@ class MessageTest < ActiveSupport::TestCase
     end
 
     should "be able to override the subject of a message" do
-      @reply = @message.build_reply(:body => "Thanks. That is much appreciated", :subject => "WTF")
+      @reply = @message.build_reply(:sender => @recipient,
+                                    :body => "Thanks. That is much appreciated",
+                                    :subject => "WTF")
       assert_equal("WTF", @reply.subject)
     end
 
@@ -67,7 +77,9 @@ class MessageTest < ActiveSupport::TestCase
       assert @reply.save
       assert @message.reload.has_unread_replies?
       @message.update_attribute(:has_unread_replies, false)
-      reply_to_reply = @reply.build_reply(:body => "All right!", :subject => "Feeling chatty")
+      reply_to_reply = @reply.build_reply(:body => "All right!",
+                                          :sender => @recipient,
+                                          :subject => "Feeling chatty")
       assert reply_to_reply.save
       assert !@message.reload.has_unread_replies?
     end
@@ -171,13 +183,13 @@ class MessageTest < ActiveSupport::TestCase
     should "be reset when a reply is created" do
       @message.mark_as_archived_by_user(@tom)
       @message.save
-      reply = @message.build_reply(:body => "Foo")
+      reply = @message.build_reply(:body => "Foo", :sender => @bob)
       assert reply.save
       assert !@message.reload.archived_by?(@tom)
 
       @message.mark_as_archived_by_user(@bob)
       @message.save
-      reply_to_reply = reply.build_reply(:body => "Kthxbye")
+      reply_to_reply = reply.build_reply(:body => "Kthxbye", :sender => @tom)
       assert reply_to_reply.save
       assert !@message.reload.archived_by?(@bob)
     end

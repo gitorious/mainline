@@ -74,6 +74,7 @@ class MessagesController < ApplicationController
 
   def show
     @message = user_messages.find(params[:id])
+    @reply = @message.build_reply(sender: current_user)
 
     @message.mark_thread_as_read_by_user(current_user)
 
@@ -107,7 +108,8 @@ class MessagesController < ApplicationController
   # POST /messages/<id>/reply
   def reply
     original_message = user_messages.find(params[:id])
-    @message = SendReply.call(original_message, params[:message])
+    message_params = params[:message].merge(sender: current_user)
+    @message = SendReply.call(original_message, message_params)
     flash[:notice] = "Your reply was sent"
     redirect_to :action => :show, :id => original_message
   rescue SendMessage::InvalidMessage

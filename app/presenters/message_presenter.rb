@@ -20,7 +20,7 @@ require 'forwardable'
 
 class MessagePresenter < Struct.new(:message, :viewer, :view_context)
   extend Forwardable
-  def_delegators :message, :id, :to_key, :body, :created_at, :subject, :notifiable, :build_reply, :to_param
+  def_delegators :message, :id, :to_key, :body, :created_at, :subject, :notifiable, :to_param
 
   def self.model_name
     Message.model_name
