@@ -58,18 +58,13 @@ class CreateMergeRequestCommentTest < ActiveSupport::TestCase
   should "notify repository owner of merge request comment" do
     user = users(:moe)
 
-    assert_difference "Message.count" do
-      outcome = CreateMergeRequestComment.new(user, @merge_request).execute({
-          :body => "Nice work"
-        })
-    end
+    SendMessage.expects(:call).with(user: message.sender,
+                                    recipient: @merge_request.user,
+                                    subject: "moe commented on your merge request",
+                                    body: "moe commented:\n\nNice work",
+                                    notifiable: @merge_request)
 
-    message = Message.last
-    assert_equal user, message.sender
-    assert_equal @merge_request.user, message.recipient
-    assert_equal "moe commented on your merge request", message.subject
-    assert_equal "moe commented:\n\nNice work", message.body
-    assert_equal @merge_request, message.notifiable
+    CreateMergeRequestComment.new(user, @merge_request).execute(body: "Nice work")
   end
 
   should "not notify repository owner of own comment" do
