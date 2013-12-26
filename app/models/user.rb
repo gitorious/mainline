@@ -71,10 +71,6 @@ class User < ActiveRecord::Base
     :url => avatar_local_path,
     :path => ":rails_root/public#{avatar_local_path}"
 
-  def unread_message_count
-    UserMessages.for(self).unread_count
-  end
-
   def self.human_name
     I18n.t("activerecord.models.user")
   end

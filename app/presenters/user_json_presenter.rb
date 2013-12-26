@@ -26,11 +26,15 @@ class UserJSONPresenter
     JSON.dump(to_hash)
   end
 
+  def unread_message_count
+    UserMessages.for(user).unread_count
+  end
+
   def to_hash
     return {} if user.nil?
     { "user" => {
         "login" => user.login,
-        "unreadMessageCount" => user.unread_message_count,
+        "unreadMessageCount" => unread_message_count,
         "dashboardPath" => app.root_path,
         "profilePath" => app.user_path(user),
         "editPath" => app.edit_user_path(user),

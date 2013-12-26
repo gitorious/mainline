@@ -27,6 +27,18 @@ class App
   def avatar_url(user); "http://www.gravatar.com/avatar/a59f9d19e6a527f11b016650dde6f4c9&amp;default=http://gitorious.test/images/default_face.gif"; end
 end
 
+class UnreadMessages
+  def self.unread_count
+    1
+  end
+end
+
+class UserMessages
+  def self.for(user)
+    UnreadMessages
+  end
+end
+
 class UserJSONPresenterTest < MiniTest::Spec
   describe "#to_hash" do
     it "returns empty hash if no user" do
@@ -43,7 +55,7 @@ class UserJSONPresenterTest < MiniTest::Spec
     end
 
     it "incudes unread message count" do
-      user = User.new(:login => "cjohansen", :unread_message_count => 1)
+      user = User.new(:login => "cjohansen")
       presenter = UserJSONPresenter.new(App.new, user)
 
       assert_equal 1, presenter.to_hash["user"]["unreadMessageCount"]
