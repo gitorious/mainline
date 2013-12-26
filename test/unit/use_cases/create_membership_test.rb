@@ -55,12 +55,6 @@ class CreateMembershipTest < ActiveSupport::TestCase
     assert_equal count, Message.count
   end
 
-  should "set message sender to Gitorious" do
-    outcome = execute(:role => Role.member.id, :login => "moe")
-
-    assert_equal "Gitorious", Message.last.sender_name
-  end
-
   should "fail validation when missing login" do
     outcome = execute(:role => Role.member.id)
 

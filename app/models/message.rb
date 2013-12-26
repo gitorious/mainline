@@ -85,24 +85,8 @@ class Message < ActiveRecord::Base
     self.recipients = User.where(login: logins)
   end
 
-  def recipient_name
-   recipient.title
-  end
-
-  def sender_name
-    if notifiable
-      "Gitorious"
-    else
-      sender.title
-    end
-  end
-
   def replies_enabled?
     notifiable.nil?
-  end
-
-  def message_recipient(user)
-    message_recipients.detect { |r| r.recipient == user }
   end
 
   def mark_as_read_by_user(candidate)
@@ -139,6 +123,10 @@ class Message < ActiveRecord::Base
   end
 
   protected
+
+  def message_recipient(user)
+    message_recipients.detect { |r| r.recipient == user }
+  end
 
   def flag_root_message_if_required
     self.last_activity_at = current_time_from_proper_timezone

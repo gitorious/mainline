@@ -232,17 +232,4 @@ class MessageTest < ActiveSupport::TestCase
       end
     end
   end
-
-  context "Sender display" do
-    setup do
-      @sender = FactoryGirl.create(:user)
-      @recipient = FactoryGirl.create(:user)
-    end
-
-    should "be sender#title when no notifiable exists" do
-      message = Message.create(:sender => @sender, :recipient => @recipient, :subject => "Hey", :body => "Hello earth")
-      assert_equal @sender.title, message.sender_name
-      assert message.replies_enabled?
-    end
-  end
 end
