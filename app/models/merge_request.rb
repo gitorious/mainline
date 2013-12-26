@@ -220,15 +220,6 @@ class MergeRequest < ActiveRecord::Base
     (repository && repository.head_candidate_name) || "master"
   end
 
-  def deliver_status_update(a_user)
-    SendMessage.call(
-      :sender => a_user,
-      :recipient => user,
-      :subject => "Your merge request was updated",
-      :body => "The merge request is now #{status_tag}.",
-      :notifiable => self)
-  end
-
   def source_name
     if source_repository
       "#{source_repository.name}:#{source_branch}"
