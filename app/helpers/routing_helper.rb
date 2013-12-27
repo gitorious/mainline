@@ -59,11 +59,8 @@ module RoutingHelper
     project_repository_commit_path(@project, @repository, objectish)
   end
 
-  def tree_path(treeish = "master", path = [])
-    if path.respond_to?(:to_str)
-      path = path.split("/")
-    end
-    tree_entry_url(@repository.slug, treeish, path)
+  def tree_path(treeish = "master")
+    tree_entry_url(@repository.slug, treeish, '')
   end
 
   def repository_path(action, sha1=nil)

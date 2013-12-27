@@ -39,7 +39,7 @@
           :author_user => commit.author_user
         }) -%>
   <% if commit.diffs.blank? -%>
-    <p><%= t("views.commits.message", :path => tree_path(commit.id)) %></p>
+    <p><%= t("views.commits.message_html", :path => tree_path(commit.id)) %></p>
   <% elsif !commit.merge? -%>
     <%= pull_box 'Summary' do %>
       <%= render_diff_stats(commit.stats) -%>

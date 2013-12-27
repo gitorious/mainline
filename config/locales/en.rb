@@ -379,7 +379,7 @@
         :page_title => "Commit in %{repo} in %{title}",
         :title => "Commit %{commit}",
         :compare_title => "Diffs from %{first_commit} to %{last_commit}",
-        :message => "This is the initial commit in this repository, <a href=\"%{path}\">browse the initial tree state</a>.",
+        :message_html => "This is the initial commit in this repository, <a href=\"%{path}\">browse the initial tree state</a>.",
       },
       :sessions => {
         :login => "Login",
