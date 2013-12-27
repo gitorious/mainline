@@ -520,6 +520,14 @@ class Repository < ActiveRecord::Base
     return result
   end
 
+  def members
+    committerships.
+      includes(:committer).
+      map(&:committer).
+      flat_map { |committer| committer.is_a?(User) ? committer : committer.members }.
+      uniq
+  end
+
   def full_hashed_path
     self.hashed_path || set_repository_path
   end
