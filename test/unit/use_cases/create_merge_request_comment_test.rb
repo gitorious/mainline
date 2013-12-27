@@ -58,7 +58,7 @@ class CreateMergeRequestCommentTest < ActiveSupport::TestCase
   should "notify repository owner of merge request comment" do
     user = users(:moe)
 
-    SendMessage.expects(:call).with(user: message.sender,
+    SendMessage.expects(:call).with(sender: user,
                                     recipient: @merge_request.user,
                                     subject: "moe commented on your merge request",
                                     body: "moe commented:\n\nNice work",
