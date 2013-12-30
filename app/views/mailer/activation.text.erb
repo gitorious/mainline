@@ -20,7 +20,7 @@
 
 Hello <%=h @user.login %>,
 
-Your account has been activated. You can now add your public SSH key here <%= Gitorious.url(user_edit_ssh_keys_path(@user)) -%>.
+Your account has been activated. You can now add your public SSH key here <%= Gitorious.url(new_user_key_path(@user)) -%>.
 You can also update your profile details here <%= Gitorious.url(edit_user_path(@user)) -%>.
 
 Thank you
