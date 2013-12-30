@@ -122,35 +122,6 @@ class FavoriteTest < ActiveSupport::TestCase
     end
   end
 
-  context "event notifications" do
-    setup do
-      @user = users(:moe)
-      @favorite = @user.favorites.create!({
-          :watchable => merge_requests(:moes_to_johans),
-          :notify_by_email => true
-        })
-      @event = Event.new({
-          :target => repositories(:johans),
-          :body => "blabla",
-          :action => Action::PUSH
-        })
-      @event.user = users(:johan)
-      @event.project = projects(:johans)
-      @event.save!
-    end
-
-    should "ask the EventRendering engine to render the event" do
-      EventRendering::Text.expects(:render).with(@event).returns("some rendered event")
-      @favorite.notify_about_event(@event)
-    end
-
-    should "deliver the notification email" do
-      favorite_mock = Mailer.expects(:favorite_notification)
-      favorite_mock.with(@user, regexp_matches(/johan pushed/)).returns(FakeMail.new)
-      @favorite.notify_about_event(@event)
-    end
-  end
-
   context "Email notifications" do
     setup do
       @user = users(:moe)

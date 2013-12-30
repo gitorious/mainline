@@ -61,9 +61,4 @@ class Favorite < ActiveRecord::Base
       event.destroy
     end
   end
-
-  def notify_about_event(an_event)
-    notification_content = EventRendering::Text.render(an_event)
-    Mailer.favorite_notification(self.user, notification_content).deliver
-  end
 end

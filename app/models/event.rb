@@ -137,32 +137,12 @@ class Event < ActiveRecord::Base
     git_actor.name
   end
 
-  def favorites_for_email_notification
-    conditions = ["notify_by_email = ? and user_id != ?", true, self.user_id]
-    favorites = self.project.favorites.where(conditions)
-    # Find anyone who's just favorited the target, if it's watchable
-    if self.target.respond_to?(:watchers)
-      favorites += self.target.favorites.where(conditions)
-    end
-
-    favorites.uniq
-  end
-
-  def disable_notifications
-    @notifications_disabled = true
-    yield
-    @notifications_disabled = false
-  end
-
   def notifications_disabled?
-    @notifications_disabled || commit_event?
+    commit_event?
   end
 
   def notify_subscribers
-    return if notifications_disabled?
-    favorites_for_email_notification.each do |favorite|
-      favorite.notify_about_event(self)
-    end
+    EmailEventSubscribers.call(self)
   end
 
   def self.events_for_archive_in_batches(created_before)

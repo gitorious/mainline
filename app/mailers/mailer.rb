@@ -100,6 +100,10 @@ class Mailer < ActionMailer::Base
          :subject => prefixed_subject("Activity: #{notification_body[0,35]}..."))
   end
 
+  def deliver_favorite_notification(user, notification_body)
+    favorite_notification(user, notification_body).deliver
+  end
+
   protected
   def build_notifiable_url(a_notifiable)
     case a_notifiable

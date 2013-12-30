@@ -18,6 +18,7 @@
 #++
 
 require "test_helper"
+load "models/event.rb"
 
 class EventTest < ActiveSupport::TestCase
   def setup
@@ -150,43 +151,6 @@ class EventTest < ActiveSupport::TestCase
       assert_no_difference("@user.feed_items.count") do
         event.save!
       end
-    end
-  end
-
-  context "favorite notification" do
-    setup do
-      @event = new_event(:action => Action::PUSH)
-      @favorite = users(:mike).favorites.new(:watchable => @repository)
-      @favorite.notify_by_email = true
-      @favorite.save!
-    end
-
-    should "find the favorites for the watchable with email notification turned on" do
-      assert_equal [@favorite], @event.favorites_for_email_notification
-      @favorite.update_attributes(:notify_by_email => false)
-      assert_equal [], @event.favorites_for_email_notification
-    end
-
-    should "tell the Favorite instances with email notification to notify" do
-      @event.expects(:favorites_for_email_notification).returns([@favorite])
-      @favorite.expects(:notify_about_event).with(@event)
-      @event.save!
-    end
-
-    should "not notify favorites if instructed not to" do
-      @event.expects(:notify_about_event).never
-      @event.disable_notifications { @event.notify_subscribers }
-    end
-
-    should "not notify favorites for commit events" do
-      assert !@event.notifications_disabled?
-      @event.action = Action::COMMIT
-      assert @event.notifications_disabled?
-    end
-
-    should "check if notifications are disabled before sending notifications" do
-      @event.expects(:notifications_disabled?)
-      @event.notify_subscribers
     end
   end
 
