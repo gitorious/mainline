@@ -55,7 +55,8 @@ module Gitorious::Messaging::SyncAdapter
       "/queue/GitoriousRepositoryDeletion" => "repository_deletion",
       "/queue/GitoriousTrackingRepositoryCreation" => "tracking_repository_creation",
       "/queue/GitoriousPostReceiveWebHook" => "service",
-      "/queue/GitoriousWikiRepositoryCreation" => "wiki_repository_creation"
+      "/queue/GitoriousWikiRepositoryCreation" => "wiki_repository_creation",
+      "/queue/GitoriousEmailEventSubscribers" => "email_event_subscribers"
     }
 
     # Locate the correct class to pick queue from

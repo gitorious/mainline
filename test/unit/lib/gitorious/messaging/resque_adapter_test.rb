@@ -40,7 +40,8 @@ class MessagingResqueAdapterTest < ActiveSupport::TestCase
         "/queue/GitoriousTrackingRepositoryCreation" => TrackingRepositoryCreationProcessor,
         "/queue/GitoriousRepositoryDeletion" => RepositoryDeletionProcessor,
         "/queue/GitoriousPostReceiveWebHook" => ServiceProcessor,
-        "/queue/GitoriousWikiRepositoryCreation" => WikiRepositoryCreationProcessor
+        "/queue/GitoriousWikiRepositoryCreation" => WikiRepositoryCreationProcessor,
+        "/queue/GitoriousEmailEventSubscribers" => EmailEventSubscribersProcessor
       }
     end
   end

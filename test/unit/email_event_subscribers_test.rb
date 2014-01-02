@@ -17,6 +17,19 @@
 #++
 
 class EmailEventSubscribersTest < ActiveSupport::TestCase
+  context ".call" do
+    include MessagingTestHelper
+
+    should "schedule an EventMailer job" do
+      event = Event.new
+      event.id = 3
+      EmailEventSubscribers.call(event)
+
+      queue_messages = Gitorious::Messaging::TestAdapter.messages_on(EmailEventSubscribers::QUEUE)
+      assert_equal({"event_id" => 3}, queue_messages.last)
+    end
+  end
+
   context ".users_to_notify" do
     should "not return the user that triggered the event" do
       moe = users(:moe)
@@ -35,7 +48,7 @@ class EmailEventSubscribersTest < ActiveSupport::TestCase
                             action: Action::CREATE_TAG,
                             project: project)
 
-      assert_equal [moe], EmailEventSubscribers.users_to_notify(event)
+      assert_equal [moe], EmailEventSubscribers::EventMailer.users_to_notify(event)
     end
   end
 
@@ -46,7 +59,7 @@ class EmailEventSubscribersTest < ActiveSupport::TestCase
 
       Mailer.expects(:deliver_favorite_notification).never
 
-      EmailEventSubscribers.new(event, [user]).notify
+      EmailEventSubscribers::EventMailer.new(event, [user]).notify
     end
 
     should "send email with an notification to recipients" do
@@ -56,7 +69,7 @@ class EmailEventSubscribersTest < ActiveSupport::TestCase
       EventRendering::Text.stubs(:render).with(event).returns("foo")
       Mailer.expects(:deliver_favorite_notification).with(user, "foo")
 
-      EmailEventSubscribers.new(event, [user]).notify
+      EmailEventSubscribers::EventMailer.new(event, [user]).notify
     end
   end
 end

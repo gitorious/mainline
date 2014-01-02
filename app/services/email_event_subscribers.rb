@@ -16,40 +16,58 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class EmailEventSubscribers
+module EmailEventSubscribers
+  extend Gitorious::Messaging::Publisher
+  QUEUE = "/queue/GitoriousEmailEventSubscribers"
+
   def self.call(event)
-    new(event, users_to_notify(event)).notify
+    publish(QUEUE, event_id: event.id)
   end
 
-  def self.users_to_notify(event)
-    conditions = ["notify_by_email = ? and user_id != ?", true, event.user_id]
-    favorites = event.project.favorites.where(conditions)
-    # Find anyone who's just favorited the target, if it's watchable
-    if event.target.respond_to?(:watchers)
-      favorites += event.target.favorites.where(conditions)
-    end
+  class Processor
+    include Gitorious::Messaging::Consumer
+    consumes QUEUE
 
-    favorites.map(&:user).uniq
-  end
-
-  def initialize(event, users)
-    @event = event
-    @users = users
-  end
-
-  def notify
-    return if event.notifications_disabled?
-    users.each do |user|
-      notify_about_event(user)
+    def on_message(message)
+      EventMailer.call(Event.find(message['event_id']))
     end
   end
 
-  private
+  class EventMailer
+    def self.call(event)
+      new(event, users_to_notify(event)).notify
+    end
 
-  attr_reader :event, :users
+    def self.users_to_notify(event)
+      conditions = ["notify_by_email = ? and user_id != ?", true, event.user_id]
+      favorites = event.project.favorites.where(conditions)
+      # Find anyone who's just favorited the target, if it's watchable
+      if event.target.respond_to?(:watchers)
+        favorites += event.target.favorites.where(conditions)
+      end
 
-  def notify_about_event(user)
-    notification_content = EventRendering::Text.render(event)
-    Mailer.deliver_favorite_notification(user, notification_content)
+      favorites.map(&:user).uniq
+    end
+
+    def initialize(event, users)
+      @event = event
+      @users = users
+    end
+
+    def notify
+      return if event.notifications_disabled?
+      users.each do |user|
+        notify_about_event(user)
+      end
+    end
+
+    private
+
+    attr_reader :event, :users
+
+    def notify_about_event(user)
+      notification_content = EventRendering::Text.render(event)
+      ::Mailer.deliver_favorite_notification(user, notification_content)
+    end
   end
 end

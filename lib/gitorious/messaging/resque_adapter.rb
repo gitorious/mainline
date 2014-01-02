@@ -36,7 +36,8 @@ module Gitorious::Messaging::ResqueAdapter
       "GitoriousTrackingRepositoryCreation" => "TrackingRepositoryCreation",
       "GitoriousRepositoryDeletion" => "RepositoryDeletion",
       "GitoriousPostReceiveWebHook" => "Service",
-      "GitoriousWikiRepositoryCreation" => "WikiRepositoryCreation"
+      "GitoriousWikiRepositoryCreation" => "WikiRepositoryCreation",
+      "GitoriousEmailEventSubscribers" => "EmailEventSubscribers"
     }
 
     # Locate the correct class to pick queue from

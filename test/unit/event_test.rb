@@ -154,6 +154,16 @@ class EventTest < ActiveSupport::TestCase
     end
   end
 
+  context "Notifications" do
+    should "sends a notification to subscribed users" do
+      event = new_event(action: Action::PUSH)
+
+      EmailEventSubscribers.expects(:call).with(event)
+
+      event.save!
+    end
+  end
+
   context "Archiving" do
     setup do
       @push_event = new_event(:action => Action::PUSH, :created_at => 32.days.ago)
