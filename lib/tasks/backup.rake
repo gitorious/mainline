@@ -157,6 +157,7 @@ namespace :backup do
   task :env do
     require "gitorious/configuration_loader"
     require 'yaml'
+    Gitorious::ConfigurationLoader.new.require_configurable_singletons!
   end
 
   desc "Simple state snapshot of the Gitorious instance to a single tarball."
