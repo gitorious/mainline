@@ -31,13 +31,17 @@ module SampleRepoHelpers
   end
 
   def sample_repo(name = 'sample_repo')
-    Grit::Repo.new(sample_repo_path(name), :is_bare => true)
+    sample_repo_for_path(sample_repo_path(name))
   end
 
-  def repository_with_working_git(name = 'sample_repo')
-    repository = Repository.new
-    git = sample_repo(name)
-    repository.stubs(:git => git, :full_repository_path => sample_repo_path(name))
+  def sample_repo_for_path(path)
+    Grit::Repo.new(path, :is_bare => true)
+  end
+
+  def repository_with_working_git(name = 'sample_repo', repository = Repository.new)
+    path = sample_repo_path(name)
+    git = sample_repo_for_path(path)
+    repository.stubs(:git => git, :full_repository_path => path)
     repository
   end
 

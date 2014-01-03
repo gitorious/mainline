@@ -56,7 +56,7 @@ class EventPresenter
 
     def render_commit(commit, options = {})
       user    = commit.committer_user
-      message = commit.summary
+      message = CGI.escapeHTML(commit.summary)
 
       link = link_to(
         view.content_tag('code', commit.short_oid).html_safe,
