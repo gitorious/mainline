@@ -88,7 +88,7 @@ class MessagePresenter < Struct.new(:message, :viewer, :view_context)
   def involved_person_name(user)
     return "me" if user == viewer
     return "[removed]" if user.nil?
-    v.link_to(h(user.title), user)
+    v.link_to(user.title, user)
   end
 
   def merge_request_title
