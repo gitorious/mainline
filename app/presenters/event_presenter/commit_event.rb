@@ -20,8 +20,6 @@ class EventPresenter
   class CommitEvent < self
 
     def action
-      repo = event.target
-
       case kind
       when Repository::KIND_WIKI
         action_for_event(:event_status_push_wiki) do
@@ -61,6 +59,14 @@ class EventPresenter
       else
         'commit'
       end
+    end
+
+    def repo
+      repo = event.target
+    end
+
+    def project
+      repo.project
     end
 
   end
