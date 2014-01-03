@@ -50,11 +50,6 @@ class FavoriteTest < ActiveSupport::TestCase
       assert @user.favorites.include?(favorite)
     end
 
-    should "give access to the watched object" do
-      favorite = @user.favorites.create(:watchable => @repo)
-      assert @user.watched_objects.include?(@repo)
-    end
-
     should "know if the user watches the repo" do
       assert !@repo.watched_by?(@user)
       favorite = @user.favorites.create(:watchable => @repo)

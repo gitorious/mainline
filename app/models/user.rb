@@ -255,14 +255,6 @@ class User < ActiveRecord::Base
     end
   end
 
-  def watched_objects
-    favorites.includes(:watchable).order("id desc").collect(&:watchable)
-  end
-
-  def watching?(thing)
-    watched_objects.include?(thing)
-  end
-
   def paginated_events_in_watchlist(pagination_options = {})
     key = "paginated_events_in_watchlist:#{self.id}:#{pagination_options[:page] || 1}"
     Rails.cache.fetch(key, :expires_in => 20.minutes) do
