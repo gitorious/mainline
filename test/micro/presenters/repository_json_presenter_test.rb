@@ -37,7 +37,17 @@ class App
   def description(repo); repo.description; end
 end
 
+class UserFavorites
+  def self.for(user)
+    new
+  end
+
+  def favorite(watchable)
+  end
+end
+
 class RepositoryJSONPresenterTest < MiniTest::Spec
+
   before do
     @repository = Repository.new({
         :name => "My repo",
@@ -86,15 +96,10 @@ class RepositoryJSONPresenterTest < MiniTest::Spec
     end
 
     it "indicates that user watches repository" do
-      def @user.favorites;
-        f = Object.new
-        def f.find;
-          o = Object.new
-          def o.to_param; "favorite"; end
-          o
-        end
-        f
-      end
+      favorite = stub(to_param: "favorite")
+      finder = stub
+      finder.stubs(:favorite).with(@repository).returns(favorite)
+      UserFavorites.stubs(:for).with(@user).returns(finder)
 
       presenter = RepositoryJSONPresenter.new(App.new, @repository)
 

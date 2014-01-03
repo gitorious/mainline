@@ -53,7 +53,7 @@ class FavoritesController < ApplicationController
   end
 
   def destroy
-    @favorite = authorize_access_to(current_user.favorites.find(params[:id]))
+    @favorite = authorize_access_to(UserFavorites.for(current_user).find(params[:id]))
     @favorite.destroy
     watchable = @favorite.watchable
     respond_to do |wants|

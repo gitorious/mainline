@@ -69,7 +69,7 @@ class RepositoryJSONPresenter
   end
 
   def watch(user)
-    favorite = user.favorites.find { |f| f.watchable == repository }
+    favorite = UserFavorites.for(user).favorite(repository)
     hash = {
       "watching" => !favorite.nil?,
       "watchPath" => app.favorites_path(:watchable_id => repository.id,

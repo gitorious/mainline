@@ -21,7 +21,7 @@ module FavoritesHelper
   def favorite_button(watchable)
     return "" unless logged_in?
 
-    if logged_in? && favorite = current_user.favorites.detect{|f| f.watchable == watchable}
+    if logged_in? && favorite = UserFavorites.for(current_user).favorite(watchable)
       destroy_favorite_link_to(favorite, watchable)
     else
       create_favorite_link_to(watchable)
@@ -35,19 +35,8 @@ module FavoritesHelper
 
   def destroy_favorite_link_to(favorite, watchable, options = {})
     name = options[:label] || '<i class="icon icon-star-empty"></i> Unwatch'.html_safe
-    url  = favorite_path(favorite)
+    url = favorites_path(:watchable_id => watchable.id, :watchable_type => watchable.class.name)
     link_to(name, url, :method => 'delete', :class => 'btn')
-  end
-
-  def link_to_notification_toggle(favorite)
-    link_classes = %w(toggle round-10)
-    link_classes << (favorite.notify_by_email? ? "enabled" : "disabled")
-
-    title = favorite.notify_by_email? ? "on" : "off"
-    value = favorite.notify_by_email? ? 0 : 1
-    url   = favorite_path(favorite)+"?favorite[notify_by_email]=#{value}"
-
-    link_to(title, url, :method => :put)
   end
 
   def link_to_unwatch_favorite(favorite)

@@ -21,8 +21,20 @@ class UserFavorites
     new(user).favorites
   end
 
+  def self.for(user)
+    new(user)
+  end
+
   def initialize(user)
     @user = user
+  end
+
+  def find(id)
+    user.favorites.find(id)
+  end
+
+  def favorite(watchable)
+    favorites.detect{|f| f.watchable == watchable}
   end
 
   def favorites
