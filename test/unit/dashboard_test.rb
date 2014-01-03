@@ -21,25 +21,13 @@
 require "test_helper"
 
 class DashboardTest < ActiveSupport::TestCase
-  context "#favorites" do
-    should "return open merge requests" do
-      user = users(:johan)
-      dashboard = Dashboard.new(user)
-      merge_request = merge_requests(:moes_to_johans_open)
-      favorite = merge_request.watched_by!(user)
+  should "delegate favorites to UserFavorites" do
+    user = User.new
+    dashboard = Dashboard.new(user)
+    favorites = [Favorite.new, Favorite.new]
 
-      assert_include dashboard.favorites, favorite
-    end
+    UserFavorites.stubs(:favorites).with(user).returns(favorites)
 
-    should "not return closed merge requests" do
-      user = users(:johan)
-      dashboard = Dashboard.new(user)
-      merge_request = merge_requests(:moes_to_johans_open)
-      merge_request.close
-      favorite = merge_request.watched_by!(user)
-
-      assert_not_include dashboard.favorites, favorite
-    end
+    assert_equal favorites, dashboard.favorites
   end
 end
-

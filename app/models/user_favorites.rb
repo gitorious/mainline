@@ -16,35 +16,42 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class Dashboard
-  attr_reader :user
+class UserFavorites
+  def self.favorites(user)
+    new(user).favorites
+  end
 
   def initialize(user)
     @user = user
   end
 
-  def events(page)
-    user.paginated_events_in_watchlist(:page => page)
+  def favorites
+    (projects + repositories + merge_requests).uniq(&:watchable)
+  end
+
+  private
+
+  attr_reader :user
+
+  def filter(type, &favorites_generator)
+    favorites = user.favorites.includes(:watchable)
+    favorites = favorites.select { |f| f.watchable.is_a?(type) }
+    favorites += favorites_generator.call.map { |f| Favorite.new(watchable: f) }
+    favorites.select { |f| f.watchable.list_as_favorite? }
   end
 
   def projects
-    user.projects.includes(:tags, { :repositories => :project })
+    filter(Project) { user.groups.includes(:projects).flat_map(&:projects) }
   end
 
   def repositories
-    user.commit_repositories
+    filter(Repository) do
+      projects.flat_map { |r| r.watchable.repositories.mainlines } + user.commit_repositories
+    end
   end
 
-  def favorites
-    UserFavorites.favorites(user)
-  end
-
-  def user_events(page)
-    user.events.excluding_commits.paginate(
-      :page => page,
-      :order => "events.created_at desc",
-      :include => [:user, :project]
-    )
+  def merge_requests
+    filter(MergeRequest) { repositories.map(&:watchable).flat_map(&:merge_requests) }
   end
 end
 
