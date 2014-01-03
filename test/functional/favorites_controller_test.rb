@@ -190,39 +190,4 @@ class FavoritesControllerTest < ActionController::TestCase
       end
     end
   end
-
-  context "editing a favorite" do
-    setup do
-      @user = users(:mike)
-      login_as @user
-      @favorite = Repository.last.watched_by!(@user)
-    end
-
-    should "scope the find to the user" do
-      fav = Favorite.create!({:user => users(:johan),
-          :watchable => Repository.last})
-      put :update, :id => fav.id
-      assert_response :not_found
-    end
-
-    should "be able to add the mail flag" do
-      assert !@favorite.notify_by_email?
-      get :update, :id => @favorite.id, :favorite => {:notify_by_email => true}
-      assert_redirected_to user_edit_favorites_path(@user)
-      assert @favorite.reload.notify_by_email?
-    end
-
-    should "only be able to change the mail flag" do
-      assert !@favorite.notify_by_email?
-      get :update, :id => @favorite.id, :favorite => {:user_id => users(:johan).id}
-      assert_response :redirect
-      assert_equal @user, @favorite.reload.user
-    end
-
-    should "disallow unauthorized users" do
-      enable_private_repositories(@favorite.watchable)
-      get :update, :id => @favorite.id, :favorite => {:user_id => users(:johan).id}
-      assert_response 403
-    end
-  end
 end

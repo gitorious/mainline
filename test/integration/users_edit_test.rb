@@ -129,17 +129,4 @@ class UserEditTest < ActionDispatch::IntegrationTest
     page.must_have_content('Key added')
   end
 
-  should "turn on/off notifications for a watched project" do
-    change_tab('Manage favorites')
-    within('.table') do
-      click_on 'off'
-      page.must_have_content('on')
-      click_on 'on'
-      page.must_have_content('off')
-      click_on 'Unwatch'
-    end
-    assert page.has_selector?('.table tbody tr', :count => 0),
-      'Unwatched item should be removed from the list'
-  end
-
 end

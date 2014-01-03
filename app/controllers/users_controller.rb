@@ -51,7 +51,7 @@ class UsersController < ApplicationController
             :teams => Team.for_user(@user),
             :projects => filter(@user.projects.includes(:tags, { :repositories => :project })),
             :repositories => filter(@user.commit_repositories),
-            :favorites => filter(@user.favorites.all(:include => :watchable)),
+            :favorites => filter_favorites(@user),
             :atom_auto_discovery_url => user_feed_path(@user, :format => :atom),
             :atom_auto_discovery_title => "Public activity feed"
           })
@@ -121,8 +121,12 @@ class UsersController < ApplicationController
 
   protected
 
+  def filter_favorites(user)
+    filter(UserFavorites.favorites(user))
+  end
+
   def favorites
-    @favorites ||= filter(current_user.favorites.all(:include => :watchable))
+    @favorites ||= filter_favorites(current_user)
   end
   helper_method :favorites
 

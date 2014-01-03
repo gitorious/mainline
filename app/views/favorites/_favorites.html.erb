@@ -33,7 +33,6 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th>Email notifications</th>
       <th></th>
     </tr>
   </thead>
@@ -42,9 +41,6 @@
       <tr>
         <td>
           <%= link_to_watchable(favorite.watchable) %>
-        </td>
-        <td class="notification">
-          <%= link_to_notification_toggle(favorite) %>
         </td>
         <td class="unwatch">
           <%= link_to_unwatch_favorite(favorite) %>

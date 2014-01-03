@@ -25,20 +25,6 @@ class FavoritesController < ApplicationController
     redirect_to(user_edit_favorites_path(current_user))
   end
 
-  def update
-    @favorite = authorize_access_to(current_user.favorites.find(params[:id]))
-    @favorite.notify_by_email = params[:favorite][:notify_by_email]
-    @favorite.save
-
-    respond_to do |wants|
-      wants.html do
-        redirect_to user_edit_favorites_path(current_user)
-      end
-
-      wants.js { head :ok }
-    end
-  end
-
   def create
     @favorite = @watchable.watched_by!(current_user)
     @favorite.create_event
