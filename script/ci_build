@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# This script is intended to only run inside Jenkins.
+# https://ci.gitorious.org/jenkins/
+
+cp config/gitorious.sample.yml config/gitorious.yml
+cp config/database.sample.yml config/database.yml
+sed -i 's/username:.*/username: gitorious/' config/database.yml
+sed -i 's/password:.*/password: gitorious/' config/database.yml
+# Optionally use a slave-specific database.
+if [[ -n "$DATABASE" ]]; then
+  sed -i "s/database:.*/database: $DATABASE/" config/database.yml
+fi
+
+export GEM_HOME=$HOME/.gems
+export RAILS_ENV=test
+export PATH=$HOME/.gems/bin:$PATH
+
+# Fix for Red Hat's old bundler package. When Red Hat updates to bundler 1.3,
+# this can go away.
+sed -i 's/:ruby_20//' Gemfile
+
+# Fix for https://groups.google.com/d/topic/gitorious/XG_WAWIZ8aA/discussion
+mkdir -p tmp/cache
+
+SCL=${SCL-bash}
+$SCL - <<EOF
+set -x
+bundle install
+bundle exec rake db:test:purge
+bundle exec rake db:setup
+COVERAGE=1 bundle exec rake ci:setup:minitest test:units rcov
+EOF
