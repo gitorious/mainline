@@ -1,6 +1,6 @@
 <%
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -35,7 +35,7 @@
   </thead>
   <tbody class="gts-tbody-actions">
     <% ssh_keys.each do |ssh_key| %>
-      <tr class="<%= cycle('even', 'odd') %>">
+      <tr id="ssh-key-<%= ssh_key.id %>" class="<%= cycle('even', 'odd') %>">
         <td><%= l(ssh_key.created_at, :format => :time_and_date) %></td>
         <td><%= truncate(h(ssh_key.comment), :length => 20) %></td>
         <td><%=h ssh_key.algorithm %></td>
@@ -47,7 +47,7 @@
                         :title => ssh_key.ready? ? 'Ready' : 'Not ready') %>
         </td>
         <td>
-          <%= link_to t("views.common.delete"), user_key_path(current_user, ssh_key),
+          <%= link_to t("views.common.delete"), delete_path[ssh_key],
             :data => { :confirm => t("views.common.confirm") },
             :method => :delete,
             :class => "btn btn-danger" %>

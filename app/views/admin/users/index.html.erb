@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2012-2014 Gitorious AS
   #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
@@ -38,11 +38,12 @@
         <th><%= t("views.users.admin") %></th>
         <th></th>
         <th></th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       <% users.each do |user| -%>
-        <tr class="<%= cycle("odd", "even") -%>">
+        <tr id="user-<%= user.id %>" class="<%= cycle("odd", "even") -%>">
           <td><%= link_to h(user.login), user %></td>
           <td><%= link_to user.email, "mailto:#{user.email}" %></td>
           <td><%= l(user.created_at, :format => :short) %></td>
@@ -57,6 +58,7 @@
             <td><%= link_to t("views.users.suspend"), suspend_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %></td>
           <% end -%>
           <td><%= link_to t("views.users.reset_pwd"), reset_password_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %></td>
+          <td><%= link_to t("views.users.manage_ssh_keys"), admin_user_keys_path(user) %></td>
         </tr>
       <% end -%>
     </tbody>

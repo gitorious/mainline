@@ -1,6 +1,6 @@
 <%
 #--
-#   Copyright (C) 2012-2014 Gitorious AS
+#   Copyright (C) 2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,16 +16,16 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<% if controller_name == 'keys' %>
+<%= partial("admin/shared/header", {
+  :app => Gitorious,
+  :active => :users,
+  :title => @title = "User administration",
+  :description => "Manage users."
+}) %>
+
+<div class="container">
   <h2><%= @title = "Add new public SSH key" %></h2>
   <%= render "keys/form",
-    ssh_key: @ssh_key || current_user.ssh_keys.build,
-    form_action: [current_user, :keys] %>
-<% else %>
-  <% @title = "SSH Keys" %>
-  <%= link_to "Add new", new_user_key_path(current_user), :class => 'btn btn-primary pull-right' %>
-  <h2 class="gts-legend">Manage your SSH keys</h2>
-  <%= render "keys/keys",
-    ssh_keys: current_user.ssh_keys,
-    delete_path: lambda { |ssh_key| user_key_path(current_user, ssh_key) } %>
-<% end %>
+    ssh_key: ssh_key,
+    form_action: admin_user_keys_path(user) %>
+</div>

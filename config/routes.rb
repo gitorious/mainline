@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -157,6 +157,8 @@ Gitorious::Application.routes.draw do
         put :unsuspend
         put :reset_password
       end
+
+      resources :keys, only: [:index, :new, :create, :destroy]
     end
 
     resources :projects, :only => [:show] do
