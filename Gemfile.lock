@@ -25,7 +25,7 @@ GIT
 
 GIT
   remote: https://github.com/libgit2/rugged.git
-  revision: b5644020c9636133fd54fdc722c6d40c281b5e7b
+  revision: 5f1b6d177132fae974efdde822082b0b567c288c
   branch: development
   submodules: true
   specs:
@@ -185,7 +185,7 @@ GEM
     kgio (2.8.1)
     launchy (2.4.2)
       addressable (~> 2.3)
-    libdolt (0.33.13)
+    libdolt (0.33.14)
       force_utf8
       htmlentities (~> 4.3)
       json (~> 1.7)
