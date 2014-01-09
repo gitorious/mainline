@@ -83,10 +83,6 @@ class LdapGroup < ActiveRecord::Base
     self.member_dns = newline_separated_list.split(/[\r\n]+/)
   end
 
-  def members
-    []
-  end
-
   def to_param
     name
   end
