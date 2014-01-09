@@ -120,17 +120,26 @@ class LdapGroup < ActiveRecord::Base
     return [] unless user.is_a?(User)
     configurator = ldap_configurator
     membership_attribute = ldap_configurator.membership_attribute_name
-    Gitorious::Authorization::LDAP::Connection.new({
-        :host => configurator.server,
-        :port => configurator.port,
-        :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
+
+    connection = Gitorious::Authorization::LDAP::Connection.new(
+      :host => configurator.server,
+      :port => configurator.port,
+      :encryption => configurator.encryption
+    )
+
+    connection.bind_as(configurator.bind_username, configurator.bind_password) do |connection|
+      filter = Net::LDAP::Filter.eq(
+        configurator.login_attribute,
+        configurator.reverse_username_transformation(user.login)
+      )
+
       entries = connection.search(
         :base => configurator.base_dn,
-        :filter => Net::LDAP::Filter.eq(configurator.login_attribute, configurator.reverse_username_transformation(user.login)),
-        :attributes => [membership_attribute])
-      if !entries.blank?
-        return entries.first[membership_attribute]
-      end
+        :filter => filter,
+        :attributes => [membership_attribute]
+      )
+
+      return entries.first[membership_attribute] unless entries.blank?
     end
   end
 
@@ -155,17 +164,21 @@ class LdapGroup < ActiveRecord::Base
   def self.uncached_dns_in_group(group_name, member_attribute_name)
     configurator = ldap_configurator
     attribute, value = group_name.split("=")
-    Gitorious::Authorization::LDAP::Connection.new({
-        :host => configurator.server,
-        :port => configurator.port,
-        :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
+
+    connection = Gitorious::Authorization::LDAP::Connection.new(
+      :host => configurator.server,
+      :port => configurator.port,
+      :encryption => configurator.encryption
+    )
+
+    connection.bind_as(configurator.bind_username, configurator.bind_password) do |connection|
       entries = connection.search(
         :base => configurator.group_search_dn,
         :filter => Net::LDAP::Filter.eq(attribute, value),
-        :attributes => [member_attribute_name])
-      if !entries.blank?
-        return entries.first[member_attribute_name]
-      end
+        :attributes => [member_attribute_name]
+      )
+
+      return entries.first[member_attribute_name] unless entries.blank?
     end
   end
 
