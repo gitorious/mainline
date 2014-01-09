@@ -117,18 +117,12 @@ class LdapGroup < ActiveRecord::Base
     configurator = ldap_configurator
     membership_attribute = ldap_configurator.membership_attribute_name
 
-    connection = Gitorious::Authorization::LDAP::Connection.new(
-      :host => configurator.server,
-      :port => configurator.port,
-      :encryption => configurator.encryption
+    filter = Net::LDAP::Filter.eq(
+      configurator.login_attribute,
+      configurator.reverse_username_transformation(user.login)
     )
 
-    connection.bind_as(configurator.bind_username, configurator.bind_password) do |connection|
-      filter = Net::LDAP::Filter.eq(
-        configurator.login_attribute,
-        configurator.reverse_username_transformation(user.login)
-      )
-
+    ldap_search(configurator) do |connection|
       entries = connection.search(
         :base => configurator.base_dn,
         :filter => filter,
@@ -161,13 +155,7 @@ class LdapGroup < ActiveRecord::Base
     configurator = ldap_configurator
     attribute, value = group_name.split("=")
 
-    connection = Gitorious::Authorization::LDAP::Connection.new(
-      :host => configurator.server,
-      :port => configurator.port,
-      :encryption => configurator.encryption
-    )
-
-    connection.bind_as(configurator.bind_username, configurator.bind_password) do |connection|
+    ldap_search(configurator) do |connection|
       entries = connection.search(
         :base => configurator.group_search_dn,
         :filter => Net::LDAP::Filter.eq(attribute, value),
@@ -241,5 +229,21 @@ class LdapGroup < ActiveRecord::Base
     return [] if user_group_dns.blank?
 
     all.select { |group| group_matches_dns?(group, user_group_dns) }.compact
+  end
+
+  def self.ldap_search(configurator)
+    connection = Gitorious::Authorization::LDAP::Connection.new(
+      :host => configurator.server,
+      :port => configurator.port,
+      :encryption => configurator.encryption
+    )
+
+    if configurator.bind_username
+      connection.bind_as(configurator.bind_username, configurator.bind_password) do |connection|
+        yield(connection)
+      end
+    else
+      yield(connection)
+    end
   end
 end

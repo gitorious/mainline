@@ -20,17 +20,16 @@ module Gitorious
     module LDAP
       class Connection
         attr_reader :options
-        
+
         def initialize(options)
           @options = options
         end
 
         def bind_as(bind_user_dn, bind_user_pass)
-          connection = Net::LDAP.new({:host => options[:host], :port => options[:port], :encryption => options[:encryption]})
-          connection.auth(bind_user_dn, bind_user_pass)
+          native_connection.auth(bind_user_dn, bind_user_pass)
           begin
-            if connection.bind
-              yield BoundConnection.new(connection)
+            if native_connection.bind
+              yield BoundConnection.new(native_connection)
             else
               raise LdapError, "Invalid LDAP binding credentials. Make sure bind_user setting in authentication.yml is correct."
             end
@@ -41,6 +40,24 @@ module Gitorious
               raise LdapError, "Unable to connect to the LDAP server on #{options[:host]}:#{options[:port]}. Are you sure the LDAP server is running?"
             end
           end
+        end
+
+        def search(options)
+          native_connection.search(options)
+        end
+
+        private
+
+        def native_connection
+          @native_connection ||= create_native_connection
+        end
+
+        def create_native_connection
+          Net::LDAP.new(
+            :host       => options[:host],
+            :port       => options[:port],
+            :encryption => options[:encryption]
+          )
         end
 
         class BoundConnection
