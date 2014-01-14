@@ -26,7 +26,9 @@
       <% end %>
     </div>
   <% end %>
-  <% if memberships.blank? %>
+  <% if memberships.nil? %>
+      <p class="hint muted">Member listing was not enabled</p>
+  <% elsif memberships.empty? %>
       <p class="hint muted">Team has no members</p>
   <% else %>
     <table class="table">

@@ -41,8 +41,17 @@ class Team
     def events(page)
       []
     end
+
     def memberships
-      []
+      if member_listing_enabled?
+        @group.memberships
+      end
+    end
+
+    private
+
+    def member_listing_enabled?
+      Gitorious::Configuration.get('enable_ldap_group_member_listing')
     end
   end
 

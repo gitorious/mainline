@@ -186,6 +186,10 @@ class LdapGroup < ActiveRecord::Base
     def count
       @members.count
     end
+
+    def empty?
+      @members.empty?
+    end
   end
 
   def memberships
