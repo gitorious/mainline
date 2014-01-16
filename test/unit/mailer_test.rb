@@ -45,6 +45,7 @@ class MailerTest < ActiveSupport::TestCase
 
   should "sends activation" do
     user = users(:johan)
+    user.fullname = 'johan, bar'
     mail = Mailer.activation(user)
 
     assert_equal [user.email], mail.to

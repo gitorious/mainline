@@ -116,7 +116,8 @@ class Mailer < ActionMailer::Base
   end
 
   def format_address(user)
-    "#{user.fullname} <#{user.email}>"
+    return "<#{user.email}>" unless user.fullname
+    "#{user.fullname.gsub(",","")} <#{user.email}>"
   end
 
   def prefixed_subject(subject, prefix = nil)
