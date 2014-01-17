@@ -54,14 +54,6 @@ class Committership < ActiveRecord::Base
   scope :committers, :conditions => ["(permissions & ?) != 0", CAN_COMMIT]
   scope :admins, :conditions => ["(permissions & ?) != 0", CAN_ADMIN]
 
-  def self.create_for_owner!(an_owner, creator = nil)
-    cs = new({:committer => an_owner})
-    cs.creator = creator
-    cs.permissions = (CAN_REVIEW | CAN_COMMIT | CAN_ADMIN)
-    cs.save!
-    cs
-  end
-
   def self.create_with_permissions!(attrs, perms)
     cs = new(attrs)
     cs.permissions = perms

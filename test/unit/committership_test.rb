@@ -223,7 +223,7 @@ class CommittershipTest < ActiveSupport::TestCase
     end
 
     should "create an initial set of permissions for an owner with full perms" do
-      assert cs = @repository.committerships.create_for_owner!(Group.first)
+      assert cs = @repository.repository_committerships.create_for_owner!(Group.first)
       assert cs.admin?
       assert cs.committer?
       assert cs.reviewer?

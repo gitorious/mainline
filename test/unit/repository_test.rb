@@ -235,7 +235,7 @@ class RepositoryTest < ActiveSupport::TestCase
     should "know if a user can write to self" do
       @repository.owner = users(:johan)
       @repository.save!
-      @repository.committerships.create_for_owner!(@repository.owner)
+      @repository.repository_committerships.create_for_owner!(@repository.owner)
       @repository.reload
       assert can_push?(users(:johan), @repository)
       assert !can_push?(users(:mike), @repository)

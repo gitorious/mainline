@@ -128,6 +128,11 @@ if !defined?(Rails)
     end
   end
 
+  class FakeRepositoryCommitterships
+    def create_for_owner!
+    end
+  end
+
   class Repository < TestHelper::Model
     attr_accessor :project, :user, :name, :hooks, :description, :browse_url,
       :clones, :owner, :user_id, :owner_id, :project_id, :parent_id,
@@ -135,10 +140,13 @@ if !defined?(Rails)
       :full_repository_path, :gitdir, :open_merge_requests, :services,
       :disk_usage, :git
 
+    def repository_committerships
+      @fake_repository_committerships ||= FakeRepositoryCommitterships.new
+    end
+
     def committerships
       return @cs if @cs
       @cs = []
-      def @cs.create_for_owner!(owner, creator = nil); end
       @cs
     end
 
@@ -248,6 +256,10 @@ if !defined?(Rails)
     class WebHook < TestHelper::Model
       attr_accessor :url
     end
+  end
+
+  class Committership < TestHelper::Model
+    attr_accessor :repository
   end
 
   class Comment < TestHelper::Model

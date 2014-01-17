@@ -12,7 +12,14 @@ class RepositoryCommitterships
   end
 
   def create_for_owner!(another_owner = owner, creator = nil)
-    all.create_for_owner!(another_owner, creator)
+    committership = new_committership
+    committership.committer = another_owner
+    committership.creator = creator
+    committership.permissions = (Committership::CAN_REVIEW |
+                                 Committership::CAN_COMMIT |
+                                 Committership::CAN_ADMIN)
+    committership.save!
+    committership
   end
 
   def destroy_for_owner

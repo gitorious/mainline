@@ -57,7 +57,7 @@ class CreateWikiRepositoryCommandTest < MiniTest::Spec
 
     it "creates committership for owner" do
       repository = @command.build(@project)
-      repository.committerships.expects(:create_for_owner!).with(@user, nil)
+      repository.repository_committerships.expects(:create_for_owner!)
       @command.execute(repository)
     end
 
