@@ -34,10 +34,7 @@ module GroupBehavior
 
     klass.before_validation :downcase_name
     klass.has_many :committerships, :as => :committer, :dependent => :destroy
-    klass.has_many :participated_repositories, :through => :committerships,
-    :source => :repository, :class_name => 'Repository'
     klass.has_many :content_memberships, :as => :member, :dependent => :destroy
-
 
     def klass.find_fuzzy(query)
       where("LOWER(name) LIKE ?", "%" + query.downcase + "%").limit(10)
@@ -49,6 +46,10 @@ module GroupBehavior
   end
 
   module InstanceMethods
+    def group_committerships
+      GroupCommitterships.new(self)
+    end
+
     def to_param_with_prefix
       "+#{to_param}"
     end

@@ -51,6 +51,7 @@ class Group < ActiveRecord::Base
 
   def self.active(cutoff = 30)
     # FIXME: there's a certain element of approximation in here
+    # SUPER-GROUP add it!?
     where("committerships.repository_id = events.target_id and " +
           "events.target_type = ? AND events.created_at > ?",
           "Repository",
@@ -63,7 +64,7 @@ class Group < ActiveRecord::Base
   def all_related_project_ids
     all_project_ids = projects.map{|p| p.id }
     all_project_ids << repositories.map{|r| r.project_id }
-    all_project_ids << committerships.map{|p| p.repository.project_id }
+    all_project_ids << group_committerships.project_ids
     all_project_ids.flatten!.uniq!
     all_project_ids
   end

@@ -17,6 +17,7 @@
 #++
 require "fast_test_helper"
 require "commands/create_tracking_repository_command"
+require "models/repository_committerships"
 require "ostruct"
 
 class FakeApp < MessageHub

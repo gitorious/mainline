@@ -4,15 +4,15 @@ class RepositoryCommitterships
   end
 
   def find(id)
-    repository.committerships.find(id)
+    committerships.find(id)
   end
 
   def new_committership
-   repository.committerships.new
+    Committership.new(repository: repository)
   end
 
   def crate_for_owner!
-    repository.committerships.create_for_owner!(repository.owner)
+    committerships.create_for_owner!(repository.owner)
   end
 
   def destroy(id, current_user)
@@ -26,7 +26,16 @@ class RepositoryCommitterships
     committership.destroy
   end
 
+  def committerships
+    repository.committerships
+  end
+
+  def admins
+    committerships.select { |c| c.admin? }
+  end
+
   private
 
   attr_reader :repository
 end
+

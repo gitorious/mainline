@@ -65,7 +65,6 @@ class GroupTest < ActiveSupport::TestCase
     should "has a committership with a repository" do
       assert_equal repositories(:moes), committerships(:thunderbird_moes).repository
       assert_equal groups(:team_thunderbird), committerships(:thunderbird_moes).committer
-      assert @group.participated_repositories.include?(repositories(:moes))
     end
   end
 
