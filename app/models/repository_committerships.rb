@@ -11,8 +11,22 @@ class RepositoryCommitterships
     Committership.new(repository: repository)
   end
 
-  def crate_for_owner!
-    committerships.create_for_owner!(repository.owner)
+  def create_for_owner!
+    committerships.create_for_owner!(owner)
+  end
+
+  def destroy_for_owner
+    existing = committerships.find_by_committer_id_and_committer_type(owner.id, owner.class.name)
+    existing.destroy if existing
+  end
+
+  def update_owner(another_owner)
+    if cs_to_upgrade = committerships.detect{|c|c.committer == another_owner}
+      cs_to_upgrade.build_permissions(:review, :commit, :admin)
+      cs_to_upgrade.save!
+    else
+      create_for_owner!
+    end
   end
 
   def destroy(id, current_user)
@@ -34,8 +48,20 @@ class RepositoryCommitterships
     committerships.select { |c| c.admin? }
   end
 
+  def members
+    committerships.
+      includes(:committer).
+      map(&:committer).
+      flat_map { |committer| committer.is_a?(User) ? committer : committer.members }.
+      uniq
+  end
+
   private
 
   attr_reader :repository
+
+  def owner
+    repository.owner
+  end
 end
 

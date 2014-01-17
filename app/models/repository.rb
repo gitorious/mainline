@@ -317,15 +317,17 @@ class Repository < ActiveRecord::Base
     end
   end
 
+  def repository_commiterships
+    RepositoryCommitterships.new(self)
+  end
+
   # changes the owner to +another_owner+, removes the old owner as committer
   # and adds +another_owner+ as committer
   def change_owner_to!(another_owner)
     return if owned_by_group?
 
     transaction do
-      if existing = committerships.find_by_committer_id_and_committer_type(owner.id, owner.class.name)
-        existing.destroy
-      end
+      repository_commiterships.destroy_for_owner
       self.owner = another_owner
       if self.kind != KIND_PROJECT_REPO # project_repo?
         case another_owner
@@ -335,12 +337,7 @@ class Repository < ActiveRecord::Base
           self.kind = KIND_USER_REPO
         end
       end
-      if cs_to_upgrade = committerships.detect{|c|c.committer == another_owner}
-        cs_to_upgrade.build_permissions(:review, :commit, :admin)
-        cs_to_upgrade.save!
-      else
-        committerships.create_for_owner!(self.owner)
-      end
+      repository_commiterships.update_owner(another_owner)
       save!
       reload
     end
@@ -521,11 +518,7 @@ class Repository < ActiveRecord::Base
   end
 
   def members
-    committerships.
-      includes(:committer).
-      map(&:committer).
-      flat_map { |committer| committer.is_a?(User) ? committer : committer.members }.
-      uniq
+    repository_commiterships.members
   end
 
   def full_hashed_path

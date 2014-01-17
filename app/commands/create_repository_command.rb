@@ -60,7 +60,7 @@ class CreateRepositoryCommand
   end
 
   def initialize_committership(repository)
-    RepositoryCommitterships.new(repository).crate_for_owner!
+    RepositoryCommitterships.new(repository).create_for_owner!
   end
 
   def initialize_membership(repo)
