@@ -24,6 +24,41 @@ module Gitorious
     # controllers, models etc. - and is able to do authorization which
     # is not handled by an LDAP authorization object; ie. direct user
     # access.
+
+    class RepositoryLdapCommitterships
+      def initialize(repository)
+        @committerships = repository.repository_committerships.committerships
+      end
+
+      def committers
+        committerships.committers
+      end
+
+      def group_committers
+        committerships.committers.select{|c|c.committer_type == "LdapGroup"}.map(&:committer)
+      end
+
+      def reviewers
+        committerships.reviewers
+      end
+
+      def group_reviewers
+        committerships.reviewers.select{|c| c.committer_type == "LdapGroup"}.map(&:committer)
+      end
+
+      def administrators
+        committerships.admins
+      end
+
+      def group_administrators
+        committerships.admins.select{|c| c.committer_type == "LdapGroup"}.map(&:committer)
+      end
+
+      private
+
+      attr_reader :committerships
+    end
+
     class LdapGroupAuthorization
       def initialize(authorizer)
         @authorizer = authorizer
@@ -32,31 +67,37 @@ module Gitorious
       def push_granted?(repository, user)
         return true if @authorizer.committers(repository).include?(user)
         groups = Team.for_user(user)
-        groups_with_access = ldap_groups_with_commit_access(repository)
+        groups_with_access = repository_ldap_committerships(repository).group_committers
         return groups_with_access.any?{|group| groups.include?(group) }
       end
 
       def can_resolve_merge_request?(user, merge_request)
-        return true if merge_request.target_repository.committerships.reviewers.any? {|cs| cs.committer == user}
+        repository_committerships = repository_ldap_committerships(merge_request.target_repository)
+        return true if repository_committerships.reviewers.any? {|cs| cs.committer == user}
+
         groups = Team.for_user(user)
-        review_groups = merge_request.target_repository.committerships.reviewers.select{|c| c.committer_type == "LdapGroup"}.map(&:committer)
+        review_groups = repository_committerships.group_reviewers
         return review_groups.any?{|group| groups.include?(group)}
       end
 
       def repository_admin?(candidate, repository)
-        return true if repository.committerships.admins.any? {|cs| cs.committer == candidate}
-        groups = Team.for_user(candidate)
-        groups_with_admin_access = repository.committerships.admins.select{|c| c.committer_type == "LdapGroup"}.map(&:committer)
-        return groups_with_admin_access.any?{|group| groups.include?(group)}
-      end
+        repository_committerships = repository_ldap_committerships(repository)
+        return true if repository_committerships.administrators.any? {|cs| cs.committer == candidate}
 
-      def ldap_groups_with_commit_access(repository)
-        repository.committerships.committers.select{|c|c.committer_type == "LdapGroup"}.map(&:committer)
+        groups = Team.for_user(candidate)
+        groups_with_admin_access = repository_committerships.group_administrators
+        return groups_with_admin_access.any?{|group| groups.include?(group)}
       end
 
       def project_admin?(user, project)
         return true if !project.owned_by_group? && project.user == user
         Team.for_user(user).include?(project.owner)
+      end
+
+      private
+
+      def repository_ldap_committerships(repository)
+        RepositoryLdapCommitterships.new(repository)
       end
     end
   end
