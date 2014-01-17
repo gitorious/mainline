@@ -25,11 +25,15 @@ class CommittershipsController < ApplicationController
   renders_in_site_specific_context
 
   def index
-    render_index(@repository, @repository.committerships.new)
+    render_index(@repository, repository_commiterships.new_committership)
+  end
+
+  def repository_commiterships
+    RepositoryCommitterships.new(@repository)
   end
 
   def create
-    committership = @repository.committerships.new
+    committership = repository_commiterships.new_committership
     committership.committer = committer
     committership.creator = current_user
     committership.build_permissions(params[:permissions])
@@ -47,11 +51,11 @@ class CommittershipsController < ApplicationController
   end
 
   def edit
-    render_edit(@repository, @repository.committerships.find(params[:id]))
+    render_edit(@repository, repository_commiterships.find(params[:id]))
   end
 
   def update
-    committership = @repository.committerships.find(params[:id])
+    committership = repository_commiterships.find(params[:id])
 
     if !params[:permissions].blank?
       committership.build_permissions(params[:permissions])
@@ -69,15 +73,7 @@ class CommittershipsController < ApplicationController
   end
 
   def destroy
-    @committership = @repository.committerships.find(params[:id])
-
-    # Update creator to hold the "destroyer" user account
-    # Makes sure hooked-in event reports correct destroying user
-    # We have no other way of passing destroying user along
-    # except restructing code to not use implicit event hooks.
-    @committership.creator = current_user
-
-    if @committership.destroy
+    if repository_commiterships.destroy(params[:id], current_user)
       flash[:notice] = "The committer was removed."
     end
     redirect_to([@repository.project, @repository, :committerships])
