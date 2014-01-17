@@ -186,22 +186,22 @@ module Gitorious
       # directly through the owner, or "indirectly" through the associated
       # groups
       def committers(repository)
-        repository.committerships.committers.map{|c| c.members }.flatten.compact.uniq
+        repository.repository_committerships.committers
       end
 
       # Returns a list of Users who can review things (as per their Committership)
       def reviewers(repository)
-        repository.committerships.reviewers.map{|c| c.members }.flatten.compact.uniq
+        repository.repository_committerships.reviewers
       end
 
       # The list of users who can admin this repo, either directly as
       # committerships or indirectly as members of a group
       def administrators(repository)
-        repository.committerships.admins.map{|c| c.members }.flatten.compact.uniq
+        repository.repository_committerships.administrators
       end
 
       def review_repositories(user)
-        user.committerships.reviewers
+        UserCommitterships.new(user).reviewers
       end
 
       def filter_authorized(actor, collection)

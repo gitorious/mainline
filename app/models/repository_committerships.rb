@@ -44,6 +44,18 @@ class RepositoryCommitterships
     repository.committerships
   end
 
+  def committers
+    committerships.committers.map{|c| c.members }.flatten.compact.uniq
+  end
+
+  def reviewers
+    committerships.reviewers.map{|c| c.members }.flatten.compact.uniq
+  end
+
+  def administrators
+    committerships.admins.map{|c| c.members }.flatten.compact.uniq
+  end
+
   def admins
     committerships.select { |c| c.admin? }
   end
