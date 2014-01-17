@@ -35,10 +35,6 @@ class Group < ActiveRecord::Base
     :url => avatar_local_path,
     :path => ":rails_root/public#{avatar_local_path}"
 
-  def self.human_name
-    I18n.t("activerecord.models.group")
-  end
-
   def self.all_participating_in_projects(projects)
     mainline_ids = projects.map do |project|
       project.repositories.mainlines.map{|r| r.id }

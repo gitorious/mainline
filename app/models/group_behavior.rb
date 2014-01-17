@@ -44,6 +44,10 @@ module GroupBehavior
     end
   end
 
+  def human_name
+    I18n.t("activerecord.models.group")
+  end
+
   module InstanceMethods
     def to_param_with_prefix
       "+#{to_param}"
