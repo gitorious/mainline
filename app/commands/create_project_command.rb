@@ -33,6 +33,17 @@ class NewProjectParams
   attribute :tag_list, String
   attribute :wiki_enabled, Boolean, :default => true
   attribute :site_id, Integer
+
+  def owner_type
+    value = super
+    value == 'Group' ? group_implementation_name : value
+  end
+
+  private
+
+  def group_implementation_name
+    Team.group_implementation.name
+  end
 end
 
 class CreateProjectCommand
