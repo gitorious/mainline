@@ -29,12 +29,7 @@ class TransferProjectOwnershipCommand
     project.save!
 
     project.repositories.mainlines.each do |repo|
-      cs = repo.committerships.find { |c| c.committer == project.owner }
-      cs ||= repo.committerships.create!(:committer => project.owner, :creator_id => user.id)
-
-      # Either build permissions for new committership, or upgrade existing one
-      cs.build_permissions(:review, :commit, :admin)
-      cs.save!
+      repo.repository_committerships.update_owner(project.owner, user)
     end
 
     project

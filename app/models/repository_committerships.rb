@@ -11,8 +11,8 @@ class RepositoryCommitterships
     Committership.new(repository: repository)
   end
 
-  def create_for_owner!
-    committerships.create_for_owner!(owner)
+  def create_for_owner!(another_owner = owner, creator = nil)
+    committerships.create_for_owner!(another_owner, creator)
   end
 
   def destroy_for_owner
@@ -20,12 +20,12 @@ class RepositoryCommitterships
     existing.destroy if existing
   end
 
-  def update_owner(another_owner)
+  def update_owner(another_owner, creator = nil)
     if cs_to_upgrade = committerships.detect{|c|c.committer == another_owner}
       cs_to_upgrade.build_permissions(:review, :commit, :admin)
       cs_to_upgrade.save!
     else
-      create_for_owner!
+      create_for_owner!(another_owner, creator)
     end
   end
 
@@ -54,6 +54,14 @@ class RepositoryCommitterships
       map(&:committer).
       flat_map { |committer| committer.is_a?(User) ? committer : committer.members }.
       uniq
+  end
+
+  def users
+    committerships.users
+  end
+
+  def groups
+    committerships.groups
   end
 
   private

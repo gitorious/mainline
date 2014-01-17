@@ -43,7 +43,7 @@ class RepositoryPresenter
   def head_candidate_name; repository.head_candidate_name; end
   def disk_usage; repository.disk_usage; end
   def ready?; repository.ready?; end
-  def committerships; repository.committerships; end
+  def committerships; repository.repository_committerships.committerships; end
   def has_commits?; repository.has_commits?; end
   def owner; repository.owner; end
   def user; repository.user; end
@@ -103,11 +103,11 @@ class RepositoryPresenter
   end
 
   def user_committers
-    repository.committerships.users
+    repository.repository_committerships.users
   end
 
   def group_committers
-    repository.committerships.groups
+    repository.repository_committerships.groups
   end
 
   def group_clones

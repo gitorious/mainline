@@ -317,7 +317,7 @@ class Repository < ActiveRecord::Base
     end
   end
 
-  def repository_commiterships
+  def repository_committerships
     RepositoryCommitterships.new(self)
   end
 
@@ -327,7 +327,7 @@ class Repository < ActiveRecord::Base
     return if owned_by_group?
 
     transaction do
-      repository_commiterships.destroy_for_owner
+      repository_committerships.destroy_for_owner
       self.owner = another_owner
       if self.kind != KIND_PROJECT_REPO # project_repo?
         case another_owner
@@ -337,7 +337,7 @@ class Repository < ActiveRecord::Base
           self.kind = KIND_USER_REPO
         end
       end
-      repository_commiterships.update_owner(another_owner)
+      repository_committerships.update_owner(another_owner)
       save!
       reload
     end
@@ -518,7 +518,7 @@ class Repository < ActiveRecord::Base
   end
 
   def members
-    repository_commiterships.members
+    repository_committerships.members
   end
 
   def full_hashed_path
