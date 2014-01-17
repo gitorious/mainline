@@ -4,7 +4,7 @@ class RepositoryCommitterships
   end
 
   def find(id)
-    committerships.find(id)
+    all.find(id)
   end
 
   def new_committership
@@ -12,16 +12,16 @@ class RepositoryCommitterships
   end
 
   def create_for_owner!(another_owner = owner, creator = nil)
-    committerships.create_for_owner!(another_owner, creator)
+    all.create_for_owner!(another_owner, creator)
   end
 
   def destroy_for_owner
-    existing = committerships.find_by_committer_id_and_committer_type(owner.id, owner.class.name)
+    existing = all.find_by_committer_id_and_committer_type(owner.id, owner.class.name)
     existing.destroy if existing
   end
 
   def update_owner(another_owner, creator = nil)
-    if cs_to_upgrade = committerships.detect{|c|c.committer == another_owner}
+    if cs_to_upgrade = all.detect{|c|c.committer == another_owner}
       cs_to_upgrade.build_permissions(:review, :commit, :admin)
       cs_to_upgrade.save!
     else
@@ -40,28 +40,28 @@ class RepositoryCommitterships
     committership.destroy
   end
 
-  def committerships
+  def all
     repository.committerships
   end
 
   def committers
-    committerships.committers.map{|c| c.members }.flatten.compact.uniq
+    all.committers.map{|c| c.members }.flatten.compact.uniq
   end
 
   def reviewers
-    committerships.reviewers.map{|c| c.members }.flatten.compact.uniq
+    all.reviewers.map{|c| c.members }.flatten.compact.uniq
   end
 
   def administrators
-    committerships.admins.map{|c| c.members }.flatten.compact.uniq
+    all.admins.map{|c| c.members }.flatten.compact.uniq
   end
 
   def admins
-    committerships.select { |c| c.admin? }
+    all.select { |c| c.admin? }
   end
 
   def members
-    committerships.
+    all.
       includes(:committer).
       map(&:committer).
       flat_map { |committer| committer.is_a?(User) ? committer : committer.members }.
@@ -69,11 +69,11 @@ class RepositoryCommitterships
   end
 
   def users
-    committerships.users
+    all.users
   end
 
   def groups
-    committerships.groups
+    all.groups
   end
 
   private

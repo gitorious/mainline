@@ -114,7 +114,7 @@ class CommittershipsController < ApplicationController
     render(:index, :locals => {
         :repository => RepositoryPresenter.new(repository),
         :committership => committership,
-        :committerships => repository_committerships.committerships,
+        :committerships => repository_committerships.all,
         :memberships => repository.content_memberships
       })
   end
