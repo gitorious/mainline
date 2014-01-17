@@ -138,7 +138,7 @@ if !defined?(Rails)
     def committerships
       return @cs if @cs
       @cs = []
-      def @cs.create_for_owner!(owner); end
+      def @cs.create_for_owner!(owner, creator = nil); end
       @cs
     end
 

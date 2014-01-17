@@ -83,7 +83,7 @@ class CloneRepositoryCommandTest < MiniTest::Spec
 
     it "creates committership for owner" do
       repository = @command.build(params)
-      repository.committerships.expects(:create_for_owner!).with(@user)
+      repository.committerships.expects(:create_for_owner!).with(@user, nil)
       @command.execute(repository)
     end
 
