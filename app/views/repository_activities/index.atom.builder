@@ -29,7 +29,7 @@ namespaced_atom_feed do |feed|
       entry.title("#{h(event.actor_display)} #{strip_tags(event.action)}")
 entry_content = <<-EOS
 <p>#{event.user ? link_to(event.user.login, user_url(event.user)) : ''} #{event.action}</p>
-<p>#{event.body}<p>
+<p>#{event.body}</p>
 <p></p>
 EOS
       entry.content(entry_content, :type => "html")
