@@ -33,7 +33,7 @@ module GroupBehavior
       :message => "Must be alphanumeric, and optional dash")
 
     klass.before_validation :downcase_name
-    klass.has_many :committerships, :as => :committer, :dependent => :destroy
+    klass.has_many :_committerships, :as => :committer, :dependent => :destroy
     klass.has_many :content_memberships, :as => :member, :dependent => :destroy
 
     def klass.find_fuzzy(query)
@@ -46,7 +46,7 @@ module GroupBehavior
   end
 
   module InstanceMethods
-    def group_committerships
+    def committerships
       GroupCommitterships.new(self)
     end
 

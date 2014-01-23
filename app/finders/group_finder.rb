@@ -25,7 +25,7 @@ class GroupFinder
   end
 
   def find_by_name!(name)
-    includes = [:projects, :repositories, :committerships, :members]
+    includes = [:projects, :repositories, :_committerships, :members]
     Group.find_by_name!(name,:include => includes)
   end
 
