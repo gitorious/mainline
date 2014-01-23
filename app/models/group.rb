@@ -36,11 +36,8 @@ class Group < ActiveRecord::Base
     :path => ":rails_root/public#{avatar_local_path}"
 
   def self.all_participating_in_projects(projects)
-    mainline_ids = projects.map do |project|
-      project.repositories.mainlines.map{|r| r.id }
-    end.flatten
-
-    all = Committership.groups.where(:repository_id => mainline_ids)
+    mainlines = projects.flat_map { |p| p.repositories.mainlines }
+    all = mainlines.flat_map { |m| m.committerships.groups }
     all.map { |c| c.committer }.uniq
   end
 
