@@ -54,7 +54,7 @@
 
     # A class/object that will be called after successful authentication
     # through LDAP. Will be "constantized", post_authenticate will be called
-    # with an options hash. See LdapAuthenticationTest.
+    # with an options hash. See LDAPAuthenticationTest.
     #callback_class: SampleCallback
 
     # Specify a username/password to use for authenticated bind
