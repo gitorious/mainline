@@ -54,13 +54,6 @@ class Committership < ActiveRecord::Base
   scope :committers, :conditions => ["(permissions & ?) != 0", CAN_COMMIT]
   scope :admins, :conditions => ["(permissions & ?) != 0", CAN_ADMIN]
 
-  def self.create_with_permissions!(attrs, perms)
-    cs = new(attrs)
-    cs.permissions = perms
-    cs.save!
-    cs
-  end
-
   def permission_mask_for(*perms)
     perms.inject(0) do |memo, perm_symbol|
       memo | PERMISSION_TABLE[perm_symbol]

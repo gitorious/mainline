@@ -25,15 +25,11 @@ class CommittershipsController < ApplicationController
   renders_in_site_specific_context
 
   def index
-    render_index(@repository, repository_committerships.new_committership)
-  end
-
-  def repository_committerships
-    RepositoryCommitterships.new(@repository)
+    render_index(@repository, @repository.committerships.new_committership)
   end
 
   def create
-    committership = repository_committerships.new_committership
+    committership = @repository.committerships.new_committership
     committership.committer = committer
     committership.creator = current_user
     committership.build_permissions(params[:permissions])
@@ -51,11 +47,11 @@ class CommittershipsController < ApplicationController
   end
 
   def edit
-    render_edit(@repository, repository_committerships.find(params[:id]))
+    render_edit(@repository, @repository.committerships.find(params[:id]))
   end
 
   def update
-    committership = repository_committerships.find(params[:id])
+    committership = @repository.committerships.find(params[:id])
 
     if !params[:permissions].blank?
       committership.build_permissions(params[:permissions])
@@ -73,7 +69,7 @@ class CommittershipsController < ApplicationController
   end
 
   def destroy
-    if repository_committerships.destroy(params[:id], current_user)
+    if @repository.committerships.destroy(params[:id], current_user)
       flash[:notice] = "The committer was removed."
     end
     redirect_to([@repository.project, @repository, :committerships])
@@ -114,7 +110,7 @@ class CommittershipsController < ApplicationController
     render(:index, :locals => {
         :repository => RepositoryPresenter.new(repository),
         :committership => committership,
-        :committerships => repository_committerships.all,
+        :committerships => repository.committerships.all,
         :memberships => repository.content_memberships
       })
   end

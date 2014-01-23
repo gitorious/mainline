@@ -27,7 +27,7 @@ module Gitorious
 
     class RepositoryLdapCommitterships
       def initialize(repository)
-        @committerships = repository.repository_committerships.all
+        @committerships = repository.committerships.all
       end
 
       def committers

@@ -140,14 +140,8 @@ if !defined?(Rails)
       :full_repository_path, :gitdir, :open_merge_requests, :services,
       :disk_usage, :git
 
-    def repository_committerships
-      @fake_repository_committerships ||= FakeRepositoryCommitterships.new
-    end
-
     def committerships
-      return @cs if @cs
-      @cs = []
-      @cs
+      @fake_committerships ||= FakeRepositoryCommitterships.new
     end
 
     def add_member(member)

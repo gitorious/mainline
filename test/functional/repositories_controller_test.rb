@@ -133,7 +133,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "destroying a project creates an event in the project" do
-      assert_difference("@project.events.count") do
+      assert_difference("@project.events.count", 2) do
         do_delete(@repo)
         assert_response :redirect
         assert_nil flash[:error]

@@ -59,9 +59,7 @@ class CommittershipsControllerTest < ActionController::TestCase
     should "lists the committerships" do
       repo = repositories(:moes)
       repo.owner = @group
-      cs = repo.committerships.first
-      cs.build_permissions(:review,:commit,:admin)
-      cs.save!
+      repo.committerships.update_owner(@group)
       repo.save!
       @group.add_member(@user, Role.admin)
       assert admin?(@user, repo)
@@ -69,10 +67,7 @@ class CommittershipsControllerTest < ActionController::TestCase
       get :index, :project_id => repo.project.to_param, :repository_id => repo.to_param
       assert_response :success
 
-      repo.committerships.where({
-        :committer_type => "Group",
-        :committer_id => @group.id
-      }).each do |cs|
+      repo.committerships.groups.each do |cs|
         assert_match cs.committer.title, @response.body
       end
     end
@@ -122,7 +117,7 @@ class CommittershipsControllerTest < ActionController::TestCase
   end
 
   should "GET edit" do
-    @committership = @repository.committerships.new
+    @committership = @repository.committerships.new_committership
     @committership.committer = users(:mike)
     @committership.permissions = Committership::CAN_REVIEW
     @committership.save!
@@ -135,7 +130,7 @@ class CommittershipsControllerTest < ActionController::TestCase
   end
 
   should "PUT update" do
-    @committership = @repository.committerships.new
+    @committership = @repository.committerships.new_committership
     @committership.committer = users(:mike)
     @committership.permissions = (Committership::CAN_REVIEW | Committership::CAN_COMMIT)
     @committership.save!

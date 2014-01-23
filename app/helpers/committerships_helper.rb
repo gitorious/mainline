@@ -24,7 +24,7 @@ module CommittershipsHelper
   end
 
   def last_admin(repo, to_be_removed)
-    admins = RepositoryCommitterships.new(repo).admins
+    admins = repo.committerships.admins
     (admins.size == 1 && admins.first == to_be_removed)
   end
 

@@ -29,7 +29,7 @@ class TransferProjectOwnershipCommand
     project.save!
 
     project.repositories.mainlines.each do |repo|
-      repo.repository_committerships.update_owner(project.owner, user)
+      repo.committerships.update_owner(project.owner, user)
     end
 
     project

@@ -44,7 +44,6 @@ class Repository < ActiveRecord::Base
   belongs_to  :owner, :polymorphic => true
   has_many    :repository_memberships, :as => :content
   has_many    :content_memberships, :as => :content
-  has_many    :committerships, :dependent => :destroy
   belongs_to  :parent, :class_name => "Repository"
   has_many    :clones, :class_name => "Repository", :foreign_key => "parent_id",
     :dependent => :nullify
@@ -56,6 +55,12 @@ class Repository < ActiveRecord::Base
   has_many    :cloners, :dependent => :destroy
   has_many    :events, :as => :target, :dependent => :destroy
   has_many    :services, :dependent => :destroy
+
+  has_many    :_committerships, :dependent => :destroy
+  def committerships
+    RepositoryCommitterships.new(self)
+  end
+
 
   after_destroy :post_repo_deletion_message
 
@@ -317,17 +322,13 @@ class Repository < ActiveRecord::Base
     end
   end
 
-  def repository_committerships
-    RepositoryCommitterships.new(self)
-  end
-
   # changes the owner to +another_owner+, removes the old owner as committer
   # and adds +another_owner+ as committer
   def change_owner_to!(another_owner)
     return if owned_by_group?
 
     transaction do
-      repository_committerships.destroy_for_owner
+      committerships.destroy_for_owner
       self.owner = another_owner
       if self.kind != KIND_PROJECT_REPO # project_repo?
         case another_owner
@@ -337,7 +338,7 @@ class Repository < ActiveRecord::Base
           self.kind = KIND_USER_REPO
         end
       end
-      repository_committerships.update_owner(another_owner)
+      committerships.update_owner(another_owner)
       save!
       reload
     end
@@ -518,7 +519,7 @@ class Repository < ActiveRecord::Base
   end
 
   def members
-    repository_committerships.members
+    committerships.members
   end
 
   def full_hashed_path

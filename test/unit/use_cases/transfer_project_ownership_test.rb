@@ -125,6 +125,6 @@ class TransferProjectOwnershipTest < ActiveSupport::TestCase
       })
 
     assert outcome.success?, [outcome.failure, outcome.pre_condition_failed].inspect
-    assert(repository.committerships.find { |c| c.committer == owner }.admin?)
+    assert(repository.committerships.administrators.include?(owner))
   end
 end

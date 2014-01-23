@@ -85,7 +85,7 @@ class MergeRequestTest < ActiveSupport::TestCase
 
   should "not send messages even if notifications are on" do
     assert_equal 1, @merge_request.target_repository.committerships.count
-    cs =  @merge_request.target_repository.committerships.first
+    cs =  @merge_request.target_repository.committerships.all.first
     cs.build_permissions(:review); cs.save!
     @merge_request.user = users(:mike)
     @merge_request.save
@@ -255,7 +255,7 @@ class MergeRequestTest < ActiveSupport::TestCase
   should "be resolvable by the MR creator as well" do
     creator = @merge_request.user = users(:mike)
     @merge_request.save!
-    @merge_request.target_repository.committerships.each(&:destroy)
+    @merge_request.target_repository.committerships.destroy_all
     assert !can_push?(creator, @merge_request.target_repository)
     assert can_resolve_merge_request?(creator, @merge_request), "not resolvable by creator"
     assert !can_resolve_merge_request?(users(:moe), @merge_request)

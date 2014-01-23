@@ -186,18 +186,18 @@ module Gitorious
       # directly through the owner, or "indirectly" through the associated
       # groups
       def committers(repository)
-        repository.repository_committerships.committers
+        repository.committerships.committers
       end
 
       # Returns a list of Users who can review things (as per their Committership)
       def reviewers(repository)
-        repository.repository_committerships.reviewers
+        repository.committerships.reviewers
       end
 
       # The list of users who can admin this repo, either directly as
       # committerships or indirectly as members of a group
       def administrators(repository)
-        repository.repository_committerships.administrators
+        repository.committerships.administrators
       end
 
       def review_repositories(user)

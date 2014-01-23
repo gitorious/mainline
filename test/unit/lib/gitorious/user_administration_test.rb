@@ -54,7 +54,7 @@ class UserAdministrationTest < ActiveSupport::TestCase
       @r2 = repositories(:moes)
       @user = users(:mike)
 
-      c = @r1.committerships.new
+      c = @r1.committerships.new_committership
       c.creator = @user
       c.committer = @user
       c.build_permissions :review, :admin, :commit
@@ -62,11 +62,11 @@ class UserAdministrationTest < ActiveSupport::TestCase
     end
 
     should "remove the users committerships" do
-      assert_equal 2, @r1.committerships.size
-      assert_equal 1, @r2.committerships.size
+      assert_equal 2, @r1.committerships.count
+      assert_equal 1, @r2.committerships.count
       remove_committerships(@user)
-      assert_equal 1, @r1.committerships.size
-      assert_equal 1, @r2.committerships.size
+      assert_equal 1, @r1.committerships.count
+      assert_equal 1, @r2.committerships.count
     end
 
     should "report repos where committerships were deleted" do

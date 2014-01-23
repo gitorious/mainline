@@ -48,7 +48,7 @@ class AccessControlTest < ActiveSupport::TestCase
       Team.group_implementation = LdapGroup
       @repository = repositories(:johans)
       @ldap_group = ldap_groups(:first_ldap_group)
-      @committership = @repository.committerships.build(:committer => @ldap_group)
+      @committership = @repository.committerships.new_committership(:committer => @ldap_group)
       @committership.build_permissions(:commit)
       @user = users(:moe)
       LdapGroup.stubs(:ldap_group_names_for_user).returns(@ldap_group.member_dns)

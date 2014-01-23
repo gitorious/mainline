@@ -235,7 +235,7 @@ class RepositoryTest < ActiveSupport::TestCase
     should "know if a user can write to self" do
       @repository.owner = users(:johan)
       @repository.save!
-      @repository.repository_committerships.create_for_owner!(@repository.owner)
+      @repository.committerships.create_for_owner!(@repository.owner)
       @repository.reload
       assert can_push?(users(:johan), @repository)
       assert !can_push?(users(:mike), @repository)
@@ -311,7 +311,7 @@ class RepositoryTest < ActiveSupport::TestCase
       @repository.kind = Repository::KIND_PROJECT_REPO
       @repository.project.repositories << new_repos(:name => "another")
       @repository.save!
-      committership = @repository.committerships.new
+      committership = @repository.committerships.new_committership
       committership.committer = users(:moe)
       committership.permissions = Committership::CAN_REVIEW | Committership::CAN_COMMIT
       committership.save!
@@ -416,7 +416,7 @@ class RepositoryTest < ActiveSupport::TestCase
 
   should "return a list of committers depending on owner type" do
     repo = repositories(:johans2)
-    repo.committerships.each(&:delete)
+    repo.committerships.destroy_all
     repo.reload
     assert !committers(repo).include?(users(:moe))
 
@@ -490,7 +490,7 @@ class RepositoryTest < ActiveSupport::TestCase
     assert !committers(repo).include?(old_committer)
     assert committers(repo).include?(groups(:team_thunderbird).members.first)
     [:reviewer?, :committer?, :admin?].each do |m|
-      assert repo.committerships.last.send(m), "cannot #{m}"
+      assert repo.committerships.all.last.send(m), "cannot #{m}"
     end
   end
 
@@ -538,7 +538,7 @@ class RepositoryTest < ActiveSupport::TestCase
 
     should "not include committerships without a commit permission bit" do
       assert_equal 1, @repo.committerships.count
-      cs = @repo.committerships.first
+      cs = @repo.committerships.all.first
       cs.build_permissions(:review)
       cs.save!
       assert_equal [], committers(@repo).map(&:login)
@@ -554,7 +554,7 @@ class RepositoryTest < ActiveSupport::TestCase
 
     context "permission helpers" do
       setup do
-        @cs = @repo.committerships.first
+        @cs = @repo.committerships.all.first
         @cs.permissions = 0
         @cs.save!
       end
