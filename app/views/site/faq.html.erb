@@ -46,11 +46,20 @@
         it.
       </p>
       <% if Gitorious::Configuration.get("ssh_fingerprint") %>
-      <h2>What is the SSH key fingerprint of the server I am pushing to?</h2>
-      <p>
-        The SSH key fingerprint of the <%= Gitorious.host %> server is:<br />
-        <code><%= Gitorious::Configuration.get("ssh_fingerprint") %></code>
-      </p>
+        <h2>What is the SSH key fingerprint of the server I am pushing to?</h2>
+        <p>
+          The SSH key fingerprint of the <%= Gitorious.host %> server is:<br />
+          <code><%= Gitorious::Configuration.get("ssh_fingerprint") %></code>
+        </p>
+      <% end %>
+      <% if Gitorious::Configuration.get("enable_super_group") %>
+        <h2>What is a Super Group?</h2>
+        <p>
+          Super group makes all the repositories available for registered
+          user. It automatically adds a SuperGroup, that contains everyone,
+          to every project. It can be disabled in Gitorious configuration
+          <code>config/gitorious.yml</code> by setting <code>enable_super_group: false</code>.
+        </p>
       <% end %>
       <h2>How do I point my local Git repository at Gitorious?</h2>
       <p>

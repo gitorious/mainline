@@ -32,17 +32,25 @@
       <% if committership.committer %>
         <tr>
           <td>
-            <%= link_to(h(committership.committer.title), committership.committer) -%>
+            <% if super_group?(committership) %>
+              <%= link_to("Super Group", "/about/faq") -%>
+            <% else %>
+              <%= link_to(h(committership.committer.title), committership.committer) -%>
+            <% end %>
             (<%= committership.committer.class.human_name -%>)
           </td>
           <td><%=h committership.permission_list.join(', ') -%></td>
           <td><%= link_to(h(committership.creator.login), committership.creator) if committership.creator -%></td>
           <td><%= l(committership.created_at, :format => :short) -%></td>
           <td class="committer-buttons">
-            <%= link_to(t("views.common.edit"),
-            [:edit, repository.project, repository, committership], :method => :get, :class => "btn") -%>
-            <%= link_to(t("views.common.remove"),
-            [repository.project, repository, committership], :method => :delete, :class => "btn btn-danger", :confirm => confirmation_if_sole_admin(repository, committership)) -%>
+            <% if super_group?(committership) %>
+              <p>Super group can be disabled in global configuration</p>
+            <% else %>
+              <%= link_to(t("views.common.edit"),
+              [:edit, repository.project, repository, committership], :method => :get, :class => "btn") -%>
+              <%= link_to(t("views.common.remove"),
+              [repository.project, repository, committership], :method => :delete, :class => "btn btn-danger", :confirm => confirmation_if_sole_admin(committership)) -%>
+            <% end %>
           </td>
         </tr>
       <% end %>

@@ -17,8 +17,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 module CommittershipsHelper
-  def confirmation_if_sole_admin(repo, committership)
-    if last_admin(repo, committership)
+  def confirmation_if_sole_admin(committership)
+    if last_admin(committership.repository, committership)
       "You are about to remove the last committer with admin rights. Are you sure about this?"
     end
   end
@@ -26,6 +26,10 @@ module CommittershipsHelper
   def last_admin(repo, to_be_removed)
     admins = repo.committerships.admins
     (admins.size == 1 && admins.first == to_be_removed)
+  end
+
+  def super_group?(committership)
+    committership.id == SuperGroup.id
   end
 
   def checkboxes(f)

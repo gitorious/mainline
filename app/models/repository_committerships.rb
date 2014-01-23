@@ -17,12 +17,15 @@
 #++
 
 class RepositoryCommitterships
+  attr_reader :repository
+
   def initialize(repository)
     @repository = repository
   end
 
   def find(id)
-    all.find(id)
+    return super_group if super_group?(id)
+    raw_all.find(id)
   end
 
   def new_committership(attrs = {})
@@ -54,12 +57,12 @@ class RepositoryCommitterships
 
 
   def destroy_for_owner
-    existing = all.find_by_committer_id_and_committer_type(owner.id, owner.class.name)
+    existing = raw_all.find_by_committer_id_and_committer_type(owner.id, owner.class.name)
     existing.destroy if existing
   end
 
   def update_owner(another_owner, creator = nil)
-    if cs_to_upgrade = all.detect{|c|c.committer == another_owner}
+    if cs_to_upgrade = raw_all.detect{|c|c.committer == another_owner}
       cs_to_upgrade.build_permissions(:review, :commit, :admin)
       cs_to_upgrade.save!
     else
@@ -79,7 +82,7 @@ class RepositoryCommitterships
   end
 
   def destroy_all
-    all.destroy_all
+    raw_all.destroy_all
   end
 
   def count
@@ -87,27 +90,32 @@ class RepositoryCommitterships
   end
 
   def all
-    repository._committerships
+    return raw_all unless super_group_enabled?
+    [super_group] + repository._committerships
   end
 
   def committers
-    all.committers.map{|c| c.members }.flatten.compact.uniq
+    return User.all if super_group_enabled?
+    raw_all.committers.map{|c| c.members }.flatten.compact.uniq
   end
 
   def reviewers
-    all.reviewers.map{|c| c.members }.flatten.compact.uniq
+    return User.all if super_group_enabled?
+    raw_all.reviewers.map{|c| c.members }.flatten.compact.uniq
   end
 
   def administrators
-    all.admins.map{|c| c.members }.flatten.compact.uniq
+    return User.all if super_group_enabled?
+    raw_all.admins.map{|c| c.members }.flatten.compact.uniq
   end
 
   def admins
-    all.select { |c| c.admin? }
+    raw_all.admins
   end
 
   def members
-    all.
+    return User.all if super_group_enabled?
+    raw_all.
       includes(:committer).
       map(&:committer).
       flat_map { |committer| committer.is_a?(User) ? committer : committer.members }.
@@ -115,20 +123,35 @@ class RepositoryCommitterships
   end
 
   def users
-    all.users
+    raw_all.users
   end
 
   def groups
-    all.groups
+    return raw_all.groups unless super_group_enabled?
   end
 
   def reload
-    all.reload
+    raw_all.reload
   end
 
   private
 
-  attr_reader :repository
+  def raw_all
+    repository._committerships
+  end
+
+  def super_group?(id)
+    id == SuperGroup.id && super_group_enabled?
+  end
+
+  def super_group_enabled?
+    Gitorious::Configuration.get("enable_super_group")
+  end
+
+  def super_group
+    SuperGroup.super_committership(self)
+  end
+
 
   def owner
     repository.owner

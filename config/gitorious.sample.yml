@@ -201,6 +201,11 @@ archive_work_dir: "/var/git/tarballs-work"
 # point. Feel free to contribute translations.
 #locale: en
 
+# Super group makes all the repositories available for registered
+# user. It automatically adds a SuperGroup, that contains everyone,
+# to every project.
+#enable_super_group: false
+
 # The (optional name and) address used when sending emails. This
 # defaults to "Gitorious <no-reply@<host>>. Can be set to an email
 # address only, or Name <address>.
