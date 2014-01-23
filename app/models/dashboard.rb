@@ -32,7 +32,7 @@ class Dashboard
   end
 
   def repositories
-    user.commit_repositories
+    user.committerships.commit_repositories
   end
 
   def favorites

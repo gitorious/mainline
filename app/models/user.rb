@@ -37,9 +37,6 @@ class User < ActiveRecord::Base
     :dependent => :destroy
   has_many :cloneable_repositories, :class_name => "Repository",
      :conditions => ["kind != ?", Repository::KIND_TRACKING_REPO]
-  has_many :committerships, :as => :committer, :dependent => :destroy
-  has_many :commit_repositories, :through => :committerships, :source => :repository,
-  :conditions => ["repositories.kind NOT IN (?)", Repository::KINDS_INTERNAL_REPO]
   has_many :ssh_keys, :order => "id desc", :dependent => :destroy
   has_many :comments
   has_many :email_aliases, :class_name => "Email", :dependent => :destroy
@@ -49,6 +46,11 @@ class User < ActiveRecord::Base
   has_many :feed_items, :foreign_key => "watcher_id"
   has_many :content_memberships, :as => :member
   has_many :created_groups, :class_name => "Group", :dependent => :destroy
+
+  has_many :_committerships, :as => :committer, :dependent => :destroy
+  def committerships
+    UserCommitterships.new(self)
+  end
 
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :password_confirmation, :current_password, :terms_of_use

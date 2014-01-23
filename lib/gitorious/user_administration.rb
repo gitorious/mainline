@@ -38,7 +38,7 @@ module Gitorious
     protected
 
     def committership_count(user)
-      UserCommitterships.new(user).count
+      user.committerships.count
     end
 
     def suspend_account(user)
@@ -63,10 +63,9 @@ module Gitorious
 
     def remove_committerships(user)
       summarized do |s|
-        user_committerships = UserCommitterships.new(user)
-        repos = user_committerships.all.map(&:repository)
+        repos = user.committerships.all.map(&:repository)
 
-        user_committerships.destroy_all
+        user.committerships.destroy_all
 
         repo_names = repos.uniq.compact.map(&:name).join(", ")
         s << " "+I18n.t("admin.user_suspend.removed_user_committerships_from_repos", :repo_names => repo_names)

@@ -16,34 +16,20 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class UserCommitterships
-  def initialize(user)
-    @user = user
+require "test_helper"
+
+class UserCommittershipsTest < ActiveSupport::TestCase
+  should "have commit_repositories" do
+    user = users(:johan)
+    user_committerships = UserCommitterships.new(user)
+
+    assert_equal [repositories(:johans)], user_committerships.commit_repositories
   end
 
-  def reviewers
-    all.reviewers
+  should "have reviewers" do
+    user = users(:johan)
+    user_committerships = UserCommitterships.new(user)
+
+    assert_equal [committerships(:johan_johans)], user_committerships.reviewers
   end
-
-  def all
-    user._committerships
-  end
-
-  def count
-    all.count
-  end
-
-  def commit_repositories
-    all.joins(:repository)
-       .where("repositories.kind NOT IN (?)", Repository::KINDS_INTERNAL_REPO)
-       .map(&:repository)
-  end
-
-  def destroy_all
-    all.each { |c| c.destroy }
-  end
-
-  private
-
-  attr_reader :user
 end

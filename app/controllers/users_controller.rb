@@ -50,7 +50,7 @@ class UsersController < ApplicationController
             :events => events,
             :teams => Team.for_user(@user),
             :projects => filter(@user.projects.includes(:tags, { :repositories => :project })),
-            :repositories => filter(UserCommitterships.new(@user).commit_repositories),
+            :repositories => filter(@user.committerships.commit_repositories),
             :favorites => filter(@user.favorites.all(:include => :watchable)),
             :atom_auto_discovery_url => user_feed_path(@user, :format => :atom),
             :atom_auto_discovery_title => "Public activity feed"

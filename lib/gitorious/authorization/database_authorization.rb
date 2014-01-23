@@ -201,7 +201,7 @@ module Gitorious
       end
 
       def review_repositories(user)
-        UserCommitterships.new(user).reviewers
+        user.committerships.reviewers
       end
 
       def filter_authorized(actor, collection)

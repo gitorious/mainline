@@ -40,11 +40,10 @@ class UserTest < ActiveSupport::TestCase
   end
 
   should have_many(:email_aliases)
-  should have_many(:committerships).dependent(:destroy)
+  should have_many(:_committerships).dependent(:destroy)
   should have_many(:memberships).dependent(:destroy)
   should have_many(:email_aliases).dependent(:destroy)
   should have_many(:favorites).dependent(:destroy)
-  should have_many(:commit_repositories)
   should have_many(:feed_items)
 
   should "create a valid user" do
