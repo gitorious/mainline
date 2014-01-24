@@ -38,20 +38,22 @@ class CommittershipPresenter
 
   def actions
     return super_group_actions if super_group?
-
-    edit_url_params = [:edit, project, repository, committership]
-    edit_link = v.link_to(v.t("views.common.edit"), edit_url_params,
-                          :method => :get, :class => "btn")
-
-    delete_url_params = [project, repository, committership]
-    delete_link = v.link_to(v.t("views.common.remove"), delete_url_params,
-                            :method => :delete, :class => "btn btn-danger",
-                            :confirm => confirmation_required?)
-
     edit_link + delete_link
   end
 
   private
+
+  def edit_link
+    edit_url_params = [:edit, project, repository, committership]
+    v.link_to(v.t("views.common.edit"), edit_url_params, :method => :get, :class => "btn")
+  end
+
+  def delete_link
+    delete_url_params = [project, repository, committership]
+    v.link_to(v.t("views.common.remove"), delete_url_params,
+              :method => :delete, :class => "btn btn-danger",
+              :confirm => confirmation_required?)
+  end
 
   def confirmation_required?
     if last_admin?
