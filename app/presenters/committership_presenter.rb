@@ -18,7 +18,7 @@
 
 class CommittershipPresenter
   def self.collection(committerships, view_context)
-    committerships.map { |c| CommittershipPresenter.new(c, view_context) }
+    committerships.map { |c| new(c, view_context) }
   end
 
   attr_reader :committership, :view_context
@@ -32,7 +32,7 @@ class CommittershipPresenter
   def label
     label_type = " (#{committership.committer.class.human_name})"
     if super_group?
-      v.link_to("Super Group", "/about/faq")
+      v.link_to("Super Group*", "/about/faq")
     else
       v.link_to(committership.committer.title, committership.committer)
     end + label_type
@@ -51,7 +51,7 @@ class CommittershipPresenter
   end
 
   def actions
-    return super_group_actions if super_group?
+    return delete_link if super_group?
     edit_link + delete_link
   end
 
@@ -77,10 +77,6 @@ class CommittershipPresenter
 
   def last_admin?
     repository.committerships.last_admin?(committership)
-  end
-
-  def super_group_actions
-    "<p>Super Group can be disabled in global configuration</p>".html_safe
   end
 
   def project

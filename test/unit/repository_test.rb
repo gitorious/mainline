@@ -606,21 +606,6 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  context "members" do
-    should "return all the committers from Users and Groups" do
-      johan = users(:johan)
-      moe = users(:moe)
-      group = Group.create!(name: 'uber-foos')
-      group.add_member(johan, Role.member)
-      group.add_member(moe, Role.member)
-
-      repo = repositories(:johans)
-      repo.committerships.create!(committer: group)
-
-      assert_same_elements [moe, johan], repo.members
-    end
-  end
-
   context "find_by_name_in_project" do
     should "find with a project" do
       Repository.expects(:find_by_name_and_project_id!).with(repositories(:johans).name, projects(:johans).id).once

@@ -96,8 +96,7 @@
                 <% end %>
                 <% repository.group_committers.each do |cs| %>
                   <li>
-                    <%= group_avatar(cs.committer, :size => :icon) %>
-                    <%= link_to h(cs.committer.to_param_with_prefix), cs.committer %>
+                    <%= committer_group(cs.committer) %>
                   </li>
                 <% end %>
               </ul>

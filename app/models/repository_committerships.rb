@@ -24,7 +24,7 @@ class RepositoryCommitterships
   end
 
   def find(id)
-    return super_group if super_group?(id)
+    return super_group if super_group?(id) && !super_group_removed?
     raw_all.find(id)
   end
 
@@ -71,6 +71,8 @@ class RepositoryCommitterships
   end
 
   def destroy(id, current_user)
+    return remove_super_group! if super_group?(id)
+
     committership = find(id)
 
     # Update creator to hold the "destroyer" user account
@@ -90,22 +92,22 @@ class RepositoryCommitterships
   end
 
   def all
-    return raw_all unless super_group_enabled?
+    return raw_all unless super_group_available?
     [super_group] + repository._committerships
   end
 
   def committers
-    return User.all if super_group_enabled?
+    return User.all if super_group_available?
     raw_all.committers.map{|c| c.members }.flatten.compact.uniq
   end
 
   def reviewers
-    return User.all if super_group_enabled?
+    return User.all if super_group_available?
     raw_all.reviewers.map{|c| c.members }.flatten.compact.uniq
   end
 
   def administrators
-    return User.all if super_group_enabled?
+    return User.all if super_group_available?
     raw_all.admins.map{|c| c.members }.flatten.compact.uniq
   end
 
@@ -113,21 +115,13 @@ class RepositoryCommitterships
     raw_all.admins == [committership]
   end
 
-  def members
-    return User.all if super_group_enabled?
-    raw_all.
-      includes(:committer).
-      map(&:committer).
-      flat_map { |committer| committer.is_a?(User) ? committer : committer.members }.
-      uniq
-  end
-
   def users
     raw_all.users
   end
 
   def groups
-    return raw_all.groups unless super_group_enabled?
+    return raw_all.groups unless super_group_available?
+    [super_group] + raw_all.groups
   end
 
   def reload
@@ -138,6 +132,18 @@ class RepositoryCommitterships
 
   def raw_all
     repository._committerships
+  end
+
+  def remove_super_group!
+    repository.update_attribute(:super_group_removed, true)
+  end
+
+  def super_group_removed?
+    repository.super_group_removed?
+  end
+
+  def super_group_available?
+    super_group_enabled? && !super_group_removed?
   end
 
   def super_group?(id)
@@ -151,7 +157,6 @@ class RepositoryCommitterships
   def super_group
     SuperGroup.super_committership(self)
   end
-
 
   def owner
     repository.owner

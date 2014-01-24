@@ -518,10 +518,6 @@ class Repository < ActiveRecord::Base
     return result
   end
 
-  def members
-    committerships.members
-  end
-
   def full_hashed_path
     self.hashed_path || set_repository_path
   end

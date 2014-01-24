@@ -29,8 +29,8 @@ class SuperGroup
     "super"
   end
 
-  def title
-    "Super Group"
+  def to_param_with_prefix
+    "Super Group*"
   end
 
   def self.super_committership(committerships)

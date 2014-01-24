@@ -49,6 +49,13 @@ class RepositoryCommittershipsTest < ActiveSupport::TestCase
         assert_equal [@super_group, @johans_committership], @committerships.all
       end
     end
+
+    should "return all committerships without super group if super group was removed" do
+      Gitorious::Configuration.override("enable_super_group" => true) do
+        @committerships.destroy("super", @johan)
+        assert_equal [@johans_committership], @committerships.all
+      end
+    end
   end
 
   [:committers, :reviewers, :administrators].each do |filter|
@@ -60,6 +67,43 @@ class RepositoryCommittershipsTest < ActiveSupport::TestCase
       should "return all #{filter} with super group" do
         Gitorious::Configuration.override("enable_super_group" => true) do
           assert_equal User.all, @committerships.send(filter)
+        end
+      end
+
+      should "return all #{filter} without super group if super group was removed" do
+        Gitorious::Configuration.override("enable_super_group" => true) do
+          @committerships.destroy("super", @johan)
+          assert_equal [@johan], @committerships.send(filter)
+        end
+      end
+    end
+  end
+
+  context "#destroy" do
+    should "destroy committership" do
+      @committerships.destroy(@johans_committership.id, @johan)
+
+      assert_raise ActiveRecord::RecordNotFound do
+        @committerships.find(@johans_committership.id)
+      end
+    end
+
+    should "destroy committership with super groups enabled" do
+      Gitorious::Configuration.override("enable_super_group" => true) do
+        @committerships.destroy(@johans_committership.id, @johan)
+
+        assert_raise ActiveRecord::RecordNotFound do
+          @committerships.find(@johans_committership.id)
+        end
+      end
+    end
+
+    should "should destroy super group with super group enabled" do
+      Gitorious::Configuration.override("enable_super_group" => true) do
+        @committerships.destroy("super", @johan)
+
+        assert_raise ActiveRecord::RecordNotFound do
+          @committerships.find("super")
         end
       end
     end
@@ -85,6 +129,43 @@ class RepositoryCommittershipsTest < ActiveSupport::TestCase
     should "find super committership with super group enabled" do
       Gitorious::Configuration.override("enable_super_group" => true) do
         assert_equal @super_group, @committerships.find("super")
+      end
+    end
+  end
+
+  context "#users" do
+    should "return committerships users" do
+      assert_equal [@johans_committership], @committerships.users
+    end
+
+    should "return committerships users when super group is enabled" do
+      Gitorious::Configuration.override("enable_super_group" => true) do
+        assert_equal [@johans_committership], @committerships.users
+      end
+    end
+  end
+
+  context "groups" do
+    setup do
+      @committership = committerships(:thunderbird_johans)
+      @committerships = repositories(:johans2).committerships
+    end
+
+    should "return groups" do
+      assert_equal [@committership], @committerships.groups
+    end
+
+    should "return groups with super group when super group is available" do
+      Gitorious::Configuration.override("enable_super_group" => true) do
+        assert_equal [@super_group, @committership], @committerships.groups
+      end
+    end
+
+    should "return original groups if super group is enabled but removed" do
+      Gitorious::Configuration.override("enable_super_group" => true) do
+        @committerships.destroy("super", @johan)
+
+        assert_equal [@committership], @committerships.groups
       end
     end
   end

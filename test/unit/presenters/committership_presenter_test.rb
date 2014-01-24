@@ -34,7 +34,7 @@ class CommittershipPresenterTest < ActiveSupport::TestCase
     end
 
     should "returns label for super group" do
-      @view_context.stubs(:link_to).with("Super Group", "/about/faq").returns("/about")
+      @view_context.stubs(:link_to).with("Super Group*", "/about/faq").returns("/about")
       @committership.stubs(id: "super")
 
       assert_equal "/about (Team)", @presenter.label
@@ -70,10 +70,13 @@ class CommittershipPresenterTest < ActiveSupport::TestCase
   context "#actions" do
     include ViewContextHelper
 
-    should "returns super group message" do
-      @committership.stubs(id: "super")
+    should "returns super group message and delete link" do
+      repository = repositories(:johans)
+      committership = SuperGroup.super_committership(repository.committerships)
+      presenter = CommittershipPresenter.new(committership, view_context)
 
-      assert_include @presenter.actions, "Super Group"
+      assert_include presenter.actions, 'method="delete"'
+      refute presenter.actions.include?('/edit')
     end
 
     should "returns edit and delete buttons otherwise" do

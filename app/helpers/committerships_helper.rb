@@ -17,6 +17,16 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 module CommittershipsHelper
+  def committer_group(group)
+    if group.is_a?(SuperGroup)
+      image_tag("super_group_avatar.png", class: 'gts-avatar') +
+        link_to("Super Group*", "/about/faq")
+    else
+      group_avatar(group, :size => :icon) +
+        link_to(group.to_param_with_prefix, group)
+    end
+  end
+
   def checkboxes(f)
     cs = f.object
     <<HTML.html_safe
