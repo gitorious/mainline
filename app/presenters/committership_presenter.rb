@@ -3,6 +3,10 @@ class CommittershipPresenter
     new(committership, view_context)
   end
 
+  def self.collection(committerships, view_context)
+    committerships.map { |c| CommittershipPresenter.for(c, view_context) }
+  end
+
   attr_reader :committership, :view_context
   alias :v :view_context
 

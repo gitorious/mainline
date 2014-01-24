@@ -25,9 +25,10 @@ class RepositoryMembershipsController < ContentMembershipsController
 
   protected
   def create_error(membership)
+    committerships = CommittershipPresenter.collection(@repository.committerships.all, view_context)
     render("committerships/index", :locals => {
         :repository => RepositoryPresenter.new(@repository),
-        :committerships => @repository.committerships.all,
+        :committerships => committerships,
         :committership => @repository.committerships.new_committership,
         :memberships => @repository.content_memberships,
         :membership => membership

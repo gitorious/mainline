@@ -107,12 +107,13 @@ class CommittershipsController < ApplicationController
   end
 
   def render_index(repository, committership)
+    committerships = CommittershipPresenter.collection(repository.committerships.all, view_context)
     render(:index, :locals => {
-        :repository => RepositoryPresenter.new(repository),
-        :committership => committership,
-        :committerships => repository.committerships.all,
-        :memberships => repository.content_memberships
-      })
+      :repository => RepositoryPresenter.new(repository),
+      :committership => committership,
+      :committerships => committerships,
+      :memberships => repository.content_memberships
+    })
   end
 
   def render_edit(repository, committership)

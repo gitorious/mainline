@@ -28,8 +28,7 @@
     </tr>
   </thead>
   <tbody class="gts-tbody-actions">
-    <% committerships.each do |committership|
-       committership = CommittershipPresenter.for(committership, self) %>
+    <% committerships.each do |committership| %>
       <tr>
         <td>
           <%= committership.label %>
