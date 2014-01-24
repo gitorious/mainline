@@ -109,8 +109,8 @@ class RepositoryCommitterships
     raw_all.admins.map{|c| c.members }.flatten.compact.uniq
   end
 
-  def admins
-    raw_all.admins
+  def last_admin?(committership)
+    raw_all.admins == [committership]
   end
 
   def members
