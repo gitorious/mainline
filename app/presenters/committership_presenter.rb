@@ -1,10 +1,24 @@
-class CommittershipPresenter
-  def self.for(committership, view_context)
-    new(committership, view_context)
-  end
+# encoding: utf-8
+#--
+#   Copyright (C) 2012-2013 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
 
+class CommittershipPresenter
   def self.collection(committerships, view_context)
-    committerships.map { |c| CommittershipPresenter.for(c, view_context) }
+    committerships.map { |c| CommittershipPresenter.new(c, view_context) }
   end
 
   attr_reader :committership, :view_context
@@ -33,7 +47,7 @@ class CommittershipPresenter
   end
 
   def created_at
-    v.l(committership.created_at, :format => :short)
+    I18n.l(committership.created_at, :format => :short)
   end
 
   def actions
@@ -45,17 +59,17 @@ class CommittershipPresenter
 
   def edit_link
     edit_url_params = [:edit, project, repository, committership]
-    v.link_to(v.t("views.common.edit"), edit_url_params, :method => :get, :class => "btn")
+    v.link_to(I18n.t("views.common.edit"), edit_url_params, :method => :get, :class => "btn")
   end
 
   def delete_link
     delete_url_params = [project, repository, committership]
-    v.link_to(v.t("views.common.remove"), delete_url_params,
+    v.link_to(I18n.t("views.common.remove"), delete_url_params,
               :method => :delete, :class => "btn btn-danger",
-              :confirm => confirmation_required?)
+              :confirm => confirmation_message)
   end
 
-  def confirmation_required?
+  def confirmation_message
     if last_admin?
       "You are about to remove the last committer with admin rights. Are you sure about this?"
     end
@@ -66,7 +80,7 @@ class CommittershipPresenter
   end
 
   def super_group_actions
-    "<p>Super group can be disabled in global configuration</p>".html_safe
+    "<p>Super Group can be disabled in global configuration</p>".html_safe
   end
 
   def project
