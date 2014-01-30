@@ -37,10 +37,7 @@
             }) %>
     </p>
     <p>
-      <%= link_to("Remove all collaborators", {
-              :action => "destroy",
-              :id => "all"
-            },
+      <%= link_to("Remove all collaborators", membership_path(content, "all"),
             :method => :delete,
             :confirm => "Are you sure? This will delete all #{memberships.count} members") %>
       to <%= text(:make_public) %>
