@@ -29,20 +29,18 @@ class CommittershipsController < ApplicationController
   end
 
   def create
-    committership = @repository.committerships.new_committership
-    committership.committer = committer
-    committership.creator = current_user
-    committership.build_permissions(params[:permissions])
+    outcome = AddCommitter.new(current_user, @repository).execute(params)
+    outcome.failure do |committership|
+      render_index(@repository, committership)
+    end
 
-    if committership.save
+    outcome.success do |committership|
       if committership.committer.is_a?(User)
         flash[:success] = "User added as committer"
       else
         flash[:success] = "Team added as committers"
       end
       redirect_to([@repository.project, @repository, :committerships])
-    else
-      render_index(@repository, committership)
     end
   end
 
@@ -97,13 +95,6 @@ class CommittershipsController < ApplicationController
                                                                @containing_project)
     authorize_access_to(@repository)
     authorize_access_to(@repository.project)
-  end
-
-  def committer
-    if params.key?(:user) && params[:user][:login]
-      return User.find_by_login(params[:user][:login])
-    end
-    Team.find_by_name!(params[:group][:name])
   end
 
   def render_index(repository, committership)

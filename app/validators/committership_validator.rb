@@ -15,39 +15,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "use_case"
 
-class SuperGroup
-  def self.model_name
-    Group.model_name
+CommittershipValidator = UseCase::Validator.define do
+  validates_presence_of :committer_id, :committer_type, :repository_id, unless: :super_group?
+  validate :uniqueness, unless: :super_group?
+
+  def uniqueness
+    errors.add(:committer_id, 'is already a committer') if !uniq?
   end
 
-  def self.human_name
-    Group.human_name
-  end
-
-  def self.id
-    "super"
-  end
-
-  def to_param_with_prefix
-    "Super Group*"
-  end
-
-  def self.super_committership(committerships)
-    cs = committerships.new_committership
-    cs.created_at = committerships.repository.created_at
-    def cs.committer
-      SuperGroup.new
-    end
-    def cs.persisted?
-      true
-    end
-    def cs.id
-      SuperGroup.id
-    end
-    def cs.save
-      nil
-    end
-    cs
+  def super_group?
+    Gitorious::Configuration.get("enable_super_group") && SuperGroup.id == id
   end
 end

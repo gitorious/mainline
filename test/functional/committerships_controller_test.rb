@@ -74,44 +74,47 @@ class CommittershipsControllerTest < ActionController::TestCase
   end
 
   context "POST create" do
+    include FakeUseCaseHelper
+
     should "add a Group as having committership" do
-      assert_difference("@repository.committerships.count") do
-        post :create, params(:group => {:name => @group.name}, :user => {}, :permissions => ["review"])
-      end
+      committership = Committership.new(committer: @group)
+      AddCommitter.stubs(:new)
+                  .with(@user, @repository)
+                  .returns(fake_use_case(success: committership))
+
+      post :create, params(:group => {:name => @group.name}, :user => {}, :permissions => ["review"])
       assert_response :redirect
-      assert_equal @group, Committership.last.committer
-      assert_equal @user, Committership.last.creator
       assert_equal "Team added as committers", flash[:success]
-      assert_equal [:review], Committership.last.permission_list
     end
 
     should "add a User as having committership" do
-      assert_difference("@repository.committerships.count") do
-        post :create, {
-          :project_id => @project.to_param,
-          :repository_id => @repository.to_param,
-          :user => {:login => users(:moe).login}, :group => {},
-          :permissions => ["review","commit"]
-        }
-        assert_nil flash[:error]
-        assert_response :redirect
-      end
-      assert_equal users(:moe), Committership.last.committer
-      assert_equal @user, Committership.last.creator
+      committership = Committership.new(committer: @user)
+      AddCommitter.stubs(:new)
+                  .with(@user, @repository)
+                  .returns(fake_use_case(success: committership))
+
+      post :create, {
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :user => {:login => users(:moe).login}, :group => {},
+        :permissions => ["review","commit"]
+      }
+      assert_nil flash[:error]
+      assert_response :redirect
       assert_equal "User added as committer", flash[:success]
-      assert Committership.last.reviewer?
-      assert Committership.last.committer?
-      assert !Committership.last.admin?
     end
 
     should "not fail when the same user is added twice" do
-      assert_no_difference("@repository.committerships.count") do
-        post :create, params(
-          :group => {},
-          :user => { :login => users(:johan).login},
-          :permissions => ["review"]
-        )
-      end
+      committership = Committership.new(committer: @user)
+      AddCommitter.stubs(:new)
+                  .with(@user, @repository)
+                  .returns(fake_use_case(failure: committership))
+
+      post :create, params(
+        :group => {},
+        :user => { :login => users(:johan).login},
+        :permissions => ["review"]
+      )
       assert_response :success
     end
   end

@@ -21,7 +21,6 @@
 #++
 
 class Committership < ActiveRecord::Base
-
   CAN_REVIEW = 1 << 4
   CAN_COMMIT = 1 << 5
   CAN_ADMIN = 1 << 6
@@ -37,10 +36,6 @@ class Committership < ActiveRecord::Base
   belongs_to :creator, :class_name => "User"
   has_many :messages, :as => :notifiable
 
-  validates_presence_of :committer_id, :committer_type, :repository_id
-  validates_uniqueness_of :committer_id, :scope => [:committer_type, :repository_id],
-    :message => "is already a committer to this repository"
-
   attr_accessible :committer, :repository, :creator, :creator_id
 
   after_create :notify_repository_owners
@@ -53,6 +48,14 @@ class Committership < ActiveRecord::Base
   scope :reviewers, :conditions => ["(permissions & ?) != 0", CAN_REVIEW]
   scope :committers, :conditions => ["(permissions & ?) != 0", CAN_COMMIT]
   scope :admins, :conditions => ["(permissions & ?) != 0", CAN_ADMIN]
+
+  def uniq?
+    committership = Committership.where(committer_type: committer_type,
+                                        repository_id: repository_id,
+                                        committer_id: committer_id).first
+
+    committership.nil? || committership == self
+  end
 
   def permission_mask_for(*perms)
     perms.inject(0) do |memo, perm_symbol|

@@ -128,6 +128,11 @@ class RepositoryCommitterships
     raw_all.reload
   end
 
+  def add_super_group!
+    repository.update_attribute(:super_group_removed, false)
+    super_group
+  end
+
   private
 
   def raw_all

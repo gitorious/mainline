@@ -15,39 +15,13 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "commands/add_committer_command"
 
-class SuperGroup
-  def self.model_name
-    Group.model_name
-  end
+class AddCommitter
+  include UseCase
 
-  def self.human_name
-    Group.human_name
-  end
-
-  def self.id
-    "super"
-  end
-
-  def to_param_with_prefix
-    "Super Group*"
-  end
-
-  def self.super_committership(committerships)
-    cs = committerships.new_committership
-    cs.created_at = committerships.repository.created_at
-    def cs.committer
-      SuperGroup.new
-    end
-    def cs.persisted?
-      true
-    end
-    def cs.id
-      SuperGroup.id
-    end
-    def cs.save
-      nil
-    end
-    cs
+  def initialize(user, repository)
+    input_class(AddCommitterParams)
+    step(AddCommitterCommand.new(user, repository), validator: CommittershipValidator)
   end
 end

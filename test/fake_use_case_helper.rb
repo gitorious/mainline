@@ -16,38 +16,26 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class SuperGroup
-  def self.model_name
-    Group.model_name
+module FakeUseCaseHelper
+  class FakeUseCase < Struct.new(:result)
+    def execute(*)
+      self
+    end
+
+    def success
+      if result[:success]
+        yield(result[:success])
+      end
+    end
+
+    def failure
+      if result[:failure]
+        yield(result[:failure])
+      end
+    end
   end
 
-  def self.human_name
-    Group.human_name
-  end
-
-  def self.id
-    "super"
-  end
-
-  def to_param_with_prefix
-    "Super Group*"
-  end
-
-  def self.super_committership(committerships)
-    cs = committerships.new_committership
-    cs.created_at = committerships.repository.created_at
-    def cs.committer
-      SuperGroup.new
-    end
-    def cs.persisted?
-      true
-    end
-    def cs.id
-      SuperGroup.id
-    end
-    def cs.save
-      nil
-    end
-    cs
+  def fake_use_case(opts)
+    FakeUseCase.new(opts)
   end
 end
