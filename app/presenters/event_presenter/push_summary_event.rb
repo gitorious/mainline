@@ -56,7 +56,7 @@ class EventPresenter
 
     def render_commit(commit, options = {})
       user    = commit.committer_user
-      message = CGI.escapeHTML(commit.summary)
+      message = format_summary(commit.summary)
 
       link = link_to(
         view.content_tag('code', commit.short_oid).html_safe,
@@ -174,6 +174,13 @@ class EventPresenter
       Array(commits[COMMIT_LIMIT+1, commits.size]).compact
     end
 
+    def format_summary(summary)
+      if summary.present?
+        CGI.escapeHTML(summary)
+      else
+        "(empty commit message)"
+      end
+    end
   end
 
 end

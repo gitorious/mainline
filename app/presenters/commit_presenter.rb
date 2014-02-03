@@ -44,7 +44,7 @@ class CommitPresenter
   end
 
   def summary
-    commit.message.split("\n").first
+    commit.message.split("\n").first.presence || "(empty commit message)"
   end
 
   def actor_display
