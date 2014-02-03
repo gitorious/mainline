@@ -105,6 +105,10 @@ class PagesController < WikiController
     project_pages_path(project, format)
   end
 
+  def wiki_index_url(project, format = nil)
+    Gitorious.url(wiki_index_path(project, format))
+  end
+
   def wiki_page_path(project, page)
     project_page_path(project, page)
   end

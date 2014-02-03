@@ -93,6 +93,7 @@ class WikiController < ApplicationController
 
   helper_method :page_history_path
   helper_method :wiki_index_path
+  helper_method :wiki_index_url
   helper_method :wiki_page_path
   helper_method :wiki_git_access_path
   helper_method :edit_wiki_page_path

@@ -27,7 +27,7 @@ namespaced_atom_feed do |feed|
 
     # TODO: we only find the first page changed for now:
     first_page = diffs.first.a_path.split(".").first
-    item_url = page_history_url(owner, first_page, :html) rescue wiki_index_url(owner, :html)
+    item_url = page_history_url(owner, first_page, :html) rescue wiki_index_url(owner)
     feed.entry(commit, {
       :url => item_url,
       :updated => commit.committed_date.utc,
