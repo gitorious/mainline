@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 class MembershipsController < ApplicationController
   before_filter :find_group
-  before_filter :find_membership, :only => [:edit, :update]
+  before_filter :find_membership, :only => [:edit, :update, :destroy]
   before_filter :ensure_group_adminship, :except => [:index, :show, :create]
   renders_in_global_context
 
@@ -82,13 +82,16 @@ class MembershipsController < ApplicationController
   end
 
   def destroy
-    @membership = @group.memberships.find(params[:id])
+    outcome = DestroyMembership.new(@membership).execute
 
-    if @membership.destroy
+    outcome.success do
       flash[:success] = I18n.t("memberships_controller.membership_destroyed")
-    else
+    end
+
+    outcome.pre_condition_failed do
       flash[:error] = I18n.t("memberships_controller.failed_to_destroy")
     end
+
     redirect_to group_memberships_path(@group)
   end
 

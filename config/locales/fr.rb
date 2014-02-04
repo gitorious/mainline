@@ -88,7 +88,7 @@
     :memberships_controller => {
       :membership_created => "Membership was successfully created",
       :membership_updated => "Membership was updated",
-      :failed_to_destroy => "Failed to destroy membership",
+      :failed_to_destroy => "Cette adhésion ne peut être retiré",
       :membership_destroyed => "Membership deleted",
     },
     :application_helper => {

@@ -126,7 +126,7 @@
     :memberships_controller => {
       :membership_created => "Membership was successfully created",
       :membership_updated => "Membership was updated",
-      :failed_to_destroy => "Failed to destroy membership",
+      :failed_to_destroy => "This membership cannot be removed",
       :membership_destroyed => "Membership deleted",
       :index_pagination_oob => "Sorry, there were no memberships for page %{page}."
     },

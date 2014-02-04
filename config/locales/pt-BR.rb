@@ -88,7 +88,7 @@
     :memberships_controller => {
       :membership_created => "Associação criada com sucesso",
       :membership_updated => "Associação atualizada",
-      :failed_to_destroy => "Falha ao excluir associação",
+      :failed_to_destroy => "Esta associação não pode ser removido",
       :membership_destroyed => "Associação excluída",
     },
     :application_helper => {
