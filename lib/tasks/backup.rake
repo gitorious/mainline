@@ -270,6 +270,9 @@ namespace :backup do
     puts `rm -f #{repo_path}/.hooks`
     puts `ln -s #{File.expand_path('./data/hooks')} #{repo_path}/.hooks`
 
+    puts "Regenerating Sphinx indexes"
+    Rake::Task["ts:rebuild"].invoke
+
     cleanup
 
     puts "Done restoring Gitorious from #{tarball_path}."
