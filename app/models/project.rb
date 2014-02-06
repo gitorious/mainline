@@ -101,9 +101,6 @@ class Project < ActiveRecord::Base
     containing_site || Site.default
   end
 
-  def committer?(candidate)
-    owner == User ? owner == candidate : owner.committer?(candidate)
-  end
 
   def owned_by_group?
     ["Group","LdapGroup"].include?(owner_type)
