@@ -400,6 +400,15 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
+  context "#members" do
+    should "return uniq members of all mainlines" do
+      project = projects(:johans)
+      user = users(:johan)
+
+      assert_equal [user], project.members
+    end
+  end
+
   context "Suspended projects" do
     setup do
       @project = projects(:johans)

@@ -101,6 +101,9 @@ class Project < ActiveRecord::Base
     containing_site || Site.default
   end
 
+  def members
+    repositories.mainlines.map(&:committerships).flat_map(&:committers).uniq
+  end
 
   def owned_by_group?
     ["Group","LdapGroup"].include?(owner_type)
