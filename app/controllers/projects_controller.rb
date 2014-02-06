@@ -226,7 +226,7 @@ class ProjectsController < ApplicationController
 
   def paginated_projects
     page = (params[:page] || 1).to_i
-    projects, pages = JustPaginate.paginate(page, Project.per_page, Project.count) do |range|
+    projects, pages = JustPaginate.paginate(page, Project.per_page, Project.active_count) do |range|
       Project.
         active.offset(range.first).limit(range.count).
         includes(:tags, { :repositories => :project })

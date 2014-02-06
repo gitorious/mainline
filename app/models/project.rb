@@ -61,7 +61,9 @@ class Project < ActiveRecord::Base
     I18n.t("activerecord.models.project")
   end
 
-  def self.per_page() 50 end
+  def self.per_page
+    2
+  end
 
   def self.top_tags(limit = 10)
     tag_counts(:limit => limit, :order => "count desc")
@@ -79,6 +81,10 @@ class Project < ActiveRecord::Base
       joins(:events).
       order("count(events.id) desc").
       group("projects.id")
+  end
+
+  def self.active_count
+    active.count.count
   end
 
   def recently_updated_group_repository_clones(limit = 5)
