@@ -18,8 +18,8 @@
 require "fast_test_helper"
 require "commands/disable_standby_mode_command"
 
-class DisableStandbyModeCommandTest < MiniTest::Shoulda
-  def setup
+class DisableStandbyModeCommandTest < MiniTest::Spec
+  before do
     @base_path = File.join(Rails.root, 'tmp', 'standby-test')
     FileUtils.mkdir_p(@base_path)
 
@@ -41,24 +41,24 @@ class DisableStandbyModeCommandTest < MiniTest::Shoulda
     )
   end
 
-  def teardown
+  after do
     FileUtils.rm_rf(@base_path)
   end
 
-  context "#execute" do
-    should "disable the standby page" do
+  describe "#execute" do
+    it "disable the standby page" do
       @command.execute
 
       assert !File.exist?(File.join(@public_path, 'system', 'standby.html'))
     end
 
-    should "enable all the git hooks" do
+    it "enable all the git hooks" do
       @command.execute
 
       assert_equal File.expand_path('data/hooks'), File.readlink(@global_hooks_path)
     end
 
-    should "re-generate authorized_keys file" do
+    it "re-generate authorized_keys file" do
       SshKeyFile.expects(:regenerate).with(@authorized_keys_path)
       @command.execute
     end

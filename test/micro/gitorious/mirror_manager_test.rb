@@ -18,13 +18,13 @@
 require "fast_test_helper"
 require "gitorious/mirror_manager"
 
-class GitoriousMirrorManagerTest < MiniTest::Shoulda
-  def setup
+class GitoriousMirrorManagerTest < MiniTest::Spec
+  before do
     Gitorious.executor.reset!
   end
 
-  context "init_repository" do
-    should "execute the proper ssh command for each mirror" do
+  describe "init_repository" do
+    it "execute the proper ssh command for each mirror" do
       mirrors = ["git@mirror1.gitorious.org", "git@mirror2.gitorious.org"]
       mirror_manager = Gitorious::MirrorManager.new(mirrors)
       repository = Repository.new(:real_gitdir => "foo/bar")
@@ -36,8 +36,8 @@ class GitoriousMirrorManagerTest < MiniTest::Shoulda
     end
   end
 
-  context "clone_repository" do
-    should "execute the proper ssh command for each mirror" do
+  describe "clone_repository" do
+    it "execute the proper ssh command for each mirror" do
       mirrors = ["git@mirror1.gitorious.org", "git@mirror2.gitorious.org"]
       mirror_manager = Gitorious::MirrorManager.new(mirrors)
       src_repository = Repository.new(:real_gitdir => "foo/bar")
@@ -50,8 +50,8 @@ class GitoriousMirrorManagerTest < MiniTest::Shoulda
     end
   end
 
-  context "delete_repository" do
-    should "execute the proper ssh command for each mirror" do
+  describe "delete_repository" do
+    it "execute the proper ssh command for each mirror" do
       mirrors = ["git@mirror1.gitorious.org", "git@mirror2.gitorious.org"]
       mirror_manager = Gitorious::MirrorManager.new(mirrors)
 
@@ -62,8 +62,8 @@ class GitoriousMirrorManagerTest < MiniTest::Shoulda
     end
   end
 
-  context "push" do
-    should "execute the proper ssh command for each mirror" do
+  describe "push" do
+    it "execute the proper ssh command for each mirror" do
       mirrors = ["git@mirror1.gitorious.org", "git@mirror2.gitorious.org"]
       mirror_manager = Gitorious::MirrorManager.new(mirrors)
       repository = Repository.new(:real_gitdir => "foo/bar", :full_repository_path => '/sth')

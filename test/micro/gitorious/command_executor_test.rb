@@ -18,23 +18,23 @@
 require "fast_test_helper"
 require "gitorious/command_executor"
 
-class GitoriousCommandExecutorTest < MiniTest::Shoulda
+class GitoriousCommandExecutorTest < MiniTest::Spec
   FILENAME = 'tmp/foo'
 
   def clear_file
     File.unlink(FILENAME) if File.exist?(FILENAME)
   end
 
-  def setup
+  before do
     clear_file
   end
 
-  def teardown
+  after do
     clear_file
   end
 
-  context "run" do
-    should "run the given command" do
+  describe "run" do
+    it "run the given command" do
       Gitorious::CommandExecutor.new.run("echo 'foo' >>#{FILENAME}")
 
       assert_equal "foo\n", File.read(FILENAME)
