@@ -18,8 +18,8 @@
 require "fast_test_helper"
 require "commands/enable_standby_mode_command"
 
-class EnableStandbyModeCommandTest < MiniTest::Shoulda
-  def setup
+class EnableStandbyModeCommandTest < MiniTest::Spec
+  before do
     @master_public_key = "ssh-rsa 3GeMgsBONURpIt+CdfuNmxeG...== master@puppets"
 
     @base_path = File.join(Rails.root, 'tmp', 'standby-test')
@@ -44,7 +44,7 @@ class EnableStandbyModeCommandTest < MiniTest::Shoulda
     )
   end
 
-  def teardown
+  after do
     FileUtils.rm_rf(@base_path)
   end
 
@@ -54,28 +54,28 @@ class EnableStandbyModeCommandTest < MiniTest::Shoulda
     end
   end
 
-  context "#execute" do
-    should "enable the standby page" do
+  describe "#execute" do
+    it "enables the standby page" do
       execute_command
 
       assert File.symlink?(@standby_symlink_path)
     end
 
-    should "disable all the git hooks" do
+    it "disables all the git hooks" do
       execute_command
 
       assert_equal '/dev/null', File.readlink(@global_hooks_path)
     end
 
-    should "generate authorized_keys to include public key of master instance user" do
+    it "generates authorized_keys to include public key of master instance user" do
       SshKeyFile.expects(:format_master_key).with(@master_public_key).returns('foo')
       execute_command
 
       assert_equal 'foo', File.read(@authorized_keys_path)
     end
 
-    context "when master_public_key is missing" do
-      should "raise MasterKeyMissingError" do
+    describe "when master_public_key is missing" do
+      it "raises MasterKeyMissingError" do
         @master_public_key = nil
 
         assert_raises(EnableStandbyModeCommand::MasterKeyMissingError) do
