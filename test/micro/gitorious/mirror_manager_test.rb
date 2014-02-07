@@ -70,8 +70,8 @@ class GitoriousMirrorManagerTest < MiniTest::Spec
 
       mirror_manager.push(repository)
 
-      assert_equal "git push --git-dir=/sth --mirror git@mirror1.gitorious.org:foo/bar", Gitorious.executor.executed_commands.first
-      assert_equal "git push --git-dir=/sth --mirror git@mirror2.gitorious.org:foo/bar", Gitorious.executor.executed_commands.last
+      assert_equal "cd /sth && git push --mirror git@mirror1.gitorious.org:foo/bar", Gitorious.executor.executed_commands.first
+      assert_equal "cd /sth && git push --mirror git@mirror2.gitorious.org:foo/bar", Gitorious.executor.executed_commands.last
     end
   end
 end
