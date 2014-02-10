@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -41,19 +41,5 @@ module CommitsHelper
     end
 
     [summary, lines.join("\n").strip].map { |m| format_commit_message(m) }
-  end
-
-  def split_summary(message)
-    return nil if message.nil?
-    head = ""
-    tail = ""
-    message.split(" ").each do |word|
-      if (head.length + word.length) < 50
-        head << "#{word} "
-      else
-        head << "#{tail} "
-      end
-    end
-    [head, tail]
   end
 end
