@@ -19,16 +19,18 @@ require "fast_test_helper"
 require "commit_presenter"
 
 class FakeGit
-  attr_accessor :parents, :diffs
+  attr_accessor :parents, :diffs, :message
 
-  def initialize(parents = [Object.new], diffs = [])
-    @parents = parents
-    @diffs = diffs
+  def initialize(opts = {})
+    @parents = opts[:parents] || [Object.new]
+    @diffs = opts[:diffs] || []
+    @message = opts[:message] || ""
   end
 
   def commit(id)
     return nil if id == "0" * 40
     OpenStruct.new({
+        :message => message,
         :parents => parents,
         :diffs => diffs,
         :id => id,
@@ -103,6 +105,64 @@ class CommitPresenterTest < MiniTest::Spec
       user = Object.new
       User.expects(:find_by_email_with_aliases).with("christian@gitorious.com").returns(user)
       assert_equal user, @commit.author_user
+    end
+  end
+
+  describe "#title" do
+    def title_for_message(message)
+      git = FakeGit.new(:message => message)
+      repository = Repository.new(:project => @project, :git => git)
+      commit = CommitPresenter.new(repository, "0123456789012345678901234567890123456789")
+      commit.title
+    end
+
+    it "indicates empty commit message" do
+      assert_equal "(empty commit message)", title_for_message("")
+    end
+
+    it "is single line if message is 1 line" do
+      assert_equal "single line", title_for_message("single line")
+    end
+
+    it "trims lines longer than 72 chars" do
+      assert_equal "x" * 69 + "...", title_for_message("x" * 73)
+    end
+
+    it "takes first line if message is multiline" do
+      assert_equal "line one", title_for_message("line one\nline two")
+    end
+
+    it "takes first line of first paragraph if message is multi paragraph" do
+      assert_equal "line one", title_for_message("line one\nline two\n\nsecond paragraph")
+    end
+  end
+
+  describe "#description_paragraphs" do
+    def paragraphs_for_message(message)
+      git = FakeGit.new(:message => message)
+      repository = Repository.new(:project => @project, :git => git)
+      commit = CommitPresenter.new(repository, "0123456789012345678901234567890123456789")
+      commit.description_paragraphs
+    end
+
+    it "is empty if message is blank" do
+      assert_equal [], paragraphs_for_message("")
+    end
+
+    it "is empty if message is a single line" do
+      assert_equal [], paragraphs_for_message("single line")
+    end
+
+    it "includes a paragraph with remaining title part" do
+      assert_equal ["...xxxx"], paragraphs_for_message("x" * 73)
+    end
+
+    it "takes second line if message is multiline" do
+      assert_equal ["line two"], paragraphs_for_message("line one\nline two")
+    end
+
+    it "takes all paragraphs except the first line if message is multi paragraph" do
+      assert_equal ["line two\nline three", "second paragraph"], paragraphs_for_message("line one\nline two\nline three\n\nsecond paragraph")
     end
   end
 end

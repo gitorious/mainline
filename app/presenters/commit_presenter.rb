@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -43,8 +43,12 @@ class CommitPresenter
     @commit     = commit
   end
 
-  def summary
-    commit.message.split("\n").first.presence || "(empty commit message)"
+  def title
+    message_paragraphs.first.presence || "(empty commit message)"
+  end
+
+  def description_paragraphs
+    message_paragraphs[1..-1] || []
   end
 
   def actor_display
@@ -121,5 +125,29 @@ class CommitPresenter
 
   def author_user
     User.find_by_email_with_aliases(author.email)
+  end
+
+  private
+
+  def message_paragraphs
+    paragraphs = commit.message.to_s.force_utf8.split(/\n{2,}/)
+    return [] if paragraphs.empty?
+
+    title = paragraphs.first
+    description_paragraphs = paragraphs[1..-1] || []
+
+    if title =~ /\n/
+      lines = title.split("\n", 2)
+
+      title = lines.first
+      description_paragraphs.unshift(lines.last)
+    end
+
+    if title.size > 72
+      description_paragraphs.unshift("..." + title[69..-1])
+      title = title[0..68] + "..."
+    end
+
+    [title] + description_paragraphs
   end
 end

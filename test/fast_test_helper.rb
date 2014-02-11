@@ -303,13 +303,25 @@ if !defined?(Rails)
     end
   end
 
-  class NilClass; def blank?; true; end; end
+  class NilClass
+    def blank?; true; end
+    def presence; nil; end
+  end
+
   class Array; def blank?; self.count == 0; end; end
   class TrueClass; def blank?; false; end; end
   class FalseClass; def blank?; true; end; end
 
   class String
     def blank?; self == ""; end
+
+    def presence
+      if blank?
+        nil
+      else
+        self
+      end
+    end
 
     def constantize
       self.split("::").inject(Object) do |mod, name|
@@ -323,6 +335,10 @@ if !defined?(Rails)
         gsub(/([a-z\d])([A-Z])/,'\1_\2').
         tr("-", "_").
         downcase
+    end
+
+    def force_utf8
+      self
     end
   end
 

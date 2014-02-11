@@ -1,5 +1,5 @@
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -56,7 +56,7 @@ class EventPresenter
 
     def render_commit(commit, options = {})
       user    = commit.committer_user
-      message = format_summary(commit.summary)
+      message = format_summary(commit.title)
 
       link = link_to(
         view.content_tag('code', commit.short_oid).html_safe,

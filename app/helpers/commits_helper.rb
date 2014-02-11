@@ -25,21 +25,13 @@ module CommitsHelper
   include CommentsHelper
   include DiffHelper
 
-  def format_commit_message(message)
-    return nil if message.nil?
-    message.force_utf8.gsub(/\b[a-z0-9]{40}\b/) do |match|
-      link_to(match, project_repository_commit_path(@project, @repository, match), :class => "sha")
-    end.html_safe
-  end
-
-  def parse_commit_message(message)
-    lines = message.split("\n")
-    summary = nil
-
-    if !lines.empty? && lines.first.length <= 50
-      summary = lines.shift
-    end
-
-    [summary, lines.join("\n").strip].map { |m| format_commit_message(m) }
+  def hyperlink_shas(text)
+    text.split(' ').map do |slice|
+      if slice =~ /^[a-f0-9]{40}$/
+        link_to(slice, project_repository_commit_path(@project, @repository, slice), class: "sha")
+      else
+        html_escape(slice)
+      end
+    end.join(' ').html_safe
   end
 end

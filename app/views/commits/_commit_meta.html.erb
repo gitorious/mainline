@@ -1,6 +1,6 @@
 <%
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -33,12 +33,9 @@
           end.join(", ").html_safe %>
     </p>
     <div class="gts-commit-message">
-      <% summary, message = parse_commit_message(commit.message) %>
-      <% if summary %>
-        <h2><%= @title = summary %></h2>
-      <% end %>
-      <% if message != "" %>
-        <%= message.split("\n\n").map { |p| "<p>#{p}</p>" }.join("").html_safe %>
+      <h2><%= hyperlink_shas commit.title %></h2>
+      <% commit.description_paragraphs.each do |paragraph| %>
+        <p><%= hyperlink_shas paragraph %></p>
       <% end %>
     </div>
   </blockquote>
