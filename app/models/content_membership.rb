@@ -22,6 +22,6 @@ class ContentMembership < ActiveRecord::Base
 
   validates_presence_of :member_id, :content_id
 
-  validates_uniqueness_of :member_id, :scope => [:content_id],
+  validates_uniqueness_of :member_id, :scope => [:content_id, :content_type],
     :message => "is already a member"
 end
