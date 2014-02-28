@@ -62,7 +62,7 @@ class Project < ActiveRecord::Base
   end
 
   def self.per_page
-    2
+    50
   end
 
   def self.top_tags(limit = 10)
