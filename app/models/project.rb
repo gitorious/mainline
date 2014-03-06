@@ -79,9 +79,11 @@ class Project < ActiveRecord::Base
     select("distinct projects.*, count(events.id) as event_count").
       where("events.created_at > ?", number_of_days.days.ago).
       joins(:events).
-      order("count(events.id) desc").
       group("projects.id")
   end
+
+  scope :order_by_title, order("title")
+  scope :order_by_activity, order("count(events.id) desc")
 
   def self.active_count
     active.count.count

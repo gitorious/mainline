@@ -29,7 +29,10 @@
       <ul class="gts-listing">
         <%= render projects %>
       </ul>
-      <%= raw JustPaginate.page_navigation(page, total_pages) { |n| projects_path(:page => n) } %>
+      <%= raw JustPaginate.page_navigation(page, total_pages) { |n|
+        projects_path(page: n, order: sorting.current_order) } %>
+
+      <%= sorting.render_widget %>
     </div>
     <div class="span4">
       <p class="clearfix">

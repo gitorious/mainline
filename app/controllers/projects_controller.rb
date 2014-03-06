@@ -36,6 +36,12 @@ class ProjectsController < ApplicationController
   renders_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
   renders_in_global_context :except => [:show, :edit, :update, :confirm_delete]
 
+  def projects_sorting
+    Sorting.new(params[:order], view_context,
+                {name: :alphabetical, order: ->(q){ q.order_by_title }},
+                {name: :activity, order: ->(q){ q.order_by_activity }, default: true})
+  end
+
   def index
     begin
       projects, total_pages, page = paginated_projects
@@ -52,6 +58,7 @@ class ProjectsController < ApplicationController
             :total_pages => total_pages,
             :page => page,
             :active_recently => filter(Project.most_active_recently),
+            :sorting => projects_sorting,
             :tags => Project.top_tags
           })
       end
@@ -227,9 +234,11 @@ class ProjectsController < ApplicationController
   def paginated_projects
     page = (params[:page] || 1).to_i
     projects, pages = JustPaginate.paginate(page, Project.per_page, Project.active_count) do |range|
-      Project.
+      unordered = Project.
         active.offset(range.first).limit(range.count).
         includes(:tags, { :repositories => :project })
+
+      projects_sorting.apply(unordered)
     end
     projects = filter(projects) if Gitorious.private_repositories?
     [projects, pages, page]
