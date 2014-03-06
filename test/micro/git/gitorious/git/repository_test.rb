@@ -25,8 +25,7 @@ module Gitorious
     class RepositoryTest < MiniTest::Spec
       include SampleRepoHelpers
 
-      let(:path) { sample_repo_path }
-      let(:repository) { Repository.new(path) }
+      let(:repository) { Repository.new(sample_rugged_repo) }
 
       describe "#branch" do
         it "returns the branch for a given name" do

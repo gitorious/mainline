@@ -26,19 +26,25 @@ module Gitorious
     PushError = Class.new(Error)
 
     class Repository
-      def initialize(path)
-        @repository = Rugged::Repository.new(path)
+      attr_reader :rugged_repository
+
+      def self.from_path(path)
+        new(Rugged::Repository.new(path))
+      end
+
+      def initialize(rugged_repository)
+        @rugged_repository = rugged_repository
       end
 
       def branch(name)
-        branch = Rugged::Branch.lookup(repository, name)
-        Branch.new(branch, repository) if branch
+        branch = Rugged::Branch.lookup(rugged_repository, name)
+        Branch.new(branch, rugged_repository) if branch
       end
 
       def push(url, refspec)
         cmd = "git push #{url} #{refspec}"
 
-        Open3.popen3(cmd, chdir: repository.path) do |stdin, stdout, stderr, wait_thr|
+        Open3.popen3(cmd, chdir: rugged_repository.path) do |stdin, stdout, stderr, wait_thr|
           exitcode = wait_thr.value
 
           if exitcode != 0
@@ -46,9 +52,6 @@ module Gitorious
           end
         end
       end
-
-      attr_reader :repository
-      private :repository
     end
   end
 end

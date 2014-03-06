@@ -238,8 +238,8 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def lookup_commits_for_selection
-    source_repo = Gitorious::Git::Repository.new(source_repository.full_repository_path)
-    target_repo = Gitorious::Git::Repository.new(target_repository.full_repository_path)
+    source_repo = Gitorious::Git::Repository.from_path(source_repository.full_repository_path)
+    target_repo = Gitorious::Git::Repository.from_path(target_repository.full_repository_path)
     source = source_repo.branch(source_branch)
     target = target_repo.branch(target_branch)
 
@@ -513,7 +513,7 @@ class MergeRequest < ActiveRecord::Base
     refspec = "#{ending_commit}:#{merge_branch_name}"
     refspec = "+#{refspec}" if force
 
-    repository = Gitorious::Git::Repository.new(source_repository.full_repository_path)
+    repository = Gitorious::Git::Repository.from_path(source_repository.full_repository_path)
     repository.push(target_repository.full_repository_path, refspec)
 
     push_new_branch_to_tracking_repo
@@ -524,7 +524,7 @@ class MergeRequest < ActiveRecord::Base
 
     refspec = [merge_branch_name, merge_branch_name(next_version_number)].join(":")
 
-    repository = Gitorious::Git::Repository.new(target_repository.full_repository_path)
+    repository = Gitorious::Git::Repository.from_path(target_repository.full_repository_path)
     repository.push(tracking_repository.full_repository_path, refspec)
 
     create_new_version

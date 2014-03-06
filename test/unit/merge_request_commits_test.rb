@@ -23,10 +23,10 @@ class MergeRequestCommitsTest < ActiveSupport::TestCase
 
   test "returns commits that are in source repository but not in target" do
     source_path = sample_repo_path("cloned_repo")
-    source_repo = Gitorious::Git::Repository.new(source_path)
+    source_repo = Gitorious::Git::Repository.from_path(source_path)
     source = source_repo.branch("master")
     target_path = sample_repo_path("original_repo")
-    target_repo = Gitorious::Git::Repository.new(target_path)
+    target_repo = Gitorious::Git::Repository.from_path(target_path)
     target = target_repo.branch("master")
 
     commits = source.commits_not_merged_upstream(target)
