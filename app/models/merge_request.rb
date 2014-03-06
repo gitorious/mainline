@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
@@ -510,22 +510,25 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def push_to_tracking_repository!(force = false)
-    options = {:timeout => false}
-    options[:force] = true if force
-    branch_spec = "#{ending_commit}:#{merge_branch_name}"
-    source_repository.git.git.push(options,
-      target_repository.full_repository_path, branch_spec)
+    refspec = "#{ending_commit}:#{merge_branch_name}"
+    refspec = "+#{refspec}" if force
+
+    repository = Gitorious::Git::Repository.new(source_repository.full_repository_path)
+    repository.push(target_repository.full_repository_path, refspec)
+
     push_new_branch_to_tracking_repo
   end
 
   def push_new_branch_to_tracking_repo
-    branch_spec = [merge_branch_name, merge_branch_name(next_version_number)].join(":")
-    unless tracking_repository
-      raise "No tracking repository exists for merge request #{id}"
-    end
-    target_repository.git.git.push({:timeout => false},
-      tracking_repository.full_repository_path, branch_spec)
+    raise "No tracking repository exists for merge request #{id}" unless tracking_repository
+
+    refspec = [merge_branch_name, merge_branch_name(next_version_number)].join(":")
+
+    repository = Gitorious::Git::Repository.new(target_repository.full_repository_path)
+    repository.push(tracking_repository.full_repository_path, refspec)
+
     create_new_version
+
     if current_version_number && current_version_number > 1
       target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self,
         user, "new version #{current_version_number}")
