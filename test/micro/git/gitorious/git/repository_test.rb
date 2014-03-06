@@ -25,10 +25,10 @@ module Gitorious
     class RepositoryTest < MiniTest::Spec
       include SampleRepoHelpers
 
-      describe "#branch" do
-        let(:path) { sample_repo_path }
-        let(:repository) { Repository.new(path) }
+      let(:path) { sample_repo_path }
+      let(:repository) { Repository.new(path) }
 
+      describe "#branch" do
         it "returns the branch for a given name" do
           branch = repository.branch("master")
 
@@ -38,6 +38,34 @@ module Gitorious
 
         it "returns nil for non-existing branches" do
           repository.branch("does-not-exist").must_be_nil
+        end
+      end
+
+      describe '#push' do
+        let(:other_repository_path) { sample_repo_path }
+        let(:source_ref) { '20ea396ef7b00bd0bb5589c8da4f3f4d157d4934' }
+
+        it "pushes source ref to target repository as target ref" do
+          dest_ref = 'refs/heads/slave'
+          refspec = "#{source_ref}:#{dest_ref}"
+
+          repository.push(other_repository_path, refspec)
+
+          resolved_dest_ref = `cd #{other_repository_path} && git rev-parse #{dest_ref}`.strip
+          resolved_dest_ref.must_equal(source_ref)
+        end
+
+        it 'force-pushes for "+" prefixed refspec' do
+          refspec = "+#{source_ref}:refs/heads/master"
+
+          repository.push(other_repository_path, refspec)
+
+          resolved_dest_ref = `cd #{other_repository_path} && git rev-parse master`.strip
+          resolved_dest_ref.must_equal(source_ref)
+        end
+
+        it "raises PushError with error message" do
+          proc { repository.push('/bad/url', 'foo:bar') }.must_raise PushError
         end
       end
     end
