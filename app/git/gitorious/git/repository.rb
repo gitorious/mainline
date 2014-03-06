@@ -42,7 +42,7 @@ module Gitorious
       end
 
       def push(url, refspec)
-        cmd = "git push #{url} #{refspec}"
+        cmd = "#{Gitorious.git_binary} push #{url} #{refspec}"
 
         Open3.popen3(cmd, chdir: rugged_repository.path) do |stdin, stdout, stderr, wait_thr|
           exitcode = wait_thr.value
