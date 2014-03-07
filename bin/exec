@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+#--
+#   Copyright (C) 2014 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+
+# Wrapper script for running Gitorious-related commands
+#
+# It will:
+# - make sure the command runs as user required in gitorious.yml (if set)
+# - make sure RAILS_ENV is set, defaulting to "production"
+# - change current working directory to Rails app root
+# - run the specified command with bundle exec, using either:
+#   - $app_dir/bin/ruby (your symlink/wrapper pointing to ruby in your system)
+#   - ruby (from $PATH)
+
+set -e
+
+bin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+app_dir="$bin_dir/.."
+
+if [[ -x "$bin_dir/ruby" ]]; then
+  ruby="$bin_dir/ruby"
+else
+  ruby="ruby"
+fi
+
+bundle_exec="$ruby -S bundle exec"
+
+BUNDLE_GEMFILE="$app_dir/Gemfile"
+RAILS_ENV=${RAILS_ENV:-production}
+
+export BUNDLE_GEMFILE RAILS_ENV
+
+cd $app_dir
+
+if [[ $RAILS_ENV == "production" ]]; then
+  user=$($ruby -e 'require "yaml"; puts YAML.load_file("config/gitorious.yml")["user"].to_s')
+  current_user_id=$(id -u)
+
+  if [[ -n $user ]]; then
+    user_id=$(id -u $user)
+
+    if [[ $current_user_id != $user_id ]]; then
+      if [[ $current_user_id == 0 ]]; then
+        exec su -c "exec $bundle_exec \"\$0\" \"\$@\"" $user -- "$@"
+      else
+        echo "Error: This script has to be run either as $user or root"
+        exit 1
+      fi
+    fi
+  else
+    if [[ $current_user_id == 0 ]]; then
+      echo "Error: Set user in gitorious.yml or run this script as non-root user"
+      exit 1
+    fi
+  fi
+fi
+
+exec $bundle_exec "$@"

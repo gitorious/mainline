@@ -1,7 +1,7 @@
-#!/usr/bin/env ruby
-require File.expand_path(File.dirname(__FILE__) + "/setup")
-require "yaml"
+#!/usr/bin/env bash
 
-Gitorious::CLI.new.run_with_gitorious_environment(:skip_bundler => true) do
-  load Gem.bin_path("bundler", "bundle")
-end
+set -e
+
+bin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+exec $bin_dir/exec bundle "$@"

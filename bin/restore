@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env bash
 
 # Convenience script for performing snapshot restore/disaster recovery
 # in standard production environments of Gitorious.
@@ -22,11 +22,8 @@
 # bin/restore /tmp/backup.tar                # Restore state from /tmp/backup.tar
 # env SKIP_REPOS=true bin/restore            # Handle repositories separately
 
-require "pathname"
-rake = Pathname.new(__FILE__).dirname.realpath.to_s+"/rake"
+set -e
 
-require File.expand_path(File.dirname(__FILE__) + "/setup")
-Gitorious::CLI.new.run_with_gitorious_environment do
-  snapshot_path = ARGV[0] || "snapshot.tar"
-  exec("#{rake} backup:restore TARBALL_PATH=#{snapshot_path}")
-end
+bin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+exec $bin_dir/rake backup:restore TARBALL_PATH=${1:-snapshot.tar}

@@ -1,9 +1,7 @@
-#!/usr/bin/env ruby
-#
-# This file can be Exec'ed without spawning a new shell
-# It lets you run rake with a full Gitorious environment
-#
-require File.expand_path(File.dirname(__FILE__) + "/setup")
-Gitorious::CLI.new.run_with_gitorious_environment do
-  load Gem.bin_path("rake", "rake")
-end
+#!/usr/bin/env bash
+
+set -e
+
+bin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+exec $bin_dir/exec rake "$@"

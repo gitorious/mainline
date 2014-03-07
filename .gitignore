@@ -44,3 +44,6 @@ vendor/bundle/
 engines
 
 test/fixtures/issues
+
+# your symlink/wrapper pointing to correct ruby version (used by bin/* scripts)
+bin/ruby
