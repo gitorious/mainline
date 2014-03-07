@@ -79,7 +79,7 @@ begin
   end
 rescue Gitorious::SSH::AccessDeniedError => e
   logger.info("Access denied or bad repository path for #{user.inspect}: #{original_command.inspect}")
-  gitorious_says "Access denied or wrong repository path"
+  gitorious_says "Access denied or wrong repository path: #{e.message}"
   exit!(1)
 rescue Gitorious::SSH::BadCommandError => e
   logger.info("Access denied or bad command for #{user.inspect}: #{original_command.inspect}")

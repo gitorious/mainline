@@ -36,6 +36,7 @@ module Gitorious
         @user_name = username
         @configuration = {}
         load_config
+        check_user_suspended
       end
       attr_accessor :project_name, :repository_name, :user_name
 
@@ -123,6 +124,10 @@ module Gitorious
         port = RUBY_VERSION > "1.9" ? _port : _port.to_s
 
         URI::HTTP.build(:host => host, :port => port, :path => path, :query => query)
+      end
+
+      def check_user_suspended
+        raise AccessDeniedError, "User is suspended." if configuration["user_suspended"] == "true"
       end
     end
   end
