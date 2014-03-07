@@ -38,6 +38,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :public_and_logged_in
   before_filter :require_current_eula
+  before_filter :custom_user_check_callbacks
 
   after_filter :mark_flash_status
 
@@ -421,6 +422,16 @@ class ApplicationController < ActionController::Base
       f.when(:owner_required) { |c| render_unauthorized }
       f.when(:current_user_required) { |c| current_user_only_redirect }
       block.call(f) if !block.nil?
+    end
+  end
+
+  def custom_user_check_callbacks
+    return unless current_user.is_a?(User)
+    unless CustomCallbacks.valid_user?(current_user)
+      self.current_user.forget_me if logged_in?
+      self.current_user = nil
+      flash[:notice] = "You have been logged out because a custom callback defined your user wasn't valid."
+      redirect_back_or_default("/")
     end
   end
 end

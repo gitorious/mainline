@@ -39,6 +39,13 @@ class RepositoryConfigurationsController < ApplicationController
     config_data = "real_path:#{repo.real_gitdir}\n"
     config_data << "force_pushing_denied:"
     config_data << (repo.deny_force_pushing? ? "true" : "false")
+
+    config_data << "\n"
+
+    # Used to abort connection if the user is suspended, since the Gitorious SSH script does not have a database connection - kaspernj.
+    user = User.find_by_login!(params[:username])
+    config_data << "user_custom_callback_valid:#{CustomCallbacks.valid_user?(user) ? "true" : "false"}\n"
+
     headers["Cache-Control"] = "public, max-age=600"
 
     render :text => config_data, :content_type => "text/x-yaml"

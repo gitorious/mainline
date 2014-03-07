@@ -4,6 +4,9 @@
 # If you just want straight database backed authentication you don't need this
 # file at all.
 #
+# If a custom callback should be made to validate the user (calls 'CustomValidationClass.valid_user?(user)' to validate).
+# custom_user_check_callback: CustomValidationClass
+#
 development:
   # Disable database authentication altogether
   #disable_default: true

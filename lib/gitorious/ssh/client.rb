@@ -36,6 +36,7 @@ module Gitorious
         @user_name = username
         @configuration = {}
         load_config
+        check_user_custom_callback
       end
       attr_accessor :project_name, :repository_name, :user_name
 
@@ -60,11 +61,11 @@ module Gitorious
 
       def real_path
         if !configuration["real_path"] || configuration["real_path"] == "nil"
-          raise AccessDeniedError
+          raise AccessDeniedError, "'real_path' was not set."
         end
         full_real_path = File.join(RepositoryRoot.default_base_path,
                                    configuration["real_path"])
-        raise AccessDeniedError unless File.exist?(full_real_path)
+        raise AccessDeniedError, "'full_real_path' did not exist: '#{full_real_path}'." unless File.exist?(full_real_path)
         full_real_path
       end
 
@@ -123,6 +124,10 @@ module Gitorious
         port = RUBY_VERSION > "1.9" ? _port : _port.to_s
 
         URI::HTTP.build(:host => host, :port => port, :path => path, :query => query)
+      end
+
+      def check_user_custom_callback
+        raise AccessDeniedError, "User was not valid when checking custom callbacks." if configuration["user_custom_callback_valid"] == "false"
       end
     end
   end
