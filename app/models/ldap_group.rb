@@ -200,11 +200,17 @@ class LdapGroup < ActiveRecord::Base
     end
 
     usernames.compact.flatten.map do |dn|
-      username = dn.split(",").detect do |pair|
-        k,v = pair.split("=")
-        v if k == configurator.login_attribute
+      if dn.include?(",") && dn.include?("=")
+        username = dn.split(",").detect do |pair|
+          k,v = pair.split("=")
+          v if k == configurator.login_attribute
+        end
+        
+        attr, username = dn.split(",").first.split("=")
+      else
+        username = dn
       end
-      attr, username = dn.split(",").first.split("=")
+      
       User.find_by_login(Gitorious::Authentication::LDAPConfigurator.transform_username(username))
     end.compact.uniq
   end
