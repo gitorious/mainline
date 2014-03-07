@@ -26,13 +26,12 @@
 <div class="container gts-container">
   <div class="row-fluid">
     <div class="span8">
+      <%= sorting.render_widget %>
       <ul class="gts-listing">
         <%= render projects %>
       </ul>
       <%= raw JustPaginate.page_navigation(page, total_pages) { |n|
         projects_path(page: n, order: sorting.current_order) } %>
-
-      <%= sorting.render_widget %>
     </div>
     <div class="span4">
       <p class="clearfix">

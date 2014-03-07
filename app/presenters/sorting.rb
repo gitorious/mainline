@@ -26,7 +26,7 @@ class Sorting
   end
 
   def render_widget
-    v.content_tag("ul", class: "pager") do
+    v.content_tag("ul", class: "pager sortings") do
       sorts.map do |sort|
         sort_name = sort[:name]
         if current_sort?(sort)
