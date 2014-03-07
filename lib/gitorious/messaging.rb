@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2014 Gitorious AS
+#   Copyright (C) 2011-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -122,9 +122,11 @@ module Gitorious
     end
 
     class AbortMessageException < Exception; end
+    class NoopLogger; def debug(message); end; end
 
     def self.logger
       return @@logger if defined? @@logger
+      return @@logger = NoopLogger.new if !defined?(ActiveSupport) || !defined?(Rails)
 
       filename = "message_processing#{Rails.env.test? ? '_test' : ''}"
       io = Rails.env.development? ? STDOUT : Rails.root + "log/#{filename}.log"
