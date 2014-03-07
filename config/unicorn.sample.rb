@@ -1,6 +1,23 @@
+# encoding: utf-8
+#--
+#   Copyright (C) 2014 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+
 # Unicorn configuration template, start your server like so:
-# cd <app_root>
-# script/unicorn -c config/unicorn.sample.rb
+# <app_root>/bin/unicorn -c config/unicorn.sample.rb
 #
 # This will load a master Unicorn process listening on a UNIX socket
 # in $RAILS_ROOT/tmp/pids/unicorn.sock By default the master process
@@ -27,47 +44,22 @@ timeout Timeout
 listen Socket.to_s
 
 before_fork do |server, worker|
-  old_pid = RAILS_ROOT + "/tmp/pids/unicorn.pid.oldbin"
-  if File.exists?(old_pid) && server.pid != File.read(old_pid).to_i
+  if defined?(ActiveRecord::Base)
+    ActiveRecord::Base.connection.disconnect!
+  end
+
+  old_pid = "#{server.config[:pid]}.oldbin"
+  if old_pid != server.pid
     begin
-      Process.kill("QUIT", File.read(old_pid).to_i)
+      sig = (worker.nr + 1) >= server.worker_processes ? :QUIT : :TTOU
+      Process.kill(sig, File.read(old_pid).to_i)
     rescue Errno::ENOENT, Errno::ESRCH
     end
   end
 end
 
-def gitorious_config(key)
-  config = YAML::load_file(Pathname(RAILS_ROOT) + "config/gitorious.yml")
-  config[key] || (config[RAILS_ENV] && config[RAILS_ENV][key])
-end
-
 after_fork do |server, worker|
-  ActiveRecord::Base.establish_connection
-
-  begin
-    uid, gid = Process.euid, Process.egid
-    user = gitorious_config("user")
-    if user
-      group = user
-      etc_user = Etc.getpwnam(user)
-      target_uid = etc_user.uid
-      begin
-        target_gid = Etc.getgrnam(group).gid
-      rescue
-        target_gid = etc_user.gid
-      end
-      worker.tmp.chown(target_uid, target_gid)
-      if uid != target_uid || gid != target_gid
-        Process.initgroups(user, target_gid)
-        Process::GID.change_privilege(target_gid)
-        Process::UID.change_privilege(target_uid)
-      end
-    end
-  rescue => e
-    if RAILS_ENV == 'development'
-      STDERR.puts "couldn't change user, oh well"
-    else
-      raise e
-    end
+  if defined?(ActiveRecord::Base)
+    ActiveRecord::Base.establish_connection
   end
 end
