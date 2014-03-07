@@ -35,6 +35,8 @@ class Group < ActiveRecord::Base
     :url => avatar_local_path,
     :path => ":rails_root/public#{avatar_local_path}"
 
+  scope :order_by_name, order(:name)
+
   def self.all_participating_in_projects(projects)
     mainlines = projects.flat_map { |p| p.repositories.mainlines }
     all = mainlines.flat_map { |m| m.committerships.groups }

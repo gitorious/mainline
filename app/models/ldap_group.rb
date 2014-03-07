@@ -31,6 +31,7 @@ class LdapGroup < ActiveRecord::Base
     :url => avatar_local_path,
     :path => ":rails_root/public#{avatar_local_path}"
 
+  scope :order_by_name, order(:name)
 
   serialize :member_dns
 
