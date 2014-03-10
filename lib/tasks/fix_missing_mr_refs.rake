@@ -32,16 +32,26 @@ task :fix_missing_mr_refs => :environment do
   repository = project.repositories.find_by_name(repository_name)
   mr = repository.merge_requests.find_by_sequence_number(mr_number.to_i)
 
+  # add missing ref for MR to target repo
+
+  ref_path = mr.target_repository.full_repository_path + "/refs/merge-requests/#{mr_number}"
+  unless File.exist?(ref_path)
+    puts "creating missing ref file #{ref_path} (#{mr.ending_commit}) in target repo"
+    File.open(ref_path, 'w') { |f| f.puts(mr.ending_commit) }
+  end
+
+  # add missing refs for MR versions to tracking repo
+
   mr_refs_dir = mr.tracking_repository.full_repository_path + "/refs/merge-requests/#{mr_number}"
   unless File.exist?(mr_refs_dir)
-    puts "creating missing MR refs directory #{mr_refs_dir}"
+    puts "creating missing MR refs directory #{mr_refs_dir} in tracking repo"
     FileUtils.mkdir_p(mr_refs_dir)
   end
 
   mr.versions.each do |version|
     ref_path = "#{mr_refs_dir}/#{version.version}"
     unless File.exist?(ref_path)
-      puts "creating missing version ref file #{ref_path} (#{mr.ending_commit})"
+      puts "creating missing version ref file #{ref_path} (#{mr.ending_commit}) in tracking repo"
       File.open(ref_path, 'w') { |f| f.puts(mr.ending_commit) }
     end
   end
