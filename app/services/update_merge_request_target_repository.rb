@@ -24,9 +24,8 @@ class UpdateMergeRequestTargetRepository < SimpleDelegator
     super(merge_request)
   end
 
-  def call(force)
-    refspec = "#{ending_commit}:#{merge_branch_name}"
-    refspec = "+#{refspec}" if force
+  def call
+    refspec = "+#{ending_commit}:#{merge_branch_name}"
 
     repository = Gitorious::Git::Repository.from_path(source_repository.full_repository_path)
     repository.push(target_repository.full_repository_path, refspec)

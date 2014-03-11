@@ -28,7 +28,7 @@ class MergeRequestProcessor
       create_tracking_repository(merge_request)
     end
     logger.info("Pushing tracking branch for merge request #{merge_request.to_param} in repository #{merge_request.target_repository.name}'s tracking repository. Project slug is #{merge_request.target_repository.project.slug}")
-    UpdateMergeRequestTargetRepository.new(merge_request).call(true)
+    UpdateMergeRequestTargetRepository.new(merge_request).call
     UpdateMergeRequestTrackingRepository.new(merge_request).call
   end
 
