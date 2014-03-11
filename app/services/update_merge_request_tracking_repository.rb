@@ -40,4 +40,28 @@ class UpdateMergeRequestTrackingRepository < SimpleDelegator
     end
   end
 
+  private
+
+  def create_new_version
+    result = build_new_version
+    result.merge_base_sha = calculate_merge_base
+    result.save
+    return result
+  end
+
+  def build_new_version
+    versions.build(:version => next_version_number)
+  end
+
+  def next_version_number
+    highest_version = versions.last
+    highest_version_number = highest_version ? highest_version.version : 0
+    highest_version_number + 1
+  end
+
+  def calculate_merge_base
+    target_repository.git.git.merge_base({:timeout => false},
+      target_branch, merge_branch_name).strip
+  end
+
 end

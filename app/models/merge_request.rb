@@ -550,28 +550,6 @@ class MergeRequest < ActiveRecord::Base
     result == :true
   end
 
-  def create_new_version
-    result = build_new_version
-    result.merge_base_sha = calculate_merge_base
-    result.save
-    return result
-  end
-
-  def calculate_merge_base
-    target_repository.git.git.merge_base({:timeout => false},
-      target_branch, merge_branch_name).strip
-  end
-
-  def build_new_version
-    versions.build(:version => next_version_number)
-  end
-
-  def next_version_number
-    highest_version = versions.last
-    highest_version_number = highest_version ? highest_version.version : 0
-    highest_version_number + 1
-  end
-
   # Migrate repositories from the old regime with reasons: If a reason
   # exists: create a comment from the user who last updated us,
   # provide the state to have it look right If no reason exists:
