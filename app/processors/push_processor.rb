@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2013 Gitorious AS
+#   Copyright (C) 2011-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +44,8 @@ class PushProcessor
 
   def process_merge_request
     return if spec.action_delete? or spec.action_create?
-    merge_request.update_from_push!
+    UpdateMergeRequestTrackingRepository.new(merge_request).call
+    merge_request.save
   end
 
   def process_push

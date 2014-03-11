@@ -49,32 +49,6 @@ class MergeRequestTest < ActiveSupport::TestCase
   should have_many(:comments)
   should_not allow_mass_assignment_of(:sequence_number)
 
-  should "calculate the merge base between target branch and self" do
-    repo = mock("Git repo")
-    git = mock("Git")
-    repo.stubs(:git).returns(git)
-    @merge_request.target_repository.stubs(:git).returns(repo)
-    git.expects(:merge_base).with({:timeout => false},
-                                  @merge_request.target_branch, "refs/merge-requests/#{@merge_request.to_param}").returns("ffcaabd\n")
-    assert_equal "ffcaabd", @merge_request.calculate_merge_base
-  end
-
-  should "create a version with the merge base" do
-    @merge_request.expects(:calculate_merge_base).returns("ffcaabd")
-    version = @merge_request.create_new_version
-    assert_equal 1, version.version
-    assert_equal "ffcaabd", version.merge_base_sha
-  end
-
-  should "generate valid version numbers for its version" do
-    version = @merge_request.build_new_version
-    assert version.save
-    assert_equal 1, version.version
-    version = @merge_request.build_new_version
-    assert version.save
-    assert_equal 2, version.version
-  end
-
   should "publish a message to the queue when being confirmed by the user" do
     @merge_request.confirmed_by_user
 

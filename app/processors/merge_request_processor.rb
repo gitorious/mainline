@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,8 @@ class MergeRequestProcessor
       create_tracking_repository(merge_request)
     end
     logger.info("Pushing tracking branch for merge request #{merge_request.to_param} in repository #{merge_request.target_repository.name}'s tracking repository. Project slug is #{merge_request.target_repository.project.slug}")
-    merge_request.push_to_tracking_repository!(true)
+    UpdateMergeRequestTargetRepository.new(merge_request).call(true)
+    UpdateMergeRequestTrackingRepository.new(merge_request).call
   end
 
   def create_tracking_repository(merge_request)

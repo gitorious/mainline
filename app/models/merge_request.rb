@@ -491,11 +491,6 @@ class MergeRequest < ActiveRecord::Base
     }.merge(opts))
   end
 
-  def update_from_push!
-    push_new_branch_to_tracking_repo
-    save
-  end
-
   def valid_oauth_credentials?
     response = access_token.get("/")
     return Net::HTTPSuccess === response
@@ -507,15 +502,6 @@ class MergeRequest < ActiveRecord::Base
 
   def recently_created?
     !ready? && created_at > 2.minutes.ago
-  end
-
-  def push_to_tracking_repository!(force = false)
-    UpdateMergeRequestTargetRepository.new(self).call(force)
-    push_new_branch_to_tracking_repo
-  end
-
-  def push_new_branch_to_tracking_repo
-    UpdateMergeRequestTrackingRepository.new(self).call
   end
 
   # Since we'll be deleting the ref in the backend, this will be
