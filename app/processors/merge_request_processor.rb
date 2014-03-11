@@ -28,8 +28,7 @@ class MergeRequestProcessor
       create_tracking_repository(merge_request)
     end
     logger.info("Pushing tracking branch for merge request #{merge_request.to_param} in repository #{merge_request.target_repository.name}'s tracking repository. Project slug is #{merge_request.target_repository.project.slug}")
-    UpdateMergeRequestTargetRepository.new(merge_request).call
-    UpdateMergeRequestTrackingRepository.new(merge_request).call
+    update_repositories(merge_request)
   end
 
   def create_tracking_repository(merge_request)
@@ -38,4 +37,10 @@ class MergeRequestProcessor
     tracking_repo = command.execute(command.build)
     logger.info("Created tracking repository at #{tracking_repo.real_gitdir} for merge request #{merge_request.to_param}")
   end
+
+  def update_repositories(merge_request)
+    UpdateMergeRequestTargetRepository.new(merge_request).call
+    UpdateMergeRequestTrackingRepository.new(merge_request).call
+  end
+
 end
