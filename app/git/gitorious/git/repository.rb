@@ -27,8 +27,16 @@ module Gitorious
 
     class Repository
 
-      def self.from_path(path)
-        new(Rugged::Repository.new(path))
+      def self.from_path(repository_path)
+        new(Rugged::Repository.new(repository_path))
+      end
+
+      def self.push(repository_path, dest, refspec)
+        from_path(repository_path).push(dest, refspec)
+      end
+
+      def self.merge_base(repository_path, sha1, sha2)
+        from_path(repository_path).merge_base(sha1, sha2)
       end
 
       def initialize(rugged_repository)
