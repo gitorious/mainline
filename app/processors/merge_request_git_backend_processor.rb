@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2012 Gitorious AS
+#   Copyright (C) 2011-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -40,12 +40,12 @@ class MergeRequestGitBackendProcessor
 
   def delete_target_repository_ref
     source_repository.git.git.push({:timeout => false},
-      target_repository.full_repository_path, ":#{@message['merge_branch_name']}")
+      target_repository.full_repository_path, ":#{@message['ref_name']}")
   end
 
   private
   def do_delete
-    logger.info("Deleting tracking branch #{@message['merge_branch_name']} for merge request " +
+    logger.info("Deleting tracking branch #{@message['ref_name']} for merge request " +
       "in target repository #{@message['target_name']}")
     begin
       delete_target_repository_ref

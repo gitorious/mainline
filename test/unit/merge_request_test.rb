@@ -775,7 +775,7 @@ class MergeRequestTest < ActiveSupport::TestCase
                          "action" => "delete",
                          "target_path" => mr.target_repository.full_repository_path,
                          "target_name" => mr.target_repository.url_path,
-                         "merge_branch_name" => mr.merge_branch_name,
+                         "ref_name" => mr.ref_name,
                          "target_repository_id" => mr.target_repository.id,
                          "source_repository_id" => mr.source_repository.id,
                        })
@@ -913,4 +913,20 @@ class MergeRequestTest < ActiveSupport::TestCase
         @merge_request.project)
     end
   end
+
+  context "#ref_name" do
+    setup do
+      @merge_request = MergeRequest.new
+      @merge_request.sequence_number = 123
+    end
+
+    should "live under refs and include its sequence_number" do
+      assert_equal "refs/merge-requests/123", @merge_request.ref_name
+    end
+
+    should "have the given version number as the last part" do
+      assert_equal "refs/merge-requests/123/5", @merge_request.ref_name(5)
+    end
+  end
+
 end

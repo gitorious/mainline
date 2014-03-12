@@ -39,7 +39,7 @@ class MergeRequestGitBackendProcessorTest < ActiveSupport::TestCase
       @msg = {
         :action => "delete",
         :target_name => @merge_request.target_repository.url_path,
-        :merge_branch_name => @merge_request.merge_branch_name,
+        :ref_name => @merge_request.ref_name,
         :source_repository_id => @merge_request.source_repository.id,
         :target_repository_id => @merge_request.target_repository.id,
       }
@@ -49,7 +49,7 @@ class MergeRequestGitBackendProcessorTest < ActiveSupport::TestCase
       @processor.stubs(:source_repository).returns(@merge_request.source_repository)
       @source_git.expects(:push).with({:timeout => false},
         @merge_request.target_repository.full_repository_path,
-        ":#{@merge_request.merge_branch_name}")
+        ":#{@merge_request.ref_name}")
       @processor.consume(@msg.to_json)
     end
 

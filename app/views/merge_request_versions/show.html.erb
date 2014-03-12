@@ -1,6 +1,6 @@
 <%
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@
 git checkout -b merge-requests/<%= merge_request.sequence_number %>
 
 # Fetch the merge request into the new branch
-git pull <%= merge_request.target_repository.clone_url %> <%= merge_request.merge_branch_name %>
+git pull <%= merge_request.target_repository.clone_url %> <%= merge_request.ref_name %>
 
 # Show the commits
 git log --pretty=oneline --abbrev-commit <%= merge_request.target_branch %>..merge-requests/<%= merge_request.sequence_number %></pre>

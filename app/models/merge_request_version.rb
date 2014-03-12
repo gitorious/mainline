@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ class MergeRequestVersion < ActiveRecord::Base
   def affected_commits
     Rails.cache.fetch(cache_key + '/affected_commits') do
       @affected_commits ||= merge_request.tracking_repository.git.commits_between(
-        merge_base_sha, merge_request.merge_branch_name(version)).reverse
+        merge_base_sha, merge_request.ref_name(version)).reverse
     end
   end
 
@@ -119,7 +119,7 @@ class MergeRequestVersion < ActiveRecord::Base
     {
       :source_repository_path => merge_request.source_repository.full_repository_path,
       :tracking_repository_path => merge_request.tracking_repository.full_repository_path,
-      :target_branch_name => merge_request.merge_branch_name(version),
+      :target_branch_name => merge_request.ref_name(version),
       :source_repository_id => merge_request.source_repository.id
     }
   end

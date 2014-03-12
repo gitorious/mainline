@@ -274,19 +274,8 @@ class MergeRequest < ActiveRecord::Base
     legacy? ? true : !versions.blank?
   end
 
-  # Returns the name for the merge request branch. version can be:
-  # - the number of a version,
-  # - :current for the latest version
-  # - nil for no version
-  def merge_branch_name(version=false)
-    result = ["refs","merge-requests",to_param]
-    case version
-    when :current
-      result << versions.last.version
-    when Fixnum
-      result << version
-    end
-    result.join("/")
+  def ref_name(version = nil)
+    ["refs", "merge-requests", to_param, version].compact.join("/")
   end
 
   def commit_diff_from_tracking_repo(which_version=nil)
@@ -512,7 +501,7 @@ class MergeRequest < ActiveRecord::Base
       :action => "delete",
       :target_path => target_repository.full_repository_path,
       :target_name => target_repository.url_path,
-      :merge_branch_name => merge_branch_name,
+      :ref_name => ref_name,
       :source_repository_id => source_repository.id,
       :target_repository_id => target_repository.id,
     }

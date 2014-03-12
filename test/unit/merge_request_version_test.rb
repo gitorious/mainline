@@ -31,7 +31,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       repo = mock("Tracking git repo")
       repo.expects(:commits_between).with(
         @first_version.merge_base_sha,
-        @merge_request.merge_branch_name(@first_version.version)
+        @merge_request.ref_name(@first_version.version)
       ).returns([])
       tracking_repo = mock("Tracking repository")
       tracking_repo.stubs(:id).returns(999)
@@ -164,7 +164,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       result = {
         :source_repository_path => @merge_request.source_repository.full_repository_path,
         :tracking_repository_path => @merge_request.tracking_repository.full_repository_path,
-        :target_branch_name => @merge_request.merge_branch_name(@version.version),
+        :target_branch_name => @merge_request.ref_name(@version.version),
         :source_repository_id => @merge_request.source_repository.id
       }
       assert_equal result, @version.branch_deletion_message

@@ -39,7 +39,7 @@ class MergeRequestVersionProcessorTest < ActiveSupport::TestCase
       repo.expects(:push).with(
         { :timeout => false },
         @tracking_repository.full_repository_path,
-        ":#{@merge_request.merge_branch_name(@version.version)}")
+        ":#{@merge_request.ref_name(@version.version)}")
       @source_repository.expects(:git).returns(mock(:git => repo))
       @processor.stubs(:source_repository).returns(@source_repository)
 
@@ -74,7 +74,7 @@ class MergeRequestVersionProcessorTest < ActiveSupport::TestCase
     end
 
     should "extract the branch name" do
-      assert_equal(@merge_request.merge_branch_name(@version.version),
+      assert_equal(@merge_request.ref_name(@version.version),
         @processor.target_branch_name)
     end
 
