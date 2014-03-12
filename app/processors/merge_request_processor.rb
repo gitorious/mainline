@@ -39,8 +39,8 @@ class MergeRequestProcessor
   end
 
   def update_repositories(merge_request)
-    UpdateMergeRequestTargetRepository.new(merge_request).call
-    UpdateMergeRequestTrackingRepository.new(merge_request).call
+    UpdateMergeRequestTargetRepository.call(merge_request)
+    CreateNewMergeRequestVersion.call(merge_request)
   end
 
 end

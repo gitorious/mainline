@@ -576,6 +576,31 @@ class MergeRequest < ActiveRecord::Base
     target_repository.project
   end
 
+  def source_repository_path
+    source_repository.full_repository_path
+  end
+
+  def target_repository_path
+    target_repository.full_repository_path
+  end
+
+  def tracking_repository_path
+    tracking_repository.full_repository_path
+  end
+
+  def create_new_version(merge_base_sha)
+    merge_request_version = versions.create(
+      version:        next_version_number,
+      merge_base_sha: merge_base_sha
+    )
+
+    if merge_request_version.version > 1
+      add_project_event(merge_request_version)
+    end
+
+    merge_request_version
+  end
+
   protected
   def set_sequence_number
     if target_repository
@@ -586,4 +611,16 @@ class MergeRequest < ActiveRecord::Base
   def add_to_creators_favorites
     watched_by!(user)
   end
+
+  private
+
+  def next_version_number
+    current_version_number.to_i + 1
+  end
+
+  def add_project_event(merge_request_version)
+    project.create_event(Action::UPDATE_MERGE_REQUEST, self,
+      user, "new version #{merge_request_version.version}")
+  end
+
 end

@@ -123,8 +123,7 @@ class CommentTest < ActiveSupport::TestCase
   context 'On merge request versions' do
     setup do
       @merge_request = merge_requests(:moes_to_johans)
-      @merge_request.stubs(:calculate_merge_base).returns("ffc00")
-      @first_version = @merge_request.create_new_version
+      @first_version = @merge_request.create_new_version('ffc00')
       @comment = @first_version.comments.build(:path => "README", :lines => "1-1:31-31+32",
         :sha1 => "ffac-aafc", :user => @merge_request.user,  :body => "Needs more cowbell",
         :project => @merge_request.target_repository.project)

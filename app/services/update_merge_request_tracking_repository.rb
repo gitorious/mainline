@@ -16,52 +16,30 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require 'delegate'
+class UpdateMergeRequestTrackingRepository
 
-class UpdateMergeRequestTrackingRepository < SimpleDelegator
+  attr_reader :git_repository_pusher
 
-  def initialize(merge_request)
-    super(merge_request)
+  def self.call(merge_request)
+    new(Gitorious::Git::Repository).call(merge_request)
   end
 
-  def call
-    raise "No tracking repository exists for merge request #{id}" unless tracking_repository
+  def initialize(git_repository_pusher)
+    @git_repository_pusher = git_repository_pusher
+  end
 
-    refspec = [merge_branch_name, merge_branch_name(next_version_number)].join(":")
-
-    repository = Gitorious::Git::Repository.from_path(target_repository.full_repository_path)
-    repository.push(tracking_repository.full_repository_path, refspec)
-
-    create_new_version
-
-    if current_version_number && current_version_number > 1
-      target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self,
-        user, "new version #{current_version_number}")
-    end
+  def call(merge_request, version_number)
+    git_repository_pusher.push(
+      merge_request.target_repository_path,
+      merge_request.tracking_repository_path,
+      refspec(merge_request, version_number)
+    )
   end
 
   private
 
-  def create_new_version
-    result = build_new_version
-    result.merge_base_sha = calculate_merge_base
-    result.save
-    return result
-  end
-
-  def build_new_version
-    versions.build(:version => next_version_number)
-  end
-
-  def next_version_number
-    highest_version = versions.last
-    highest_version_number = highest_version ? highest_version.version : 0
-    highest_version_number + 1
-  end
-
-  def calculate_merge_base
-    target_repository.git.git.merge_base({:timeout => false},
-      target_branch, merge_branch_name).strip
+  def refspec(merge_request, version_number)
+    [merge_request.ref_name, merge_request.ref_name(version_number)].join(":")
   end
 
 end

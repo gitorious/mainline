@@ -66,9 +66,8 @@ class ParamsFinderTest < ActiveSupport::TestCase
     setup do
       @repo = repositories(:johans)
       @mr = @repo.merge_requests.public.first
-      @mr.stubs(:calculate_merge_base).returns("ffcca0")
-      @first = @mr.create_new_version
-      @second = @mr.create_new_version
+      @first = @mr.create_new_version('ffcca0')
+      @second = @mr.create_new_version('ffcca0')
     end
 
     should "find last merge request version by default" do

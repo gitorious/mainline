@@ -44,8 +44,7 @@ class PushProcessor
 
   def process_merge_request
     return if spec.action_delete? or spec.action_create?
-    UpdateMergeRequestTrackingRepository.new(merge_request).call
-    merge_request.save
+    CreateNewMergeRequestVersion.call(merge_request)
   end
 
   def process_push

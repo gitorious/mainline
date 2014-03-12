@@ -111,8 +111,7 @@ class MergeRequestTest < ActiveSupport::TestCase
   context "Merge request readyness" do
     should "have a ready? method which tells whether it has been created in the background" do
       assert !@merge_request.ready?
-      v = @merge_request.build_new_version
-      assert v.save
+      @merge_request.create_new_version('ffac')
       assert @merge_request.ready?
     end
 
@@ -123,57 +122,17 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
   end
 
-  should "be able to update from a push event" do
-    @merge_request.expects(:push_new_branch_to_tracking_repo).once
-    @merge_request.update_from_push!
-    @merge_request.reload
-  end
-
-  should "not create an event when updated since this is done inside push_new_branch_to_tracking_repo" do
-    @merge_request.stubs(:push_new_branch_to_tracking_repo)
-    assert_incremented_by(@merge_request.target_repository.project.events, :size, 0) do
-      @merge_request.update_from_push!
-    end
-  end
-
   should "create a new version with the merge base between target branch and self" do
-    @merge_request.expects(:calculate_merge_base).returns("ff0")
-    version = @merge_request.create_new_version
+    version = @merge_request.create_new_version('ff0')
     assert_equal "ff0", version.merge_base_sha
   end
 
   should "calculate commit diff from tracking repo" do
-    @merge_request.stubs(:calculate_merge_base).returns("ff0")
-    version = @merge_request.create_new_version
+    version = @merge_request.create_new_version('ff0')
     version.stubs(:affected_commits).returns([])
     @merge_request.stubs(:versions).returns([version])
     assert_equal [], @merge_request.commit_diff_from_tracking_repo(version.version)
     assert_equal [], @merge_request.commit_diff_from_tracking_repo
-  end
-
-  should "build the name of its merge request branch" do
-    @merge_request.stubs(:calculate_merge_base).returns("ff0")
-    version = @merge_request.create_new_version
-    assert_equal "refs/merge-requests/#{@merge_request.to_param}", @merge_request.merge_branch_name
-    assert_equal "refs/merge-requests/#{@merge_request.to_param}/1", @merge_request.merge_branch_name(1)
-    assert_equal "refs/merge-requests/#{@merge_request.to_param}/#{version.version}", @merge_request.merge_branch_name(:current)
-  end
-
-  should "push new branch to tracking repo" do
-    tracking_repo = mock
-    tracking_repo.stubs(:full_repository_path).returns("/tmp/foo.git")
-    @merge_request.stubs(:tracking_repository).returns(tracking_repo)
-    repo = mock("Target repository")
-    repo.expects(:push).once.with({:timeout => false},
-                                  @merge_request.tracking_repository.full_repository_path,
-                                  "refs/merge-requests/#{@merge_request.to_param}:refs/merge-requests/#{@merge_request.to_param}/#{@merge_request.next_version_number}")
-    git = mock
-    git.stubs(:git).returns(repo)
-    @merge_request.target_repository.stubs(:git).returns(git)
-    @merge_request.stubs(:calculate_merge_base).returns("ff0")
-    assert_incremented_by(@merge_request.versions, :size, 1) do
-      @merge_request.push_new_branch_to_tracking_repo
-    end
   end
 
   should "has a closed? status" do
@@ -394,15 +353,13 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
 
     should "access its versions by version number" do
-      @merge_request.stubs(:calculate_merge_base).returns("ffac")
-      3.times{@merge_request.create_new_version}
+      3.times{ @merge_request.create_new_version('ffac') }
       assert_nil @merge_request.version_number(4)
       assert_equal 3, @merge_request.version_number(3).version
     end
 
     should "use the real commits if the target branch has been updated" do
-      @merge_request.stubs(:calculate_merge_base).returns("ff0")
-      @merge_request.create_new_version
+      @merge_request.create_new_version('ff0')
       @merge_request.expects(:commit_diff_from_tracking_repo).once
       @merge_request.commits_to_be_merged
     end
@@ -603,61 +560,6 @@ class MergeRequestTest < ActiveSupport::TestCase
 
       xml_payload = @merge_request.to_xml
       assert_match(/<comment .*author="#{users(:johan).title}".*>/, xml_payload)
-    end
-  end
-
-  context "Pushing changes to the merge request repository" do
-    setup do
-      @merge_request = merge_requests(:moes_to_johans)
-    end
-
-    should "send a push command from the source repository to the tracking repository" do
-      cmd = CreateTrackingRepositoryCommand.new(MessageHub.new, @merge_request.target_repository)
-      cmd.execute(cmd.build)
-      mr_repo = @merge_request.target_repository.tracking_repository
-      merge_request_repo_path = mr_repo.full_repository_path
-      branch_spec_base = "#{@merge_request.ending_commit}:refs/merge-requests"
-      branch_spec = [branch_spec_base, @merge_request.to_param].join("/")
-      tracking_branch_spec = [branch_spec_base, @merge_request.to_param, 1].join("/")
-
-      git = mock("Git")
-      git_backend = mock("Source repository git")
-      git.stubs(:git).returns(git_backend)
-      @merge_request.source_repository.stubs(:git).returns(git)
-      @merge_request.expects(:push_new_branch_to_tracking_repo).twice
-
-      git_backend.expects(:push).with({:timeout => false},
-                                      @merge_request.target_repository.full_repository_path, branch_spec).once
-      @merge_request.push_to_tracking_repository!
-      git_backend.expects(:push).with({:force => true,:timeout => false},
-                                      @merge_request.target_repository.full_repository_path, branch_spec).once
-      @merge_request.push_to_tracking_repository!(true)
-    end
-
-    context "Update events" do
-      setup do
-        git = mock("Git")
-        @git_backend = mock("tracking repository git")
-        git.stubs(:git).returns(@git_backend)
-        @merge_request.target_repository.stubs(:git).returns(git)
-        @git_backend.stubs(:merge_base).returns("abc")
-      end
-
-      should "not create a 'new version' event if it is the first version" do
-        @git_backend.expects(:push)
-        assert_no_difference("Event.count") do
-          @merge_request.push_new_branch_to_tracking_repo
-        end
-      end
-
-      should "create a 'new version' event unless it is the first version" do
-        @git_backend.expects(:push)
-        @merge_request.create_new_version
-        assert_difference("Event.count") do
-          @merge_request.push_new_branch_to_tracking_repo
-        end
-        assert_equal Action::UPDATE_MERGE_REQUEST, Event.last.action
-      end
     end
   end
 
@@ -914,6 +816,47 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
   end
 
+  context "#source_repository_path" do
+    setup do
+      @merge_request = MergeRequest.new
+      source_repository = Repository.new
+      source_repository.stubs(:full_repository_path).returns('/full/path')
+      @merge_request.source_repository = source_repository
+    end
+
+    should "be an absolute path to source repository" do
+      assert_equal "/full/path", @merge_request.source_repository_path
+    end
+  end
+
+  context "#target_repository_path" do
+    setup do
+      @merge_request = MergeRequest.new
+      target_repository = Repository.new
+      target_repository.stubs(:full_repository_path).returns('/full/path')
+      @merge_request.target_repository = target_repository
+    end
+
+    should "be an absolute path to target repository" do
+      assert_equal "/full/path", @merge_request.target_repository_path
+    end
+  end
+
+  context "#tracking_repository_path" do
+    setup do
+      @merge_request = MergeRequest.new
+      tracking_repository = Repository.new
+      tracking_repository.stubs(:full_repository_path).returns('/full/path')
+      target_repository = Repository.new
+      target_repository.stubs(:tracking_repository).returns(tracking_repository)
+      @merge_request.target_repository = target_repository
+    end
+
+    should "be an absolute path to tracking repository" do
+      assert_equal "/full/path", @merge_request.tracking_repository_path
+    end
+  end
+
   context "#ref_name" do
     setup do
       @merge_request = MergeRequest.new
@@ -926,6 +869,35 @@ class MergeRequestTest < ActiveSupport::TestCase
 
     should "have the given version number as the last part" do
       assert_equal "refs/merge-requests/123/5", @merge_request.ref_name(5)
+    end
+  end
+
+  context "#create_new_version" do
+    setup do
+      @merge_request = merge_requests(:moes_to_johans)
+    end
+
+    should "create new version with next sequential number and given merge base" do
+      new_version = @merge_request.create_new_version('shashasha')
+      assert_equal "shashasha", new_version.merge_base_sha
+      assert_equal 1, new_version.version
+
+      new_version = @merge_request.create_new_version('shashasha')
+      assert_equal 2, new_version.version
+    end
+
+    should "create project event for all but first version" do
+      assert_difference '@merge_request.project.events.count', 0 do
+        @merge_request.create_new_version('shashasha')
+      end
+
+      assert_difference '@merge_request.project.events.count', 1 do
+        @merge_request.create_new_version('shashasha')
+      end
+
+      assert_difference '@merge_request.project.events.count', 1 do
+        @merge_request.create_new_version('shashasha')
+      end
     end
   end
 

@@ -16,19 +16,30 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require 'delegate'
+class UpdateMergeRequestTargetRepository
 
-class UpdateMergeRequestTargetRepository < SimpleDelegator
+  attr_reader :git_repository_pusher
 
-  def initialize(merge_request)
-    super(merge_request)
+  def self.call(merge_request)
+    new(Gitorious::Git::Repository).call(merge_request)
   end
 
-  def call
-    refspec = "+#{ending_commit}:#{merge_branch_name}"
+  def initialize(git_repository_pusher)
+    @git_repository_pusher = git_repository_pusher
+  end
 
-    repository = Gitorious::Git::Repository.from_path(source_repository.full_repository_path)
-    repository.push(target_repository.full_repository_path, refspec)
+  def call(merge_request)
+    git_repository_pusher.push(
+      merge_request.source_repository_path,
+      merge_request.target_repository_path,
+      refspec(merge_request)
+    )
+  end
+
+  private
+
+  def refspec(merge_request)
+    "+#{merge_request.ending_commit}:#{merge_request.ref_name}"
   end
 
 end

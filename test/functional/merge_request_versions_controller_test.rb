@@ -27,8 +27,7 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
       @merge_request.status = MergeRequest::STATUS_OPEN
       @merge_request.status_tag = "Open"
       @merge_request.save
-      @merge_request.stubs(:calculate_merge_base).returns("ffac0")
-      @version = @merge_request.create_new_version
+      @version = @merge_request.create_new_version('ffac0')
       @git = mock
 
       #(repo, id, parents, tree, author, authored_date, committer, committed_date, message)

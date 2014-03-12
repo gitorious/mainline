@@ -46,9 +46,8 @@ class MergeRequestsControllerTest < ActionController::TestCase
     @source_repository = repositories(:johans2)
     @target_repository = repositories(:johans)
     @merge_request = merge_requests(:moes_to_johans_open)
-    @merge_request.stubs(:calculate_merge_base).returns("ff")
     @merge_request.stubs(:commit_merged?).returns(true)
-    version = @merge_request.create_new_version
+    version = @merge_request.create_new_version('ff')
     MergeRequestVersion.any_instance.stubs(:affected_commits).returns([])
     @merge_request.versions << version
     version.stubs(:merge_request).returns(@merge_request)

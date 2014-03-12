@@ -23,8 +23,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
   context 'In general' do
     setup do
       @merge_request = merge_requests(:moes_to_johans)
-      @merge_request.stubs(:calculate_merge_base).returns("ffcca0")
-      @first_version = @merge_request.create_new_version
+      @first_version = @merge_request.create_new_version('ffcca0')
     end
 
     should 'ask the target repository for commits' do
@@ -48,7 +47,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
     end
 
     should "have a unique cache key between versions" do
-      second_version = @merge_request.create_new_version
+      second_version = @merge_request.create_new_version('cacaca')
       assert_not_equal @first_version.cache_key, second_version.cache_key
     end
   end
@@ -56,8 +55,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
   context 'Diff browsing' do
     setup do
       @merge_request = merge_requests(:moes_to_johans)
-      @merge_request.stubs(:calculate_merge_base).returns("ffcca0")
-      @version = @merge_request.create_new_version
+      @version = @merge_request.create_new_version('ffcca0')
       @diff_backend = mock
       @version.stubs(:diff_backend).returns(@diff_backend)
     end
@@ -82,7 +80,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
     setup do
       @merge_request = merge_requests(:moes_to_johans)
       @merge_request.stubs(:calculate_merge_base).returns("ffca0")
-      @version = @merge_request.create_new_version
+      @version = @merge_request.create_new_version('ffca0')
     end
 
     should "be the merge base only if no affected commits" do
@@ -127,8 +125,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
   context 'Commenting' do
     setup do
       @merge_request = merge_requests(:moes_to_johans)
-      @merge_request.stubs(:calculate_merge_base).returns("ffcca0")
-      @first_version = @merge_request.create_new_version
+      @first_version = @merge_request.create_new_version('ffcca0')
       @comment = @first_version.comments.create(:path => "README", :lines => "1-1:1-32+33",
         :sha1 => "ffac-aafc", :user => @merge_request.user,  :body => "Needs more cowbell",
         :project => @merge_request.target_repository.project)

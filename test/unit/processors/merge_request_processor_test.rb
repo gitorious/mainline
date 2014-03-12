@@ -26,6 +26,8 @@ class MergeRequestProcessorTest < ActiveSupport::TestCase
     @target_repo = @merge_request.target_repository
     @merge_request.stubs(:target_repository).returns(@target_repo)
     MergeRequest.expects(:find).with(@merge_request.id).returns(@merge_request)
+    UpdateMergeRequestTargetRepository.stubs(:call)
+    CreateNewMergeRequestVersion.stubs(:call)
   end
 
   should "send a repo creation message when the target repo does not have a MR repo" do
@@ -33,14 +35,20 @@ class MergeRequestProcessorTest < ActiveSupport::TestCase
     @target_repo.expects(:has_tracking_repository?).once.returns(false)
     tracking_repo = OpenStruct.new(:real_gitdir => "ff0/bbc/234")
     CreateTrackingRepositoryCommand.any_instance.expects(:execute).returns(tracking_repo)
-    @merge_request.expects(:"push_to_tracking_repository!").with(true).once
     MergeRequestProcessor.new.consume(message)
   end
 
-  should "create a new branch from the merge request" do
+  should "push proposed changes to target repository" do
     message = { "merge_request_id" => @merge_request.id }.to_json
     @target_repo.expects(:has_tracking_repository?).once.returns(true)
-    @merge_request.expects(:push_to_tracking_repository!).once
+    UpdateMergeRequestTargetRepository.expects(:call).with(@merge_request)
+    @processor.consume(message)
+  end
+
+  should "create a new merge request version" do
+    message = { "merge_request_id" => @merge_request.id }.to_json
+    @target_repo.expects(:has_tracking_repository?).once.returns(true)
+    CreateNewMergeRequestVersion.expects(:call).with(@merge_request)
     @processor.consume(message)
   end
 end

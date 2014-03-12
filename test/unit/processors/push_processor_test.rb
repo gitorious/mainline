@@ -95,7 +95,7 @@ class PushProcessorTest < ActiveSupport::TestCase
 
     should "update merge request" do
       @processor.stubs(:merge_request).returns(@merge_request)
-      @merge_request.expects(:update_from_push!)
+      CreateNewMergeRequestVersion.expects(:call).with(@merge_request)
       @processor.load_message(@payload)
       @processor.process_merge_request
     end
@@ -103,7 +103,7 @@ class PushProcessorTest < ActiveSupport::TestCase
     should "not fail if username is nil" do
       @payload[:username] = nil
       @processor.stubs(:merge_request).returns(@merge_request)
-      @merge_request.expects(:update_from_push!)
+      CreateNewMergeRequestVersion.expects(:call).with(@merge_request)
       @processor.consume(@payload.to_json)
     end
 
