@@ -26,7 +26,6 @@ module Gitorious
     PushError = Class.new(Error)
 
     class Repository
-      attr_reader :rugged_repository
 
       def self.from_path(path)
         new(Rugged::Repository.new(path))
@@ -59,6 +58,10 @@ module Gitorious
       def merge_base(sha1, sha2)
         rugged_repository.merge_base(sha1, sha2)
       end
+
+      private
+
+      attr_reader :rugged_repository
     end
   end
 end
