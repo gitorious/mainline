@@ -34,11 +34,13 @@ class CreateNewMergeRequestVersionTest < MiniTest::Spec
     let(:merge_request_version) { stub('merge_request_version', version: 5) }
 
     before do
-      merge_base_lookup.stubs(:merge_base).with('/target/repo', 'the-branch', 'refs/merge-requests/1').returns('shashasha')
+      merge_base_lookup.stubs(:merge_base).
+        with('/target/repo', 'the-branch', 'refs/merge-requests/1').returns('shashasha')
     end
 
     it "creates a new version" do
-      merge_request.expects(:create_new_version).with('shashasha').returns(merge_request_version)
+      merge_request.expects(:create_new_version).with('shashasha').
+        returns(merge_request_version)
 
       service.call(merge_request)
     end

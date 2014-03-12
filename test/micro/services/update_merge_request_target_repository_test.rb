@@ -31,7 +31,8 @@ class UpdateMergeRequestTargetRepositoryTest < MiniTest::Spec
                                                 ref_name: 'def') }
 
     it "force pushes from source repo to target repo" do
-      git_repository_pusher.expects(:push).with('/source/repo', '/target/repo', "+abc:def")
+      git_repository_pusher.expects(:push).
+        with('/source/repo', '/target/repo', "+abc:def")
 
       service.call(merge_request)
     end

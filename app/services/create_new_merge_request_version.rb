@@ -31,7 +31,6 @@ class CreateNewMergeRequestVersion
   end
 
   def call(merge_request)
-    # raise "No tracking repository exists for merge request #{id}" unless tracking_repository
     merge_request_version = create_new_version(merge_request)
     post_create.call(merge_request, merge_request_version.version)
   end
@@ -44,7 +43,11 @@ class CreateNewMergeRequestVersion
   end
 
   def calculate_merge_base_sha(merge_request)
-    merge_base_lookup.merge_base(merge_request.target_repository_path, merge_request.target_branch, merge_request.ref_name)
+    merge_base_lookup.merge_base(
+      merge_request.target_repository_path,
+      merge_request.target_branch,
+      merge_request.ref_name
+    )
   end
 
 end

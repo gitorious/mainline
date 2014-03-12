@@ -32,7 +32,8 @@ class UpdateMergeRequestTrackingRepositoryTest < MiniTest::Spec
       merge_request.stubs(:ref_name).with().returns('refs/merge-requests/123')
       merge_request.stubs(:ref_name).with(5).returns('refs/merge-requests/123/5')
 
-      git_repository_pusher.expects(:push).with('/target/repo', '/tracking/repo', "refs/merge-requests/123:refs/merge-requests/123/5")
+      git_repository_pusher.expects(:push).
+        with('/target/repo', '/tracking/repo', "refs/merge-requests/123:refs/merge-requests/123/5")
 
       service.call(merge_request, 5)
     end
