@@ -84,6 +84,7 @@ class PushProcessorTest < ActiveSupport::TestCase
         "username" => @user.login,
         "message" => "#{SHA} #{OTHER_SHA} refs/merge-requests/#{@merge_request.sequence_number}"
       }
+      CreateNewMergeRequestVersion.stubs(:call).with(@merge_request)
     end
 
     should "be processed as such" do
@@ -93,7 +94,7 @@ class PushProcessorTest < ActiveSupport::TestCase
       @processor.consume(@payload.to_json)
     end
 
-    should "update merge request" do
+    should "update merge request tracking repository" do
       @processor.stubs(:merge_request).returns(@merge_request)
       CreateNewMergeRequestVersion.expects(:call).with(@merge_request)
       @processor.load_message(@payload)
@@ -103,7 +104,6 @@ class PushProcessorTest < ActiveSupport::TestCase
     should "not fail if username is nil" do
       @payload[:username] = nil
       @processor.stubs(:merge_request).returns(@merge_request)
-      CreateNewMergeRequestVersion.expects(:call).with(@merge_request)
       @processor.consume(@payload.to_json)
     end
 
