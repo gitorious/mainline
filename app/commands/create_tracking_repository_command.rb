@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -18,12 +18,15 @@
 require "commands/create_repository_command"
 
 class CreateTrackingRepositoryCommand < CreateRepositoryCommand
-  def initialize(app, repository)
+  attr_reader :clone_in_foreground
+
+  def initialize(app, repository, clone_in_foreground = false)
     super(app, repository.project, repository.user, {
         :owner => repository.owner,
         :kind => :tracking
       })
     @repository = repository
+    @clone_in_foreground = clone_in_foreground
   end
 
   def build(params = nil)
@@ -39,7 +42,21 @@ class CreateTrackingRepositoryCommand < CreateRepositoryCommand
     save(repository)
     initialize_committership(repository)
     initialize_membership(repository)
-    schedule_creation(repository, :queue => "GitoriousTrackingRepositoryCreation")
+    create_git_repository(repository)
     repository
+  end
+
+  private
+
+  def create_git_repository(repository)
+    if async_creation?
+      schedule_creation(repository, :queue => "GitoriousTrackingRepositoryCreation")
+    else
+      RepositoryCloner.clone(repository.parent.real_gitdir, repository.real_gitdir)
+    end
+  end
+
+  def async_creation?
+    !clone_in_foreground
   end
 end
