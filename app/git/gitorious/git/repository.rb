@@ -41,6 +41,9 @@ module Gitorious
         Branch.new(branch, rugged_repository) if branch
       end
 
+      # NOTE: this method doesn't use native Rugged push because unlike git binary
+      # (and thus grit) it doesn't support naked commit sha on the left side of
+      # the refspec (and we need that).
       def push(url, refspec)
         cmd = "#{Gitorious.git_binary} push #{url} #{refspec}"
 
