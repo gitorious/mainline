@@ -67,6 +67,17 @@ module Gitorious
           proc { repository.push('/bad/url', 'foo:bar') }.must_raise PushError
         end
       end
+
+      describe '#merge_base' do
+        it "finds the best common ancestors between 2 commits" do
+          merge_base = repository.merge_base(
+            '91c2430892b8f1736d84d3418259317793bb1903',
+            '8a273e1245f73deb8fd9c6055d21d6110cb5f25d'
+          )
+
+          merge_base.must_equal('b3f9782d5dc0b97b1efcccb1da651af3f646bf4a')
+        end
+      end
     end
   end
 end

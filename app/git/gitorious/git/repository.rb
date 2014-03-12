@@ -55,6 +55,10 @@ module Gitorious
           end
         end
       end
+
+      def merge_base(sha1, sha2)
+        rugged_repository.merge_base(sha1, sha2)
+      end
     end
   end
 end
