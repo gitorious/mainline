@@ -20,8 +20,8 @@ class UpdateMergeRequestTrackingRepository
 
   attr_reader :git_repository_pusher
 
-  def self.call(merge_request)
-    new(Gitorious::Git::Repository).call(merge_request)
+  def self.call(merge_request, version_number)
+    new(Gitorious::Git::Repository).call(merge_request, version_number)
   end
 
   def initialize(git_repository_pusher)
