@@ -853,29 +853,11 @@ class RepositoryTest < ActiveSupport::TestCase
   context "Sequences" do
     setup do
       @repository = repositories(:johans)
+      @repository.last_merge_request_sequence_number = 100
     end
 
-    should "calculate the highest existing sequence number" do
-      assert_equal(@repository.merge_requests.max_by(&:sequence_number).sequence_number,
-        @repository.calculate_highest_merge_request_sequence_number)
-    end
-
-    should "calculate the number of merge requests" do
-      assert_equal(3, @repository.merge_request_count)
-    end
-
-    should "be the number of merge requests for a given repo" do
-      assert_equal 3, @repository.merge_requests.size
-      assert_equal 4, @repository.next_merge_request_sequence_number
-    end
-
-    # 3 merge requests, update one to have seq 4
-    should "handle taken sequence numbers gracefully" do
-      last_merge_request = @repository.merge_requests.last
-      last_merge_request.update_attribute(:sequence_number, 4)
-      @repository.expects(:calculate_highest_merge_request_sequence_number).returns(99)
-      assert_equal(100,
-        @repository.next_merge_request_sequence_number)
+    should "be the next sequence number for a given repo" do
+      assert_equal 101, @repository.next_merge_request_sequence_number
     end
   end
 

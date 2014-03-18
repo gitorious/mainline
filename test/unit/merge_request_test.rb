@@ -597,6 +597,7 @@ class MergeRequestTest < ActiveSupport::TestCase
                                      :summary => "Add a user",
                                      :proposal => "Please add me",
                                      :ending_commit => "a"*10, :source_branch => "master", :target_branch => "master")
+      new_request.sequence_number = 123
       assert new_request.save!
       assert new_request.status_tag.blank?
       new_request.confirmed_by_user
@@ -722,8 +723,7 @@ class MergeRequestTest < ActiveSupport::TestCase
 
     should "set the sequence number on create" do
       next_sequence = @repository.next_merge_request_sequence_number
-      assert @merge_request.save
-      assert_equal next_sequence + 1, @repository.next_merge_request_sequence_number
+      assert @merge_request.save_with_next_sequence_number
       assert_equal(next_sequence, @merge_request.sequence_number)
     end
 
@@ -739,9 +739,9 @@ class MergeRequestTest < ActiveSupport::TestCase
                                              :ending_commit => "ac00")
 
       mr2.sequence_number = 666
-      mr2.save
+      mr2.valid?
 
-      assert_not_equal mr2.reload.sequence_number, @merge_request.reload.sequence_number
+      assert mr2.errors[:sequence_number].present?
     end
 
     should "use sequence_number in to_param" do
@@ -800,7 +800,7 @@ class MergeRequestTest < ActiveSupport::TestCase
 
     should "be added to creators favorites" do
       assert_incremented_by(@user.favorites, :size, 1) {
-        @merge_request.save
+        @merge_request.save_with_next_sequence_number
       }
     end
   end

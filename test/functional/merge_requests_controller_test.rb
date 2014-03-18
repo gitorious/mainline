@@ -314,7 +314,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
                                                                         :ending_commit => "6823e6622e1da9751c87380ff01a1db1",
                                                                         :target_repository => @target_repository,
                                                                         :summary => "foo" })
-      assert @merge_request.save
+      assert @merge_request.save_with_next_sequence_number
       @merge_request.stubs(:commits_to_be_merged).returns([])
       MergeRequest.stubs(:find_by_sequence_number!).returns(@merge_request)
       login_as :johan

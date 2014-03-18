@@ -39,8 +39,6 @@ class MergeRequest < ActiveRecord::Base
   after_destroy  :delete_tracking_branches
   after_create :add_to_creators_favorites
 
-  before_validation(:set_sequence_number, :on => :create)
-
   attr_accessible(:user, :source_repository, :target_repository, :proposal,
                   :source_branch, :target_branch, :ending_commit, :summary,
                   :sha_snapshot, :contribution_agreement_version,
@@ -599,6 +597,22 @@ class MergeRequest < ActiveRecord::Base
     end
 
     merge_request_version
+  end
+
+  def save_with_next_sequence_number
+    self.class.transaction do
+      if target_repository
+        self.sequence_number = target_repository.last_merge_request_sequence_number =
+          target_repository.next_merge_request_sequence_number
+        target_repository.save!
+      end
+
+      save!
+    end
+
+    true
+  rescue ActiveRecord::RecordInvalid
+    false
   end
 
   protected

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -152,7 +152,7 @@ class MergeRequestsController < ApplicationController
   def create
     @merge_request = authorize_access_to(@repository.proposed_merge_requests.new(params[:merge_request]))
     @merge_request.user = current_user
-    if @merge_request.save
+    if @merge_request.save_with_next_sequence_number
       merge_request_created
     else
       respond_to do |format|

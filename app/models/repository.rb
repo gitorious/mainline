@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
@@ -594,26 +594,8 @@ class Repository < ActiveRecord::Base
     !tracking_repository.nil?
   end
 
-  # Fallback when the real sequence number is taken
-  def calculate_highest_merge_request_sequence_number
-    merge_requests.maximum(:sequence_number)
-  end
-
-  # The basis for the sequence number, reflects the number of merge requests
-  def merge_request_count
-    merge_requests.count
-  end
-
-  # Ideally we want to reflect how many merge requests are entered.
-  # However, if this sequence is taken (an old record), we'll go one up
-  # from the highest number instead
   def next_merge_request_sequence_number
-    candidate = merge_request_count + 1
-    if merge_requests.find_by_sequence_number(candidate)
-      calculate_highest_merge_request_sequence_number + 1
-    else
-      candidate
-    end
+    last_merge_request_sequence_number + 1
   end
 
   # Runs git-gc on this repository, and updates the last_gc_at attribute
