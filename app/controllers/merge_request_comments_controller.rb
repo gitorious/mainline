@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -25,8 +25,10 @@ class MergeRequestCommentsController < CommentsController
   end
 
   def update_comment_path(comment)
-    mr = comment.target
-    project_repository_merge_request_comment_path(mr.project, mr.target_repository, mr, comment)
+    target = comment.target
+    merge_request = target.is_a?(MergeRequestVersion) ? target.merge_request : target
+
+    project_repository_merge_request_comment_path(merge_request.project, merge_request.target_repository, merge_request, comment)
   end
 
   # Callbacks from CommentController

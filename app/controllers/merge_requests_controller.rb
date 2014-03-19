@@ -292,7 +292,10 @@ class MergeRequestsController < ApplicationController
   end
 
   def edit_comment_path(comment)
-    edit_project_repository_merge_request_comment_path(@project, @repository, comment.target, comment)
+    target = comment.target
+    merge_request = target.is_a?(MergeRequestVersion) ? target.merge_request : target
+
+    edit_project_repository_merge_request_comment_path(@project, @repository, merge_request, comment)
   end
 
   helper_method :edit_comment_path
