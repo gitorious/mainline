@@ -48,7 +48,8 @@ must manually put it in place afterwards
 
 
   File.open(ARGV[1], "w") do |f|
-    if old["production"]["messaging_adapter"] == "stomp"
+    messaging_adapter = (old["production"] || {})["messaging_adapter"]
+    if messaging_adapter == "stomp"
       puts "WARNING! Messaging adapter stomp is no longer supported. \n" +
         "Refer to the Readme for information on running Redis and Resque. \n" +
         "Temporarily using the sync adapter, please update gitorious.yml \n" +

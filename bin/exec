@@ -48,7 +48,9 @@ export BUNDLE_GEMFILE RAILS_ENV
 cd $app_dir
 
 if [[ $RAILS_ENV == "production" ]]; then
-  user=$($ruby -e 'require "yaml"; puts YAML.load_file("config/gitorious.yml")["user"].to_s')
+  user=$($ruby -e 'require "yaml"
+                   c = YAML.load_file("config/gitorious.yml")
+                   puts (c["production"] || c)["user"].to_s')
   current_user_id=$(id -u)
 
   if [[ -n $user ]]; then
