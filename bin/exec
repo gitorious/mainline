@@ -50,7 +50,8 @@ cd $app_dir
 if [[ $RAILS_ENV == "production" ]]; then
   user=$($ruby -e 'require "yaml"
                    c = YAML.load_file("config/gitorious.yml")
-                   puts (c["production"] || c)["user"].to_s')
+                   production_user = (c["production"] || {})["user"]
+                   puts (production_user || c["user"]).to_s')
   current_user_id=$(id -u)
 
   if [[ -n $user ]]; then
