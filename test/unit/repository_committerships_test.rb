@@ -88,6 +88,13 @@ class RepositoryCommittershipsTest < ActiveSupport::TestCase
       end
     end
 
+    should "create a 'removed committer' event on project" do
+      assert_difference("@johans_committership.repository.project.events.count") do
+        @committerships.destroy(@johans_committership.id, @johan)
+      end
+      assert_equal Action::REMOVE_COMMITTER, Event.last.action
+    end
+
     should "destroy committership with super groups enabled" do
       Gitorious::Configuration.override("enable_super_group" => true) do
         @committerships.destroy(@johans_committership.id, @johan)

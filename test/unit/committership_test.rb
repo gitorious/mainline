@@ -87,14 +87,6 @@ class CommittershipTest < ActiveSupport::TestCase
       end
       assert_equal Action::ADD_COMMITTER, Event.last.action
     end
-
-    should "create a 'removed committer' event on destroy" do
-      @committership.save!
-      assert_difference("@project.events.count") do
-        @committership.destroy
-      end
-      assert_equal Action::REMOVE_COMMITTER, Event.last.action
-    end
   end
 
   def new_committership(opts = {})

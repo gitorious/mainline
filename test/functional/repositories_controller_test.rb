@@ -132,14 +132,6 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_redirected_to(group_path(repo.owner))
     end
 
-    should "destroying a project creates an event in the project" do
-      assert_difference("@project.events.count", 2) do
-        do_delete(@repo)
-        assert_response :redirect
-        assert_nil flash[:error]
-      end
-    end
-
     should "work for user/group clones" do
       repo = repositories(:johans2)
       repo.user = users(:mike)

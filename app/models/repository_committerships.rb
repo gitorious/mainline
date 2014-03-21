@@ -75,12 +75,10 @@ class RepositoryCommitterships
 
     committership = find(id)
 
-    # Update creator to hold the "destroyer" user account
-    # Makes sure hooked-in event reports correct destroying user
-    # We have no other way of passing destroying user along
-    # except restructing code to not use implicit event hooks.
-    committership.creator = current_user
-    committership.destroy
+    Committership.transaction do
+      committership.destroy
+      committership.add_removed_committer_event(current_user)
+    end
   end
 
   def destroy_all

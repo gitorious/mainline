@@ -40,7 +40,6 @@ class Committership < ActiveRecord::Base
 
   after_create :notify_repository_owners
   after_create :add_new_committer_event
-  after_destroy :add_removed_committer_event
   before_destroy :nullify_messages
 
   scope :groups, :conditions => { :committer_type => "Group" }
@@ -107,6 +106,11 @@ class Committership < ActiveRecord::Base
     end
   end
 
+  def add_removed_committer_event(user)
+    repository.project.create_event(Action::REMOVE_COMMITTER, repository,
+                                    user, committer.title)
+  end
+
   protected
   def notify_repository_owners
     return unless creator
@@ -125,12 +129,6 @@ class Committership < ActiveRecord::Base
 
   def add_new_committer_event
     repository.project.create_event(Action::ADD_COMMITTER, repository,
-                                    creator, committer.title)
-  end
-
-  def add_removed_committer_event
-    return unless repository
-    repository.project.create_event(Action::REMOVE_COMMITTER, repository,
                                     creator, committer.title)
   end
 
