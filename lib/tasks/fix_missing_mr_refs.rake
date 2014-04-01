@@ -15,26 +15,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-desc 'Creates missing refs for given merge request ID'
-task :fix_missing_mr_refs => :environment do
+def fix_refs(mr)
   require 'fileutils'
-
-  project_slug = ENV['PROJECT_SLUG']
-  repository_name = ENV['REPO_NAME']
-  mr_number = ENV['MR_NUMBER']
-
-  if project_slug.blank? || repository_name.blank? || mr_number.blank?
-    puts "You have to set PROJECT_SLUG, REPO_NAME and MR_NUMBER env variables"
-    exit 1
-  end
-
-  project = Project.find_by_slug(project_slug)
-  repository = project.repositories.find_by_name(repository_name)
-  mr = repository.merge_requests.find_by_sequence_number(mr_number.to_i)
 
   # add missing ref for MR to target repo
 
-  ref_path = mr.target_repository.full_repository_path + "/refs/merge-requests/#{mr_number}"
+  ref_path = mr.target_repository.full_repository_path + "/refs/merge-requests/#{mr.sequence_number}"
   unless File.exist?(ref_path)
     puts "creating missing ref file #{ref_path} (#{mr.ending_commit}) in target repo"
     File.open(ref_path, 'w') { |f| f.puts(mr.ending_commit) }
@@ -42,7 +28,7 @@ task :fix_missing_mr_refs => :environment do
 
   # add missing refs for MR versions to tracking repo
 
-  mr_refs_dir = mr.tracking_repository.full_repository_path + "/refs/merge-requests/#{mr_number}"
+  mr_refs_dir = mr.tracking_repository.full_repository_path + "/refs/merge-requests/#{mr.sequence_number}"
   unless File.exist?(mr_refs_dir)
     puts "creating missing MR refs directory #{mr_refs_dir} in tracking repo"
     FileUtils.mkdir_p(mr_refs_dir)
@@ -53,6 +39,32 @@ task :fix_missing_mr_refs => :environment do
     unless File.exist?(ref_path)
       puts "creating missing version ref file #{ref_path} (#{mr.ending_commit}) in tracking repo"
       File.open(ref_path, 'w') { |f| f.puts(mr.ending_commit) }
+    end
+  end
+end
+
+desc 'Creates missing refs for given merge request ID'
+task :fix_missing_mr_refs => :environment do
+  project_slug = ENV['PROJECT_SLUG']
+  repository_name = ENV['REPO_NAME']
+  mr_number = ENV['MR_NUMBER']
+
+  if project_slug || repository_name || mr_number
+    if project_slug.blank? || repository_name.blank? || mr_number.blank?
+      puts "You have to set PROJECT_SLUG, REPO_NAME and MR_NUMBER env variables"
+      exit 1
+    end
+
+    project = Project.find_by_slug(project_slug)
+    repository = project.repositories.find_by_name(repository_name)
+    mr = repository.merge_requests.find_by_sequence_number(mr_number.to_i)
+
+    fix_refs(mr)
+  else
+    puts "Iterating over all MRs in the database..."
+    MergeRequest.find_each do |mr|
+      puts "Trying MR id=#{mr.id}..."
+      fix_refs(mr)
     end
   end
 end
