@@ -26,6 +26,8 @@ class RailsEnv
   def test?; @env == "test"; end
   def to_s; @env; end
   def to_sym; @env.to_sym; end
+  def hash; @env.hash; end
+  def eql?(other); @env.eql?(other); end
 end
 
 module Rails
