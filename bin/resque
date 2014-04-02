@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -e
+
+bin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+exec $bin_dir/rake resque:work QUEUE="*" INTERVAL="0.1"
