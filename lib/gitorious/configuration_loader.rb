@@ -17,6 +17,7 @@
 #++
 require "pathname"
 require "yaml"
+require "erb"
 
 # See also config/gitorious_config.rb for more information about
 # how Gitorious is configured.
