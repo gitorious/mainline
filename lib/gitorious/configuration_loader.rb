@@ -154,7 +154,7 @@ Tests may not work as intended.
       full_path = File.join(@root, path)
       return [{}, {}] if allow_missing && !File.exist?(full_path)
 
-      settings = YAML.load_file(full_path) || {}
+      settings = YAML.load(ERB.new(File.read(full_path)).result) || {}
 
       groups = {}
       groups['production']  = settings.delete('production') if settings.key?('production')
