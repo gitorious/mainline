@@ -15,6 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require 'erb'
+
 module Gitorious
   # If the file Rails.root + config/config_file exists, load this as a
   # YAML file, fetch the section under Rails.env and yield these settings
@@ -24,7 +26,7 @@ module Gitorious
   def self.on_config(config_file)
     path = Rails.root + "config/#{config_file}"
     if path.exist?
-      settings = YAML::load_file(path)[Rails.env]
+      settings = YAML::load(ERB.new(File.read(path)).result)[Rails.env]
       yield settings if settings
     end
   end
