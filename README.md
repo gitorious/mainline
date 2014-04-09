@@ -19,9 +19,9 @@ Using the use cases ensures that every step of a certain task is carried out,
 and you don't end up with inconsistent data. See the app/use_cases directory
 for further information.
 
-# Further documentation
+# Installation
 
-http://getgitorious.com is the main source of official documentation.
+To install Gitorious locally visit [getgitorious.com](http://getgitorious.com).
 
 # Messaging server
 
