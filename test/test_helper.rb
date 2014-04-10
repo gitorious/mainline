@@ -46,6 +46,7 @@ require "capybara_minitest_spec"
 require "capybara_test_case"
 require "view_context_helper"
 require "fake_use_case_helper"
+require "fake_git_helper"
 
 Minitest::Reporters.use!(Minitest::Reporters::DefaultReporter.new)
 

@@ -18,6 +18,7 @@
 #++
 
 require "test_helper"
+load 'app/models/merge_request_version.rb'
 
 class MergeRequestVersionTest < ActiveSupport::TestCase
   context 'In general' do
@@ -71,7 +72,8 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
     end
 
     should 'handle all commits' do
-      @diff_backend.expects(:commit_diff).with(@version.merge_base_sha, @merge_request.ending_commit)
+      @version.stubs(:affected_commits).returns([FakeCommit.new('ff'), FakeCommit.new('aa')])
+      @diff_backend.expects(:commit_diff).with('aa', 'ff', true)
       @version.diffs
     end
   end

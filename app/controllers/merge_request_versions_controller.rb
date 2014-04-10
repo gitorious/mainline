@@ -36,7 +36,7 @@ class MergeRequestVersionsController < ApplicationController
 
     begin
       timeout = Timeout.timeout(Gitorious.diff_timeout) do
-        diffs = merge_request_version.diffs(extract_range_from_parameter(params[:commit_shas]))
+        diffs = merge_request_version.diffs
       end
 
       timeout = nil unless timeout.length == 0
@@ -71,18 +71,6 @@ class MergeRequestVersionsController < ApplicationController
   def diff_renderer(mode, repository, commit)
     klass = mode == "sidebyside" ? Gitorious::Diff::SidebysideRenderer : Gitorious::Diff::InlineRenderer
     klass.new(self, repository, commit)
-  end
-
-  def commit_range?(shaish)
-    shaish.include?("-")
-  end
-
-  def extract_range_from_parameter(param)
-    if match = /^([a-z0-9]*)-([a-z0-9]*)$/.match(param)
-      Range.new(match[1], match[2])
-    else
-      param
-    end
   end
 
   def commit_range(range)

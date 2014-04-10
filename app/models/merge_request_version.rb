@@ -43,7 +43,7 @@ class MergeRequestVersion < ActiveRecord::Base
     when String
       diff_backend.single_commit_diff(sha_or_range)
     else
-      diff_backend.commit_diff(merge_base_sha, merge_request.ending_commit)
+      diff_backend.commit_diff(affected_commits.last.id, affected_commits.first.id, true)
     end
   end
 

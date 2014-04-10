@@ -18,32 +18,6 @@
 require "test_helper"
 require "test_service"
 
-class FakeHead
-  attr_reader :target, :name
-  def initialize(target, name)
-    @target = target
-    @name = name
-  end
-end
-
-class FakeCommit
-  attr_reader :id, :parent_ids
-  def initialize(oid)
-    @id = oid
-    @parent_ids = ["a" * 40]
-  end
-end
-
-class FakeRepository
-  def head
-    FakeHead.new("b" * 40, "refs/heads/master")
-  end
-
-  def lookup(id)
-    FakeCommit.new(id)
-  end
-end
-
 class TestServiceTest < ActiveSupport::TestCase
   def setup
     @user = users(:johan)
