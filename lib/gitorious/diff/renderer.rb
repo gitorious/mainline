@@ -27,23 +27,42 @@ module Gitorious
 
       def render(file)
         diff = ::Diff::Display::Unified.new(file.diff)
-        a_path = file.a_path && file.a_path.force_utf8
         class_name = respond_to?(:table_class) ? " " + table_class : ""
-        <<-HTML
-<div class="gts-file">
-  <ul class="breadcrumb">
-    <li class="gts-diff-summary">
-      <a href="#{blob_url(file)}"><i class="icon icon-file"></i> <span class="gts-path">#{a_path}</span></a>
-      (<span class="gts-diff-add">+#{adds(diff)}</span>/<span class="gts-diff-rm">-#{rms(diff)}</span>)
-    </li>
-  </ul>
+
+        if binary?(file)
+          render_blob(diff, file)
+        else
+          render_blob(diff, file) do
+            <<-HTML
   <div class="gts-code-listing-wrapper">
     <table class="gts-code-listing#{class_name}">
 #{diff.render(callback_class.new).force_utf8}
     </table>
   </div>
+            HTML
+          end
+        end
+      end
+
+      def render_blob(diff, file)
+        <<-HTML
+<div class="gts-file">
+  <ul class="breadcrumb">
+    <li class="gts-diff-summary">
+      <a href="#{blob_url(file)}">
+        <i class="icon icon-file"></i>
+        <span class="gts-path">#{a_path(file)}</span>
+      </a>
+      (<span class="gts-diff-add">+#{adds(diff)}</span>/<span class="gts-diff-rm">-#{rms(diff)}</span>)
+    </li>
+  </ul>
+  #{yield if block_given?}
 </div>
         HTML
+      end
+
+      def binary?(file)
+        [file.a_blob, file.b_blob].compact.any?(&:binary?)
       end
 
       def blob_url(file)
@@ -56,6 +75,10 @@ module Gitorious
 
       def rms(diff)
         diff.stats[:deletions]
+      end
+
+      def a_path(file)
+        file.a_path && file.a_path.force_utf8
       end
 
       private
