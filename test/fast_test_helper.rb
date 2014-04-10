@@ -260,7 +260,14 @@ if !defined?(Rails)
   class Comment < TestHelper::Model
     attr_accessor :user, :body, :created_at, :first_line_number,
       :last_line_number, :context, :path, :sha1, :target,
-      :user_id, :project_id
+      :user_id, :project_id, :state_changed_from, :state_changed_to
+
+    def applies_to_line_numbers?; false; end
+    def editable_until; Time.now + 3600; end
+  end
+
+  class MergeRequestStatus
+    def self.open?(*); true; end
   end
 end
 

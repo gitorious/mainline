@@ -51,7 +51,13 @@
 
   <%= tabbable({ 'discussion' => '#discussion' }, :active => 'discussion') do %>
     <%= tab_pane 'discussion', :active => true do %>
-      <%= render 'merge_requests/show/comments', :comments => comments, :merge_request => merge_request, :repository => repository %>
+      <div class="gts-mr-comments"
+        data-gts-env-mr-comments-url="<%= project_repository_merge_request_comments_path(repository.project, repository, merge_request, format: "json") %>"
+        data-gts-env-mr-statuses="<%= merge_request_statuses_json(merge_request) %>"
+        data-gts-env-current-mr-status="<%= merge_request.status_tag %>"
+      >
+        <div class="comments-container"></div>
+      </div>
     <% end %>
   <% end %>
 

@@ -113,15 +113,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
       end
     end
 
-    should "allow committers to change status" do
-      login_as :johan
-      stub_commits(@merge_request)
-
-      get :show, mr_params
-      assert_response :success
-      assert_select "select#comment_state"
-    end
-
     should "not display a comment change field unless the current user can change the MR" do
       login_as :moe
       assert !can_resolve_merge_request?(users(:moe), @merge_request)
@@ -129,15 +120,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
       get :show, mr_params
       assert_response :success
       assert_select "select#comment_state", false
-    end
-
-    should "display a comment change field if the current user can change the MR" do
-      login_as :johan
-      assert can_resolve_merge_request?(users(:johan), @merge_request)
-
-      get :show, mr_params
-      assert_response :success
-      assert_select "select#comment_state"
     end
 
     context "Git timeouts" do

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013-2014 Gitorious AS
+#   Copyright (C) 2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,9 +15,11 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "commit_comment_json_presenter"
 
-class CommitCommentsJSONPresenter
+class MergeRequestCommentsJSONPresenter
+
+  attr_reader :app, :comments
+
   def initialize(app, comments)
     @app = app
     @comments = comments
@@ -28,23 +30,13 @@ class CommitCommentsJSONPresenter
   end
 
   def hash_for(user)
-    { "commit" => commit_comments(comments, user),
-      "diffs" => diff_comments(comments, user) }
+    comments.map { |c| comment_hash(c, user) }
   end
 
   protected
-  def commit_comments(comments, user)
-    comments.select { |c| c.path.nil? }.map { |c| comment_hash(c, user) }
-  end
-
-  def diff_comments(comments, user)
-    comments = comments.select { |c| !c.path.nil? }.map { |c| comment_hash(c, user) }
-    comments.group_by { |c| c["path"] }
-  end
 
   def comment_hash(comment, user)
     CommitCommentJSONPresenter.new(app, comment).hash_for(user)
   end
 
-  attr_reader :app, :comments
 end

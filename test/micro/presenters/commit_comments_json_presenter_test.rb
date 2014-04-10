@@ -25,6 +25,9 @@ class App
   def edit_comment_path(comment)
     "/comments/#{comment.id}/edit"
   end
+  def update_comment_path(comment)
+    "/comments/#{comment.id}"
+  end
 end
 
 class CommitCommentsJSONPresenterTest < MiniTest::Spec
@@ -58,13 +61,20 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
                 "login" => "cjohansen",
                 "name" => "Christian Johansen"
               },
-              "body" => "<p>Yup</p>",
+              "body" => "Yup",
+              "bodyHtml" => "<p>Yup</p>",
               "createdAt" => "2013-01-01T00:00:00+00:00",
               "updatedAt" => "2013-01-02T00:00:00+00:00",
               "firstLine" => nil,
               "lastLine" => nil,
               "context" => nil,
-              "path" => nil
+              "path" => nil,
+              "sha1" => nil,
+              "htmlUrl" => nil,
+              "statusChangedFrom" => nil,
+              "statusChangedTo" => nil,
+              "statusChangedFromIsOpen" => true,
+              "statusChangedToIsOpen" => true,
             }],
           "diffs"=>{}
         }, presenter.hash_for(nil))
@@ -122,10 +132,10 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
             })])
 
       assert_equal("<p><a href=\"http://somewhere.com\">Hey</a></p>",
-                   presenter.hash_for(nil)["commit"][0]["body"])
+                   presenter.hash_for(nil)["commit"][0]["bodyHtml"])
     end
 
-    it "includes update path for comment author" do
+    it "includes update url for comment author" do
       app = App.new
       def app.can_edit?(user, comment); true; end
       presenter = CommitCommentsJSONPresenter.new(app, [Comment.new({
@@ -138,8 +148,8 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
               :target => @repository
             })])
 
-      edit_path = presenter.hash_for(@user)["commit"][0]["editPath"]
-      assert_equal("/comments/42/edit", edit_path)
+      update_url = presenter.hash_for(@user)["commit"][0]["updateUrl"]
+      assert_equal("/comments/42", update_url)
     end
   end
 end

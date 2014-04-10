@@ -193,6 +193,16 @@ module ApplicationHelper
     end
   end
 
+  def merge_request_statuses_json(merge_request)
+    if can_resolve_merge_request?(current_user, merge_request)
+      statuses = merge_request.target_repository.project.merge_request_statuses.map(&:name)
+    else
+      statuses = []
+    end
+
+    statuses.to_json
+  end
+
   def logo_link
     logo = Gitorious::Configuration.get("logo_url", "/dist/images/gitorious2013.png")
     link_to(logo.blank? ? "Gitorious" : image_tag(logo), root_path)

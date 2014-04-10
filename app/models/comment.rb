@@ -23,6 +23,8 @@
 class Comment < ActiveRecord::Base
   include Gitorious::Authorization
 
+  EDITING_PERIOD = 10.minutes
+
   belongs_to :user
   belongs_to :target, :polymorphic => true
   belongs_to :project
@@ -107,7 +109,11 @@ class Comment < ActiveRecord::Base
   end
 
   def recently_created?
-    created_at > 10.minutes.ago
+    created_at > EDITING_PERIOD.ago
+  end
+
+  def editable_until
+    created_at + EDITING_PERIOD
   end
 
   def repository

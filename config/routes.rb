@@ -298,7 +298,7 @@ Gitorious::Application.routes.draw do
           get :terms_accepted
         end
 
-        resources :comments, :controller => :merge_request_comments, :only => [:new, :create, :edit, :update]
+        resources :comments, :controller => :merge_request_comments, :only => [:index, :new, :create, :edit, :update]
 
         get "/diffs(/:version)" => "merge_request_versions#show", :as => :version
         get "/diffs/:version/comments/:commit_range(.:format)" => "merge_request_version_comments#index", :as => :version_comments

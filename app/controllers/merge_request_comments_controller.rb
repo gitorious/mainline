@@ -18,10 +18,14 @@
 require "create_merge_request_comment"
 
 class MergeRequestCommentsController < CommentsController
-  protected
-  def edit_comment_path(comment)
-    mr = comment.target
-    edit_project_repository_merge_request_comment_path(mr.project, mr.target_repository, mr, comment)
+
+  def index
+    respond_to do |format|
+      format.json do
+        comments = target.cascaded_comments
+        render(json: MergeRequestCommentsJSONPresenter.new(self, comments).render_for(current_user))
+      end
+    end
   end
 
   def update_comment_path(comment)
@@ -29,6 +33,13 @@ class MergeRequestCommentsController < CommentsController
     merge_request = target.is_a?(MergeRequestVersion) ? target.merge_request : target
 
     project_repository_merge_request_comment_path(merge_request.project, merge_request.target_repository, merge_request, comment)
+  end
+
+  protected
+
+  def edit_comment_path(comment)
+    mr = comment.target
+    edit_project_repository_merge_request_comment_path(mr.project, mr.target_repository, mr, comment)
   end
 
   # Callbacks from CommentController

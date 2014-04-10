@@ -64,11 +64,29 @@ class CommentsController < ApplicationController
     end
 
     outcome.success do |comment|
-      flash[:success] = "Your comment was added"
-      redirect_to(create_succeeded_path(comment))
+      respond_to do |format|
+        format.html do
+          flash[:success] = "Your comment was added"
+          redirect_to(create_succeeded_path(comment))
+        end
+
+        format.json do
+          render json: CommitCommentJSONPresenter.new(self, comment).render_for(current_user)
+        end
+      end
     end
 
-    outcome.failure { |comment| render_form(comment) }
+    outcome.failure do |comment|
+      respond_to do |format|
+        format.html do
+          render_form(comment)
+        end
+
+        format.json do
+          render json: comment.errors
+        end
+      end
+    end
   end
 
   def edit
@@ -84,11 +102,29 @@ class CommentsController < ApplicationController
     end
 
     outcome.success do |comment|
-      flash[:success] = "Your comment was updated"
-      redirect_to(update_succeeded_path(comment))
+      respond_to do |format|
+        format.html do
+          flash[:success] = "Your comment was updated"
+          redirect_to(update_succeeded_path(comment))
+        end
+
+        format.json do
+          render json: CommitCommentJSONPresenter.new(self, comment).render_for(current_user)
+        end
+      end
     end
 
-    outcome.failure { |comment| render_form(comment) }
+    outcome.failure do |comment|
+      respond_to do |format|
+        format.html do
+          render_form(comment)
+        end
+
+        format.json do
+          render json: comment.errors
+        end
+      end
+    end
   end
 
   protected

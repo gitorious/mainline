@@ -61,4 +61,6 @@ Gitorious::Application.configure do
   # Make sure this is writeable by your webserver user
   cache_dir = Rails.root + 'public/cache'
   config.action_controller.page_cache_directory = cache_dir
+
+  config.react.variant = :production
 end
