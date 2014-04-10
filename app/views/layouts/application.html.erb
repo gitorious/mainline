@@ -105,7 +105,7 @@
     <% Gitorious::View.theme_javascripts(current_site).each do |javascript| %>
       <script src="<%= javascript %>"></script>
     <% end %>
-    <%= javascript_include_tag "application" %>
+    <%= javascript_include_tag "application" if defined? javascript_include_tag %>
     <%= content_for(:javascripts) %>
     <%= content_for(:footer) %>
     <script>
