@@ -79,7 +79,6 @@ group :development do
   gem "foreman", "~> 0.41"
   gem "thin", "~> 1.2"
   gem "pry-rails"
-  gem "debugger"
 end
 
 group :ldap_wizard do
