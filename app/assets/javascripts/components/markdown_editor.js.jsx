@@ -7,25 +7,54 @@ var MarkdownEditor = React.createClass({
   },
 
   render: function() {
-    return (
-      <div className="row-fluid gts-markdown-editor">
-        <div className="span6">
+    var tabContent;
+
+    if (this.state.preview) {
+      tabContent = <MarkdownPreview text={this.state.currentText} />;
+    } else {
+      tabContent =
+        <div>
           <textarea ref="input" value={this.state.currentText} onChange={this.handleTextChange}></textarea>
           <span className="hint">Markdown supported</span>
-        </div>
-        <div className="span6">
-          <p><strong>Preview:</strong></p>
-          <MarkdownPreview text={this.state.currentText} />
-        </div>
+        </div>;
+    }
+
+    return (
+      <div className="gts-markdown-editor">
+        <ul className="nav nav-tabs">
+          <li className={this.state.preview ? "" : "active"} onClick={this.handleWriteClick}><a href="#">Write</a></li>
+          <li className={this.state.preview ? "active" : ""} onClick={this.handlePreviewClick}><a href="#">Preview</a></li>
+        </ul>
+        {tabContent}
       </div>
     );
   },
 
   componentDidMount: function() {
+    this.focusTextarea();
+  },
+
+  componentDidUpdate: function(prevProps, prevState) {
+    if (prevState.preview && !this.state.preview) {
+      this.focusTextarea();
+    }
+  },
+
+  focusTextarea: function() {
     var textarea = this.refs.input.getDOMNode();
     textarea.innerHTML = '';
     textarea.focus();
     textarea.innerHTML = this.state.currentText;
+  },
+
+  handleWriteClick: function(event) {
+    event.preventDefault();
+    this.setState({ preview: false });
+  },
+
+  handlePreviewClick: function(event) {
+    event.preventDefault();
+    this.setState({ preview: true });
   },
 
   handleTextChange: function(event) {
