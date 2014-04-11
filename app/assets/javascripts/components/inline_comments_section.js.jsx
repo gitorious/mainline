@@ -16,9 +16,7 @@ var InlineCommentsSection = React.createClass({
   },
 
   renderChildren: function() {
-    var children = cull.map(function(comment) {
-      return <Comment data={comment} />;
-    }, this.state.comments);
+    var children = [<CommentsList comments={this.state.comments} />];
 
     if (this.props.createCommentUrl) {
       var element;

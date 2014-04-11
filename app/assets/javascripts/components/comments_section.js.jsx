@@ -9,18 +9,10 @@ var CommentsSection = React.createClass({
   render: function() {
     return (
       <div className="gts-comments">
-        {this.renderComments()}
+        <CommentsList comments={this.state.comments} />
         {this.renderForm()}
       </div>
     );
-  },
-
-  renderComments: function() {
-    var comments = cull.map(function(comment) {
-      return <Comment data={comment} />;
-    }, this.state.comments);
-
-    return comments;
   },
 
   renderForm: function() {

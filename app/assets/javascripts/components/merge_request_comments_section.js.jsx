@@ -14,10 +14,7 @@ var MergeRequestCommentsSection = React.createClass({
   },
 
   renderChildren: function() {
-    var children = cull.map(function(comment) {
-      return <Comment data={comment}
-                      includeContext={true} />;
-    }, this.state.comments);
+    var children = [<CommentsList comments={this.state.comments} includeContext={true} />];
 
     if (this.props.createCommentUrl) {
       var form = <AddMergeRequestCommentForm url={this.props.createCommentUrl}
