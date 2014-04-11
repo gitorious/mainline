@@ -56,9 +56,8 @@
         data-gts-env-mr-statuses="<%= merge_request_statuses_json(merge_request) %>"
         data-gts-env-current-mr-status="<%= merge_request.status_tag %>"
       >
-        <div class="comments-container"></div>
+        <%= render 'comments/comments_container', header: false %>
       </div>
-      <%= render 'comments/login_prompt' unless logged_in? %>
     <% end %>
   <% end %>
 
