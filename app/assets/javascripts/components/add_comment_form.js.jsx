@@ -19,7 +19,7 @@ var AddCommentForm = React.createClass({
         <div className="row">
           {error}
           <div className="form-actions">
-            <button className="btn btn-primary" onClick={this.handleSubmit} disabled={this.state.processing}>Comment</button>
+            <SubmitButton text="Comment" onClick={this.handleSubmit} processing={this.state.processing} />
             <button type="button" className="btn" onClick={this.handleCancel}>Cancel</button>
           </div>
         </div>
@@ -27,8 +27,7 @@ var AddCommentForm = React.createClass({
     );
   },
 
-  handleSubmit: function(event) {
-    event.preventDefault();
+  handleSubmit: function() {
     this.setError(false);
 
     var body = this.refs.editor.getText();
