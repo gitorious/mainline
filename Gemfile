@@ -31,7 +31,6 @@ gem "airbrake", "~> 3.1.14", :require => false
 gem "simple_form", "~> 2.1"
 gem "force_utf8"
 gem 'rugged', git: 'https://github.com/libgit2/rugged.git', branch: 'development', submodules: true
-gem 'react-rails', git: "https://github.com/gitorious/react-rails.git"
 
 if ENV['GTS_ENGINE'].to_s != 'true'
   gem "gitorious-issues", :git => "https://git.gitorious.org/gitorious/gitorious-issues.git", :branch => 'master'
@@ -132,4 +131,5 @@ end
 
 group :assets do
   gem "sass-rails", "~> 3.2"
+  gem 'react-rails', git: "https://github.com/gitorious/react-rails.git"
 end
