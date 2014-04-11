@@ -10,22 +10,23 @@ var MergeRequestCommentsSection = React.createClass({
   },
 
   render: function() {
-    return <div className="gts-comments">{this.renderChildren()}</div>;
+    return (
+      <div className="gts-comments">
+        <CommentsList comments={this.state.comments} includeContext={true} />
+        {this.renderForm()}
+      </div>
+    )
   },
 
-  renderChildren: function() {
-    var children = [<CommentsList comments={this.state.comments} includeContext={true} />];
-
+  renderForm: function() {
     if (this.props.createCommentUrl) {
-      var form = <AddMergeRequestCommentForm url={this.props.createCommentUrl}
-                                            onSuccess={this.appendComment}
-                                            mergeRequestStatuses={this.props.mergeRequestStatuses}
-                                            currentMergeRequestStatus={this.state.currentMergeRequestStatus} />
-
-      children = children.concat([form]);
+      return (
+        <AddMergeRequestCommentForm url={this.props.createCommentUrl}
+                                    onSuccess={this.appendComment}
+                                    mergeRequestStatuses={this.props.mergeRequestStatuses}
+                                    currentMergeRequestStatus={this.state.currentMergeRequestStatus} />
+      )
     }
-
-    return children;
   },
 
   appendComment: function(comment) {

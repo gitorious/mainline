@@ -12,31 +12,28 @@ var InlineCommentsSection = React.createClass({
       style.display = 'none';
     }
 
-    return <div className="gts-comments" style={style}>{this.renderChildren()}</div>;
+    return (
+      <div className="gts-comments" style={style}>
+        <CommentsList comments={this.state.comments} />
+        {this.renderForm()}
+      </div>
+    )
   },
 
-  renderChildren: function() {
-    var children = [<CommentsList comments={this.state.comments} />];
-
+  renderForm: function() {
     if (this.props.createCommentUrl) {
-      var element;
-
       if (this.state.formVisible) {
-        element = <AddCommentForm url={this.props.createCommentUrl}
-                                  lines={this.props.lines}
-                                  context={this.props.context}
-                                  path={this.props.path}
-                                  onSuccess={this.appendComment}
-                                  onClose={this.closeForm}
-                                  initialFocus={true} />;
+        return <AddCommentForm url={this.props.createCommentUrl}
+                               lines={this.props.lines}
+                               context={this.props.context}
+                               path={this.props.path}
+                               onSuccess={this.appendComment}
+                               onClose={this.closeForm}
+                               initialFocus={true} />;
       } else {
-        element = <AddCommentButton onClick={this.openForm} />;
+        return <AddCommentButton onClick={this.openForm} />;
       }
-
-      children = children.concat([<div className="gts-new-comment">{element}</div>]);
     }
-
-    return children;
   },
 
   openForm: function() {

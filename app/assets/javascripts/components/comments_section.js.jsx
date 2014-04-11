@@ -18,10 +18,8 @@ var CommentsSection = React.createClass({
   renderForm: function() {
     if (this.props.createCommentUrl) {
       return (
-        <div className="gts-new-comment">
-          <AddCommentForm url={this.props.createCommentUrl}
-                          onSuccess={this.appendComment} />
-        </div>
+        <AddCommentForm url={this.props.createCommentUrl}
+                        onSuccess={this.appendComment} />
       );
     }
   },

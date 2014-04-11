@@ -19,14 +19,16 @@ var AddCommentForm = React.createClass({
     }
 
     return (
-      <div className="gts-comment-form">
-        <h3>Add comment</h3>
-        <MarkdownEditor ref="editor" initialFocus={this.props.initialFocus} />
-        <div className="row">
-          {error}
-          <div className="form-actions">
-            <SubmitButton text="Comment" onClick={this.handleSubmit} processing={this.state.processing} />
-            {cancelButton}
+      <div className="gts-new-comment">
+        <div className="gts-comment-form">
+          <h3>Add comment</h3>
+          <MarkdownEditor ref="editor" initialFocus={this.props.initialFocus} />
+          <div className="row">
+            {error}
+            <div className="form-actions">
+              <SubmitButton text="Comment" onClick={this.handleSubmit} processing={this.state.processing} />
+              {cancelButton}
+            </div>
           </div>
         </div>
       </div>
