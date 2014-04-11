@@ -15,7 +15,7 @@ var EditCommentForm = React.createClass({
     return (
       <div className="gts-comment-form">
         <h3>Edit comment</h3>
-        <MarkdownEditor ref="editor" initialText={this.props.comment.body} />
+        <MarkdownEditor ref="editor" initialText={this.props.comment.body} initialFocus={true} />
         <div className="row">
           {error}
           <div className="form-actions">
