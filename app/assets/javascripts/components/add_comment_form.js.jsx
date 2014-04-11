@@ -7,7 +7,13 @@ var AddCommentForm = React.createClass({
   },
 
   render: function() {
+    var cancelButton;
     var error;
+
+    if (this.props.onClose) {
+      cancelButton = <button type="button" className="btn" onClick={this.handleCancel}>Cancel</button>;
+    }
+
     if (this.state.error) {
       error = <span className="error">Communication with the server failed. Please try again in a minute.</span>;
     }
@@ -20,7 +26,7 @@ var AddCommentForm = React.createClass({
           {error}
           <div className="form-actions">
             <SubmitButton text="Comment" onClick={this.handleSubmit} processing={this.state.processing} />
-            <button type="button" className="btn" onClick={this.handleCancel}>Cancel</button>
+            {cancelButton}
           </div>
         </div>
       </div>
@@ -53,6 +59,7 @@ var AddCommentForm = React.createClass({
 
       req.done(function(data) {
         this.setProcessing(false);
+        this.clear();
         this.props.onSuccess(data);
       }.bind(this));
 
@@ -69,6 +76,10 @@ var AddCommentForm = React.createClass({
 
   setError: function(error) {
     this.setState({ error: error });
+  },
+
+  clear: function() {
+    this.refs.editor.setText('');
   },
 
   handleCancel: function(event) {

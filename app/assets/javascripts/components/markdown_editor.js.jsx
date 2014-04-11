@@ -59,11 +59,15 @@ var MarkdownEditor = React.createClass({
 
   handleTextChange: function(event) {
     var text = this.refs.input.getDOMNode().value;
-    this.setState({ currentText: text });
+    this.setText(text);
   },
 
   getText: function() {
     return this.state.currentText;
-  }
+  },
+
+  setText: function(text) {
+    this.setState({ currentText: text });
+  },
 
 });
