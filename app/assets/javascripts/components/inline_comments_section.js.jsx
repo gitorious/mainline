@@ -27,7 +27,8 @@ var InlineCommentsSection = React.createClass({
                                   context={this.props.context}
                                   path={this.props.path}
                                   onSuccess={this.appendComment}
-                                  onClose={this.closeForm} />;
+                                  onClose={this.closeForm}
+                                  initialFocus={true} />;
       } else {
         element = <AddCommentButton onClick={this.openForm} />;
       }

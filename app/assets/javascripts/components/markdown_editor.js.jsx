@@ -31,7 +31,9 @@ var MarkdownEditor = React.createClass({
   },
 
   componentDidMount: function() {
-    this.focusTextarea();
+    if (this.props.initialFocus) {
+      this.focusTextarea();
+    }
   },
 
   componentDidUpdate: function(prevProps, prevState) {
