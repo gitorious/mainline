@@ -42,6 +42,12 @@ var InlineCommentsSection = React.createClass({
       this.hideParentRow();
     } else {
       this.showParentRow();
+
+      // re-focus - workaround for the fact that showParentRow is called after textarea got focus
+      var textarea = this.getDOMNode().querySelector('textarea');
+      if (textarea) {
+        textarea.focus();
+      }
     }
   },
 
@@ -51,7 +57,7 @@ var InlineCommentsSection = React.createClass({
   },
 
   showParentRow: function() {
-    // show whole gts-diff-comment <tr>
+    // show gts-diff-comment <tr>
     this.getDOMNode().parentNode.parentNode.style.display = '';
   },
 
