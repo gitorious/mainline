@@ -131,5 +131,5 @@ end
 
 group :assets do
   gem "sass-rails", "~> 3.2"
-  gem 'react-rails', github: "gitorious/react-rails"
+  gem 'react-rails', git: "https://github.com/gitorious/react-rails.git"
 end
