@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +19,12 @@
 require File.expand_path("../boot", __FILE__)
 require "rails/all"
 
-Bundler.require(:default, Rails.env) if defined?(Bundler)
+if defined?(Bundler)
+  # If you precompile assets before deploying to production, use this line
+  Bundler.require *Rails.groups(:assets => %w(development test))
+  # If you want your assets lazily compiled in production, use this line
+  # Bundler.require(:default, :assets, Rails.env)
+end
 
 module Gitorious
   class Application < Rails::Application

@@ -22,6 +22,7 @@
     <meta charset="utf-8">
     <title><%= [@title, current_site.title].compact.join(' - ') %></title>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <%= stylesheet_link_tag "application" if defined? stylesheet_link_tag %>
     <% Gitorious::View.theme_stylesheets(current_site).each do |stylesheet| %>
       <link href="<%= stylesheet %>" rel="stylesheet" type="text/css">
     <% end %>
