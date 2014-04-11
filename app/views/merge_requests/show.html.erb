@@ -58,6 +58,7 @@
       >
         <div class="comments-container"></div>
       </div>
+      <%= render 'comments/login_prompt' unless logged_in? %>
     <% end %>
   <% end %>
 

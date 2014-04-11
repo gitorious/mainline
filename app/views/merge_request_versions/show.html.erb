@@ -64,7 +64,8 @@ git log --pretty=oneline --abbrev-commit <%= merge_request.target_branch %>..mer
     data-gts-env-commit-comments-url="<%= project_repository_merge_request_version_comments_path(project, repository, merge_request, merge_request_version, range, format: "json") %>"
     data-gts-env-create-commit-comment-url="<%= project_repository_merge_request_version_create_comment_path(project, repository, merge_request, merge_request_version, range, format: "json") %>"
   >
-    <h3>Comments</h3>
+    <h3 class="gts-legend">Comments</h3>
     <div class="comments-container"></div>
+    <%= render 'comments/login_prompt' unless logged_in? %>
   </div>
 </div>

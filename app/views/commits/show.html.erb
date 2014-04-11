@@ -56,5 +56,6 @@
     >
     <h3 class="gts-legend">Comments</h3>
     <div class="comments-container"></div>
+    <%= render 'comments/login_prompt' unless logged_in? %>
   </div>
 </div>
