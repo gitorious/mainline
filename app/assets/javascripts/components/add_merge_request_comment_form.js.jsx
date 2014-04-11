@@ -42,7 +42,7 @@ var AddMergeRequestCommentForm = React.createClass({
             {statusSelect}
             {error}
             <div className="form-actions">
-              <button className="btn btn-primary" onClick={this.handleSubmit} disabled={this.state.processing}>Comment</button>
+              <SubmitButton text="Comment" onClick={this.handleSubmit} processing={this.state.processing} />
             </div>
           </div>
         </div>
@@ -54,8 +54,7 @@ var AddMergeRequestCommentForm = React.createClass({
     this.setState({ mergeRequestStatus: event.target.value });
   },
 
-  handleSubmit: function(event) {
-    event.preventDefault();
+  handleSubmit: function() {
     this.setError(false);
 
     var body = this.refs.editor.getText();
