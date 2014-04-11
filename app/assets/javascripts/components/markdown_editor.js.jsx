@@ -3,14 +3,14 @@
 var MarkdownEditor = React.createClass({
 
   getInitialState: function() {
-    return { currentText: this.props.initialText || "" };
+    return { currentText: this.props.initialText || "", preview: false };
   },
 
   render: function() {
     return (
       <div className="row-fluid gts-markdown-editor">
         <div className="span6">
-          <textarea ref="input" onChange={this.handleTextChange}></textarea>
+          <textarea ref="input" value={this.state.currentText} onChange={this.handleTextChange}></textarea>
           <span className="hint">Markdown supported</span>
         </div>
         <div className="span6">
@@ -23,6 +23,7 @@ var MarkdownEditor = React.createClass({
 
   componentDidMount: function() {
     var textarea = this.refs.input.getDOMNode();
+    textarea.innerHTML = '';
     textarea.focus();
     textarea.innerHTML = this.state.currentText;
   },
