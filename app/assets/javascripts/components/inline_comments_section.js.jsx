@@ -7,13 +7,8 @@ var InlineCommentsSection = React.createClass({
   },
 
   render: function() {
-    var style = {};
-    if (this.state.comments.length === 0 && !this.state.formVisible) {
-      style.display = 'none';
-    }
-
     return (
-      <div className="gts-comments" style={style}>
+      <div className="gts-comments">
         <CommentsList comments={this.state.comments} />
         {this.renderForm()}
       </div>
@@ -34,6 +29,38 @@ var InlineCommentsSection = React.createClass({
         return <AddCommentButton onClick={this.openForm} />;
       }
     }
+  },
+
+  componentDidMount: function() {
+    if (this.shouldParentBeHidden()) {
+      this.hideParentRow();
+    }
+  },
+
+  componentDidUpdate: function() {
+    if (this.shouldParentBeHidden()) {
+      this.hideParentRow();
+    } else {
+      this.showParentRow();
+    }
+  },
+
+  hideParentRow: function() {
+    // hide whole gts-diff-comment <tr>
+    this.getDOMNode().parentNode.parentNode.style.display = 'none';
+  },
+
+  showParentRow: function() {
+    // show whole gts-diff-comment <tr>
+    this.getDOMNode().parentNode.parentNode.style.display = '';
+  },
+
+  shouldParentBeHidden: function() {
+    return this.state.comments.length === 0 && !this.state.formVisible;
+  },
+
+  toggleForm: function() {
+    this.setState({ formVisible: !this.state.formVisible });
   },
 
   openForm: function() {
