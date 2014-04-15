@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require 'erb'
 
 ActionMailer::Base.default_url_options[:protocol] = Gitorious.scheme
 ActionMailer::Base.default_url_options[:host]     = Gitorious.host
@@ -25,7 +26,7 @@ ActionMailer::Base.default_url_options[:port]     = Gitorious.port unless Gitori
 
 smtp_config_path = (Rails.root + 'config' + 'smtp.yml').to_s
 if File.exist?(smtp_config_path)
-  smtp_settings = YAML.load_file(smtp_config_path)
+  smtp_settings = YAML::load(ERB.new(File.read(smtp_config_path)).result)
   if smtp_settings
     ActionMailer::Base.smtp_settings = smtp_settings.symbolize_keys
   end
