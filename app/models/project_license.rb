@@ -46,6 +46,7 @@ class ProjectLicense
              "Other Open Source Initiative Approved License",
              "Other/Proprietary License",
              "Other/Multiple",
+             "Eclipse Public License - v 1.0",
              "None"]
 
   def initialize(name, description = nil)
