@@ -52,7 +52,7 @@
               <%= h truncate(commit.committer.to_s, :length => 25) %>
             </strong>
             <span class="sha-abbrev">
-              <%= link_to commit.id_abbrev, project_repository_commit_path(@project, @repository, commit) %>
+              <%= link_to commit.id_abbrev, project_repository_commit_path(@project, @repository, commit.id) %>
             </span>
             <small>
               <%= distance_of_time_in_words_to_now(commit.time) %> ago
