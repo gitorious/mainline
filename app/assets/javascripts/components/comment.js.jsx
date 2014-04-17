@@ -33,7 +33,13 @@ var Comment = React.createClass({
       ]);
     }
 
-    return <div className="gts-comment">{children}</div>;
+    return <div className="gts-comment" id={"c" + comment.id}>{children}</div>;
+  },
+
+  componentDidMount: function() {
+    if (("#c" + this.state.comment.id) == document.location.hash) {
+      $('html, body').scrollTop($(this.getDOMNode()).offset().top);
+    }
   },
 
   handleEdit: function() {

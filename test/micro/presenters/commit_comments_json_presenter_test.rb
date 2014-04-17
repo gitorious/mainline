@@ -46,6 +46,7 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
 
     it "returns array of commit comments" do
       presenter = CommitCommentsJSONPresenter.new(App.new, [Comment.new({
+              :id => 123,
               :user => @user,
               :body => "Yup",
               :created_at => DateTime.new(2013, 1, 1),
@@ -55,6 +56,7 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
 
       assert_equal({
           "commit"=> [{
+              "id" => 123,
               "author" => {
                 "profilePath" => "/~cjohansen",
                 "avatarUrl" => "http://www.gravatar.com/avatar/a59f9d19e6a527f11b016650dde6f4c9&amp;default=http://gitorious.test/images/default_face.gif",

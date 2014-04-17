@@ -35,6 +35,7 @@ class CommitCommentJSONPresenter
     project = repository.project
 
     {
+      "id" => comment.id,
       "author" => {
         "profilePath" => app.user_path(comment.user),
         "avatarUrl" => app.avatar_url(comment.user),

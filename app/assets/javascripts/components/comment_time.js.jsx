@@ -11,7 +11,7 @@ var CommentTime = React.createClass({
       children = children.concat([" (edited ", <TimeAgo time={comment.updatedAt} />, ")"]);
     }
 
-    return <span>{children}</span>;
+    return <span><a href={"#c" + comment.id}>{children}</a></span>;
   }
 
 });
