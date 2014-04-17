@@ -3,13 +3,13 @@
 var EditCommentForm = React.createClass({
 
   getInitialState: function() {
-    return { processing: false, error: false };
+    return { processing: false, error: null };
   },
 
   render: function() {
     var error;
     if (this.state.error) {
-      error = <span className="error">Communication with the server failed. Please try again in a minute.</span>;
+      error = <span className="error">{this.state.error}</span>;
     }
 
     return (
@@ -28,7 +28,7 @@ var EditCommentForm = React.createClass({
   },
 
   handleSubmit: function() {
-    this.setError(false);
+    this.setError(null);
 
     var body = this.refs.editor.getText();
 
@@ -50,9 +50,25 @@ var EditCommentForm = React.createClass({
         this.props.onSuccess(data);
       }.bind(this));
 
-      req.fail(function() {
+      req.fail(function(jqXHR, textStatus, errorThrown) {
+        var message;
+
+        if (jqXHR.responseText[0] == '{') {
+          try {
+            var json = JSON.parse(jqXHR.responseText);
+            if (json.error) {
+              message = json.error;
+            }
+          } catch (e) {
+          }
+        }
+
+        if (!message) {
+          message = "Communication with the server failed. Please try again in a minute.";
+        }
+
+        this.setError(message);
         this.setProcessing(false);
-        this.setError(true);
       }.bind(this));
     }
   },

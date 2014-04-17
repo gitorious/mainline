@@ -56,7 +56,7 @@ class CommentsController < ApplicationController
 
     pre_condition_failed(outcome) do |pc|
       format.json do
-        render json: { error: pc.pre_condition.message }, status: :bad_request
+        render nothing: true, status: :bad_request
       end
     end
 
@@ -81,8 +81,10 @@ class CommentsController < ApplicationController
     outcome = UpdateComment.new(@comment, current_user).execute(params[:comment])
 
     pre_condition_failed(outcome) do |pc|
-      format.json do
-        render json: { error: pc.pre_condition.message }, status: :bad_request
+      respond_to do |format|
+        format.json do
+          render nothing: true, status: :bad_request
+        end
       end
     end
 
