@@ -32,23 +32,9 @@ class RepositoryCommentsControllerTest < ActionController::TestCase
     should "list comments" do
       create_comment
 
-      get(:index, params)
+      get :index, params(format: 'atom')
 
-      assert_match "Hey man!", response.body
-    end
-  end
-
-  context "editing comments" do
-    setup do
-      @comment = create_comment
-    end
-
-    should "display editing form" do
-      login_as(@user)
-
-      get(:edit, params(:id => @comment.id))
-
-      assert_match "Hey man!", response.body
+      assert_response 200
     end
   end
 
@@ -59,14 +45,14 @@ class RepositoryCommentsControllerTest < ActionController::TestCase
 
     should "disallow unauthorized user from listing comments" do
       comment = create_comment
-      get(:index, params)
+      get :index, params(format: 'atom')
       assert_response 403
     end
 
     should "allow authorized user to list comments" do
       login_as :johan
       comment = create_comment
-      get(:index, params)
+      get :index, params(format: 'atom')
       assert_response 200
     end
   end

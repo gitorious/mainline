@@ -23,7 +23,7 @@ class MergeRequestCommentsController < CommentsController
     respond_to do |format|
       format.json do
         comments = target.cascaded_comments
-        render(json: MergeRequestCommentsJSONPresenter.new(self, comments).render_for(current_user))
+        render json: MergeRequestCommentsJSONPresenter.new(self, comments).render_for(current_user)
       end
     end
   end
@@ -37,11 +37,6 @@ class MergeRequestCommentsController < CommentsController
 
   protected
 
-  def edit_comment_path(comment)
-    mr = comment.target
-    edit_project_repository_merge_request_comment_path(mr.project, mr.target_repository, mr, comment)
-  end
-
   # Callbacks from CommentController
   def target
     id = params[:merge_request_id]
@@ -52,19 +47,4 @@ class MergeRequestCommentsController < CommentsController
     CreateMergeRequestComment.new(current_user, target)
   end
 
-  def create_failed_path
-    project_repository_merge_request_path(@project, @repository, target)
-  end
-
-  def create_succeeded_path(comment)
-    project_repository_merge_request_path(@project, @repository, target)
-  end
-
-  def update_failed_path
-    project_repository_merge_request_path(@project, @repository, target)
-  end
-
-  def update_succeeded_path(comment)
-    project_repository_merge_request_path(@project, @repository, target)
-  end
 end

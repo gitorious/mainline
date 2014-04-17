@@ -273,7 +273,7 @@ Gitorious::Application.routes.draw do
         get "/activities" => "repository_activities#index", :as => :activities
       end
 
-      resources :comments, :controller => :repository_comments, :only => [:index, :edit, :update]
+      resources :comments, :controller => :repository_comments, :only => [:index]
 
       resources :services, :only => [:index, :destroy] do
         collection do
@@ -298,7 +298,7 @@ Gitorious::Application.routes.draw do
           get :terms_accepted
         end
 
-        resources :comments, :controller => :merge_request_comments, :only => [:index, :new, :create, :edit, :update]
+        resources :comments, :controller => :merge_request_comments, :only => [:index, :create, :update]
 
         get "/diffs(/:version)" => "merge_request_versions#show", :as => :version
         get "/diffs/:version/comments/:commit_range(.:format)" => "merge_request_version_comments#index", :as => :version_comments
@@ -318,7 +318,6 @@ Gitorious::Application.routes.draw do
       post "/commit/:ref/comments" => "commit_comments#create", :as => :create_commit_comment, :ref => /[^\/]+/
       put "/commit/:ref/comments/:id" => "commit_comments#update", :as => :update_commit_comment, :ref => /[^\/]+/
       get "/commit/:ref/comments.:format" => "commit_comments#index", :as => :commit_comments, :ref => /[^\/]+/
-      get "/commit/:ref/comments/:id/edit" => "commit_comments#edit", :as => :edit_commit_comment, :ref => /[^\/]+/
 
       match "/commit/:from_id/diffs/:id" => "commit_diffs#show", :as => :commit_compare
 

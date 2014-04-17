@@ -1,5 +1,5 @@
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -52,9 +52,7 @@ class EventPresenter
       else
         if comment.sha1.blank? # old-world repo comments
           action_for_event(:event_commented) do
-            " on " +  link_to(h(repo.url_path),
-                              view.project_repository_comments_url(project, repo) +
-                              "##{dom_id(comment)}")
+            " on " +  h(repo.url_path)
           end
         else
           action_for_event(:event_commented) do

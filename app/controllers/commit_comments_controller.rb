@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2013 Gitorious AS
+#   Copyright (C) 2011-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -32,10 +32,6 @@ class CommitCommentsController < CommentsController
     end
   end
 
-  def edit_comment_path(comment)
-    project_repository_edit_commit_comment_path(@project, @repository, comment.sha1, comment.id)
-  end
-
   def update_comment_path(comment)
     if comment.new_record?
       project_repository_create_commit_comment_path(@project, @repository, comment.sha1)
@@ -48,22 +44,6 @@ class CommitCommentsController < CommentsController
   # Callbacks from CommentController
   def create_use_case
     CreateCommitComment.new(current_user, @repository, params[:ref])
-  end
-
-  def create_failed_path
-    project_repository_commit_path(@project, @repository, params[:ref])
-  end
-
-  def create_succeeded_path(comment)
-    project_repository_commit_path(@project, @repository, comment.sha1)
-  end
-
-  def update_failed_path
-    project_repository_commit_path(@project, @repository, params[:ref])
-  end
-
-  def update_succeeded_path(comment)
-    project_repository_commit_path(@project, @repository, comment.sha1)
   end
 
   def find_comment

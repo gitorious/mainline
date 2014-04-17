@@ -43,11 +43,9 @@ class CommitCommentsControllerTest < ActionController::TestCase
   context "creating commit comments" do
     should "add comment to commit" do
       login_as(@user)
-      post(:create, params(:comment => {
-            :body => "Look at me!"
-          }))
+      post(:create, params(comment: { :body => "Look at me!" }, format: 'json'))
 
-      assert_response :redirect
+      assert_response :ok
       assert_equal "Look at me!", Comment.last.body
       assert_equal @user, Comment.last.user
     end
@@ -65,19 +63,19 @@ class CommitCommentsControllerTest < ActionController::TestCase
     end
   end
 
-  context "edit" do
+  context "update" do
     setup do
       @comment = CreateCommitComment.new(@user, @repository, @sha).execute({
           :body => "tis my comment'"
         }).result
     end
 
-    should "display editing form" do
+    should "update comment" do
       login_as(@user)
 
-      get(:edit, params(:id => @comment.id))
+      put(:update, params(id: @comment.id, comment: { body: 'foobar' }, format: 'json'))
 
-      assert_match "tis my comment", response.body
+      assert_response :ok
     end
   end
 
@@ -99,10 +97,10 @@ class CommitCommentsControllerTest < ActionController::TestCase
       assert_response 200
     end
 
-    should "allow authorized user to edit comments" do
+    should "allow authorized user to update comments" do
       login_as :johan
       comment = create_comment(users(:johan))
-      get(:edit, params(:id => comment.id))
+      put(:update, params(id: comment.id, comment: { body: 'foobar' }, format: 'json'))
       assert_response 200
     end
   end
@@ -125,17 +123,17 @@ class CommitCommentsControllerTest < ActionController::TestCase
       assert_response 200
     end
 
-    should "disallow unauthorized user from editing comment" do
+    should "disallow unauthorized user from updating comment" do
       login_as(:moe)
       comment = create_comment(users(:johan))
-      get(:edit, params(:id => comment.id))
+      put(:update, params(id: comment.id, comment: { body: 'foobar' }, format: 'json'))
       assert_response 403
     end
 
-    should "allow authorized user to edit comments" do
+    should "allow authorized user to update comments" do
       login_as :johan
       comment = create_comment(users(:johan))
-      get(:edit, params(:id => comment.id))
+      put(:update, params(id: comment.id, comment: { body: 'foobar' }, format: 'json'))
       assert_response 200
     end
   end

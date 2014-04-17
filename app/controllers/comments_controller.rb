@@ -26,7 +26,7 @@ class CommentsController < ApplicationController
   include Gitorious::View::AvatarHelper
   before_filter :login_required, :except => [:index]
   before_filter :find_project_and_repository
-  before_filter :comment_should_be_editable, :only => [:edit, :update]
+  before_filter :comment_should_be_editable, only: [:update]
   renders_in_site_specific_context
 
   def index
@@ -50,26 +50,18 @@ class CommentsController < ApplicationController
     end
   end
 
-  def new
-    render_form(target.comments.new)
-  end
-
   def create
     uc = create_use_case
     outcome = uc.execute(params[:comment].merge(:add_to_favorites => params[:add_to_favorites]))
 
     pre_condition_failed(outcome) do |pc|
-      flash[:error] = "Couldn't create comment: #{pc.pre_condition.message}"
-      redirect_to(create_failed_path)
+      format.json do
+        render json: { error: pc.pre_condition.message }, status: :bad_request
+      end
     end
 
     outcome.success do |comment|
       respond_to do |format|
-        format.html do
-          flash[:success] = "Your comment was added"
-          redirect_to(create_succeeded_path(comment))
-        end
-
         format.json do
           render json: CommitCommentJSONPresenter.new(self, comment).render_for(current_user)
         end
@@ -78,36 +70,24 @@ class CommentsController < ApplicationController
 
     outcome.failure do |comment|
       respond_to do |format|
-        format.html do
-          render_form(comment)
-        end
-
         format.json do
-          render json: comment.errors
+          render json: comment.errors, status: :unprocessable_entity
         end
       end
     end
-  end
-
-  def edit
-    render_form(@comment)
   end
 
   def update
     outcome = UpdateComment.new(@comment, current_user).execute(params[:comment])
 
     pre_condition_failed(outcome) do |pc|
-      flash[:error] = "Couldn't update comment: #{pc.pre_condition.message}"
-      redirect_to(update_failed_path)
+      format.json do
+        render json: { error: pc.pre_condition.message }, status: :bad_request
+      end
     end
 
     outcome.success do |comment|
       respond_to do |format|
-        format.html do
-          flash[:success] = "Your comment was updated"
-          redirect_to(update_succeeded_path(comment))
-        end
-
         format.json do
           render json: CommitCommentJSONPresenter.new(self, comment).render_for(current_user)
         end
@@ -116,12 +96,8 @@ class CommentsController < ApplicationController
 
     outcome.failure do |comment|
       respond_to do |format|
-        format.html do
-          render_form(comment)
-        end
-
         format.json do
-          render json: comment.errors
+          render json: comment.errors, status: :unprocessable_entity
         end
       end
     end
@@ -129,31 +105,6 @@ class CommentsController < ApplicationController
 
   protected
   helper_method :update_comment_path
-  helper_method :edit_comment_path
-
-  def create_failed_path
-    # Implement in sub-classes
-  end
-
-  def create_succeeded_path(comment)
-    # Implement in sub-classes
-  end
-
-  def update_failed_path
-    # Implement in sub-classes
-  end
-
-  def update_succeeded_path(comment)
-    # Implement in sub-classes
-  end
-
-  def render_form(comment)
-    render(:action => "edit", :locals => {
-        :user => current_user,
-        :repository => RepositoryPresenter.new(@repository),
-        :comment => comment
-      })
-  end
 
   def find_repository
     rid = params[:repository_id]
@@ -163,8 +114,12 @@ class CommentsController < ApplicationController
   def comment_should_be_editable
     @comment = authorize_access_to(find_comment)
     if !can_edit?(current_user, @comment)
-      flash[:error] = !@comment.recently_created? ? "Only recently created comments can be edited, sorry" :  "You are not authorized to edit this comment"
-      redirect_to(update_failed_path)
+      error_message = !@comment.recently_created? ? "Only recently created comments can be edited, sorry" : "You are not authorized to edit this comment"
+      respond_to do |format|
+        format.json do
+          render json: { error: error_message }, status: :forbidden
+        end
+      end
     end
   end
 

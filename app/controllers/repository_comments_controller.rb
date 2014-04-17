@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -22,21 +22,10 @@ class RepositoryCommentsController < CommentsController
     project_repository_comment_path(comment.project, comment.repository, comment)
   end
 
-  def edit_comment_path(comment)
-    edit_project_repository_comment_path(comment.project, comment.repository, comment)
-  end
-
   protected
   # Callbacks from CommentController
   def target
     authorize_access_to(@repository)
   end
 
-  def update_failed_path
-    project_repository_comments_path(@project, @repository)
-  end
-
-  def update_succeeded_path
-    project_repository_comments_path(@project, @repository)
-  end
 end
