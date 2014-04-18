@@ -22,20 +22,16 @@ var MergeRequestCommentsSection = React.createClass({
     if (this.props.createCommentUrl) {
       return (
         <AddMergeRequestCommentForm url={this.props.createCommentUrl}
-                                    onSuccess={this.appendComment}
+                                    onSuccess={this.handleCommentCreated}
                                     mergeRequestStatuses={this.props.mergeRequestStatuses}
-                                    currentMergeRequestStatus={this.state.currentMergeRequestStatus} />
+                                    currentMergeRequestStatus={this.state.currentMergeRequestStatus}
+                                    showAddToFavorites={this.props.showAddToFavorites} />
       )
     }
   },
 
-  appendComment: function(comment) {
-    if (comment.statusChangedTo) {
-      window.location.reload();
-    } else {
-      var comments = this.state.comments.concat([comment]);
-      this.setState({ comments: comments });
-    }
+  handleCommentCreated: function(comment) {
+    window.location.reload();
   },
 
 });

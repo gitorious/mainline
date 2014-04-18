@@ -55,6 +55,7 @@
         data-gts-env-mr-comments-url="<%= project_repository_merge_request_comments_path(repository.project, repository, merge_request, format: "json") %>"
         data-gts-env-mr-statuses="<%= merge_request_statuses_json(merge_request) %>"
         data-gts-env-current-mr-status="<%= merge_request.status_tag %>"
+        data-gts-env-mr-favorited="<%= merge_request.watched_by?(current_user) ? "1" : "" %>"
       >
         <%= render 'comments/comments_container', header: false %>
       </div>
