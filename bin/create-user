@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 require(File.expand_path(File.dirname(__FILE__) + "/setup"))
 
+def yes_no(str)
+  str == "y"
+end
+
 Gitorious::CLI.new.run_with_gitorious_environment do
   require "./config/environment"
   require "highline/import"
@@ -8,13 +12,19 @@ Gitorious::CLI.new.run_with_gitorious_environment do
   ActionMailer::Base.raise_delivery_errors = false
   ActionMailer::Base.delivery_method = :test
 
-  email = ask("Enter e-mail: ")
+  if ARGV.empty?
+    email = ask("Enter e-mail: ")
 
-  default_login = email.split("@").first
-  login = ask("Enter login (#{default_login}): ")
-  login = default_login if login.blank?
-
-  password = ask("Enter password: ") { |q| q.echo = "*" }
+    default_login = email.split("@").first
+    login = ask("Enter login (#{default_login}): ")
+    login = default_login if login.blank?
+    password = ask("Enter password: ") { |q| q.echo = "*" }
+    make_admin = yes_no(ask("Make user admin? (y/n) "))
+  else
+    puts "Reading <email, login, password, make_admin> from command arguments"
+    email, login, password, make_admin = ARGV
+    make_admin = yes_no(make_admin)
+  end
 
   outcome = CreateActivatedUser.new.execute({
       :login => login,
@@ -22,7 +32,7 @@ Gitorious::CLI.new.run_with_gitorious_environment do
       :password => password,
       :password_confirmation => password,
       :terms_of_use => true,
-      :is_admin => ask("Make user admin? (y/n) ") == "y"
+      :is_admin => make_admin
     })
 
   outcome.failure do |user|
