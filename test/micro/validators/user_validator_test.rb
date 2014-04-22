@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -41,8 +41,8 @@ class UserValidatorTest < MiniTest::Spec
       @result = UserValidator.call(@user)
     end
 
-    it "does not require login" do
-      assert_equal [], @result.errors[:login]
+    it "validates presence of login" do
+      refute_equal [], @result.errors[:login]
     end
 
     it "does not require password" do

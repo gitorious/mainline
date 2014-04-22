@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2012-2014 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@
             <p><%= t("views.users.openid_build_description") %></p>
           </legend>
           <%= f.input :email, :as => :email, :required => true, :label => t(:email, :scope => "activerecord.attributes.user") %>
-          <%= f.input :login, :label => t(:login, :scope => "activerecord.attributes.user") %>
+          <%= f.input :login, :required => true, :label => t(:login, :scope => "activerecord.attributes.user") %>
           <%= f.input :fullname, :label => t(:fullname, :scope => "activerecord.attributes.user") %>
           <%= f.input :terms_of_use, :as => :boolean,
             :label => %(I accept the #{link_to('Terms of Service', Gitorious::View.terms_of_service_url)}).html_safe %>

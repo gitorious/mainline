@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -24,7 +24,7 @@ require "validators/password_validator"
 UserValidator = UseCase::Validator.define do
   USERNAME_FORMAT = /^[a-z0-9\-_\.]*$/i.freeze
 
-  validates_presence_of :login, :if => :password_required?
+  validates_presence_of :login
   validates_format_of :login, :with => /^#{USERNAME_FORMAT}$/i
   validates_length_of :login, :within => 1..40, :allow_blank => true
   validates_format_of :email, :with => EmailValidator::EMAIL_FORMAT
