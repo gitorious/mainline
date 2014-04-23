@@ -13,6 +13,7 @@ config/gitorious.yml
 config/gitorious.overrides.yml
 config/memcache.yml
 config/resque.yml
+config/skylight.yml
 config/smtp.yml
 config/unicorn.rb
 config/*.sphinx.conf
