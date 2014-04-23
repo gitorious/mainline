@@ -32,6 +32,7 @@ gem "simple_form", "~> 2.1"
 gem "force_utf8"
 gem 'rugged', git: 'https://github.com/libgit2/rugged.git', branch: 'development', submodules: true
 gem 'react-rails', '~> 0.9.0'
+gem 'skylight'
 
 if ENV['GTS_ENGINE'].to_s != 'true'
   gem "gitorious-issues", :git => "https://git.gitorious.org/gitorious/gitorious-issues.git", :branch => 'master'
