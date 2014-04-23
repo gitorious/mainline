@@ -474,7 +474,7 @@ archive_work_dir: "/var/git/tarballs-work"
 #########################################################################
 
 # Is this gitorious.org? Read: should we have a very flashy homepage?
-#is_gitorious_dot_org: true
+#is_gitorious_dot_org: false
 
 # Stuff that's in the html <head>. custom stats javascript code etc
 #extra_html_head_data:

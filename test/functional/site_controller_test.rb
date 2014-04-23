@@ -50,11 +50,9 @@ class SiteControllerTest < ActionController::TestCase
 
     context "Anonymous users" do
       should "render the public timeline" do
-        Gitorious::Configuration.override("is_gitorious_dot_org" => false) do
-          get :index
-          assert_response :success
-          assert_template "site/index"
-        end
+        get :index
+        assert_response :success
+        assert_template "site/index"
       end
 
       should "not include any commit_repositories" do
@@ -68,11 +66,6 @@ class SiteControllerTest < ActionController::TestCase
       setup do
         @project = Project.first
         enable_private_repositories
-        @settings = Gitorious::Configuration.append("is_gitorious_dot_org" => false)
-      end
-
-      teardown do
-        Gitorious::Configuration.prune(@settings)
       end
 
       should "not display unauthenticated projects" do
@@ -157,14 +150,6 @@ class SiteControllerTest < ActionController::TestCase
   end
 
   context "in Private Mode" do
-    setup do
-      @settings = Gitorious::Configuration.append("is_gitorious_dot_org" => false)
-    end
-
-    teardown do
-      Gitorious::Configuration.prune(@settings)
-    end
-
     should "GET / should not show private content in the homepage" do
       Gitorious.stubs(:public?).returns(false)
       get :index

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011-2013 Gitorious AS
+#   Copyright (C) 2011-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -185,7 +185,7 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
   end
 
   def self.dot_org?
-    @is_gitorious_org = Gitorious::Configuration.get("is_gitorious_dot_org", true)
+    @is_gitorious_org = Gitorious::Configuration.get("is_gitorious_dot_org", false)
   end
 
   def self.git_binary

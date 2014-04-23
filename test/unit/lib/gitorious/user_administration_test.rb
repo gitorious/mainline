@@ -22,7 +22,7 @@ class UserAdministrationTest < ActiveSupport::TestCase
   include Gitorious::UserAdministration
 
   should "summarize operations for feedback in CLI or GUI" do
-    summary = suspend_user(User.new)
+    summary = suspend_user(User.new(login: 'foobar'))
     assert summary.length > 0
     assert summary.class == String
     assert summary =~ /Suspended Gitorious account/
