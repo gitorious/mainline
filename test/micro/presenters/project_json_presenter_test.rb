@@ -63,13 +63,20 @@ class ProjectJSONPresenterTest < MiniTest::Spec
       assert_equal "/project/confirm_delete", paths["destroyPath"]
       assert_equal "/project/ownership/edit", paths["ownershipPath"]
       assert_equal "/project/repositories/new", paths["newRepositoryPath"]
-      assert_equal "/project/oauth_settings", paths["oauthSettingsPath"]
     end
 
     it "does not include membership URL when private repos is disabled" do
       Gitorious.stubs(:private_repositories?).returns(false)
       presenter = ProjectJSONPresenter.new(App.new(:is_admin => true), @project)
       assert_nil presenter.hash_for(@user)["project"]["admin"]["membershipsPath"]
+    end
+
+    it "includes OAuth settings URL when this is gitorious.org" do
+      Gitorious.stubs(:dot_org?).returns(true)
+      presenter = ProjectJSONPresenter.new(App.new(:is_admin => true), @project)
+
+      paths = presenter.hash_for(@user)["project"]["admin"]
+      assert_equal "/project/oauth_settings", paths["oauthSettingsPath"]
     end
 
     it "includes membership URL when private repos is enabled" do
