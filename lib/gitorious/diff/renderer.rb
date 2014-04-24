@@ -27,19 +27,20 @@ module Gitorious
 
       def render(file)
         diff = ::Diff::Display::Unified.new(file.diff)
-        class_name = respond_to?(:table_class) ? " " + table_class : ""
 
         if binary?(file)
-          render_blob(diff, file)
-        else
           render_blob(diff, file) do
             <<-HTML
-  <div class="gts-code-listing-wrapper">
-    <table class="gts-code-listing#{class_name}">
-#{diff.render(callback_class.new).force_utf8}
-    </table>
-  </div>
+      <tbody>
+        <tr class="gts-diff-unmod">
+          <td class="gts-code"><code>Binary files differ, diff hidden.</code></td>
+        </tr>
+      </tbody>
             HTML
+          end
+        else
+          render_blob(diff, file) do
+            diff.render(callback_class.new).force_utf8
           end
         end
       end
@@ -56,7 +57,11 @@ module Gitorious
       (<span class="gts-diff-add">+#{adds(diff)}</span>/<span class="gts-diff-rm">-#{rms(diff)}</span>)
     </li>
   </ul>
-  #{yield if block_given?}
+  <div class="gts-code-listing-wrapper">
+    <table class="gts-code-listing#{class_name}">
+      #{yield if block_given?}
+    </table>
+  </div>
 </div>
         HTML
       end
@@ -79,6 +84,10 @@ module Gitorious
 
       def a_path(file)
         file.a_path && file.a_path.force_utf8
+      end
+
+      def class_name
+        respond_to?(:table_class) ? " " + table_class : ""
       end
 
       private
