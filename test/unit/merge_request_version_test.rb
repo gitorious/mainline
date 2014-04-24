@@ -104,6 +104,8 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
   end
 
   context "The diff backend" do
+    include SampleRepoHelpers
+
     setup {
       @backend = MergeRequestVersion::DiffBackend.new(nil)
     }
@@ -121,6 +123,17 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
     should "ask the cache for diffs for a single commit" do
       Rails.cache.expects(:fetch).with("merge_request_diff_v1_f00").returns("foo_bar")
       assert_equal "foo_bar", @backend.single_commit_diff("f00")
+    end
+
+    should "return commits diff" do
+      repo = sample_repo('with_binaries')
+      backend = MergeRequestVersion::DiffBackend.new(repo)
+
+      diffs = backend.commit_diff("d26a845ccc77c471f0d6acadf8c72669e83a9585",
+                                  "771cece5bb44e2918adf6d2eb05d86af0dd50492")
+      files = diffs.map { |f| [f.b_path, f.b_blob.binary?] }
+
+      assert_equal [["README", false], ["favicon.ico", true]], files
     end
   end
 
