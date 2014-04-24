@@ -101,8 +101,7 @@ class MergeRequestVersion < ActiveRecord::Base
                            else
                              first
                            end
-        diff_string = @repository.git.ruby_git.diff(first_commit_sha ,last)
-        Grit::Diff.list_from_string(@repository, diff_string)
+        Grit::Commit.diff(@repository, first_commit_sha, last)
       end
     end
 
