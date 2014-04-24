@@ -47,7 +47,7 @@ module Gitorious
 
       def render_blob(diff, file)
         <<-HTML
-<div class="gts-file">
+<div class="gts-file" id="#{a_path(file)}">
   <ul class="breadcrumb">
     <li class="gts-diff-summary">
       <a href="#{blob_url(file)}">
