@@ -411,7 +411,7 @@ GEM
     xpath (2.0.0)
       nokogiri (~> 1.3)
     yajl-ruby (1.1.0)
-    zeus (0.13.4.pre2)
+    zeus (0.15.1)
       method_source (>= 0.6.7)
 
 PLATFORMS
@@ -500,4 +500,4 @@ DEPENDENCIES
   webmock (~> 1.13)
   wikicloth
   will_paginate (~> 3.0)
-  zeus (= 0.13.4.pre2)
+  zeus

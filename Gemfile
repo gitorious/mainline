@@ -68,7 +68,7 @@ group :test do
   gem "simplecov", :platforms => [:ruby_19, :ruby_20], :require => false
   gem "simplecov-rcov", :platforms => [:ruby_19, :ruby_20], :require => false
 
-  gem "zeus", "0.13.4.pre2"
+  gem "zeus"
 end
 
 group :postgres do
