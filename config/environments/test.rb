@@ -59,4 +59,6 @@ Gitorious::Application.configure do
   config.active_record.mass_assignment_sanitizer = :strict
 
   config.react.variant = :production
+
+  config.cache_store = :null_store
 end
