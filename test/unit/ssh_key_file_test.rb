@@ -34,6 +34,7 @@ class SshKeyFileTest < ActiveSupport::TestCase
 
   def teardown
     FileUtils.rm(fixture_key_path) if File.exist?(fixture_key_path)
+    ENV.delete("GITORIOUS_AUTHORIZED_KEYS_PATH")
   end
 
   should "initializes with the path to the key file" do
@@ -44,6 +45,12 @@ class SshKeyFileTest < ActiveSupport::TestCase
   should "defaults to $HOME/.ssh/authorized_keys" do
     keyfile = SshKeyFile.new
     assert_equal File.join(File.expand_path("~"), ".ssh", "authorized_keys"), keyfile.path
+  end
+
+  should "read the default path from ENV" do
+    ENV["GITORIOUS_AUTHORIZED_KEYS_PATH"] = "/var/lib/gitorious"
+
+    assert_equal "/var/lib/gitorious", SshKeyFile.new.path
   end
 
   should "reads all the data in the file" do

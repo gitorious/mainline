@@ -81,6 +81,7 @@ class SshKeyFile
 
   protected
   def default_authorized_keys_path
-    File.join(File.expand_path("~"), ".ssh", "authorized_keys")
+    ENV["GITORIOUS_AUTHORIZED_KEYS_PATH"] ||
+      File.join(File.expand_path("~"), ".ssh", "authorized_keys")
   end
 end
