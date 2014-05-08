@@ -5,7 +5,7 @@ class AuthConfigLoader
     auth_file = RAILS_ROOT + "config/authentication.yml"
     raise ConfigurationError, "No config/authentication found" unless auth_file.exist?
 
-    auth_config = YAML::load_file(auth_file) || {}
+    auth_config = Gitorious::ConfigurationReader.read(auth_file) || {}
     auth_config = auth_config[RAILS_ENV] if auth_config.key?(RAILS_ENV)
     raise ConfigurationError, "No authentication configuration found in authentication.yml. #{auth_config.inspect}" unless auth_config
     raise ConfigurationError, "No authentication methods defined in authentication.yml. #{auth_config.inspect}" unless auth_config.key?("methods")

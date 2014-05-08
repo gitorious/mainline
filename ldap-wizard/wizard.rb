@@ -17,6 +17,7 @@ require "net/ldap"
 require "credentials"
 require "ldap_configuration_presenter"
 require "ldap_tester"
+require "gitorious/configuration_reader"
 require "auth_config_loader"
 
 require "sinatra"

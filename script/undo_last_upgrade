@@ -9,8 +9,8 @@
 
 
 def restore_db
-  require 'yaml'
-  conf = YAML::load(File.open('config/database.yml'))
+  require_relative '../lib/gitorious/configuration_reader'
+  conf = Gitorious::ConfigurationReader.read('config/database.yml')
   db_name = conf['production']['database']
   puts `mysql #{db_name} < /tmp/upgrade_db_backup.sql`
 end

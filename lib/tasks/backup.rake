@@ -122,7 +122,8 @@ namespace :backup do
   end
 
   def db_config
-    @db_config ||= YAML::load(File.open('config/database.yml'))
+    require "gitorious/configuration_reader"
+    @db_config ||= Gitorious::ConfigurationReader.read('config/database.yml')
   end
 
   def repo_path

@@ -49,13 +49,13 @@ git_dir = ENV.delete("GIT_DIR")
 Bundler.require(:messaging, Rails.env.to_s)
 ENV["GIT_DIR"] = git_dir
 
-require "yaml"
 require "gitorious/messaging"
+require "gitorious/configuration_reader"
 require "repository_root"
 
 if !defined?(Gitorious::Configuration)
-  conf = YAML::load_file(Rails.root + "config/gitorious.yml")
-  overrides = YAML::load_file(Rails.root + "config/gitorious.overrides.yml") rescue {}
+  conf = Gitorious::ConfigurationReader.read(Rails.root + "config/gitorious.yml")
+  overrides = Gitorious::ConfigurationReader.read(Rails.root + "config/gitorious.overrides.yml") rescue {}
   conf.merge!(overrides || {})
   Gitorious::Messaging.adapter = (conf[Rails.env.to_s] || {})["messaging_adapter"] || conf["messaging_adapter"]
   Bundler.require(Gitorious::Messaging.adapter.to_sym)
@@ -65,7 +65,7 @@ if !defined?(Gitorious::Configuration)
   if Gitorious::Messaging.adapter == "resque"
     resque_config = Rails.root + "config/resque.yml"
     if resque_config.exist?
-      settings = YAML::load_file(resque_config)[Rails.env.to_s]
+      settings = Gitorious::ConfigurationReader.read(resque_config)[Rails.env.to_s]
       Resque.redis = settings if settings
     end
   end

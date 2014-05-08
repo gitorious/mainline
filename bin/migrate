@@ -41,14 +41,14 @@ require "pathname"
 gitorious_root = Pathname.new(__FILE__).dirname.realpath.to_s.gsub("/bin", "")
 Dir.chdir gitorious_root
 RAILS_ENV = ENV["RAILS_ENV"] || "production"
-require 'yaml'
+require_relative "../lib/gitorious/configuration_reader"
 
 def db_config
-  @db_config ||= YAML::load(File.open('config/database.yml'))
+  @db_config ||= Gitorious::ConfigurationReader.read('config/database.yml')
 end
 
 def gitorious_config
-  @gitorious_config ||= YAML::load(File.open('config/gitorious.yml'))
+  @gitorious_config ||= Gitorious::ConfigurationReader.read('config/gitorious.yml')
 end
 
 def repo_path

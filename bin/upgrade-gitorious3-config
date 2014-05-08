@@ -30,7 +30,7 @@ must manually put it in place afterwards
     `cp #{ARGV[1]} #{ARGV[1]}.bu-#{Time.now.to_i}`
   end
 
-  old = YAML.load_file(ARGV[0])
+  old = Gitorious::ConfigurationReader.read(ARGV[0])
 
   def optional(settings, setting)
     return "##{setting}:" if !settings.key?(setting)

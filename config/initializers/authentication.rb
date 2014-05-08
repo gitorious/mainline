@@ -19,7 +19,7 @@ require "gitorious/authentication"
 auth_configuration_path = ENV['GTS_AUTHENTICATION_YML'] || Rails.root + "config/authentication.yml"
 
 if File.exist?(auth_configuration_path)
-  config = YAML::load_file(auth_configuration_path)
+  config = Gitorious::ConfigurationReader.read(auth_configuration_path)
 
   if config && config.key?(Rails.env)
     config = config[Rails.env]

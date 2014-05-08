@@ -31,7 +31,7 @@ module Gitorious
         authorization_configuration_path = File.join(root, "config", "authorization.yml")
 
         if File.exist?(authorization_configuration_path)
-          if config = YAML::load_file(authorization_configuration_path)[Rails.env]
+          if config = Gitorious::ConfigurationReader.read(authorization_configuration_path)[Rails.env]
             Gitorious::Authorization::Configuration.configure(config)
           else
             Gitorious::Authorization::Configuration.use_default_configuration

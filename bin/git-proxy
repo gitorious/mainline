@@ -59,7 +59,7 @@ require "yaml"
 ROOT_DIR = File.expand_path( File.join(File.dirname(__FILE__), "../") )
 
 if Rails.env.production? && Process.uid == 0
-  config = YAML::load_file(ROOT_DIR + "/config/gitorious.yml")
+  config = Gitorious::ConfigurationReader.read(ROOT_DIR + "/config/gitorious.yml")
   git_user = config["user"] || (config[Rails.env] && config[Rails.env]["user"])
   if git_user
     uid = Etc.getpwnam(git_user).uid

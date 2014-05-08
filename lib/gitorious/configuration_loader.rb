@@ -16,8 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "pathname"
-require "yaml"
-require "erb"
+require "gitorious/configuration_reader"
 
 # See also config/gitorious_config.rb for more information about
 # how Gitorious is configured.
@@ -155,7 +154,7 @@ Tests may not work as intended.
       full_path = File.join(@root, path)
       return [{}, {}] if allow_missing && !File.exist?(full_path)
 
-      settings = YAML.load(ERB.new(File.read(full_path)).result) || {}
+      settings = Gitorious::ConfigurationReader.read(full_path) || {}
 
       groups = {}
       groups['production']  = settings.delete('production') if settings.key?('production')
