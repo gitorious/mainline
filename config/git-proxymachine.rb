@@ -1,3 +1,21 @@
+# encoding: utf-8
+#--
+#   Copyright (C) 2011-2014 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+
 # Run with `env RAILS_ENV="development" proxymachine -c config/git-proxymachine.rb`
 
 ENV["RAILS_ENV"] ||= "production"
@@ -32,12 +50,16 @@ end
 
 # Do the proxying to the proper host, and send the real path onwards
 # to the backend git-daemon
+remote_host = ENV['GIT_DAEMON_PORT_9418_TCP_ADDR'] || 'localhost'
+remote_port = ENV['GIT_DAEMON_PORT_9418_TCP_PORT'] || 9400
+remote = "#{remote_host}:#{remote_port}"
+
 proxy do |data|
   if data =~ /^....(git\-upload\-pack|git\ upload\-pack)\s(.+)\x00host=(.+)\x00/
     service, path, host = $1, $2, $3
     if repository = GitRouter.lookup_repository(path)
       {
-        :remote => "localhost:9400",
+        :remote => remote,
         :data => GitRouter.header_tag(repository.hashed_path + ".git")
       }
     else
