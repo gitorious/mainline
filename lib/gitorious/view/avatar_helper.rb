@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -51,7 +51,7 @@ module Gitorious
         if group.avatar?
           image_tag(group.avatar.url(size), options)
         else
-          image_tag("/images/#{DEFAULT_GROUP_AVATAR}", options)
+          image_tag(DEFAULT_GROUP_AVATAR, options)
         end
       end
 

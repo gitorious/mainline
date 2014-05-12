@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,6 @@ class Group < ActiveRecord::Base
 
   avatar_local_path = '/system/group_avatars/:group_name/:style/:basename.:extension'
   has_attached_file :avatar,
-    :default_url  =>'/images/default_group_avatar.png',
     :styles => { :normal => "300x300>", :medium => "64x64>", :thumb => '32x32>', :icon => '16x16>' },
     :url => avatar_local_path,
     :path => ":rails_root/public#{avatar_local_path}"
