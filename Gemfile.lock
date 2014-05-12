@@ -181,7 +181,7 @@ GEM
     kgio (2.8.1)
     launchy (2.4.2)
       addressable (~> 2.3)
-    libdolt (0.33.16)
+    libdolt (0.33.17)
       force_utf8
       htmlentities (~> 4.3)
       json (~> 1.7)
