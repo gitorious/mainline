@@ -156,10 +156,6 @@ class GroupTest < ActiveSupport::TestCase
   context 'Avatars' do
     setup { @group = FactoryGirl.create(:group) }
 
-    should 'have a default avatar' do
-      assert_equal '/images/default_group_avatar.png', @group.avatar.url
-    end
-
     should 'use the correct path when an avatar is set' do
       @group.avatar_file_name = 'foo.png'
       assert_equal "/system/group_avatars/#{@group.name}/original/foo.png", @group.avatar.url
