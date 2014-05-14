@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -133,6 +133,13 @@ EOF
     assert validator.valid?
 
     ssh_key = new_key(:key => "#{k}\n#{k}")
+    assert validator.valid?
+  end
+
+  it "supports ecdsa keys" do
+    ssh_key = new_key(:key => "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBK9idXeOK6XrcbcTYG1Y08uSmqXLRBX+F0Yj3GVb3N6z1dXkdt726Ui6lqUY9z06Aq3a0STcY0XhIo47BH9T3EI= foo@example.com")
+    validator = SshKeyValidator.new(ssh_key)
+
     assert validator.valid?
   end
 end

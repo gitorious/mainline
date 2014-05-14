@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +19,7 @@ require "use_case"
 require "tempfile"
 
 SshKeyValidator = UseCase::Validator.define do
-  KEY_FORMAT = /^ssh\-[a-z0-9]{3,4} [a-z0-9\+=\/]+ .*$/ims.freeze
+  KEY_FORMAT = /^((ssh-[a-z0-9]{3,4})|(ecdsa(-[a-z0-9]+){2})) [a-z0-9\+=\/]+ .*$/ims.freeze
   PRIVATE_KEY_FORMAT = /^-+.*PRIVATE.*-+$/ims.freeze
 
   validate :valid_ssh_key
