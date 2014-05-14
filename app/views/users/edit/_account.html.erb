@@ -1,6 +1,6 @@
 <%
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -35,6 +35,7 @@
       </div>
     </div>
     <%= f.input :avatar, :as => :file, :hint => 'If you do not add an image, Gitorious will try to use your gravatar', :label => 'Upload avatar' %>
+    <%= f.input :url, :as => :string, :label => t('views.users.url') %>
     <%= f.input :wants_email_notifications, :as => :boolean, :hint => t("views.users.describe_email_notifications"), :label => t("views.users.wants_email_notifications") %>
     <%= f.input :default_favorite_notifications, :as => :boolean, :hint => t("views.users.default_favorite_notifications", :url => favorites_path) %>
   </fieldset>
