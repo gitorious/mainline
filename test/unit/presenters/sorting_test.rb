@@ -18,7 +18,7 @@
 
 class SortingTest < Minitest::Spec
   def sorting(order, view_context = nil)
-    Sorting.new(order, view_context,
+    Sorting.new(order, view_context, 'foo/bar',
       {name: "foo", order: ->(q){ :foo }},
       {name: "bar", order: ->(q){ :bar }, default: true})
   end
@@ -31,6 +31,11 @@ class SortingTest < Minitest::Spec
     it "applies a default scope with no sorting found" do
       assert_equal :bar, sorting("baz").apply(nil)
     end
+
+    it "returns the given collection with no default" do
+      sorting = Sorting.new("foo", nil, 'foo/bar')
+      assert_equal [1,2,3], sorting.apply([1,2,3])
+    end
   end
 
   it "exposes current_order" do
@@ -38,13 +43,15 @@ class SortingTest < Minitest::Spec
   end
 
   describe "#render_widget" do
-    include ViewContextHelper
-
     it "disables the selected sort" do
-      widget = sorting("foos", view_context).render_widget
+      sorts = [{name: 'foo'}]
+      view_context = stub
+      sorting = Sorting.new(:foo, view_context, 'foo/bar', *sorts)
+      view_context.stubs(:render)
+        .with('foo/bar', sorts: sorts, sorting: sorting)
+        .returns("rendered template")
 
-      assert_includes widget, "?order=foo"
-      refute_includes widget, "?order=bar"
+      assert_equal "rendered template", sorting.render_widget
     end
   end
 end

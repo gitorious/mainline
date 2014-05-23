@@ -19,43 +19,36 @@
 class Sorting
   attr_reader :current_order
 
-  def initialize(current_order, view_context, *sorts)
+  def initialize(current_order, view_context, template, *sorts)
+    @template = template
     @current_order = current_order
     @v = view_context
     @sorts = sorts
   end
 
   def render_widget
-    v.content_tag("ul", class: "pager sortings") do
-      sorts.map do |sort|
-        sort_name = sort[:name]
-        if current_sort?(sort)
-          v.content_tag("li", class: "disabled") do
-            v.content_tag("a", sort_name.capitalize)
-          end
-        else
-          v.content_tag("li") do
-            v.link_to sort_name.capitalize, v.url_for(order: sort_name)
-          end
-        end
-      end.join.html_safe
-    end
+    v.render(template, sorts: sorts, sorting: self)
   end
 
   def apply(query)
     current_sort[:order][query]
   end
 
+  def current_sort?(sort)
+    sort == current_sort
+  end
+
   private
 
-  attr_reader :v, :sorts
+  attr_reader :v, :sorts, :template
 
   def current_sort
     sorts.find { |s| s[:name].to_s == current_order } ||
-    sorts.find { |s| s[:default] }
+    sorts.find { |s| s[:default] } ||
+    identity
   end
 
-  def current_sort?(sort)
-    sort == current_sort
+  def identity
+    {order: ->(q) { q }}
   end
 end

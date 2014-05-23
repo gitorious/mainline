@@ -37,9 +37,15 @@ class ProjectsController < ApplicationController
   renders_in_global_context :except => [:show, :edit, :update, :confirm_delete]
 
   def projects_sorting
-    Sorting.new(params[:order], view_context,
+    Sorting.new(params[:order], view_context, 'sortings/projects',
                 {name: :alphabetical, order: ->(q){ q.order_by_title }},
                 {name: :activity, order: ->(q){ q.order_by_activity }, default: true})
+  end
+
+  def repositories_sorting
+    Sorting.new(params[:repositories_order], view_context, 'sortings/repositories',
+                {name: :ascending, order: ->(q){ q.sort_by(&:url_path) }, default: true },
+                {name: :descending, order: ->(q){ q.sort_by(&:url_path).reverse }})
   end
 
   def index
@@ -93,7 +99,8 @@ class ProjectsController < ApplicationController
             :current_page => page,
             :total_pages => total_pages,
             :atom_auto_discovery_url => project_path(@project, :format => :atom),
-            :mainlines => mainlines,
+            :mainlines => repositories_sorting.apply(mainlines),
+            :mainlines_sorting => repositories_sorting,
             :group_clones => group_clones,
             :user_clones => user_clones
           }, :layout => 'project')
