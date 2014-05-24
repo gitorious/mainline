@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2012-2014 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 <li class="clone">
   <% if repository.owned_by_group? %>
     <span class="group">
-      <%= group_avatar(repository.owner, :size => 16) %>
+      <%= group_avatar(repository.owner, :size => :icon) %>
       <%= link_to h(repository.owner_to_param_with_prefix), repository.owner %>
     </span>
   <% else %>
