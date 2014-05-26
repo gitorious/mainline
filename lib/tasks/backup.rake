@@ -155,14 +155,8 @@ namespace :backup do
     puts `rm -rf #{SQL_DUMP_FILE};rm -rf #{TMP_WORKDIR}`
   end
 
-  task :env do
-    require "gitorious/configuration_loader"
-    require 'yaml'
-    Gitorious::ConfigurationLoader.new.require_configurable_singletons!
-  end
-
   desc "Simple state snapshot of the Gitorious instance to a single tarball."
-  task :snapshot => :env do
+  task :snapshot => :environment do
     puts "Initializing..."
     puts `rm -f #{tarball_path};rm -f #{SQL_DUMP_FILE}`
     puts `rm -rf #{TMP_WORKDIR}; mkdir #{TMP_WORKDIR}`
@@ -217,7 +211,7 @@ namespace :backup do
   end
 
   desc "Restores Gitorious instance to snapshot previously stored in tarball file."
-  task :restore => [:env, :environment, "db:drop", "db:create"] do
+  task :restore => [:environment, "db:drop", "db:create"] do
     abort "Snapshot file #{tarball_path} not found, aborting" unless File.exist?(tarball_path)
     abort "Repo dir #{repo_path.to_s} not found in current Gitorous installation, aborting" unless File.exist?(repo_path.to_s)
 
