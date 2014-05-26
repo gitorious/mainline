@@ -20,6 +20,6 @@
 <% descending = sorting.current_order == 'descending' %>
 
 <%= link_to url_for(repositories_order: descending ? 'ascending' : 'descending'), 
-  class: 'btn btn-primary' do %>
+  class: 'btn btn-primary', title: 'Sort ' + (descending ? 'ascending' : 'descending') do %>
   <i class="icon-chevron-<%= descending ? 'down' : 'up' %> icon-white"></i>
 <% end %>
