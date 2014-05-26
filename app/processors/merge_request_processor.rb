@@ -23,7 +23,14 @@ class MergeRequestProcessor
 
   def on_message(message)
     # Find by id, as we're outside repository scope here
-    merge_request = MergeRequest.find(message['merge_request_id'])
+    id = message['merge_request_id'].to_i
+    begin
+      merge_request = MergeRequest.find(id)
+    rescue ActiveRecord::RecordNotFound
+      logger.warning("Can't process merge request with id=#{id}, record doesn't exist")
+      return
+    end
+
     if !merge_request.target_repository.has_tracking_repository?
       create_tracking_repository(merge_request)
     end

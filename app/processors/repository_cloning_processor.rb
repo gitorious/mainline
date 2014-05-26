@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -21,7 +21,14 @@ class RepositoryCloningProcessor
   consumes "/queue/GitoriousRepositoryCloning"
 
   def on_message(message)
-    repository = Repository.find(message["id"].to_i)
+    id = message["id"].to_i
+    begin
+      repository = Repository.find(id)
+    rescue ActiveRecord::RecordNotFound
+      logger.warning("Can't clone repository with id=#{id}, record doesn't exist")
+      return
+    end
+
     logger.info("Processing new repository clone: #<Repository id: #{repository.id}, :parent: #{repository.parent.repository_plain_path}, path: #{repository.repository_plain_path}>")
     RepositoryCloner.clone_with_hooks(repository.parent.real_gitdir, repository.real_gitdir)
     repository.ready = true

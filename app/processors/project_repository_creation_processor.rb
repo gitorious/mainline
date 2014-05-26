@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -21,7 +21,14 @@ class ProjectRepositoryCreationProcessor
   consumes "/queue/GitoriousProjectRepositoryCreation"
 
   def on_message(message)
-    repository = Repository.find(message["id"].to_i)
+    id = message["id"].to_i
+    begin
+      repository = Repository.find(id)
+    rescue ActiveRecord::RecordNotFound
+      logger.warning("Can't create project repository on disk for id=#{id}, record doesn't exist")
+      return
+    end
+
     logger.info("Processing new project repository: #<Repository id: #{repository.id}, path: #{repository.repository_plain_path}>")
     full_path = RepositoryRoot.expand(repository.real_gitdir)
     GitBackend.create(full_path.to_s)

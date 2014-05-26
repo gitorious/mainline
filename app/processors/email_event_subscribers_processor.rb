@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,14 @@ class EmailEventSubscribersProcessor
   consumes EmailEventSubscribers::QUEUE
 
   def on_message(message)
-    EmailEventSubscribers::EventMailer.call(Event.find(message['event_id']))
+    id = message['event_id']
+    begin
+      event = Event.find(id)
+    rescue ActiveRecord::RecordNotFound
+      logger.warning("Can't notify subscribers about event with id=#{id}, record doesn't exist")
+      return
+    end
+
+    EmailEventSubscribers::EventMailer.call(event)
   end
 end
