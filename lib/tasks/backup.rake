@@ -135,7 +135,10 @@ namespace :backup do
   end
 
   def database_credential_options
-    "-u#{db_config[RAILS_ENV]['username']} -p#{db_config[RAILS_ENV]['password']}"
+    db = db_config[RAILS_ENV]
+    params = {u: 'username', p: 'password', h: 'host', P: 'port'}
+
+    params.map {|o,k| "-#{o}#{db[k]}" if db[k]}.join(' ')
   end
 
   def restore_config_files?
