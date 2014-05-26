@@ -259,7 +259,7 @@ namespace :backup do
     Rake::Task["db:migrate"].invoke
 
     puts "Rebuilding ~/.ssh/authorized_keys from user keys in database..."
-    puts `rm -f $HOME/.ssh/authorized_keys; bundle exec script/regenerate_ssh_keys $HOME/.ssh/authorized_keys`
+    puts `bundle exec script/regenerate_ssh_keys`
 
     puts "Recreating symlink to common hooks"
     puts `rm -f #{repo_path}/.hooks`
