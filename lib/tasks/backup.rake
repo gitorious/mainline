@@ -65,8 +65,8 @@ namespace :backup do
   # sudo bundle exec rake backup:restore RAILS_ENV=production
   #
   # More explicit: specify tarball path
-  # sudo bundle exec rake backup:snapshot RAILS_ENV=production TARBALL_PATH="current_snapshot.sql"
-  # sudo bundle exec rake backup:restore RAILS_ENV=production TARBALL_PATH="current_snapshot.sql"
+  # sudo bundle exec rake backup:snapshot RAILS_ENV=production TARBALL_PATH="current_snapshot.tar"
+  # sudo bundle exec rake backup:restore RAILS_ENV=production TARBALL_PATH="current_snapshot.tar"
   #
   # During restore of a snapshot, also restore config files
   # sudo bundle exec rake backup:snapshot RAILS_ENV=production RESTORE_CONFIG_FILES=true
