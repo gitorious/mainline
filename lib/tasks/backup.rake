@@ -177,7 +177,8 @@ namespace :backup do
 
     puts "Backing up uploaded assets (avatar pictures etc)"
     if File.exist?("./public/system")
-      puts `cp -r ./public/system #{TMP_WORKDIR}/public_system_uploaded_assets`
+      puts `mkdir -p #{TMP_WORKDIR}/public_system_uploaded_assets`
+      puts `cp -r ./public/system/* #{TMP_WORKDIR}/public_system_uploaded_assets/`
     end
 
     puts "Backing up custom hooks..."
