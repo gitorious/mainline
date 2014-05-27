@@ -59,21 +59,21 @@ namespace :backup do
   # EXAMPLES:
   #
   # Simple dump of production env to default tarball file in current directory:
-  # sudo bundle exec rake backup:snapshot RAILS_ENV=production
+  # bundle exec rake backup:snapshot RAILS_ENV=production
   #
   # Simple restore of production env from default tarball in current directory:
-  # sudo bundle exec rake backup:restore RAILS_ENV=production
+  # bundle exec rake backup:restore RAILS_ENV=production
   #
   # More explicit: specify tarball path
-  # sudo bundle exec rake backup:snapshot RAILS_ENV=production TARBALL_PATH="current_snapshot.tar"
-  # sudo bundle exec rake backup:restore RAILS_ENV=production TARBALL_PATH="current_snapshot.tar"
+  # bundle exec rake backup:snapshot RAILS_ENV=production TARBALL_PATH="current_snapshot.tar"
+  # bundle exec rake backup:restore RAILS_ENV=production TARBALL_PATH="current_snapshot.tar"
   #
   # During restore of a snapshot, also restore config files
-  # sudo bundle exec rake backup:snapshot RAILS_ENV=production RESTORE_CONFIG_FILES=true
+  # bundle exec rake backup:snapshot RAILS_ENV=production RESTORE_CONFIG_FILES=true
 
   # Do the actual git repo backup/restore separately yourself
-  # sudo bundle exec rake backup:snapshot RAILS_ENV=production SKIP_REPOS=true
-  # sudo bundle exec rake backup:restore RAILS_ENV=production SKIP_REPOS=true
+  # bundle exec rake backup:snapshot RAILS_ENV=production SKIP_REPOS=true
+  # bundle exec rake backup:restore RAILS_ENV=production SKIP_REPOS=true
 
   # ASSUMPTIONS:
 
@@ -83,27 +83,23 @@ namespace :backup do
   # you can run the recover task to bring in the data and possibly
   # configuration files from a a snapshot tarball.
 
-  # 1. Both tasks should be run as root/superuser to preserve file/dir
-  # ownerships and have enough permissions when the backup tasks shell
-  # out.
-
-  # 2. You need to specify which environment you
+  # 1. You need to specify which environment you
   # snapshotting/restoring (production, development, etc). See example
   # above to pass this as param.
 
-  # 3. Leans on the 'mysqldump' util for database backup.
+  # 2. Leans on the 'mysqldump' util for database backup.
 
-  # 4. Doesn't currently capture queue state, so you may want to shut
+  # 3. Doesn't currently capture queue state, so you may want to shut
   # down the web frontend first and let the queues settle down before
   # using these snapshot/restore operations in production systems.
 
-  # 5. Assumes that you have the time and disk-space to slurp down all
+  # 4. Assumes that you have the time and disk-space to slurp down all
   # repos into a local tarball. Sites with huge amounts of repo data
   # may need custom backup schemes. For large sites consider using the
   # SKIP_REPOS=true option and copying the repos as a separate,
   # explicit step.
 
-  # 6. The restore step (especially if restoring old config files)
+  # 5. The restore step (especially if restoring old config files)
   # assumes only minor changes in versions of Gitorious between
   # snapshot and subsequent restoration of a backup. Major version
   # jumps may necessitate a more manual restore procedure due to
@@ -113,13 +109,6 @@ namespace :backup do
   SQL_DUMP_FILE="db_state.sql"
   TMP_WORKDIR="tmp-backup-workdir"
   RAILS_ENV = ENV["RAILS_ENV"]
-
-  def exit_if_nonsudo
-    if Process.uid != 0
-      puts "Please run the task as superuser/root!"
-      exit
-    end
-  end
 
   def db_config
     require "gitorious/configuration_reader"
