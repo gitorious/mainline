@@ -231,7 +231,7 @@ namespace :backup do
     end
 
     if restore_config_files?
-      puts "Restoring custom config files..."
+      puts "Restoring config files..."
       puts `cp -f #{TMP_WORKDIR}/config/* ./config`
 
       puts "Restoring custom hooks..."
@@ -240,8 +240,8 @@ namespace :backup do
 
     puts "Restoring uploaded assets (avatar pictures etc)"
     if File.exist?("#{TMP_WORKDIR}/public_system_uploaded_assets")
-      puts `rm -rf ./public/system`
-      puts `cp -rf #{TMP_WORKDIR}/public_system_uploaded_assets ./public/system`
+      puts `mkdir -p ./public/system`
+      puts `cp -rf #{TMP_WORKDIR}/public_system_uploaded_assets/* ./public/system/`
     end
 
     puts "Restoring mysql state..."
