@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -20,7 +20,7 @@ class ParamsFinder
   def initialize(app, params, predefs = {})
     @app = app
     @params = params
-    predefs.keys.each { |k| send(:"#{k}=", predefs[k]) if respond_to?(:"#{k}=") }
+    predefs.keys.each { |k| send(:"#{k}=", predefs[k]) if respond_to?(:"#{k}=", true) }
   end
 
   def project
