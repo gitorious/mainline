@@ -1,5 +1,26 @@
 # Gitorious Changelog
 
+## 3.0.4 (2014-05-28)
+
+### New features
+
+* Sorting of repositories list on a project page (alphabetical)
+* Ability to change user's website/blog URL (displayed on profile)
+
+### Changes
+
+* Rails version upgraded to 3.2.18
+* Resque version upgraded to 1.25.2
+* Code updated to work on Ruby 2.0
+
+### Bugs fixed
+
+* Fixed rendering of README files in asciidoc format
+* Fixed display of group avatars on repository's Community page
+* Fixed backup:snapshot rake task
+* No more warning messages when running tests
+* Many Resque jobs don't crash anymore on missing db records (they warn)
+
 ## 3.0.3 (2014-05-13)
 
 ### Changes
