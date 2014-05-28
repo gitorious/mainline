@@ -37,15 +37,6 @@ user: git
 # #{repository_base_path}/#{project.slug}/#{repository.name}.git/
 repository_base_path: "/var/git/repositories"
 
-# Gitorious stores repositories under 'repository_base_path', directly
-# named by project slug and repository title. However, for large
-# installations which host a lot of repositories, the repository
-# directories can be hashed and sharded into subdirectories 3 levels
-# deep to break them down into a hash-like tree of directories
-# instead. This helps avoid hitting (filesystem-specific) limits on
-# number of entries in a directory.
-#enable_repository_dir_sharding: false
-
 # Gitorious allows users to download archived tarballs of repositories. In
 # order to do this, it needs a separate directory to do the rough work,
 # and a directory to keep cached tarballs (such that we don't waste time

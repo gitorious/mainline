@@ -1,5 +1,12 @@
 # Gitorious Changelog
 
+## master (development version)
+
+### Changes
+
+* DEPRECATION: repositories directory sharding feature will be removed in the
+  next major version (`enable_repository_dir_sharding`)
+
 ## 3.0.4 (2014-05-28)
 
 ### New features
