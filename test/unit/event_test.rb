@@ -18,7 +18,6 @@
 #++
 
 require "test_helper"
-load "models/event.rb"
 
 class EventTest < ActiveSupport::TestCase
   def setup
