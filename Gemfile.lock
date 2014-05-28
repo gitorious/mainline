@@ -72,6 +72,7 @@ GEM
       json
     ansi (1.4.3)
     arel (3.0.3)
+    asciidoctor (0.1.4)
     axiom-types (0.0.5)
       descendants_tracker (~> 0.0.1)
       ice_nine (~> 0.9)
@@ -425,6 +426,7 @@ DEPENDENCIES
   activerecord-jdbcmysql-adapter
   acts-as-taggable-on (~> 2.3)
   airbrake (~> 3.1.14)
+  asciidoctor
   capillary (~> 1.0.1)
   capybara (~> 2.1)
   capybara-screenshot

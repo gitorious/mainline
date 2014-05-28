@@ -128,6 +128,7 @@ group :dolt do
   gem "org-ruby"
   gem "creole"
   gem "wikicloth"
+  gem "asciidoctor"
 end
 
 group :assets do
