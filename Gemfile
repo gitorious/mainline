@@ -95,9 +95,9 @@ group :messaging do
 end
 
 group :resque do
-  gem "resque", "1.24.1"
-  gem "resque-cleaner", "~> 0.2.11"
-  gem "resque-job-stats", "~> 0.3.0"
+  gem "resque", "1.25.2"
+  gem "resque-cleaner"
+  gem "resque-job-stats"
 end
 
 group :http_utils do
