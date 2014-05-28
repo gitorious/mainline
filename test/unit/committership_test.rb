@@ -18,7 +18,6 @@
 #++
 
 require "test_helper"
-load Rails.root.join("app/models/committership.rb")
 
 class CommittershipTest < ActiveSupport::TestCase
   should "have a creator" do
