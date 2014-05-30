@@ -274,7 +274,7 @@ class User < ActiveRecord::Base
 
       total = (watched.length < watched.per_page ? watched.length : watched.total_entries)
       items = WillPaginate::Collection.new(watched.current_page, watched.per_page, total)
-      items.replace(Event.where(:id => watched.map(&:event_id)).order("created_at desc"))
+      items.replace(Event.where(:id => watched.map(&:event_id)).includes(:user, :project, :target).order("created_at desc"))
     end
   end
 
