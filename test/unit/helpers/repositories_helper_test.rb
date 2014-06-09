@@ -41,30 +41,4 @@ class RepositoriesHelperTest < ActionView::TestCase
   def generic_sha(letter = "a")
     letter * 40
   end
-
-  should "know if a branch is namespaced" do
-    assert !namespaced_branch?("foo")
-    assert namespaced_branch?("foo/bar")
-    assert namespaced_branch?("foo/bar/baz")
-  end
-
-  context "sorted git heads" do
-    should "sort by name, with the HEAD first" do
-      heads = [
-        stub("git head", :name => "c", :head? => true),
-        stub("git head", :name => "a", :head? => false),
-        stub("git head", :name => "b", :head? => false),
-      ]
-      assert_equal %w[c a b], sorted_git_heads(heads).map(&:name)
-    end
-
-    should "not include a nil item when there is no head" do
-      heads = [
-        stub("git head", :name => "c", :head? => false),
-        stub("git head", :name => "a", :head? => false),
-        stub("git head", :name => "b", :head? => false),
-      ]
-      assert_equal %w[a b c], sorted_git_heads(heads).map(&:name)
-    end
-  end
 end
