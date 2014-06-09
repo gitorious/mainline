@@ -25,7 +25,7 @@ class WikiRepositoryCreationProcessor
     begin
       repository = Repository.find(id)
     rescue ActiveRecord::RecordNotFound
-      logger.warning("Can't create wiki repository on disk for id=#{id}, record doesn't exist")
+      logger.warn("Can't create wiki repository on disk for id=#{id}, record doesn't exist")
       return
     end
 

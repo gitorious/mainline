@@ -27,7 +27,7 @@ class MergeRequestProcessor
     begin
       merge_request = MergeRequest.find(id)
     rescue ActiveRecord::RecordNotFound
-      logger.warning("Can't process merge request with id=#{id}, record doesn't exist")
+      logger.warn("Can't process merge request with id=#{id}, record doesn't exist")
       return
     end
 

@@ -25,7 +25,7 @@ class EmailEventSubscribersProcessor
     begin
       event = Event.find(id)
     rescue ActiveRecord::RecordNotFound
-      logger.warning("Can't notify subscribers about event with id=#{id}, record doesn't exist")
+      logger.warn("Can't notify subscribers about event with id=#{id}, record doesn't exist")
       return
     end
 

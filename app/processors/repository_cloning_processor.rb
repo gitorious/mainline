@@ -25,7 +25,7 @@ class RepositoryCloningProcessor
     begin
       repository = Repository.find(id)
     rescue ActiveRecord::RecordNotFound
-      logger.warning("Can't clone repository with id=#{id}, record doesn't exist")
+      logger.warn("Can't clone repository with id=#{id}, record doesn't exist")
       return
     end
 

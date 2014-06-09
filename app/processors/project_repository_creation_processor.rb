@@ -25,7 +25,7 @@ class ProjectRepositoryCreationProcessor
     begin
       repository = Repository.find(id)
     rescue ActiveRecord::RecordNotFound
-      logger.warning("Can't create project repository on disk for id=#{id}, record doesn't exist")
+      logger.warn("Can't create project repository on disk for id=#{id}, record doesn't exist")
       return
     end
 
