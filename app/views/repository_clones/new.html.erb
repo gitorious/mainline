@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2012-2014 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -29,11 +29,11 @@
 </div>
 
 <div class="container">
-  <h2><%= t("views.repos.create_title",
+  <h2><%= t("views.repos.create_title_html",
             :clone_name => h(repository.name),
             :clone_url => project_repository_path(project, repository),
             :project_name => h(project.title),
-            :project_url => project_path(project)).html_safe %></h2>
+            :project_url => project_path(project)) %></h2>
   <%= error_messages(clone) -%>
   <%= form_for(clone, {
           :url => create_clone_project_repository_path(project, repository),

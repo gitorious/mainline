@@ -231,12 +231,12 @@
         :pay_off => "Gitorious provides free <a href=\"%{gitorious_repo_path}\">open source</a> infrastructure for open source projects that use Git. <a href=\"%{read_more_path}\">Read more &raquo;</a>",
         :login_box_header => "Already registered?",
         :page_title => "Free open source project hosting",
-        :description => "<strong>Gitorious</strong> is a great way of collaborating on distributed open source projects",
+        :description_html => "<strong>Gitorious</strong> is a great way of collaborating on distributed open source projects",
         :for_projects => "For Projects",
         :for_contributors => "For Contributors",
         :creating_account => "<a href=\"%{path}\">Signing up</a> allows you to create your own projects and participate in the development of any project.",
         :newest_projects => "Latest projects",
-        :view_more => "View more &raquo;",
+        :view_more_html => "View more &raquo;",
         :dashboard => {
           :page_title => "%{login}'s dashboard",
           :activities => "Activities",
@@ -269,7 +269,7 @@
         :add_ssh_key => "Add SSH key",
         :add_title => "Add a new public SSH key",
         :your_public_key => "Your public key",
-        :hint => "It is generally located in ~/.ssh/id_rsa.pub or ~/.ssh/id_dsa.pub. If you want to use multiple keys you will have to add each of them separately. <br />The key should be in the format of: <br /><code>ssh-algorithm base64-content you@somehost</code>",
+        :hint_html => "It is generally located in ~/.ssh/id_rsa.pub or ~/.ssh/id_dsa.pub. If you want to use multiple keys you will have to add each of them separately. <br />The key should be in the format of: <br /><code>ssh-algorithm base64-content you@somehost</code>",
       },
       :users => {
         :activated => "Activated?",
@@ -320,8 +320,8 @@
         :avatar => 'Profile image',
         :pending_activation => {
           :header => "Almost done",
-          :info => "A <strong>confirmation e-mail</strong> will be delivered to the e-mail address you specified. This e-mail contains an activation link, visit that link to complete the registration.",
-          :thanks => "We look forward to seeing you use Gitorious!"
+          :info_html => "A <strong>confirmation e-mail</strong> will be delivered to the e-mail address you specified. This e-mail contains an activation link, visit that link to complete the registration.",
+          :thanks_html => "We look forward to seeing you use Gitorious!"
         },
         :favorites_action => "Your favorites",
         :delete_account => "Delete account",
@@ -330,7 +330,7 @@
       },
       :logs => {
         :title_clean => "Commits in %{repo_url}:%{ref}",
-        :title => "Commits in %{repo_url}:<span class=\"gts-oid\">%{ref}</span>",
+        :title_html => "Commits in %{repo_url}:<span class=\"gts-oid\">%{ref}</span>",
         :project => "Project",
         :maintainer => "Maintainer",
         :head_tree => "HEAD tree",
@@ -471,9 +471,7 @@
         :committers => "Committers",
         :current_committers => "Committers",
         :remove => "Remove",
-        :create_title => "Create a clone of <a href=\"%{clone_url}\">%{clone_name}</a> in <a href=\"%{project_url}\">%{project_name}</a>",
-        :edit_group => "Edit/show team members",
-        :show_group => "Show team members",
+        :create_title_html => "Create a clone of <a href=\"%{clone_url}\">%{clone_name}</a> in <a href=\"%{project_url}\">%{project_name}</a>",
         :by_teams => "Team clones",
         :by_users => "Personal clones",
         :merge_requests_enabled => "Merge requests allow Gitorious users to request you to merge contributions they make to your code. "
@@ -509,7 +507,7 @@
         :add_repository => "Add repository",
         :edit_oauth_settings => 'Edit contribution settings',
         :edit_slug_title => 'Edit the slug (for URLs etc.)',
-        :edit_slug_disclaimer => 'Please note that by changing the slug <strong>all URLs, including git URLs, will be changed</strong>',
+        :edit_slug_disclaimer_html => 'Please note that by changing the slug <strong>all URLs, including git URLs, will be changed</strong>',
         :update_slug => 'Update slug',
         :merge_request_states_hint => 'Each line should contain one status tag that can be selected for merge requests in this project'
       },
@@ -517,25 +515,25 @@
         :btn_add_read_rights => "Grant read access"
       },
       :project_memberships => {
-        :collaborator => "Collaborator",
-        :back_to_project => "Back to project",
-        :is_public => "This project is public.",
-        :is_public_description => "Anyone with access to %{site_name} can browse this project and its public repositories.",
-        :is_private => "This project is private.",
-        :is_private_description => "To be able to browse this project and its repositories, users must be granted read access.",
-        :make_private => "Make private",
-        :make_public => "open project to the public."
+        :collaborator_html => "Collaborator",
+        :back_to_project_html => "Back to project",
+        :is_public_html => "This project is public.",
+        :is_public_description_html => "Anyone with access to %{site_name} can browse this project and its public repositories.",
+        :is_private_html => "This project is private.",
+        :is_private_description_html => "To be able to browse this project and its repositories, users must be granted read access.",
+        :make_private_html => "Make private",
+        :make_public_html => "open project to the public."
       },
       :repository_memberships => {
-        :title => "Manage user &amp; team read access to %{repo_name}",
-        :collaborator => "Repository member",
-        :back_to_repository => "Back to repository",
-        :is_public => "Repository is public.",
-        :is_public_description => "Anyone with access to the %{project} project can browse this repository.",
-        :is_private => "Repository is private.",
-        :is_private_description => "To be able to browse and clone this repository, users must be granted read access in addition to their committerships.",
-        :make_private => "Make private",
-        :make_public => "open access to the repository. If the project is also private, this will only open access to project collaborators."
+        :title_html => "Manage user &amp; team read access to %{repo_name}",
+        :collaborator_html => "Repository member",
+        :back_to_repository_html => "Back to repository",
+        :is_public_html => "Repository is public.",
+        :is_public_description_html => "Anyone with access to the %{project} project can browse this repository.",
+        :is_private_html => "Repository is private.",
+        :is_private_description_html => "To be able to browse and clone this repository, users must be granted read access in addition to their committerships.",
+        :make_private_html => "Make private",
+        :make_public_html => "open access to the repository. If the project is also private, this will only open access to project collaborators."
       },
       :merges => {
         :info => {
@@ -594,7 +592,7 @@
         :last_edited_by => "Last edited by %{link_or_name}",
         :or_back_to_page => "or return to %{page_link}",
         :history => "History",
-        :last_n_edits => "Last %{n} edits on %{title}",
+        :last_n_edits_html => "Last %{n} edits on %{title}",
         :index => "Pages index",
         :format_using_markdown => %Q(Format pages using %{markdown}),
         :wikiwords_syntax => "[[Wikilink]] will be linked to a page of that name.",
@@ -636,7 +634,7 @@
         :btn_add_as_collaborator => "Add as collaborator",
         :return_to => "return to",
         :or_return_to => "or return to",
-        :add_team_note => "<strong>Note</strong> that adding a team will give
+        :add_team_note_html => "<strong>Note</strong> that adding a team will give
                           everyone in that team the permissions you select",
       },
       :aliases => {

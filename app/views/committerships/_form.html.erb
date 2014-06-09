@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2012-2014 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@
               }) -%>
         <%= checkboxes(f) -%>
         <%= f.submit(t("views.collaborators.btn_add_as_collaborator"), :class => "btn btn-primary") %>
-        <p class="muted"><br><%= t("views.collaborators.add_team_note").html_safe -%></p>
+        <p class="muted"><br><%= t("views.collaborators.add_team_note_html") -%></p>
       <% end %>
     </div>
   </div>

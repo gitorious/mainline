@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2012-2014 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
   #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
@@ -26,8 +26,8 @@
     <div class="span8">
       <h1><%= @title = I18n.t("views.users.pending_activation.header") %></h1>
       <p>
-        <%= I18n.t("views.users.pending_activation.info").html_safe %>
-        <%= I18n.t("views.users.pending_activation.thanks").html_safe %>
+        <%= I18n.t("views.users.pending_activation.info_html") %>
+        <%= I18n.t("views.users.pending_activation.thanks_html") %>
       </p>
     </div>
   </div>

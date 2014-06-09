@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2012-2014 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@
           </legend>
           <%= form.input(:slug, {
                   :label => t(:slug, :scope => "activerecord.attributes.project"),
-                  :hint => t('views.projects.edit_slug_disclaimer').html_safe
+                  :hint => t('views.projects.edit_slug_disclaimer_html')
                 }) %>
           <div class="form-actions">
             <%= form.submit(t("views.projects.update_slug"), :class => "btn btn-primary") %>

@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2012-2014 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -27,10 +27,10 @@
 <div class="container">
   <%= render('pages/actions', :owner => owner, :page => page, :active => :history) %>
   <h2 class="gts-legend">
-    <%= t("views.pages.last_n_edits", {
+    <%= t("views.pages.last_n_edits_html", {
             :n => 30,
             :title => link_to(page.title, wiki_page_path(owner, page.title))
-          }).html_safe %>
+          }) %>
   </h2>
   <%= render(:partial => "commits/log", :locals => {
           :repository => wiki_repository,

@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,6 @@
 #++
 module ContentMembershipsHelper
   def text(key, params = {})
-    t("views.#{content.class.to_s.underscore}_memberships.#{key}", params).html_safe
+    t("views.#{content.class.to_s.underscore}_memberships.#{key}_html", params)
   end
 end
