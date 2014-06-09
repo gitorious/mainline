@@ -35,8 +35,10 @@
 <div class="container gts-body">
   <%= render 'header', :merge_request => merge_request, :source_repo => source_repo, :target_repo => target_repo, :user => user %>
 
-  <% help_link = link_to('<i class="icon icon-question-sign"></i>'.html_safe, '#mr-help',
-                         :data => { :toggle => 'modal' }) %>
+  <% help_link = link_to('#mr-help', :data => { :toggle => 'modal' }) do %>
+    <i class="icon icon-question-sign"></i>
+  <% end %>
+
   <% commit_header = "Commits #{help_link}".html_safe %>
 
   <%= pull_box commit_header do %>

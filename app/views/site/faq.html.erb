@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2012-2014 Gitorious AS
   #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
   #   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
   #   Copyright (C) 2008 Jonas Fonseca <fonseca@diku.dk>
@@ -68,7 +68,7 @@
         file of the repository you wish to push:
       </p>
       <pre><code>[remote "origin"]
-url = <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").html_safe %>
+url = <%= Gitorious.ssh_daemon.url('/') %><em>project</em>/<em>repository.git</em>
 fetch = +refs/heads/*:refs/remotes/origin/*
 
 [branch "master"]
@@ -82,7 +82,7 @@ merge = refs/heads/master</code></pre>
         you can setup a remote by doing the following (add --fetch to the add call to
         get the config from above):
       </p>
-      <pre><code>$ git remote add origin <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").html_safe %>
+      <pre><code>$ git remote add origin <%= Gitorious.ssh_daemon.url('/') %><em>project</em>/<em>repository.git</em>
 # to push the master branch to the origin remote we added above:
 git push origin master
 

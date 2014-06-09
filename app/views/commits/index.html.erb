@@ -30,8 +30,9 @@
   <ul class="nav nav-tabs">
     <li class="active"><a>Log</a></li>
     <li>
-      <%= link_to("Graph <span class=\"gts-oid\">#{ref}</span>".html_safe,
-                  project_repository_graph_in_ref_path(repository.project, repository, params[:branch])+"?page=#{page}") %>
+      <%= link_to(project_repository_graph_in_ref_path(repository.project, repository, params[:branch])+"?page=#{page}") do %>
+        Graph <span class="gts-oid"><%= ref %></span>
+      <% end %>
     </li>
   </ul>
   <h2 class="gts-legend">
