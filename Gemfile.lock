@@ -25,8 +25,8 @@ GIT
 
 GIT
   remote: https://github.com/libgit2/rugged.git
-  revision: fb28f860679f3a4bb29a9d1579f3b13754d81374
-  ref: fb28f860679f3a4bb29a9d1579f3b13754d81374
+  revision: 5f1b6d177132fae974efdde822082b0b567c288c
+  ref: 5f1b6d177132fae974efdde822082b0b567c288c
   branch: development
   submodules: true
   specs:

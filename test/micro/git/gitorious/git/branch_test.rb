@@ -30,7 +30,7 @@ module Gitorious
       describe "#name" do
         it "returns the branch name" do
           repo = sample_rugged_repo
-          rugged_branch = repo.branches['master']
+          rugged_branch = Rugged::Branch.lookup(repo, 'master')
           branch = Branch.new(rugged_branch, repo)
 
           branch.name.must_equal 'master'
@@ -40,7 +40,7 @@ module Gitorious
       describe "#commits" do
         it "returns all the commits reachable from branch head" do
           repo = sample_rugged_repo('original_repo')
-          rugged_branch = repo.branches['master']
+          rugged_branch = Rugged::Branch.lookup(repo, 'master')
           branch = Branch.new(rugged_branch, repo)
 
           commits = branch.commits
