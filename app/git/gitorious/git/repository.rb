@@ -44,7 +44,7 @@ module Gitorious
       end
 
       def branch(name)
-        branch = Rugged::Branch.lookup(rugged_repository, name)
+        branch = rugged_repository.branches[name]
         Branch.new(branch, rugged_repository) if branch
       end
 

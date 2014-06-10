@@ -30,7 +30,7 @@ gem "gitlab-grit", :require => "grit", :git => "https://github.com/gitorious/gri
 gem "airbrake", "~> 3.1.14", :require => false
 gem "simple_form", "~> 2.1"
 gem "force_utf8"
-gem 'rugged', git: 'https://github.com/libgit2/rugged.git', branch: 'development', submodules: true, ref: '5f1b6d177132fae974efdde822082b0b567c288c'
+gem 'rugged', git: 'https://github.com/libgit2/rugged.git', branch: 'development', submodules: true, ref: 'fb28f860679f3a4bb29a9d1579f3b13754d81374'
 gem 'react-rails', '~> 0.9.0'
 
 if ENV['GTS_ENGINE'].to_s != 'true'

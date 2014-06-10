@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,7 @@ module Gitorious
       def commits
         walker = Rugged::Walker.new(rugged_repository)
         walker.sorting(Rugged::SORT_TOPO)
-        walker.push(rugged_branch.tip.oid)
+        walker.push(rugged_branch.target_id)
         walker.map { |c| Commit.new(c) }
       end
 
