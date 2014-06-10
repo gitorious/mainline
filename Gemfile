@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gem "rails", "3.2.18"
 gem "geoip", "0.8.9"
 gem "daemons", "1.1.0", :require => false
-gem "rdiscount", "~> 1.6"
+gem "rdiscount", "~> 2.1.7"
 gem "mime-types", "~> 1.16", :require => "mime/types"
 gem "diff-lcs", "1.1.2", :require => "diff/lcs"
 gem "oauth", "0.4.4"
