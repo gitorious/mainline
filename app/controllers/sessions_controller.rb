@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
@@ -95,9 +95,7 @@ class SessionsController < ApplicationController
       end
     end
   rescue ActiveRecord::RecordInvalid => invalid
-    flash[:error] = %Q{This login (<strong>#{@user.login}</strong>) already exists,
-      please <a href="#{@user.identity_url}"> choose a different persona/nickname
-      or modify the current one</a>}
+    flash[:error] = %Q{This login (#{@user.login}) already exists, please choose another one}
     redirect_to login_path(:method => 'openid')
   end
 
