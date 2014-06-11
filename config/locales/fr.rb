@@ -163,13 +163,11 @@
         :blog => "Blog",
       },
       :site => {
-        :pay_off => "Gitorious provides free <a href=\"%{gitorious_repo_path}\">open source</a> infrastructure for open source projects that use Git.",
         :login_box_header => "Already registered?",
         :page_title => "Free open source project hosting",
         :description => "<strong>Gitorious</strong> is a great way of collaborating on distributed open source projects",
         :for_projects => "For Projects",
         :for_contributors => "For Contributors",
-        :creating_account => "<a href=\"%{path}\">Creating a user account</a> allows you to create your own project or participate in the development of any project.",
         :newest_projects => "Latest projects",
         :view_more => "View more &raquo;",
         :dashboard => {
@@ -223,8 +221,6 @@
         :wants_email_notifications => 'Send email notifications?',
         :describe_email_notifications => "We will send you an email notification when you receive a message in Gitorious",
         :default_favorite_notifications => "By default notify me of updates in what I am watching",
-        :describe_default_favorite_notifications => "By selecting this you will by default be notified by email when " +
-        "activities occur in what you are watching on Gitorious",
         :member_for => "Member for",
         :this_week => {
           :one => "commit so far this week",
@@ -348,7 +344,6 @@
         :help_clone_http => "note that cloning over HTTP is slightly slower, but useful if you are behind a firewall",
         :http_url => "Public HTTP clone url",
         :push_url => "Your push url",
-        :help_push => "You can run <code>git push {{repo}} master</code><br /> Or you can setup a remote like this:",
         :owner => "Owner",
         :creator => "creator",
         :project => "Project",
@@ -484,8 +479,6 @@
         :cancel => "cancel",
         :or => "or",
         :remove => "remove",
-        :format_using_markdown => %Q(Use {{markdown}} for formatting),
-        :markdown_format_with_help => %Q(Format pages using <a href="#markdown-help" class="markdown-help-toggler">Markdown</a>"),
       },
       :pages => {
         :page => "page",
@@ -494,7 +487,6 @@
         :history => "History",
         :last_n_edits => "Last {{n}} edits on {{title}}",
         :index => "Pages index",
-        :format_using_markdown => %Q(Format pages using {{markdown}}),
         :wikiwords_syntax => "[[Wikilink]] will be linked to a page of that name."
       },
       :memberships => {

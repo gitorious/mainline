@@ -117,7 +117,6 @@
         :description => "<strong>Gitorious</strong> pretende proveer una manera\ninteresante de hacer desarrollo opensource colaborativo y distribuido",
         :for_projects => "Para proyectos",
         :for_contributors => "Para colaboradores",
-        :creating_account => "<a href=\"%{path}\">Crear una cuenta de usuario</a> le permite crear su propio proyecto o participar en el desarrollo de otro proyecto.",
         :newest_projects => "Los proyectos más nuevos",
         :view_more => "Ver más &raquo;",
         :dashboard => {
@@ -257,7 +256,6 @@
         :help_clone_http => "note que clonar mediante HTTP es un poco más lento, pero útil si está detrás de un firewall",
         :http_url => "URL para clonar mediante HTTP",
         :push_url => "URL para publicar (Push)",
-        :help_push => "Puede ejecutar \"<code>git push %{repo}</code>\", o puede configurar un remote haciendo lo siguiente:",
         :owner => "dueño",
         :confirm_delete => "Por favor confirme que desea borrar el %{repo} en %{title}",
         :message_delete => "Una vez que presione este botón el repositorio será borrado",

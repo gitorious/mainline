@@ -131,7 +131,7 @@
       :index_pagination_oob => "Sorry, there were no memberships for page %{page}."
     },
     :application_helper => {
-      :notice_for => "This %{class_name} is being created,<br /> it will be ready pretty soon&hellip;",
+      :notice_for_html => "This %{class_name} is being created,<br /> it will be ready pretty soon&hellip;",
       :event_status_add_project_repository => "created repository",
       :event_status_created => "created project",
       :event_status_deleted => "deleted project",
@@ -228,13 +228,11 @@
         :blog => "Blog",
       },
       :site => {
-        :pay_off => "Gitorious provides free <a href=\"%{gitorious_repo_path}\">open source</a> infrastructure for open source projects that use Git. <a href=\"%{read_more_path}\">Read more &raquo;</a>",
         :login_box_header => "Already registered?",
         :page_title => "Free open source project hosting",
         :description_html => "<strong>Gitorious</strong> is a great way of collaborating on distributed open source projects",
         :for_projects => "For Projects",
         :for_contributors => "For Contributors",
-        :creating_account => "<a href=\"%{path}\">Signing up</a> allows you to create your own projects and participate in the development of any project.",
         :newest_projects => "Latest projects",
         :view_more_html => "View more &raquo;",
         :dashboard => {
@@ -284,14 +282,10 @@
         :send_new_passwd => 'Send me a new password',
         :openid_build_title => 'Complete your registration',
         :openid_build_description => 'You need to enter the following details:',
-        :create_title => "Create new user or <a href=\"%{path}\">login directly with your OpenID</a>",
         :create_description => "Creating a user account allows you to create your own project or participate in the development of any project.",
         :wants_email_notifications => 'Send email notifications?',
         :describe_email_notifications => "We will send you an email notification when you receive a message in Gitorious",
         :default_favorite_notifications => "By default notify me of updates in what I am watching",
-        :notice_fordescribe_default_favorite_notifications => "By selecting this you will by default be notified by email when " +
-          "activities occur in what you are watching on Gitorious.<br/>" +
-          "Visit <a href=\"%{url}\">your favorites page</a> to set preferences for each object you're watching on Gitorious",
         :member_for => "Member for",
         :this_week => {
           :one => "commit so far this week",
@@ -302,7 +296,7 @@
         :edit_action => "Edit details",
         :realname => "Full name",
         :email => "E-mail",
-        :url => "Website URL <small>(blog etc.)</small>",
+        :url => "Website URL (blog etc.)",
         :openid => "OpenID",
         :my_account => "My account",
         :chg_passwd_action => "Change password",
@@ -340,34 +334,6 @@
       },
       :graphs => {
         :title => "Graph for %{repo_url}:%{ref}",
-        :type_all => "Graph all",
-        :type_normal => "Graph"
-      },
-      :blobs => {
-        :page_title => "%{path} - %{repo} in %{title}",
-        :wrap => "Softwrap mode",
-        :title => "Blob of <code>%{path}</code>",
-        :raw => "Raw blob data",
-        :show => "Blob contents",
-        :history => "Blob history",
-        :blame => "Blame",
-        :heading => "History for %{ref}:%{path}",
-        :too_big => "This file is too big to be rendered within reasonable time, <a href=\"%{path}\">try viewing the raw data</a>",
-        :message => "This blob appears to be binary data, if you like you can <a href=\"%{path}\">download the raw data</a> (right click, save as)",
-      },
-      :comments => {
-        :commit => "on commit %{sha1}",
-        :permalink => '<abbr title="permalink for this comment">#</abbr>',
-        :add_title => "Add a new comment",
-        :edit_title => "Change your comment",
-        :body => "Comment",
-        :add => "Add Comment",
-        :update_or_add => "Update / Add Comment",
-        :page_title => "Comments in %{repo}",
-        :diff => "Commit diff",
-        :total => "Comments (%{total})",
-        :page_title_2 => "Comments on %{title}",
-        :page_title_3 => "Comments for &quot;%{repo}&quot; repository in %{title}",
       },
       :commits => {
         :date => "Date",
@@ -427,7 +393,6 @@
         :help_clone_http => "note that cloning over HTTP is slightly slower, but useful if you are behind a firewall",
         :http_url => "Public HTTP clone url",
         :push_url => "Your push url",
-        :help_push => "You can run <code>git push %{repo} master</code><br /> Or you can setup a remote like this:",
         :owner => "Owner",
         :creator => "creator",
         :project => "Project",
@@ -441,7 +406,6 @@
         :activities => { :one => "activity", :other => "activities" },
         :branches => { :one => "branch", :other => "branches" },
         :authors => { :one => "author", :other => "authors" },
-        :name => %Q{Name <small>(eg "%{name}-sandbox", "performance-fixes" etc)</small>},
         :btn_clone => "Clone repository",
         :back => "Back to repository",
         :show_page_title => "%{repo} in %{title}",
@@ -479,7 +443,6 @@
       :projects => {
         :title => "Projects",
         :back => "Back to edit screen",
-        :hint => %Q{<a href="http://daringfireball.net/projects/markdown/">Markdown</a> and basic html is allowed},
         :categories => "Labels",
         :delete => "Delete project",
         :delete_title => "Please confirm deletion of %{title}",
@@ -560,11 +523,6 @@
         :reopen_btn => 'Reopen merge request',
         :update_btn => 'Update merge request',
       },
-      :committers => {
-        :title => "Give a user commit rights to %{repo}",
-        :login => "Existing username <small>(search-as-you-type)</small>",
-        :add => "Add as committer",
-      },
       :common => {
         :confirm => "Are you sure?",
         :create => "Create",
@@ -584,8 +542,6 @@
         :cancel => "cancel",
         :or => "or",
         :remove => "remove",
-        :format_using_markdown => %Q(Use %{markdown} for formatting),
-        :markdown_format_with_help => %Q(Format pages using <a href="#markdown-help" class="markdown-help-toggler">Markdown</a>.),
       },
       :pages => {
         :page => "page",
@@ -594,7 +550,6 @@
         :history => "History",
         :last_n_edits_html => "Last %{n} edits on %{title}",
         :index => "Pages index",
-        :format_using_markdown => %Q(Format pages using %{markdown}),
         :wikiwords_syntax => "[[Wikilink]] will be linked to a page of that name.",
         :git => "Git access"
       },

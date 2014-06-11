@@ -163,13 +163,11 @@
         :blog => 'Blog',
       },
       :site => {
-        :pay_off => "Gitorious provê uma infra-estrutura de <a href=\"%{gitorious_repo_path}\">código aberto</a> para projetos de código aberto que usam Git. <a href=\"%{read_more_path}\">Leia mais &raquo;</a>",
         :login_box_header => "Já é registrado?",
         :page_title => "Hospedagem Gratuita de Projetos Open Source",
         :description => "<strong>Gitorious</strong> quer fornecer uma grande\nmaneira de colaborar com código opensource de forma distribuída",
         :for_projects => "Para Projetos",
         :for_contributors => "Para Colaboradores",
-        :creating_account => "<a href=\"%{path}\">Criar uma conta de usuário</a> lhe permite criar seus próprios projetos ou participar do desenvolvimento de qualquer outro.",
         :newest_projects => "Projetos mais Recentes",
         :view_more => "Ver mais &raquo;",
         :dashboard => {
@@ -225,9 +223,6 @@
         :wants_email_notifications => 'Enviar notificações por e-mail?',
         :describe_email_notifications => "Nós lhe enviaremos uma notificação por e-mail quando você receber uma mensagem no Gitorious",
         :default_favorite_notifications => "Por padrão, notificar-me de atualizações sobre o que eu estiver observando",
-        :describe_default_favorite_notifications => "Selecionando esta opção, por padrão você será notificado por e-mail sempre que" +
-          "ocorrerem atividades no que você estiver observando no Gitorious.<br/>" +
-        "Visite <a href=\"%{url}\">sua página de favoritos</a> para ajustar as preferências para cada objeto que você estiver observando no Gitorious",
         :member_for => "Membro por",
         :this_week => {
           :one => "commit até agora esta semana",
@@ -353,7 +348,6 @@
         :help_clone_http => "note que clonar sobre HTTP é mais lento, mas útil se estiver atrás de um firewall",
         :http_url => "URL para clone via HTTP",
         :push_url => "URL Privada de Push",
-        :help_push => "Você pode executar \"<code>git push %{repo}</code>\", ou também pode configurar um repositório remoto da seguinte maneira:",
         :owner => "criador",
         :creator => "criador",
         :project => "Projeto",
@@ -503,8 +497,6 @@
         :cancel => "cancelar",
         :or => "ou",
         :remove => "remover",
-        :format_using_markdown => %Q(Usar %{markdown} para formatação),
-        :markdown_format_with_help => %Q(Formatar páginas utilizando <a href="#markdown-help" class="markdown-help-toggler">Markdown</a>.),
       },
       :pages => {
         :page => "página",
@@ -513,7 +505,6 @@
         :history => "Histórico",
         :last_n_edits => "Últimas %{n} edições em %{title}",
         :index => "Índice de páginas",
-        :format_using_markdown => %Q(Formatar páginas usando %{markdown}),
         :wikiwords_syntax => "[[Wikilink]] criará um link para uma página com este nome.",
         :git => "Acesso Git"
       },
