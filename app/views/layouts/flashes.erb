@@ -1,0 +1,36 @@
+<%
+  #--
+  #   Copyright (C) 2014 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+-%>
+
+<% if flash[:notice] || flash[:error] || flash[:success] %>
+  <div class="gts-notification">
+    <div class="container">
+      <% if flash[:notice] %>
+        <div class="alert alert-info"><%= flash[:notice] %></div>
+      <% end %>
+
+      <% if flash[:error] %>
+        <div class="alert alert-error"><%= flash[:error] %></div>
+      <% end %>
+
+      <% if flash[:success] %>
+        <div class="alert alert-success"><%= flash[:success] %></div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
