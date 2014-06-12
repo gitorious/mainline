@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -32,21 +32,20 @@ module Gitorious
         "<link rel=\"shortcut icon\" href=\"#{url}\" type=\"image/x-icon\">"
       end
 
-      def alerts(flash)
-        types = {
-          :notice => "alert-info",
-          :error => "alert-error",
-          :success => "alert-success"
-        }
+      def system_messages
+        system_message = Gitorious::Configuration.get("system_message")
 
-        content = flash.inject("") do |html, f|
-          msg = f[1] =~ /<strong/ ? f[1] : "<strong>#{f[1]}</strong>"
-          "#{html}<div class=\"alert #{types[f[0]]}\">#{msg}</div>".html_safe
+        unless system_message.blank?
+          alerts(notice: "<strong>System notice:</strong> #{system_message}".html_safe)
         end
+      end
 
-        return "" if content == ""
-        "<div class=\"gts-notification\"><div class=\"container\">#{content}" +
-          "</div></div>".html_safe
+      def flash_messages
+        alerts(defined?(flash) ? flash : {})
+      end
+
+      def alerts(flash)
+        render 'layouts/flashes', flash: flash
       end
 
       def header_navigation(items, options = {})
