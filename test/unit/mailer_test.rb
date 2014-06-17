@@ -61,7 +61,7 @@ class MailerTest < ActiveSupport::TestCase
     mail = Mailer.forgotten_password(user, "secret")
 
     assert_equal [user.email], mail.to
-    assert_equal "[Gitorious] Your new password", mail.subject
+    assert_equal "[Gitorious] Your password reset link", mail.subject
     body = mail.body.decoded
     assert_match(/requested a new password for your/i, body)
     assert_match(/reset your password: .+\/users\/reset_password\/secret/i, body)

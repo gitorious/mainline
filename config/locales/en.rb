@@ -25,7 +25,7 @@
       :repository_clone => "%{login} has cloned %{slug}",
       :request_notification => "%{login} has requested a merge in %{title}",
       :code_comment => "%{login} commented on your merge request",
-      :new_password => "Your new password",
+      :new_password => "Your password reset link",
       :subject  => 'Please activate your new account',
       :activated => 'Your account has been activated!',
     },
