@@ -11,13 +11,7 @@
 # tabs for indentation. Using tabs for indentation will prevent
 # Gitorious from running at all.
 #
-# Structure of this file
-#
-# This file has three main sections: Global settings, and one section
-# each for the development and production environment. Unless you
-# intend to build new features, fix bugs, etc, you only need to look
-# through the global settings. The test environment is configured
-# separately through test/gitorious.yml.
+# The test environment is configured separately through test/gitorious.yml.
 #
 # If you intend to work on the Gitorious source code, you need it to
 # run in development mode. Review the development mode section to the
