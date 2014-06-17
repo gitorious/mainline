@@ -22,6 +22,7 @@ Gitorious.on_config("memcache.yml") do |settings|
   silence_warnings do
     # This may not be the sexiest thing you ever saw, but that's how
     # Rails::Initializer#initialize_cache works
-    Object.const_set "RAILS_CACHE", ActiveSupport::Cache::MemCacheStore.new(settings)
+    Gitorious::Application.config.cache_store = :mem_cache_store, settings
+    Object.const_set "RAILS_CACHE", ActiveSupport::Cache.lookup_store(Gitorious::Application.config.cache_store, settings)
   end
 end
