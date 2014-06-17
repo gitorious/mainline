@@ -21,7 +21,6 @@ Gitorious::CLI.new.run_with_gitorious_environment do
     password = ask("Enter password: ") { |q| q.echo = "*" }
     make_admin = yes_no(ask("Make user admin? (y/n) "))
   else
-    puts "Reading <email, login, password, make_admin> from command arguments"
     email, login, password, make_admin = ARGV
     make_admin = yes_no(make_admin)
   end
