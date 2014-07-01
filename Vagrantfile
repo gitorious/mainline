@@ -27,7 +27,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     apt-get install -y memcached redis-server mysql-server git \
       build-essential libmysqlclient-dev libxml2-dev libxslt1-dev \
-      libreadline6 libicu-dev imagemagick nodejs mysql-client cmake pkg-config
+      libreadline6 libicu-dev imagemagick nodejs mysql-client cmake \
+      pkg-config nginx
 
     cd /tmp
     wget -O ruby-install-0.4.3.tar.gz https://github.com/postmodern/ruby-install/archive/v0.4.3.tar.gz
@@ -47,6 +48,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 source /usr/local/share/chruby/chruby.sh
 source /usr/local/share/chruby/auto.sh
 EOF
+
+
+    cat <<EOF >/usr/bin/gitorious
+#!/bin/bash
+source /etc/profile.d/chruby.sh
+cd /vagrant
+exec bin/gitorious "$@"
+EOF
+
+    chmod a+x /usr/bin/gitorious
 EOS
 
 end
