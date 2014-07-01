@@ -26,6 +26,8 @@ require "sinatra"
 site = Site.find(ENV['SITE_ID'])
 token = ENV['TOKEN']
 
+set :port, ENV['PORT'] || 4567
+
 post '/:project/:repository' do
   if params[:token] != token
     status 401
