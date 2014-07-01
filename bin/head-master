@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+#--
+#   Copyright (C) 2014 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+#
+# Simple HTTP API for updating repository's HEAD.
+
+ENV["RAILS_ENV"] ||= "production"
+require "pathname"
+require (Pathname(__FILE__) + "../../config/environment.rb").realpath
+require "sinatra"
+
+site = Site.find(ENV['SITE_ID'])
+token = ENV['TOKEN']
+
+post '/:project/:repository' do
+  if params[:token] != token
+    status 401
+    return "ERROR: invalid token\n"
+  end
+
+  head = params[:head].to_s
+
+  if head == ''
+    status 400
+    return "ERROR: head param missing\n"
+  end
+
+  ActiveRecord::Base.verify_active_connections!
+
+  begin
+    project = Project.find_by_slug!(params[:project])
+
+    if project.site != site
+      status 403
+      return "ERROR: you can't access this project\n"
+    end
+
+    repository = project.repositories.find_by_name!(params[:repository])
+
+    repository.head = head
+
+    if repository.head.name == head
+      "OK\n"
+    else
+      status 400
+      "ERROR: given HEAD doesn't exist\n"
+    end
+  rescue ActiveRecord::RecordNotFound
+    not_found "ERROR: repository not found\n"
+  end
+end
