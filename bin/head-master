@@ -28,6 +28,10 @@ token = ENV['TOKEN']
 
 set :port, ENV['PORT'] || 4567
 
+after do
+  ActiveRecord::Base.clear_active_connections!
+end
+
 post '/:project/:repository' do
   if params[:token] != token
     status 401
@@ -40,8 +44,6 @@ post '/:project/:repository' do
     status 400
     return "ERROR: head param missing\n"
   end
-
-  ActiveRecord::Base.verify_active_connections!
 
   begin
     project = Project.find_by_slug!(params[:project])
