@@ -53,7 +53,6 @@ group :test do
   gem "poltergeist", "~> 1.4", :require => false
 
   gem "shoulda", "~> 3.3"
-  gem "shoulda-matchers", "~> 1.4", :platforms => :ruby_18
   gem "database_cleaner"
 
   gem "guard-minitest"
@@ -64,7 +63,6 @@ group :test do
   gem "factory_girl_rails", "~> 1.7"
 
   gem "ci_reporter"
-  gem "rcov", :platforms => :ruby_18
   gem "simplecov", :platforms => [:ruby_19, :ruby_20], :require => false
   gem "simplecov-rcov", :platforms => [:ruby_19, :ruby_20], :require => false
 
@@ -90,10 +88,6 @@ group :git_proxy do
   gem "proxymachine", "1.2.4"
 end
 
-group :messaging do
-  gem "json", ">= 1.7.7", "< 1.8", :platforms => :ruby_18
-end
-
 group :resque do
   gem "resque", "1.25.2"
   gem "resque-cleaner"
@@ -108,12 +102,6 @@ platform :jruby do
   gem "activerecord-jdbcmysql-adapter"
   gem "jruby-openssl"
   gem 'trinidad', :require => false
-end
-
-platform :ruby_18 do
-  gem "ruby-hmac", "0.4.0"
-  gem "oniguruma", "~> 1.1"
-  gem "SystemTimer", "~> 1.2"
 end
 
 group :dolt do
