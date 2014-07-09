@@ -26,6 +26,7 @@ namespaced_atom_feed do |feed|
     user_title = !event.user.nil? ? event.user.login : mangled_mail(event.user_email)
 
     feed.entry(event, :url => Gitorious.url(user_path(user))) do |entry|
+      entry.updated(event.created_at.iso8601)
       entry.title("#{h(user_title)} #{strip_tags(event.action)}")
       content =
         if event.user.nil?

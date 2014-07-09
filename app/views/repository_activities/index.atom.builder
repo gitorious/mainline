@@ -26,6 +26,7 @@ namespaced_atom_feed do |feed|
   events.map { |event| EventPresenter.build(event, self) }.each do |event|
     item_url = project_repository_commits_path(repository.project, repository, :only_path => false)
     feed.entry(event, :url => item_url) do |entry|
+      entry.updated(event.created_at.iso8601)
       entry.title("#{h(event.actor_display)} #{strip_tags(event.action)}")
 entry_content = <<-EOS
 <p>#{event.user ? link_to(event.user.login, user_url(event.user)) : ''} #{event.action}</p>
