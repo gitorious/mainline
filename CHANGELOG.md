@@ -1,11 +1,23 @@
 # Gitorious Changelog
 
-## master (development version)
+## 3.1.0 (2014-07-09)
 
 ### Changes
 
+* Rails version upgraded to 3.2.19
+* Logging has been improved (every request includes: timestamp, pid and UUID)
 * DEPRECATION: repositories directory sharding feature will be removed in the
   next major version (`enable_repository_dir_sharding`)
+* Clean up in Gemfile - all Ruby 1.8 related gems have been removed
+
+### Bugs fixed
+
+* Fixed XSS issues related to flash messages
+* Fixed Wiki pages crashes in some obscure cases
+* Fixed occasional crashes (segfaults) of push processor on CentOS
+* Improved speed of news feeds loading
+* Fixed background job processors logging (no more crashes in edge cases)
+* Missing "updated" element was added to entries of several atom feeds
 
 ## 3.0.4 (2014-05-28)
 
