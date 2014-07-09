@@ -25,6 +25,7 @@ namespaced_atom_feed do |feed|
 
   events.map { |event| EventPresenter.build(event, self) }.each do |event|
     feed.entry(event, :url => Gitorious.url(project_path(project))) do |entry|
+      entry.updated(event.created_at.iso8601)
       if event.user
         entry.title("#{h(event.user.login)} #{strip_tags(event.action)}")
         entry_content = <<-EOS
