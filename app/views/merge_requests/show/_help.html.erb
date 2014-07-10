@@ -29,7 +29,7 @@
         request will be created, up until the last commit you push. You may make as
         many updates as you like; the last one will always be displayed by default
       </p>
-      <pre><%= "git push #{merge_request.target_repository.push_url}:#{merge_request.ref_name}" -%></pre>
+      <pre><%= "git push #{merge_request.target_repository.push_url} #{merge_request.source_branch}:#{merge_request.ref_name}" -%></pre>
       <h4>How to merge these changes?</h4>
       <p>
         Pull the changes into a local branch for review, verify the changes (run
