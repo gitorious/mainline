@@ -29,8 +29,8 @@ class TestServiceCommand
 
   def execute(repository)
     repo = Rugged::Repository.new(repository.full_repository_path)
-    parent = repo.lookup(repo.head.target).parent_ids.first
-    spec = PushSpecParser.new(parent, repo.head.target, repo.head.name)
+    parent = repo.head.target.parent_ids.first
+    spec = PushSpecParser.new(parent, repo.head.target.oid, repo.head.name)
     Gitorious::ServicePayloadGenerator.new(repository, spec, user).generate!(hook)
     hook
   end

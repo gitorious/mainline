@@ -27,7 +27,7 @@ class TestServiceTest < ActiveSupport::TestCase
         :url => "http://somewhere",
         :user => @user
       })
-    Rugged::Repository.stubs(:new).returns(FakeRepository.new)
+    Rugged::Repository.stubs(:new).returns(FakeRuggedRepository.new)
   end
 
   should "process web hook generator" do

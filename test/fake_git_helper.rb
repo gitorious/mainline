@@ -42,3 +42,28 @@ class FakeRepository
   end
 end
 
+class FakeRuggedHead
+  attr_reader :target, :name
+  def initialize(target, name)
+    @target = target
+    @name = name
+  end
+end
+
+class FakeRuggedCommit
+  attr_reader :oid, :parent_ids
+  def initialize(oid)
+    @oid = oid
+    @parent_ids = ["a" * 40]
+  end
+end
+
+class FakeRuggedRepository
+  def head
+    FakeRuggedHead.new(FakeRuggedCommit.new("b" * 40), "refs/heads/master")
+  end
+
+  def lookup(id)
+    FakeRuggedCommit.new(id)
+  end
+end
