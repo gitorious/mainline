@@ -16,29 +16,11 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class FakeHead
-  attr_reader :target, :name
-  def initialize(target, name)
-    @target = target
-    @name = name
-  end
-end
-
-class FakeCommit
+class FakeGritCommit
   attr_reader :id, :parent_ids
   def initialize(oid)
     @id = oid
     @parent_ids = ["a" * 40]
-  end
-end
-
-class FakeRepository
-  def head
-    FakeHead.new("b" * 40, "refs/heads/master")
-  end
-
-  def lookup(id)
-    FakeCommit.new(id)
   end
 end
 

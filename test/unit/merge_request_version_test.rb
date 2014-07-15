@@ -72,7 +72,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
     end
 
     should 'handle all commits' do
-      @version.stubs(:affected_commits).returns([FakeCommit.new('ff'), FakeCommit.new('aa')])
+      @version.stubs(:affected_commits).returns([FakeGritCommit.new('ff'), FakeGritCommit.new('aa')])
       @diff_backend.expects(:commit_diff).with('aa', 'ff', true)
       @version.diffs
     end
