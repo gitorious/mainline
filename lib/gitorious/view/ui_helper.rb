@@ -36,7 +36,9 @@ module Gitorious
         system_message = Gitorious::Configuration.get("system_message")
 
         unless system_message.blank?
-          alerts(notice: "<strong>System notice:</strong> #{system_message}".html_safe)
+          %(<div class="row">
+            <p class="system-message"><strong>System notice</strong>: #{system_message.html_safe}</p>
+          </div>).html_safe
         end
       end
 

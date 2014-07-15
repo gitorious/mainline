@@ -45,6 +45,7 @@
         <div class="gts-masthead navbar">
           <div class="navbar-inner">
             <div class="container">
+              <%= system_messages %>
               <a href="<%= @main_app.root_path %>" class="gts-logo"><%= site_logo(current_site).html_safe %></a>
               <ul class="nav">
                 <li>
@@ -71,7 +72,6 @@
                 </div>
               </div>
             </div>
-            <%= system_messages %>
             <%= flash_messages %>
           </div>
         </div>
