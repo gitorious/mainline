@@ -20,6 +20,7 @@
   <table class="table table-striped service-stats">
     <thead>
       <tr>
+        <td class="gts-cell-small"><%= service_type.id_label %></td>
         <td class="gts-cell-small">Runs</td>
         <td class="gts-cell-small">Last response</td>
         <td class="gts-cell-small">Created by</td>
@@ -29,6 +30,7 @@
     <tbody>
       <% services.each do |service| %>
         <tr>
+          <td><%= service.id %></td>
           <td><%= service.runs %></td>
           <td><%= service.last_response %></td>
           <td>

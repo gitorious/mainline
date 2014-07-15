@@ -29,6 +29,10 @@ class Service::Sprintly < Service::Adapter
     "Sprint.ly"
   end
 
+  def id
+    email
+  end
+
   def notify(http_client, payload)
     http_client.post "https://sprint.ly/integration/github/#{product_id}/push/",
       :body => payload.to_json,

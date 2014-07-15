@@ -24,7 +24,7 @@
     <legend>
       <%= t("views.tabs.#{service_type.name}") %>
     </legend>
-    <%= render("stats", :services => service_type.services, :repository => repository) %>
+    <%= render("stats", :services => service_type.services, :repository => repository, :service_type => service_type) %>
     <%= render(service_type.template_path, :f => f) %>
   </fieldset>
 

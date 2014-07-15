@@ -52,6 +52,17 @@ class ServiceTypePresenter
     @services.select{ |s| s.service_type == service_type }.map{ |s| ServiceStatsPresenter.new(s) }
   end
 
+  def id_label
+    case service_type
+    when 'sprintly'
+      'E-mail'
+    when 'web_hook'
+      'URL'
+    else
+      'ID'
+    end
+  end
+
   private
 
   def service_for_form

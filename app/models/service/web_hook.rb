@@ -34,6 +34,10 @@ class Service::WebHook < Service::Adapter
     url
   end
 
+  def id
+    url
+  end
+
   private
 
   def valid_url_format

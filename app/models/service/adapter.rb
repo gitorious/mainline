@@ -51,4 +51,8 @@ class Service::Adapter
       end
     end
   end
+
+  def id
+    raise NotImplementedError
+  end
 end
