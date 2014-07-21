@@ -50,6 +50,12 @@ class MountPointTest < MiniTest::Spec
       assert_equal "https://gitorious.here/somewhere", mp.url("/somewhere")
     end
 
+    it "generates url for ssl on port 443 when no port specified" do
+      mp = Gitorious::HttpMountPoint.new("gitorious.here", nil, "https")
+
+      assert_equal "https://gitorious.here/somewhere", mp.url("/somewhere")
+    end
+
     it "generates url for ssl on non-443 port" do
       mp = Gitorious::HttpMountPoint.new("gitorious.here", 1918, "https")
 

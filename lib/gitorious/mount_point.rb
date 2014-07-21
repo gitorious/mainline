@@ -22,9 +22,9 @@ module Gitorious
     attr_reader :host, :port, :scheme
 
     def initialize(host, port = nil, scheme = nil)
+      @scheme = scheme || default_scheme
       @host = host.split(":").first
       @port = (port || default_port).to_i
-      @scheme = scheme || default_scheme
     end
 
     def url(path)
@@ -58,7 +58,7 @@ module Gitorious
     end
 
     def default_scheme
-      port == 443 ? "https" : "http"
+      "http"
     end
 
     def default_port
