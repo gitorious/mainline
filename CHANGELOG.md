@@ -1,5 +1,18 @@
 # Gitorious Changelog
 
+## 3.1.1 (2014-07-21)
+
+### Changes
+
+* "System message" box is more subtle now, moved to the very top of the page
+* URLs of configured service hooks are now displayed on the hooks list
+
+### Bugs fixed
+
+* Fixed URL generation when config file has scheme == "https" but no port set
+* Fixed "Test" functionality of service hooks
+* Fixed instructions for updating merge request via git push
+
 ## 3.1.0 (2014-07-09)
 
 ### Changes
