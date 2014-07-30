@@ -64,6 +64,14 @@ class RepositoriesControllerTest < ActionController::TestCase
       get :show, :project_id => @project.to_param, :id => ready_repository.to_param, :format => "xml"
       assert_response :success
     end
+
+    should "respond with proper go-import meta tag when go-get param is present" do
+      get :show, :project_id => @project.to_param, :id => ready_repository.to_param, 'go-get' => 1
+
+      assert_response 200
+      assert_tag tag: 'meta', attributes: { name: 'go-import', content: 'gitorious.test git http://gitorious.test/johans-project/johansprojectrepos.git' }
+    end
+
   end
 
   context "#index" do

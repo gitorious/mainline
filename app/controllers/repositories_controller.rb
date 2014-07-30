@@ -43,8 +43,13 @@ class RepositoriesController < ApplicationController
 
     respond_to do |format|
       format.html do
-        repo = RepositoryPresenter.new(repository).slug
-        redirect_to(tree_entry_url(repo, repository.head.commit, ""), :status => 307)
+        repo = RepositoryPresenter.new(repository)
+
+        if params['go-get']
+          render 'go-get', locals: { repository: repository }, layout: false
+        else
+          redirect_to(tree_entry_url(repo.slug, repository.head.commit, ""), status: 307)
+        end
       end
 
       format.xml do
