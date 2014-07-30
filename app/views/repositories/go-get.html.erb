@@ -1,7 +1,7 @@
 <html>
   <head>
     <% if Gitorious.git_http %>
-      <meta name="go-import" content="<%= Gitorious.host %> git <%= repository.http_clone_url %>" />
+      <meta name="go-import" content="<%= Gitorious.host %>/<%= repository.url_path %> git <%= repository.http_clone_url %>" />
     <% end %>
   </head>
   <body></body>
