@@ -7,7 +7,6 @@ host: gitorious.test
 scheme: http
 client_host: gitorious.test
 client_port: 3001
-frontend_server: apache
 cookie_secret: UpDoquajrecJewyeodMilmiasFicsOke
 messaging_adapter: test
 git_binary: /usr/bin/git

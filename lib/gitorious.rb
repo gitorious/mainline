@@ -179,11 +179,6 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
     @diff_timeout = Gitorious::Configuration.get("merge_request_diff_timeout", 10).to_i
   end
 
-  def self.frontend_server
-    return @frontend_server if @frontend_server && cache?
-    @frontend_server = Gitorious::Configuration.get("frontend_server", "nginx").downcase
-  end
-
   def self.dot_org?
     @is_gitorious_org = Gitorious::Configuration.get("is_gitorious_dot_org", false)
   end

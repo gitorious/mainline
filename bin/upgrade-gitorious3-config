@@ -121,7 +121,7 @@ enable_repository_dir_sharding: #{all.key?("enable_repository_dir_sharding") ? a
 # and a directory to keep cached tarballs (such that we don't waste time
 # re-generating tarballs on every request).
 #
-# Tarball cache directory. Gitorious uses X-Sendfile to deliver files to
+# Tarball cache directory. Gitorious uses X-Accel-Redirect to deliver files to
 # users, so this needs to be readable by the web server.
 archive_cache_dir: #{all["archive_cache_dir"]}
 
@@ -193,21 +193,6 @@ enable_git_http: #{!all["hide_http_clone_urls"]}
 git_http_host: #{all["gitorious_clone_host"] || all["gitorious_host"]}
 #git_http_port: 80
 #git_http_scheme: https
-
-# Give a hint about which frontend web server is being used. When
-# running under nginx, Gitorious uses X-Accel-Redirect headers for
-# files that should be served directly by the web server. For Apache,
-# it will use X-Sendfile. The default value is 'nginx'. Please note
-# that when when assuming Nginx, Gitorious will serve static files
-# from the following URIs mapping to the file system:
-#
-# - /tarballs/<tarball-name>   -> <archive_cache_dir>/<tarball-name>
-# - /
-#
-# Furthermore, you should instruct Nginx to consider these URLs
-# private to prevent direct access to them. Have a look in
-# doc/templates/nginx.conf.sample for an example.
-frontend_server: #{all["frontend_server"] || 'apache'}
 
 # Messaging queue configuration
 # Possible values: resque, test, sync. Default value is resque. The
@@ -516,7 +501,6 @@ development:
   #git_http_host:
   #git_http_port:
   #git_http_scheme:
-  #frontend_server:
   #public_mode:
   #enable_private_repositories:
   #projects_default_private:

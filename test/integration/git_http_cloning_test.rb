@@ -26,14 +26,14 @@ class GitHttpCloningTest < ActionController::IntegrationTest
       @request_uri = "/johans-project/johansprojectrepos.git/HEAD"
     end
 
-    should "set X-Sendfile headers" do
+    should "set X-Accel-Redirect header" do
       assert_incremented_by(@repository.cloners, :count, 1) do
         get @request_uri, {}, :remote_addr => "192.71.1.2"
       end
 
       assert_response :success
-      assert_not_nil(headers["X-Sendfile"])
-      assert_equal(File.join(RepositoryRoot.default_base_path, @repository.real_gitdir, "HEAD"), headers["X-Sendfile"])
+      assert_not_nil(headers["X-Accel-Redirect"])
+      assert_equal(File.join("/git-http", @repository.real_gitdir, "HEAD"), headers["X-Accel-Redirect"])
     end
 
     should "create cloner with correct remote address" do
@@ -60,20 +60,12 @@ class GitHttpCloningTest < ActionController::IntegrationTest
       assert_match /nofollow/, headers["X-Robots-Tag"]
     end
 
-    should "use X-Accel-Redirect when running under nginx" do
-      Gitorious.stubs(:frontend_server).returns("nginx")
-      get @request_uri, {}, :host => "git.gitorious.local", :remote_addr => "192.71.1.2"
-
-      assert_response :success
-      assert_not_nil headers["X-Accel-Redirect"]
-    end
-
     should "not allow http cloning if denied by configuration" do
       Gitorious.stubs(:git_http).returns(nil)
       get @request_uri, {}
 
       assert_response 403
-      assert_nil headers['X-Sendfile']
+      assert_nil headers['X-Accel-Redirect']
     end
   end
 end

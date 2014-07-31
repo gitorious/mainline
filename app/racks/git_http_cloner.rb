@@ -21,10 +21,9 @@ require "gitorious"
 # Middleware that handles HTTP cloning
 #
 # - Rip out the repo path and rest from the URI
-# - Return a X-Sendfile header in the response containing the full
+# - Return a X-Accel-Redirect header in the response containing the full
 #   path to the object requested
-# - This will be picked up by Apache (given mod-x_sendfile is
-#   installed) and then delivered to the client
+# - This will be picked up by Nginx and then delivered to the client
 module Gitorious
   class GitHttpCloner
     TRUSTED_PROXIES = /^127\.0\.0\.1$|^(10|172\.(1[6-9]|2[0-9]|30|31)|192\.168)\./i
@@ -46,7 +45,7 @@ module Gitorious
         headers = {
           "Content-Type" => "application/octet-stream",
           "X-Robots-Tag" => "noindex,nofollow"
-        }.merge(sendfile_headers(repo, rest))
+        }.merge(accel_headers(repo, rest))
         env["rack.session.options"] = {}
         return [200, headers, []]
       rescue ActiveRecord::RecordNotFound
@@ -55,12 +54,8 @@ module Gitorious
       end
     end
 
-    def self.sendfile_headers(repo, rest)
-      if Gitorious.frontend_server == "nginx"
-        { "X-Accel-Redirect" => File.join("/git-http", repo.real_gitdir, rest) }
-      else
-        { "X-Sendfile" => File.join(repo.full_repository_path, rest) }
-      end
+    def self.accel_headers(repo, rest)
+      { "X-Accel-Redirect" => File.join("/git-http", repo.real_gitdir, rest) }
     end
 
     protected

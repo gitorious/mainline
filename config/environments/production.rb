@@ -12,14 +12,8 @@ Gitorious::Application.configure do
   config.action_controller.perform_caching = true
 
   config.action_dispatch.rack_cache = nil
-  # Specifies the header that your server uses for sending files
-  config.action_dispatch.x_sendfile_header = "X-Sendfile"
 
-  # For nginx:
-  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
-
-  # If you have no front-end server that supports something like X-Sendfile,
-  # just comment this out and Rails will serve the files
+  config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
 
   # See everything in the log (default is :info)
   config.log_level = :warn

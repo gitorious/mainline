@@ -132,7 +132,6 @@ user: $GITORIOUS_USER
 scheme: http
 host: localhost
 port: 3000
-frontend_server: nginx
 client_port: 3000
 repository_base_path: /home/$GITORIOUS_USER/projects/gitorious/repositories
 archive_cache_dir: /home/$GITORIOUS_USER/projects/gitorious/tarball-cache
@@ -192,7 +191,7 @@ sudo apt-get install -y git-daemon-run
 echo "Start the git-daemon like so:"
 echo "git daemon --listen=0.0.0.0 --port=9418 --export-all --base-path=$GITORIOUS_ROOT/repositories --verbose --reuseaddr $GITORIOUS_ROOT/repositories"
 
-# To do Git over HTTP, you need a frontend server, as Gitorious uses Sendfile to
+# To do Git over HTTP, you need a frontend server, as Gitorious uses X-Accel-Redirect to
 # avoid locking up a Rails process while serving (potentially lots of) data to
 # the Git client.
 

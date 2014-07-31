@@ -138,7 +138,7 @@ module Gitorious
         else
           configure_env(repo)
           filename = lookup.archive(repo, ref, format)
-          add_sendfile_headers(filename, format)
+          add_accel_headers(filename, format)
           body("")
         end
       end
@@ -205,18 +205,13 @@ module Gitorious
       renderer.render(template, {:session => session, :current_user => current_user}.merge(locals), opts)
     end
 
-    def add_sendfile_headers(filename, format)
+    def add_accel_headers(filename, format)
       basename = File.basename(filename)
       user_path = basename.gsub("/", "_").gsub('"', '\"')
 
       response.headers["content-type"] = format == "zip" ? "application/x-zip" : "application/x-gzip"
       response.headers["content-disposition"] = "Content-Disposition: attachment; filename=\"#{user_path}\""
-
-      if Gitorious.frontend_server == "nginx"
-        response.headers["x-accel-redirect"] = "/tarballs/#{basename}"
-      else
-        response.headers["x-sendfile"] = filename
-      end
+      response.headers["X-Accel-Redirect"] = "/tarballs/#{basename}"
     end
 
     def force_ref(repo, pathlike, action)
