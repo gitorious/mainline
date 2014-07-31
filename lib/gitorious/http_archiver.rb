@@ -25,13 +25,13 @@ module Gitorious
     end
 
     def archive(repository, oid, format = 'tar.gz')
-      prefix = repository.path_segment.gsub(/\//, "-") + "/"
+      prefix = repository.path_segment.gsub(/\//, "-")
       format = 'tar.gz' if format == 'tgz'
       filename = "#{prefix}-#{oid}.#{format}"
 
       "#{url}/#{repository.real_gitdir}" +
         "?ref=#{oid}" +
-        "&prefix=#{prefix}" +
+        "&prefix=#{prefix}/" +
         "&format=#{format}" +
         "&filename=#{filename}"
     end
