@@ -37,6 +37,7 @@ class RepositoryPresenter
   def id; repository.id; end
   def name; repository.name; end
   def gitdir; repository.gitdir; end
+  def real_gitdir; repository.real_gitdir; end
   def to_param; repository.to_param; end
   def path_segment; repository.path_segment; end
   def full_repository_path; repository.full_repository_path; end

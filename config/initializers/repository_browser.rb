@@ -66,6 +66,10 @@ view.helper(:maxdepth => 3, :tab_width => 4)
 
 ::Dolt::View::SubmoduleUrl.parsers.unshift(Gitorious::SubmoduleUrlParser.new)
 
-archiver = ::Dolt::Git::Archiver.new(Gitorious.archive_work_dir, Gitorious.archive_cache_dir)
+if archiver_url = ENV['GITORIOUS_ARCHIVER_URL']
+  archiver = Gitorious::HttpArchiver.new(archiver_url)
+else
+  archiver = ::Dolt::Git::Archiver.new(Gitorious.archive_work_dir, Gitorious.archive_cache_dir)
+end
 lookup = ::Dolt::RepositoryLookup.new(Gitorious::Dolt::RepositoryResolver.new, archiver)
 Gitorious::RepositoryBrowser.instance = Gitorious::RepositoryBrowser.new(lookup, view)

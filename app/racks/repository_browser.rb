@@ -137,8 +137,8 @@ module Gitorious
           dolt.redirect("/#{repo}/archive/#{oid}.#{format}")
         else
           configure_env(repo)
-          filename = lookup.archive(repo, ref, format)
-          add_accel_headers(filename, format)
+          location = lookup.archive(repo, ref, format)
+          add_accel_headers(location, format)
           body("")
         end
       end
@@ -205,13 +205,17 @@ module Gitorious
       renderer.render(template, {:session => session, :current_user => current_user}.merge(locals), opts)
     end
 
-    def add_accel_headers(filename, format)
-      basename = File.basename(filename)
-      user_path = basename.gsub("/", "_").gsub('"', '\"')
+    def add_accel_headers(location, format)
+      if location.include?("_internal") # it's an internal Nginx redirect
+        response.headers["X-Accel-Redirect"] = location
+      else # it's a file path
+        basename = File.basename(location)
+        filename = basename.gsub("/", "_").gsub('"', '\"')
 
-      response.headers["content-type"] = format == "zip" ? "application/x-zip" : "application/x-gzip"
-      response.headers["content-disposition"] = "Content-Disposition: attachment; filename=\"#{user_path}\""
-      response.headers["X-Accel-Redirect"] = "/tarballs/#{basename}"
+        response.headers["Content-Type"] = format == "zip" ? "application/zip" : "application/x-gzip"
+        response.headers["Content-Disposition"] = "attachment; filename=#{filename}"
+        response.headers["X-Accel-Redirect"] = "/tarballs/#{basename}"
+      end
     end
 
     def force_ref(repo, pathlike, action)
