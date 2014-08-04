@@ -41,7 +41,7 @@ namespaced_atom_feed do |feed|
 
 <pre>
 #{h word_wrap(commit.message)}
-<pre>
+</pre>
 
 EOS
       entry.author do |author|
