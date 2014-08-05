@@ -23,7 +23,6 @@ Gitorious::Application.routes.draw do
   root :to => "site#index"
 
   ### R1. Rack endpoints
-  match "/:owner/:project_id/:repository_id.git/*slug" => Gitorious::GitHttpCloner, :owner => /[+~][^\/]+/
   match "/:project_id/:repository_id.git/*slug" => Gitorious::GitHttpCloner
   # The repository browser instance is configured in an initializer
   match "/:project_id/:repository_id/:action/*slug" => Gitorious::RepositoryBrowser.instance, :action => /(source|tree_history|raw|blame|history|archive)/, :as => :repository_browser
