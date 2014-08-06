@@ -16,14 +16,14 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require (Rails.root + "app/racks/git_http_cloner.rb").realpath
-
 Gitorious::Application.routes.draw do
   ### R0. Site index
   root :to => "site#index"
 
-  ### R1. Rack endpoints
-  match "/:project_id/:repository_id.git/*slug" => Gitorious::GitHttpCloner
+  ### R1. Git-over-Http auth endpoint
+  if Gitorious.git_http
+    match "/:project_slug/:repository_name.git*slug" => 'git_http#authorize'
+  end
   # The repository browser instance is configured in an initializer
   match "/:project_id/:repository_id/:action/*slug" => Gitorious::RepositoryBrowser.instance, :action => /(source|tree_history|raw|blame|history|archive)/, :as => :repository_browser
   match "/:project_id/:repository_id/refs" => Gitorious::RepositoryBrowser.instance, :as => :repository_refs

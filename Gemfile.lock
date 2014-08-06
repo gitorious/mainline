@@ -264,6 +264,8 @@ GEM
       slop (~> 3.4)
     pry-rails (0.3.2)
       pry (>= 0.9.10)
+    pundit (0.2.3)
+      activesupport (>= 3.0.0)
     pygments.rb (0.5.2)
       posix-spawn (~> 0.3.6)
       yajl-ruby (~> 1.1.0)
@@ -464,6 +466,7 @@ DEPENDENCIES
   poltergeist (~> 1.4)
   proxymachine (= 1.2.4)
   pry-rails
+  pundit (~> 0.2.3)
   rails (= 3.2.19)
   rails_autolink (~> 1.0)
   rake (~> 10.0)

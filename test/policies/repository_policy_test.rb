@@ -1,7 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Gitorious AS and/or its subsidiary(-ies)
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,19 +16,30 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-# Rack Middleware that handles HTTP cloning
+require "test_helper"
 
-require(File.dirname(__FILE__) + "/../../config/environment") unless defined?(Rails)
-require(File.dirname(__FILE__) + "/../../app/racks/git_http_cloner")
+class RepositoryPolicyTest < MiniTest::Spec
+  let(:policy) { RepositoryPolicy.new(user, repository, db_authorization) }
+  let(:user) { User.new }
+  let(:repository) { Repository.new }
+  let(:db_authorization) { stub('db_authorization', can_read_repository?: :yup) }
 
-class GitHttpClonerMiddleware
-  def initialize(app)
-    @app = app
+  describe "#read?" do
+    it "delegates to db authorization's #can_read_repository?" do
+      assert_equal :yup, policy.read?
+    end
   end
 
-  def call(env)
-    response = Gitorious::GitHttpCloner.call(env)
-    return @app.call(env) if response[0] > 400 && response[0] < 500
-    response
+  describe "#upload_pack?" do
+    it "delegates to db authorization's #can_read_repository?" do
+      assert_equal :yup, policy.upload_pack?
+    end
   end
+
+  describe "#receive_pack?" do
+    it "is false" do
+      refute policy.receive_pack?
+    end
+  end
+
 end

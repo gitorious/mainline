@@ -115,9 +115,6 @@ module Gitorious
     OpenIdAuthentication.store = :file
     config.middleware.use OpenIdAuthentication
 
-    # require (Rails.root + "app/middlewares/git_http_cloner.rb").realpath
-    # config.middleware.insert_before ActionDispatch::Cookies, ::GitHttpCloner
-
     # Enable the asset pipeline
     config.assets.enabled = true
     config.assets.precompile += %w(public_index.css)
