@@ -40,7 +40,7 @@ class GitHttpController < ApplicationController
 
   def command
     regexp = /git[\s-](upload-pack|receive-pack)/
-    params[:service].to_s[regexp, 1] || params[:slug].to_s[regexp, 1]
+    params[:service].to_s[regexp, 1] || params[:slug].to_s[regexp, 1] || 'upload-pack'
   end
 
   def x_accel_redirect_path(real_gitdir)
