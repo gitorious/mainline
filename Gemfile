@@ -27,7 +27,7 @@ gem "virtus", '~> 1.0.1'
 gem "charlatan", '~> 0.0.1'
 gem "rake", "~> 10.0"
 gem "gitlab-grit", :require => "grit", :git => "https://github.com/gitorious/grit.git"
-gem "airbrake", "~> 3.1.14", :require => false
+gem "bugsnag", "~> 2.4.0"
 gem "simple_form", "~> 2.1"
 gem "force_utf8"
 gem 'rugged', git: 'https://github.com/libgit2/rugged.git', branch: 'development', submodules: true

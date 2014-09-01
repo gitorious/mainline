@@ -65,9 +65,6 @@ GEM
     acts-as-taggable-on (2.4.1)
       rails (>= 3, < 5)
     addressable (2.3.5)
-    airbrake (3.1.14)
-      builder
-      json
     ansi (1.4.3)
     arel (3.0.3)
     asciidoctor (0.1.4)
@@ -77,6 +74,9 @@ GEM
     backports (3.3.5)
     bourne (1.5.0)
       mocha (>= 0.13.2, < 0.15)
+    bugsnag (2.4.0)
+      httparty (>= 0.6, < 1.0)
+      multi_json (~> 1.0)
     builder (3.0.4)
     capillary (1.0.4)
       htmlentities
@@ -421,8 +421,8 @@ DEPENDENCIES
   RedCloth
   activerecord-jdbcmysql-adapter
   acts-as-taggable-on (~> 2.3)
-  airbrake (~> 3.1.14)
   asciidoctor
+  bugsnag (~> 2.4.0)
   capillary (~> 1.0.1)
   capybara (~> 2.1)
   capybara-screenshot
