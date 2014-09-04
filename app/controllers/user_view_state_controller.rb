@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -23,8 +23,7 @@ class UserViewStateController < ApplicationController
 
   def show
     respond_to do |format|
-      user = current_user == :false ? nil : current_user
-      presenter = UserJSONPresenter.new(self, user)
+      presenter = UserJSONPresenter.new(self, current_user)
       format.json { render(:json => presenter.render) }
     end
   end

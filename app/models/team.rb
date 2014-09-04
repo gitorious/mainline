@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -119,7 +119,7 @@ class Team
   end
 
   def self.group_admin?(group, user)
-    return false unless user.is_a? User
+    return false unless user
     role = group.user_role(user)
     role && role.admin?
   end

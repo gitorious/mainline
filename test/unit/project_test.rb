@@ -71,8 +71,6 @@ class ProjectTest < ActiveSupport::TestCase
     project.owner.add_member(users(:moe), Role.member)
     refute admin?(users(:moe), project)
 
-    # be able to deal with AuthenticatedSystem's quirky design:
-    refute admin?(:false, project)
     refute admin?(false, project)
     refute admin?(nil, project)
   end
@@ -92,8 +90,6 @@ class ProjectTest < ActiveSupport::TestCase
     project.owner.add_member(users(:moe), Role.member)
     refute admin?(users(:moe), project)
 
-    # be able to deal with AuthenticatedSystem's quirky design:
-    refute project.member?(:false)
     refute project.member?(false)
     refute project.member?(nil)
   end

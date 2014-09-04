@@ -562,21 +562,21 @@ class RepositoryTest < ActiveSupport::TestCase
       should "know if a user is a committer" do
         assert !committer?(@cs.committer, @repo)
         @cs.build_permissions(:commit); @cs.save
-        assert !committer?(:false, @repo)
+        assert !committer?(nil, @repo)
         assert !committer?(@cs.committer, @repo)
       end
 
       should "know if a user is a reviewer" do
         assert !reviewer?(@cs.committer, @repo)
         @cs.build_permissions(:review); @cs.save
-        assert !reviewer?(:false, @repo)
+        assert !reviewer?(nil, @repo)
         assert !reviewer?(@cs.committer, @repo)
       end
 
       should "know if a user is a admin" do
         assert !admin?(@cs.committer, @repo)
         @cs.build_permissions(:commit, :admin); @cs.save
-        assert !admin?(:false, @repo)
+        assert !admin?(nil, @repo)
         assert !admin?(@cs.committer, @repo)
       end
     end

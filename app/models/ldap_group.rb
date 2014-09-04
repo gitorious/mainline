@@ -113,7 +113,7 @@ class LdapGroup < ActiveRecord::Base
   end
 
   def self.ldap_group_names_for_user(user)
-    return [] unless user.is_a?(User)
+    return [] unless user
     configurator = ldap_configurator
     membership_attribute = ldap_configurator.membership_attribute_name
 

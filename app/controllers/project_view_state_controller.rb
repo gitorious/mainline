@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -20,10 +20,9 @@ require "project_json_presenter"
 class ProjectViewStateController < ApplicationController
   def show
     respond_to do |format|
-      user = current_user == :false ? nil : current_user
       project = Project.find_by_slug!(params[:id])
       presenter = ProjectJSONPresenter.new(self, project)
-      format.json { render(:json => presenter.render_for(user)) }
+      format.json { render(:json => presenter.render_for(current_user)) }
     end
   end
 end

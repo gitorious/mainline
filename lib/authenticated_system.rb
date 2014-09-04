@@ -1,5 +1,5 @@
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -20,24 +20,24 @@ module AuthenticatedSystem
     # Returns true or false if the user is logged in.
     # Preloads @current_user with the user model if they're logged in.
     def logged_in?
-      current_user != :false
+      !!current_user
     end
 
-    # Accesses the current user from the session.  Set it to :false if login fails
-    # so that future calls do not hit the database.
+    # Accesses the current user from the session.
     def current_user
-      @current_user ||= (login_from_session || login_from_basic_auth || login_from_cookie || :false)
+      return @current_user if instance_variable_defined?(:@current_user)
+      @current_user = login_from_session || login_from_basic_auth || login_from_cookie
     end
 
     # Store the given user in the session.
     def current_user=(user)
-      if user.nil? || user.is_a?(Symbol)
+      if user
+        session[:user_id] = user.id
+        set_varnish_auth_cookie
+      else
         session.delete(:user_id)
         cookies.delete(:auth_token)
         clear_varnish_auth_cookie
-      else
-        session[:user_id] = user.id
-        set_varnish_auth_cookie
       end
 
       @current_user = user

@@ -77,7 +77,7 @@ class LdapGroupTest < ActiveSupport::TestCase
     end
 
     should "not try looking up memberships for anonymous users" do
-      assert_equal([], LdapGroup.groups_for_user(:false))
+      assert_equal([], LdapGroup.groups_for_user(nil))
     end
   end
 
