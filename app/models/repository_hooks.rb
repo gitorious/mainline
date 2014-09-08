@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -22,13 +22,16 @@ class RepositoryHooks
   def self.create(path)
     hooks = RepositoryRoot.expand(".hooks")
     ensure_symlink(Rails.root + "data/hooks", hooks)
-
-    local_hooks = path + "hooks"
-    return if local_hooks.exist?
-
     target_path = hooks.relative_path_from(path)
+
     Dir.chdir(path) do
-      FileUtils.ln_s(target_path.to_s, "hooks")
+      FileUtils.mkdir_p("hooks")
+
+      %w[pre-receive post-receive update post-update].each do |hook|
+        global_hook_path = "#{target_path}/#{hook}"
+        local_hook_path = "hooks/#{hook}"
+        FileUtils.ln_sf(global_hook_path, local_hook_path) unless File.executable?(local_hook_path)
+      end
     end
   end
 

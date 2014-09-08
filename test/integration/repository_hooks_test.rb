@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -19,19 +19,30 @@ require "test_helper"
 require "fileutils"
 
 class RepositoryHooksTest < ActiveSupport::TestCase
-  should "create missing symlink" do
-    hooks = Pathname("/I/dont/exist")
-    FileUtils.expects(:ln_sf).with(File.join(Rails.root, "data/hooks"), "/I/dont/exist")
-    RepositoryRoot.stubs(:expand).with(".hooks").returns(hooks)
 
-    RepositoryHooks.create(Rails.root + "data")
+  def assert_hooks(repos_path, repo_path)
+    assert_equal "#{Rails.root}/data/hooks", File.readlink("#{repos_path}/.hooks")
+
+    %w[pre-receive post-receive update post-update].each do |hook|
+      assert_equal "../.hooks/#{hook}", File.readlink("#{repo_path}/hooks/#{hook}")
+    end
   end
 
-  should "create local link" do
-    FileUtils.expects(:ln_s).with("../data/hooks", "hooks")
-    FileUtils.stubs(:ln_sf)
-    RepositoryRoot.stubs(:expand).with(".hooks").returns(Rails.root + "data/hooks")
+  should "symlink hooks" do
+    Dir.mktmpdir do |dir|
+      repos_path = "#{dir}/repos"
+      FileUtils.mkdir(repos_path)
+      RepositoryRoot.default_base_path = repos_path
+      repo_path = "#{repos_path}/repo.git"
+      FileUtils.mkdir(repo_path)
 
-    RepositoryHooks.create(Rails.root + "app")
+      RepositoryHooks.create(Pathname(repo_path))
+      assert_hooks(repos_path, repo_path)
+
+      # do it again and ensure it's idempotent
+      RepositoryHooks.create(Pathname(repo_path))
+      assert_hooks(repos_path, repo_path)
+    end
   end
+
 end
