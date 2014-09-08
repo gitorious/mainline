@@ -11,6 +11,10 @@
 
 * `frontend_server` option is removed, Nginx is always assumed
 
+### Bugs fixed
+
+* Fixed closing pre tag in commit history RSS feed
+
 ## 3.1.1 (2014-07-21)
 
 ### Changes
