@@ -183,6 +183,8 @@ Gitorious::Application.routes.draw do
   namespace :api do
     get ":project_id/:repository_id/log/graph(.:format)" => "graphs#show"
     get ":project_id/:repository_id/log/graph/*branch(.:format)" => "graphs#show"
+
+    resource :user, only: [:show]
   end
 
   ### R10. Events
