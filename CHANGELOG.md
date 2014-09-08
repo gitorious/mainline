@@ -7,6 +7,10 @@
 * Repositories are now discoverable by `go get` (`go get
     gitorious-host/project-name/repo-name`)
 
+### Changes
+
+* `frontend_server` option is removed, Nginx is always assumed
+
 ## 3.1.1 (2014-07-21)
 
 ### Changes
