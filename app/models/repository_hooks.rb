@@ -22,7 +22,7 @@ class RepositoryHooks
   def self.create(path)
     hooks = RepositoryRoot.expand(".hooks")
     ensure_symlink(Rails.root + "data/hooks", hooks)
-    target_path = hooks.relative_path_from(path)
+    target_path = hooks.relative_path_from(path + "hooks")
 
     Dir.chdir(path) do
       FileUtils.mkdir_p("hooks")

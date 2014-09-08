@@ -24,7 +24,7 @@ class RepositoryHooksTest < ActiveSupport::TestCase
     assert_equal "#{Rails.root}/data/hooks", File.readlink("#{repos_path}/.hooks")
 
     %w[pre-receive post-receive update post-update].each do |hook|
-      assert_equal "../.hooks/#{hook}", File.readlink("#{repo_path}/hooks/#{hook}")
+      assert_equal "../../.hooks/#{hook}", File.readlink("#{repo_path}/hooks/#{hook}")
     end
   end
 
