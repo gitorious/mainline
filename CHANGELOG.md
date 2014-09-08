@@ -1,5 +1,12 @@
 # Gitorious Changelog
 
+## master
+
+### New features
+
+* Repositories are now discoverable by `go get` (`go get
+    gitorious-host/project-name/repo-name`)
+
 ## 3.1.1 (2014-07-21)
 
 ### Changes
