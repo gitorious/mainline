@@ -32,6 +32,10 @@ class RepositoryHooks
         local_hook_path = "hooks/#{hook}"
         FileUtils.ln_sf(global_hook_path, local_hook_path) unless File.executable?(local_hook_path)
       end
+
+      global_script_path = "#{target_path}/messaging.rb"
+      local_script_path = "hooks/messaging.rb"
+      FileUtils.ln_sf(global_script_path, local_script_path) unless File.exist?(local_script_path)
     end
   end
 
