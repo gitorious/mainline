@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -19,8 +19,16 @@ require "fast_test_helper"
 require "gitorious/custom_hook"
 
 class CustomHookTest < MiniTest::Spec
+  it "uses executable script in $PWD/hooks" do
+    File.stubs(:executable?).returns(true, false)
+    hook = Gitorious::CustomHook.new("pre-receive")
+
+    expected = File.join(Dir.pwd, "hooks/custom-pre-receive")
+    assert_equal File.expand_path(expected), hook.path
+  end
+
   it "uses executable script in data/hooks" do
-    File.stubs(:executable?).returns(true)
+    File.stubs(:executable?).returns(false, true)
     hook = Gitorious::CustomHook.new("pre-receive")
 
     expected = File.join(Rails.root, "data/hooks/custom-pre-receive")

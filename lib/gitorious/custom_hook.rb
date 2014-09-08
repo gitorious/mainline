@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #--
-#   Copyright (C) 2013 Gitorious AS
+#   Copyright (C) 2013-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -25,9 +25,13 @@ module Gitorious
     end
 
     def path
-      return @file if defined?(@file)
-      @file = File.join(File.dirname(__FILE__), "../../data/hooks/custom-#{@hook}")
-      return File.expand_path(@file) if File.executable?(@file)
+      return @file if @file
+
+      @file = File.expand_path("hooks/custom-#{@hook}")
+      return @file if File.executable?(@file)
+
+      @file = File.expand_path(File.join(File.dirname(__FILE__), "../../data/hooks/custom-#{@hook}"))
+      return @file if File.executable?(@file)
 
       if !defined?(Gitorious::Configuration)
         require "gitorious/configuration_loader"
