@@ -19,6 +19,7 @@ require "pathname"
 require "fileutils"
 
 class RepositoryHooks
+
   def self.create(path)
     hooks = RepositoryRoot.expand(".hooks")
     ensure_symlink(Rails.root + "data/hooks", hooks)
@@ -39,7 +40,25 @@ class RepositoryHooks
     end
   end
 
+  def self.custom_hook_path(repo_path, name, global_hooks_path = "#{Rails.root}/data/hooks")
+    path = "#{repo_path}/hooks/custom-#{name}"
+    if File.executable?(path)
+      return path
+    end
+
+    path = "#{global_hooks_path}/custom-#{name}"
+    if File.executable?(path)
+      return path
+    end
+
+    path = Gitorious::Configuration.get("custom_#{name.gsub('-', '_')}_hook")
+    if path && File.executable?(path)
+      return path
+    end
+  end
+
   private
+
   def self.ensure_symlink(src, dest)
     return if dest.symlink? && dest.realpath.to_s == src.realpath.to_s
     FileUtils.ln_sf(src.realpath.to_s, dest.expand_path.to_s)

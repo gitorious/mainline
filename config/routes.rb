@@ -185,6 +185,10 @@ Gitorious::Application.routes.draw do
     get ":project_id/:repository_id/log/graph/*branch(.:format)" => "graphs#show"
 
     resource :user, only: [:show]
+
+    namespace :internal do
+      get "/repo-config", to: "repository_configurations#show"
+    end
   end
 
   ### R10. Events

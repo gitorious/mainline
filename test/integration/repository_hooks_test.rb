@@ -28,6 +28,11 @@ class RepositoryHooksTest < ActiveSupport::TestCase
     end
   end
 
+  def create_hook(path)
+    FileUtils.touch(path)
+    File.chmod(755, path)
+  end
+
   should "symlink hooks" do
     Dir.mktmpdir do |dir|
       repos_path = "#{dir}/repos"
@@ -42,6 +47,47 @@ class RepositoryHooksTest < ActiveSupport::TestCase
       # do it again and ensure it's idempotent
       RepositoryHooks.create(Pathname(repo_path))
       assert_hooks(repos_path, repo_path)
+    end
+  end
+
+  should "returns path to the executable custom hook" do
+    Dir.mktmpdir do |dir|
+      global_hooks_path = "#{dir}/global-hooks"
+      FileUtils.mkdir(global_hooks_path)
+
+      repo_path = "#{dir}/repo.git"
+      FileUtils.mkdir_p("#{repo_path}/hooks")
+
+      # each additional hook added below shadows the previous ones
+
+      assert_equal nil, RepositoryHooks.custom_hook_path(repo_path, "pre-receive", global_hooks_path)
+
+      # 1. custom global hook at arbitrary path, set in config file
+
+      config_hook_path = "#{dir}/hook"
+      create_hook(config_hook_path)
+
+      Gitorious::Configuration.override("custom_pre_receive_hook" => config_hook_path) do |conf|
+        assert_equal config_hook_path, RepositoryHooks.custom_hook_path(repo_path, "pre-receive", global_hooks_path)
+      end
+
+      # 2. custom global hook in global hooks dir (Rails.root/data/hooks)
+
+      global_hook_path = "#{global_hooks_path}/custom-pre-receive"
+      create_hook(global_hook_path)
+
+      Gitorious::Configuration.override("custom_pre_receive_hook" => config_hook_path) do |conf|
+        assert_equal global_hook_path, RepositoryHooks.custom_hook_path(repo_path, "pre-receive", global_hooks_path)
+      end
+
+      # 3. custom local hook in repo_path/hooks
+
+      local_hook_path = "#{repo_path}/hooks/custom-pre-receive"
+      create_hook(local_hook_path)
+
+      Gitorious::Configuration.override("custom_pre_receive_hook" => config_hook_path) do |conf|
+        assert_equal local_hook_path, RepositoryHooks.custom_hook_path(repo_path, "pre-receive", global_hooks_path)
+      end
     end
   end
 
