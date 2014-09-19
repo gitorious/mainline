@@ -1,26 +1,30 @@
 class RepositoryPolicy
 
-  attr_reader :user, :repository, :db_authorization
+  attr_reader :user, :repository, :authorization
 
-  def self.allowed?(user, repository, action)
+  def self.allowed?(user, repository, action, *args)
     action = "#{action.to_s.gsub('-', '_')}?"
-    new(user, repository).public_send(action)
+    new(user, repository).public_send(action, *args)
   end
 
-  def initialize(user, repository, db_authorization = Gitorious::Authorization::DatabaseAuthorization.new)
+  def initialize(user, repository, authorization = Gitorious::Authorization::DatabaseAuthorization.new)
     @user = user
     @repository = repository
-    @db_authorization = db_authorization
+    @authorization = authorization
   end
 
   def read?
-    db_authorization.can_read_repository?(user, repository)
+    authorization.can_read_repository?(user, repository)
   end
 
   alias_method :upload_pack?, :read?
 
   def receive_pack?
     false
+  end
+
+  def push?
+    authorization.can_push?(user, repository)
   end
 
 end

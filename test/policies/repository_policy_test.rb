@@ -19,19 +19,20 @@
 require "test_helper"
 
 class RepositoryPolicyTest < MiniTest::Spec
-  let(:policy) { RepositoryPolicy.new(user, repository, db_authorization) }
+  let(:policy) { RepositoryPolicy.new(user, repository, authorization) }
   let(:user) { User.new }
   let(:repository) { Repository.new }
-  let(:db_authorization) { stub('db_authorization', can_read_repository?: :yup) }
+  let(:authorization) { stub('authorization', can_read_repository?: :yup,
+                                              can_push?: :nope) }
 
   describe "#read?" do
-    it "delegates to db authorization's #can_read_repository?" do
+    it "delegates to authorization's #can_read_repository?" do
       assert_equal :yup, policy.read?
     end
   end
 
   describe "#upload_pack?" do
-    it "delegates to db authorization's #can_read_repository?" do
+    it "delegates to authorization's #can_read_repository?" do
       assert_equal :yup, policy.upload_pack?
     end
   end
@@ -39,6 +40,12 @@ class RepositoryPolicyTest < MiniTest::Spec
   describe "#receive_pack?" do
     it "is false" do
       refute policy.receive_pack?
+    end
+  end
+
+  describe "#push?" do
+    it "delegates to authorization's #can_push?" do
+      assert_equal :nope, policy.push?
     end
   end
 

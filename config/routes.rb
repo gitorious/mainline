@@ -188,6 +188,8 @@ Gitorious::Application.routes.draw do
 
     namespace :internal do
       get "/repo-config", to: "repository_configurations#show"
+      get "/hooks/pre-receive", to: "hooks#pre_receive"
+      post "/hooks/post-receive", to: "hooks#post_receive"
     end
   end
 
