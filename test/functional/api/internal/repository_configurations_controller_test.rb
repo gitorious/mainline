@@ -25,13 +25,13 @@ class Api::Internal::RepositoryConfigurationsControllerTest < ActionController::
       @user = mock("user")
       @repository = repositories(:johans)
       User.expects(:find_by_login).with("bar").returns(@user)
-      Repository.expects(:find_by_path).with("repo/path").returns(@repository)
+      Repository.expects(:find_by_path).with("repo/path.git").returns(@repository)
     end
 
     should "respond with repo configuration when user can read repo" do
       @controller.expects(:can_read?).with(@user, @repository).returns(true)
 
-      get :show, username: "bar", repo_path: "repo/path", format: :json
+      get :show, username: "bar", repo_path: "repo/path.git", format: :json
 
       assert_response :success
       assert_equal({
@@ -45,9 +45,9 @@ class Api::Internal::RepositoryConfigurationsControllerTest < ActionController::
     should "respond with 403 when user can't read repo" do
       @controller.expects(:can_read?).with(@user, @repository).returns(false)
 
-      get :show, username: "bar", repo_path: "repo/path", format: :json
+      get :show, username: "bar", repo_path: "repo/path.git", format: :json
 
-      assert_response :unauthorized
+      assert_response :forbidden
     end
   end
 

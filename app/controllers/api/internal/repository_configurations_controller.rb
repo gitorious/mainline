@@ -29,7 +29,7 @@ module Api
         if can_read?(user, repository)
           respond_with RepositoryConfigurationPresenter.new(repository)
         else
-          render nothing: true, status: :unauthorized
+          head :forbidden
         end
       end
 
