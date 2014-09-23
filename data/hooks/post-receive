@@ -27,8 +27,8 @@ notify() {
   local newsha=$2
   local refname=$3
 
-  url="$INTERNAL_API_URL/hooks/post-receive?username=$GITORIOUS_USER&repo_path=$GITORIOUS_REPOSITORY_PATH&refname=$refname&oldsha=$oldsha&newsha=$newsha"
-  curl -q -L -s -o /dev/null -X POST "$url" &
+  url="$INTERNAL_API_URL/hooks/post-receive"
+  curl -q -L -s -o /dev/null -X POST --data-urlencode "username=$GITORIOUS_USER" --data-urlencode "repo_path=$GITORIOUS_REPOSITORY_PATH" --data-urlencode "refname=$refname" --data-urlencode "oldsha=$oldsha" --data-urlencode "newsha=$newsha" "$url" &
 }
 
 lines=()
