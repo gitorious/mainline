@@ -44,7 +44,7 @@ class RefPolicyTest < MiniTest::Spec
 
     describe "when user is allowed to push to the repository" do
       before do
-        RepositoryPolicy.expects(:allowed?).with(user, repository, :push?).returns(true)
+        RepositoryPolicy.expects(:allowed?).with(user, repository, :push).returns(true)
       end
 
       it "is true" do
@@ -54,7 +54,7 @@ class RefPolicyTest < MiniTest::Spec
 
     describe "when user isn't allowed to push to the repository" do
       before do
-        RepositoryPolicy.expects(:allowed?).with(user, repository, :push?).returns(false)
+        RepositoryPolicy.expects(:allowed?).with(user, repository, :push).returns(false)
       end
 
       it "is false" do
@@ -76,7 +76,7 @@ class RefPolicyTest < MiniTest::Spec
 
     describe "when user is allowed to push to the repository" do
       before do
-        RepositoryPolicy.expects(:allowed?).with(user, repository, :push?).returns(true)
+        RepositoryPolicy.expects(:allowed?).with(user, repository, :push).returns(true)
       end
 
       it "is true" do
@@ -86,7 +86,7 @@ class RefPolicyTest < MiniTest::Spec
 
     describe "when user isn't allowed to push to the repository" do
       before do
-        RepositoryPolicy.expects(:allowed?).with(user, repository, :push?).returns(false)
+        RepositoryPolicy.expects(:allowed?).with(user, repository, :push).returns(false)
       end
 
       it "is false" do
@@ -100,8 +100,8 @@ class RefPolicyTest < MiniTest::Spec
 
       describe "when user is allowed to update merge request" do
         before do
-          RepositoryPolicy.stubs(:allowed?).with(user, repository, :push?).returns(false)
-          MergeRequestPolicy.expects(:allowed?).with(user, merge_request, :update?).returns(true)
+          RepositoryPolicy.stubs(:allowed?).with(user, repository, :push).returns(false)
+          MergeRequestPolicy.expects(:allowed?).with(user, merge_request, :update).returns(true)
         end
 
         it "is true" do
@@ -134,7 +134,7 @@ class RefPolicyTest < MiniTest::Spec
 
     describe "when user is allowed to push to the repository" do
       before do
-        RepositoryPolicy.expects(:allowed?).with(user, repository, :push?).returns(true)
+        RepositoryPolicy.expects(:allowed?).with(user, repository, :push).returns(true)
       end
 
       it "is true" do
@@ -144,7 +144,7 @@ class RefPolicyTest < MiniTest::Spec
 
     describe "when user isn't allowed to push to the repository" do
       before do
-        RepositoryPolicy.expects(:allowed?).with(user, repository, :push?).returns(false)
+        RepositoryPolicy.expects(:allowed?).with(user, repository, :push).returns(false)
       end
 
       it "is false" do
@@ -157,8 +157,8 @@ class RefPolicyTest < MiniTest::Spec
 
       describe "when user is allowed to update merge request" do
         before do
-          RepositoryPolicy.stubs(:allowed?).with(user, repository, :push?).returns(false)
-          MergeRequestPolicy.expects(:allowed?).with(user, merge_request, :update?).returns(true)
+          RepositoryPolicy.stubs(:allowed?).with(user, repository, :push).returns(false)
+          MergeRequestPolicy.expects(:allowed?).with(user, merge_request, :update).returns(true)
         end
 
         it "is true" do
@@ -199,7 +199,7 @@ class RefPolicyTest < MiniTest::Spec
 
     describe "when user is allowed to push to the repository" do
       before do
-        RepositoryPolicy.expects(:allowed?).with(user, repository, :push?).returns(true)
+        RepositoryPolicy.expects(:allowed?).with(user, repository, :push).returns(true)
       end
 
       it "is true" do
@@ -209,7 +209,7 @@ class RefPolicyTest < MiniTest::Spec
 
     describe "when user isn't allowed to push to the repository" do
       before do
-        RepositoryPolicy.expects(:allowed?).with(user, repository, :push?).returns(false)
+        RepositoryPolicy.expects(:allowed?).with(user, repository, :push).returns(false)
       end
 
       it "is false" do

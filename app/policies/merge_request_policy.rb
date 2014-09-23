@@ -20,6 +20,10 @@ class MergeRequestPolicy
 
   attr_reader :user, :merge_request
 
+  def self.allowed?(user, merge_request, action)
+    new(user, merge_request).public_send("#{action}?")
+  end
+
   def initialize(user, merge_request)
     @user = user
     @merge_request = merge_request

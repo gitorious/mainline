@@ -47,23 +47,24 @@ class RefPolicy
 
   def create?
     return false unless user
+    return false if ref.merge_request
 
-    RepositoryPolicy.allowed?(user, ref.repository, :push?)
+    RepositoryPolicy.allowed?(user, ref.repository, :push)
   end
 
   def update?
     return false unless user
-    return true if ref.merge_request && MergeRequestPolicy.allowed?(user, ref.merge_request, :update?)
+    return true if ref.merge_request && MergeRequestPolicy.allowed?(user, ref.merge_request, :update)
 
-    RepositoryPolicy.allowed?(user, ref.repository, :push?)
+    RepositoryPolicy.allowed?(user, ref.repository, :push)
   end
 
   def force_update?
     return false unless user
     return false unless ref.force_update_allowed?
-    return true if ref.merge_request && MergeRequestPolicy.allowed?(user, ref.merge_request, :update?)
+    return true if ref.merge_request && MergeRequestPolicy.allowed?(user, ref.merge_request, :update)
 
-    RepositoryPolicy.allowed?(user, ref.repository, :push?)
+    RepositoryPolicy.allowed?(user, ref.repository, :push)
   end
 
   def delete?
@@ -71,7 +72,7 @@ class RefPolicy
     return false unless ref.force_update_allowed?
     return false if ref.merge_request
 
-    RepositoryPolicy.allowed?(user, ref.repository, :push?)
+    RepositoryPolicy.allowed?(user, ref.repository, :push)
   end
 
 end
