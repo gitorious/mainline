@@ -21,12 +21,21 @@ require "test_helper"
 class RefPolicyTest < MiniTest::Spec
   let(:policy) { RefPolicy.new(user, ref) }
   let(:user) { stub('user') }
-  let(:ref) { stub('ref', repository: repository) }
+  let(:ref) { stub('ref', repository: repository, merge_request: merge_request) }
   let(:repository) { stub('repository') }
+  let(:merge_request) { nil }
 
   describe "#create?" do
     describe "when user is nil" do
       let(:user) { nil }
+
+      it "is false" do
+        refute policy.create?
+      end
+    end
+
+    describe "when ref refers to a merge request" do
+      let(:merge_request) { stub('merge_request') }
 
       it "is false" do
         refute policy.create?

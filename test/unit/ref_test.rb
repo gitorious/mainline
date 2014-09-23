@@ -43,12 +43,13 @@ class RefTest < ActiveSupport::TestCase
     assert_equal mr, ref.merge_request
   end
 
-  should "raise error when invalid merge request sequence number given" do
+  should "return new, unsaved merge request when invalid merge request sequence number given" do
     ref = Ref.new(repositories(:johans), "refs/merge-requests/999999")
 
-    assert_raise ActiveRecord::RecordNotFound do
-      ref.merge_request
-    end
+    mr = ref.merge_request
+
+    assert_equal 999999, mr.sequence_number
+    assert mr.new_record?
   end
 
   should "return nil when branch refname given" do

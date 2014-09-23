@@ -43,7 +43,11 @@ class Ref
 
   def merge_request
     seqnum = name[MERGE_REQUEST_REGEXP, 1]
-    repository.merge_requests.find_by_sequence_number!(seqnum) if seqnum
+    repository.merge_requests.find_or_initialize_by_sequence_number(seqnum) if seqnum
+  end
+
+  def force_update_allowed?
+    !repository.deny_force_pushing
   end
 
 end
