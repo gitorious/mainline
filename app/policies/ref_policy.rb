@@ -21,7 +21,7 @@ class RefPolicy
   Error = Class.new(StandardError)
 
   ERROR_MESSAGES = {
-    create: "You are not allowed to create refs in this repository",
+    create: "You are not allowed to create %{refname} in this repository",
     update: "You are not allowed to update %{refname} in this repository",
     force_update: "You are not allowed to force-update %{refname} in this repository",
     delete: "You are not allowed to delete %{refname} in this repository",
