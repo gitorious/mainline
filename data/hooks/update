@@ -1,6 +1,6 @@
-#!/usr/bin/env ruby
+#!/bin/bash
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,19 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "pathname"
-$: << File.join(File.dirname(Pathname.new(__FILE__).realpath), "../../lib")
-require "gitorious/custom_hook"
 
-# NOTE: Any core Gitorious update operations goes here at the top (none so far).
-
-hook = Gitorious::CustomHook.new("update", ENV["RAILS_ENV"] || "production")
-
-if hook.executable?
-  status = hook.execute(ARGV)
-
-  if !status.success?
-    puts "Custom update hook failed, exiting with its code"
-    exit(status.exitstatus)
-  end
-end
+# Run custom update hook (if any)
+if [ -n "$GITORIOUS_CUSTOM_UPDATE_PATH" ]; then
+  exec $GITORIOUS_CUSTOM_UPDATE_PATH "$@"
+fi

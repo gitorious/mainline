@@ -1,7 +1,6 @@
-#!/usr/bin/env ruby
-# -*- coding: utf-8 -*-
+#!/bin/bash
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #   Copyright (C) 2009 Marius Mårnes Mathiesen <marius.mathiesen@gmail.com>
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #
@@ -18,33 +17,27 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-print "=> Syncing Gitorious... "
 
-incpath = File.dirname(__FILE__)
-$: << incpath
+set -e # exit on error immediately
 
-require "messaging"
+INTERNAL_API_URL=${INTERNAL_API_URL:-"http://localhost:3000/api/internal"}
 
-@publisher = Publisher.new
-gitdir = RepositoryRoot.relative_path(File.expand_path(File.join(incpath, ".."))).to_s
+notify() {
+  local oldsha=$1
+  local newsha=$2
+  local refname=$3
 
-hook_input_lines = ""
+  url="$INTERNAL_API_URL/hooks/post-receive?username=$GITORIOUS_USER&repo_path=$GITORIOUS_REPOSITORY_PATH&refname=$refname&oldsha=$oldsha&newsha=$newsha"
+  curl -q -L -s -o /dev/null -X POST "$url" &
+}
 
-while line = gets
-  hook_input_lines << line
-  @publisher.post_message({:gitdir => gitdir.sub(/\.git$/,""), :message => line.chomp, :username => ENV["GITORIOUS_USER"]})
-end
+lines=()
+while read oldsha newsha refname; do
+  notify $oldsha $newsha $refname
+  lines+=("$oldsha $newsha $refname")
+done
 
-require "gitorious/custom_hook"
-hook = Gitorious::CustomHook.new("post-receive", Rails.env)
-
-if hook.executable?
-  status = hook.execute([], hook_input_lines)
-
-  if !status.success?
-    puts "Custom post-receive hook failed, exiting with its code"
-    exit(status.exitstatus)
-  end
-end
-
-puts "[OK]"
+# Run custom post-receive hook (if any)
+if [ -n "$GITORIOUS_CUSTOM_POST_RECEIVE_PATH" ]; then
+  (IFS=$'\n'; echo "${lines[*]}") | exec $GITORIOUS_CUSTOM_POST_RECEIVE_PATH
+fi

@@ -1,6 +1,6 @@
-#!/usr/bin/env ruby
+#!/bin/bash
 #--
-#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2012-2014 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,86 +16,47 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "pathname"
-$: << File.join(File.dirname(Pathname.new(__FILE__).realpath), "../../lib")
-require "gitorious/custom_hook"
-require "gitorious/ssh/pre_receive_guard"
-require "logger"
 
-logger = if ENV["GITORIOUS_BASE_DIR"]
-           Logger.new(File.join(ENV["GITORIOUS_BASE_DIR"], "log/pre_receive_guard.log"))
-         else
-           Logger.new("/tmp/pre_receive_guard.log")
-         end
+set -e # exit on error immediately
 
-hook_input_lines = ""
+# If GITORIOUS_PROTO is empty it's a local push.
+# Local pushes come from the app itself (merge request update from UI etc).
+if [ -z "$GITORIOUS_PROTO" ]; then
+  exit 0 # exit with success, skipping custom hook
+fi
 
-while data = gets
-  hook_input_lines << data
-  begin
-    pre_receive_guard = Gitorious::SSH::PreReceiveGuard.new(ENV.to_hash, data)
-    oldrev, newrev, ref = data.chomp.split(" ")
+INTERNAL_API_URL=${INTERNAL_API_URL:-"http://localhost:3000/api/internal"}
 
-    if pre_receive_guard.allow_push?
-      if pre_receive_guard.deny_merge_request_update_with_sha?(newrev)
-        # it's a request to delete a merge request ref
-        logger.info("delete-merge-request.ref denied for #{ENV['GITORIOUS_USER'].inspect}" +
-                    " to #{pre_receive_guard.git_spec.inspect} via " +
-                    "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
-        pre_receive_guard.gitorious_says "You can't delete a merge-request ref"
-        exit!(1)
-      end
+authorize() {
+  local oldsha=$1
+  local newsha=$2
+  local refname=$3
+  local mergebase=$(git merge-base $oldsha $newsha 2>/dev/null || true)
 
-      if pre_receive_guard.deny_force_pushes?
-        if pre_receive_guard.null_sha?(newrev)
-          # it's a request to delete a ref
-          logger.info("delete-ref denied for #{ENV['GITORIOUS_USER'].inspect} to " +
-                      "#{pre_receive_guard.git_spec.inspect} via " +
-                      "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
-          pre_receive_guard.gitorious_says "This repository does not allow deleting refs"
-          exit!(1)
-        end
+  url="$INTERNAL_API_URL/hooks/pre-receive?username=$GITORIOUS_USER&repo_path=$GITORIOUS_REPOSITORY_PATH&refname=$refname&oldsha=$oldsha&newsha=$newsha&mergebase=$mergebase"
+  response=$(curl -q -L -s -o - -w '\n%{http_code}' "$url" || true)
 
-        if !pre_receive_guard.null_sha?(oldrev)
-          merge_base = `git merge-base #{oldrev} #{newrev}`.chomp
-          if merge_base != oldrev
-            # it's a force-push
-            logger.info("force-push denied for #{ENV['GITORIOUS_USER'].inspect} to " +
-                        "#{pre_receive_guard.git_spec.inspect} via "+
-                        "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
-            pre_receive_guard.gitorious_says "This repository does only allow fast-forwards"
-            exit!(1)
-          end
-        end
-      end
+  status=$(echo "$response" | tail -n1)
+  message=$(echo "$response" | head -n1)
 
-      # If we get here, everything should be good to go and we
-      # wait for the next line to be fed to us, or just let this
-      # script finish..
-      logger.info("Allowed #{ENV['GITORIOUS_USER'].inspect} to " +
-                  "#{pre_receive_guard.git_spec.inspect} via " +
-                  "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+  if [[ $status != "200" ]]; then
+    if [[ $status == "403" ]]; then
+      echo "$message" >&2
     else
-      pre_receive_guard.gitorious_says "You do not have write access to this repository"
-      logger.info("Denied #{ENV['GITORIOUS_USER'].inspect} to " +
-                  "#{pre_receive_guard.git_spec.inspect} via " +
-                  "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
-      exit!(1)
-    end
-  rescue Errno::ECONNREFUSED
-    logger.fatal "Connection refused"
-    pre_receive_guard.gitorious_says "Temporary interuption. Please try again shortly"
-    exit!(1)
-  end
-end
+      echo "Error occured, please contact support" >&2
+    fi
 
-hook = Gitorious::CustomHook.new("pre-receive", ENV["RAILS_ENV"] || "production")
+    exit 1
+  fi
+}
 
-if hook.executable?
-  status = hook.execute([], hook_input_lines)
+lines=()
+while read oldsha newsha refname; do
+  authorize $oldsha $newsha $refname
+  lines+=("$oldsha $newsha $refname")
+done
 
-  if !status.success?
-    puts "Custom pre-receive hook failed, exiting with its code"
-    exit(status.exitstatus)
-  end
-end
+# Run custom pre-receive hook (if any)
+if [ -n "$GITORIOUS_CUSTOM_PRE_RECEIVE_PATH" ]; then
+  (IFS=$'\n'; echo "${lines[*]}") | exec $GITORIOUS_CUSTOM_PRE_RECEIVE_PATH
+fi
