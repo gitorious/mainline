@@ -116,6 +116,8 @@ class Repository < ActiveRecord::Base
     project_name = path_components.pop
     repo_name.sub!(/\.git/, "")
 
+    raise ActiveRecord::RecordNotFound unless owner_name
+
     owner = case owner_name[0].chr
       when "+"
         Group.find_by_name!(owner_name.sub(/^\+/, ""))

@@ -214,6 +214,12 @@ class RepositoryTest < ActiveSupport::TestCase
       path = File.join(projects(:johans).slug, "#{repo.name}.git")
       assert_equal repo, Repository.find_by_path(path)
     end
+
+    should "return nil when looked up repository path is 1 segment" do
+      assert_raise(ActiveRecord::RecordNotFound) do
+        Repository.find_by_path("foo.git")
+      end
+    end
   end
 
   context "#to_xml" do
