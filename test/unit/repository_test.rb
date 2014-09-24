@@ -208,6 +208,12 @@ class RepositoryTest < ActiveSupport::TestCase
       path = File.join(RepositoryRoot.default_base_path, same_name_repo.gitdir)
       assert_equal same_name_repo, Repository.find_by_path(path)
     end
+
+    should "find a repository by its relative path" do
+      repo = repositories(:johans)
+      path = File.join(projects(:johans).slug, "#{repo.name}.git")
+      assert_equal repo, Repository.find_by_path(path)
+    end
   end
 
   context "#to_xml" do
