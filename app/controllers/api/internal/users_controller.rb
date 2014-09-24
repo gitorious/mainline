@@ -16,15 +16,22 @@
 #++
 
 module Api
+  module Internal
 
-  class UsersController < ApplicationController
-    before_filter :login_required
-    respond_to :json
+    class UsersController < ApplicationController
+      respond_to :json
 
-    def show
-      respond_with({ username: current_user.login })
+      def authenticate
+        user = User.authenticate(params[:username], params[:password])
+
+        if user
+          respond_with({ username: user.login })
+        else
+          head :unauthorized
+        end
+      end
+
     end
 
   end
-
 end

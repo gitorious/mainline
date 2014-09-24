@@ -18,19 +18,20 @@
 
 require "test_helper"
 
-class Api::UsersControllerTest < ActionController::TestCase
+class Api::Internal::UsersControllerTest < ActionController::TestCase
 
-  context "GET #show" do
-    should "respond with 401 when not authenticated" do
-      get :show, format: :json
-      assert_response :unauthorized
-    end
+  context "GET #authenticate" do
+    should "respond with authenticated user's information for valid credentials" do
+      get :authenticate, username: "johan", password: "test", format: :json
 
-    should "respond with authenticated user's information when authenticated" do
-      login_as :johan
-      get :show, format: :json
       assert_response :success
       assert_equal({ "username" => "johan" }, JSON.parse(response.body))
+    end
+
+    should "respond with 401 when not authenticated" do
+      get :authenticate, username: "johan", password: "xxx", format: :json
+
+      assert_response :unauthorized
     end
   end
 

@@ -184,10 +184,9 @@ Gitorious::Application.routes.draw do
     get ":project_id/:repository_id/log/graph(.:format)" => "graphs#show"
     get ":project_id/:repository_id/log/graph/*branch(.:format)" => "graphs#show"
 
-    resource :user, only: [:show]
-
     namespace :internal do
       get "/repo-config", to: "repository_configurations#show"
+      get "/authenticate", to: "users#authenticate"
       get "/hooks/pre-receive", to: "hooks#pre_receive"
       post "/hooks/post-receive", to: "hooks#post_receive"
     end
