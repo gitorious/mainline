@@ -215,7 +215,7 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal repo, Repository.find_by_path(path)
     end
 
-    should "return nil when looked up repository path is 1 segment" do
+    should "raise RecordNotFound when looked up repository path is 1 segment" do
       assert_raise(ActiveRecord::RecordNotFound) do
         Repository.find_by_path("foo.git")
       end
