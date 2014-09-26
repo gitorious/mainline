@@ -1,4 +1,0 @@
-#!/usr/bin/env ruby
-
-$stderr.puts "*** WARNING! This script is deprecated, please use bin/git-proxy instead ***"
-exit 1

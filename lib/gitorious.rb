@@ -26,8 +26,6 @@ module Gitorious
   # Application-wide configuration settings.
   Configuration = Configurable.new("GITORIOUS")
   Configuration.rename("gitorious_host", "host")
-  Configuration.rename("gitorious_client_host", "client_host")
-  Configuration.rename("gitorious_client_port", "client_port")
   Configuration.rename("sender_email_address", "email_sender")
   Configuration.rename("gitorious_support_email", "support_email")
   Configuration.rename("gitorious_clone_host", "git_daemon_host")
@@ -79,13 +77,6 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
   def self.ssl?; site.ssl?; end
   def self.default_port?; site.default_port?; end
   def self.url(path); site.url(path); end
-
-  def self.client
-    return @client if @client && cache?
-    host = Gitorious::Configuration.get("client_host", "localhost")
-    port = Gitorious::Configuration.get("client_port")
-    @client = Gitorious::HttpMountPoint.new(host, port)
-  end
 
   def self.git_daemon
     return @git_daemon if @git_daemon && cache?

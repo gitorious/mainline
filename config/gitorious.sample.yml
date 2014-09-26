@@ -63,19 +63,6 @@ archive_work_dir: "/var/git/tarballs-work"
 #host: gitorious.local
 #port: 443
 
-# Internal scripts will make HTTP requests to Gitorious for certain
-# kinds of information (e.g. bin/gitorious uses HTTP to figure out
-# where a repo resides on disk and so on). For this to work, you must
-# provide a hostname and port that resolves locally on the server, and
-# that serves Gitorious. In most cases, you can use the host and port
-# users use to reach Gitorious, but you may also optimize network
-# access by using a local host and port. Remember to make sure your
-# frontend web server knows about these as well. Internal requests do
-# not use SSL, so if you're serving SSL-only to your users, make sure
-# your application can be reached over HTTP locally.
-#client_host: localhost
-#client_port: 80
-
 # Host for pulling and pushing over SSH. The full SSH URLs will
 # include the name of the Gitorious user (as configured elsewhere in
 # this file). The default is the value of the `host` setting. If any
@@ -505,8 +492,6 @@ development:
   scheme: "http"
   host: localhost
   port: 3000
-  client_host: localhost
-  client_port: 3000
   git_daemon_host: localhost
   git_daemon_port: 9418
   ssh_daemon_host: localhost

@@ -20,11 +20,7 @@ Gitorious::Application.routes.draw do
   ### R0. Site index
   root :to => "site#index"
 
-  ### R1. Git-over-Http auth endpoint
-  if Gitorious.git_http
-    match "/:project_slug/:repository_name.git*slug" => 'git_http#authorize'
-  end
-  # The repository browser instance is configured in an initializer
+  ### R1. Repository browser (instance is configured in an initializer)
   match "/:project_id/:repository_id/:action/*slug" => Gitorious::RepositoryBrowser.instance, :action => /(source|tree_history|raw|blame|history|archive)/, :as => :repository_browser
   match "/:project_id/:repository_id/refs" => Gitorious::RepositoryBrowser.instance, :as => :repository_refs
 
@@ -272,8 +268,6 @@ Gitorious::Application.routes.draw do
         get "/search_clones" => "repository_clone_searches#show"
         get :committers
         get :confirm_delete
-        get "/writable_by" => "repository_configurations#writable_by"
-        get "/config" => "repository_configurations#show"
         get "/ownership/edit" => "repository_ownerships#edit", :as => :transfer_ownership
         put "/ownership/edit" => "repository_ownerships#update"
         get "/activities" => "repository_activities#index", :as => :activities

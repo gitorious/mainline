@@ -132,7 +132,6 @@ user: $GITORIOUS_USER
 scheme: http
 host: localhost
 port: 3000
-client_port: 3000
 repository_base_path: /home/$GITORIOUS_USER/projects/gitorious/repositories
 archive_cache_dir: /home/$GITORIOUS_USER/projects/gitorious/tarball-cache
 archive_work_dir: /home/$GITORIOUS_USER/projects/gitorious/tarball-work

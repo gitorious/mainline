@@ -1,4 +1,0 @@
-#!/usr/bin/env ruby
-
-$stderr.puts "*** WARNING! This script is deprecated, please use bin/gitorious instead ***"
-exit 1

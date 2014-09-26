@@ -148,19 +148,6 @@ scheme: #{all["use_ssl"] ? 'https' : 'http'}
 host: #{all["gitorious_host"]}
 #port: 80
 
-# Internal scripts will make HTTP requests to Gitorious for certain
-# kinds of information (e.g. bin/gitorious uses HTTP to figure out
-# where a repo resides on disk and so on). For this to work, you must
-# provide a hostname and port that resolves locally on the server, and
-# that serves Gitorious. In most cases, you can use the host and port
-# users use to reach Gitorious, but you may also optimize network
-# access by using a local host and port. Remember to make sure your
-# frontend web server knows about these as well. Internal requests do
-# not use SSL, so if you're serving SSL-only to your users, make sure
-# your application can be reached over HTTP locally.
-client_host: #{all["gitorious_client_host"]}
-client_port: #{all["gitorious_client_port"]}
-
 # Host for pulling and pushing over SSH. Gitorious currently does not
 # support running the SSH daemon on any other port than the default
 # 22. The full SSH URLs will include the name of the Gitorious user (as
@@ -490,8 +477,6 @@ development:
   #host:
   #port:
   #scheme:
-  #client_host:
-  #client_port:
   #enable_ssh_daemon:
   #ssh_daemon_host:
   #enable_git_daemon:
