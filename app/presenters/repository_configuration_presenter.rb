@@ -21,7 +21,10 @@ class RepositoryConfigurationPresenter < Struct.new(:repository)
   def as_json(*)
     repo_path = repository.full_repository_path
 
-    json = { real_path: repository.real_gitdir }
+    json = {
+      id:        repository.id,
+      real_path: repository.real_gitdir,
+    }
 
     json = add_clone_url(json, repository, :ssh)
     json = add_clone_url(json, repository, :http)

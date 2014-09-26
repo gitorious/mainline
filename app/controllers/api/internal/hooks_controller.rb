@@ -22,10 +22,10 @@ module Api
     class HooksController < ApplicationController
       include Gitorious::Messaging::Publisher
 
-      # params: username, repo_path, refname, oldsha, newsha, mergebase
+      # params: username, repository_id, refname, oldsha, newsha, mergebase
       def pre_receive
         user = User.find_by_login(params[:username])
-        repository = Repository.find_by_path(params[:repo_path])
+        repository = Repository.find(params[:repository_id])
 
         RefPolicy.authorize_action!(user, repository, params[:refname], params[:oldsha], params[:newsha], params[:mergebase])
         head :ok
@@ -34,10 +34,10 @@ module Api
         render text: e.message, status: :forbidden
       end
 
-      # params: username, repo_path, refname, oldsha, newsha
+      # params: username, repository_id, refname, oldsha, newsha
       def post_receive
         publish("/queue/GitoriousPush", {
-          gitdir:   params[:repo_path].sub(/\.git$/, ""),
+          repository_id: params[:repository_id],
           message:  "#{params[:oldsha]} #{params[:newsha]} #{params[:refname]}",
           username: params[:username],
         })

@@ -20,6 +20,7 @@ require "test_helper"
 
 class RepositoryConfigurationPresenterTest < MiniTest::Spec
   let(:repository) { stub("repository", {
+    id: 123,
     full_repository_path: "/repo/path",
     real_gitdir: "real/gitdir",
     ssh_cloning?: true,
@@ -40,6 +41,10 @@ class RepositoryConfigurationPresenterTest < MiniTest::Spec
 
     it "includes real_path" do
       assert_equal "real/gitdir", presenter.as_json[:real_path]
+    end
+
+    it "includes repository id" do
+      assert_equal 123, presenter.as_json[:id]
     end
 
     it "includes ssh_clone_url when ssh cloning enabled" do

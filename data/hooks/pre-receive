@@ -34,7 +34,7 @@ authorize() {
   local mergebase=$(git merge-base $oldsha $newsha 2>/dev/null || true)
 
   url="$INTERNAL_API_URL/hooks/pre-receive"
-  response=$(curl -q -L -s -o - -w '\n%{http_code}' --get --data-urlencode "username=$GITORIOUS_USER" --data-urlencode "repo_path=$GITORIOUS_REPOSITORY_PATH" --data-urlencode "refname=$refname" --data-urlencode "oldsha=$oldsha" --data-urlencode "newsha=$newsha" --data-urlencode "mergebase=$mergebase" "$url" || true)
+  response=$(curl -q -L -s -o - -w '\n%{http_code}' --get --data-urlencode "username=$GITORIOUS_USER" --data-urlencode "repo_path=$GITORIOUS_REPOSITORY_PATH" --data-urlencode "repository_id=$GITORIOUS_REPOSITORY_ID" --data-urlencode "refname=$refname" --data-urlencode "oldsha=$oldsha" --data-urlencode "newsha=$newsha" --data-urlencode "mergebase=$mergebase" "$url" || true)
 
   status=$(echo "$response" | tail -n1)
   message=$(echo "$response" | head -n1)

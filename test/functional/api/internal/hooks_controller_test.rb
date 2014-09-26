@@ -25,7 +25,7 @@ class Api::Internal::HooksControllerTest < ActionController::TestCase
       @user = mock("user")
       @repository = mock("repository")
       User.expects(:find_by_login).with("bar").returns(@user)
-      Repository.expects(:find_by_path).with("repo/path").returns(@repository)
+      Repository.expects(:find).with("123").returns(@repository)
     end
 
     should "respond with 200 when user is allowed to update ref" do
@@ -40,7 +40,7 @@ class Api::Internal::HooksControllerTest < ActionController::TestCase
 
       get :pre_receive,
         username:   "bar",
-        repo_path:  "repo/path",
+        repository_id: 123,
         refname:    "refs/heads/master",
         oldsha:     "deadbeef",
         newsha:     "baadf00d",
@@ -61,7 +61,7 @@ class Api::Internal::HooksControllerTest < ActionController::TestCase
 
       get :pre_receive,
         username:   "bar",
-        repo_path:  "repo/path",
+        repository_id: 123,
         refname:    "refs/heads/master",
         oldsha:     "deadbeef",
         newsha:     "baadf00d",
@@ -74,14 +74,14 @@ class Api::Internal::HooksControllerTest < ActionController::TestCase
   context "POST #post_receive" do
     should "enqueue GitoriousPush message" do
       @controller.expects(:publish).with('/queue/GitoriousPush', {
-        gitdir:   "repo/path",
+        repository_id: "123",
         message:  "deadbeef baadf00d refs/heads/master",
         username: "bar",
       })
 
       post :post_receive,
         username:  "bar",
-        repo_path: "repo/path.git",
+        repository_id: 123,
         refname:   "refs/heads/master",
         oldsha:    "deadbeef",
         newsha:    "baadf00d"
