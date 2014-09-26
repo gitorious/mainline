@@ -26,10 +26,14 @@ module Api
         repository = Repository.find_by_path(params[:repo_path])
         user = User.find_by_login(params[:username])
 
-        if can_read?(user, repository)
-          respond_with RepositoryConfigurationPresenter.new(repository)
+        if repository
+          if can_read?(user, repository)
+            respond_with RepositoryConfigurationPresenter.new(repository)
+          else
+            head :forbidden
+          end
         else
-          head :forbidden
+          head :not_found
         end
       end
 

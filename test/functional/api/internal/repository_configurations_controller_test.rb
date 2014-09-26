@@ -24,8 +24,8 @@ class Api::Internal::RepositoryConfigurationsControllerTest < ActionController::
     setup do
       @user = mock("user")
       @repository = repositories(:johans)
-      User.expects(:find_by_login).with("bar").returns(@user)
-      Repository.expects(:find_by_path).with("repo/path.git").returns(@repository)
+      User.stubs(:find_by_login).with("bar").returns(@user)
+      Repository.stubs(:find_by_path).with("repo/path.git").returns(@repository)
     end
 
     should "respond with repo configuration when user can read repo" do
@@ -40,6 +40,14 @@ class Api::Internal::RepositoryConfigurationsControllerTest < ActionController::
         "http_clone_url" => "http://gitorious.test/johans-project/johansprojectrepos.git",
         "git_clone_url"  => "git://gitorious.test/johans-project/johansprojectrepos.git",
       }, JSON.parse(response.body))
+    end
+
+    should "respond with 404 when repo path is invalid" do
+      Repository.stubs(:find_by_path).with("repo/path.git").returns(nil)
+
+      get :show, username: "bar", repo_path: "repo/path.git", format: :json
+
+      assert_response :not_found
     end
 
     should "respond with 403 when user can't read repo" do
