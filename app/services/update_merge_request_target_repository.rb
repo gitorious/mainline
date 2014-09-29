@@ -32,7 +32,8 @@ class UpdateMergeRequestTargetRepository
     git_repository_pusher.push(
       merge_request.source_repository_path,
       merge_request.target_repository_path,
-      refspec(merge_request)
+      refspec(merge_request),
+      { 'GITORIOUS_REPOSITORY_ID' => merge_request.target_repository_id }
     )
   end
 

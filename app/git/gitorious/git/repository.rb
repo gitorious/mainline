@@ -31,8 +31,8 @@ module Gitorious
         new(Rugged::Repository.new(repository_path))
       end
 
-      def self.push(repository_path, dest, refspec)
-        from_path(repository_path).push(dest, refspec)
+      def self.push(repository_path, dest, refspec, env = {})
+        from_path(repository_path).push(dest, refspec, env)
       end
 
       def self.merge_base(repository_path, sha1, sha2)
@@ -51,8 +51,11 @@ module Gitorious
       # NOTE: this method doesn't use native Rugged push because unlike git binary
       # (and thus grit) it doesn't support naked commit sha on the left side of
       # the refspec (and we need that).
-      def push(url, refspec)
-        cmd = "#{Gitorious.git_binary} push #{url} #{refspec}"
+      # Also, we want to be able to set environment variables on which push
+      # hook scripts rely.
+      def push(url, refspec, env = {})
+        env_vars = env.inject("") { |s, kv| s + "#{kv.first}=#{kv.last} " }
+        cmd = "#{env_vars} #{Gitorious.git_binary} push #{url} #{refspec}"
 
         Open3.popen3(cmd, chdir: rugged_repository.path) do |stdin, stdout, stderr, wait_thr|
           exitcode = wait_thr.value

@@ -27,12 +27,16 @@ class UpdateMergeRequestTargetRepositoryTest < MiniTest::Spec
   describe '#call' do
     let(:merge_request) { stub('merge_request', source_repository_path: '/source/repo',
                                                 target_repository_path: '/target/repo',
+                                                target_repository_id: 666,
                                                 ending_commit: 'abc',
                                                 ref_name: 'def') }
 
     it "force pushes from source repo to target repo" do
       git_repository_pusher.expects(:push).
-        with('/source/repo', '/target/repo', "+abc:def")
+        with('/source/repo',
+             '/target/repo',
+             "+abc:def",
+             { 'GITORIOUS_REPOSITORY_ID' => 666 })
 
       service.call(merge_request)
     end

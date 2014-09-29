@@ -582,6 +582,10 @@ class MergeRequest < ActiveRecord::Base
     target_repository.full_repository_path
   end
 
+  def tracking_repository_id
+    tracking_repository.try(:id)
+  end
+
   def tracking_repository_path
     tracking_repository.full_repository_path
   end
