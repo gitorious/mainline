@@ -71,7 +71,7 @@ class PushProcessor
 
   def load_message(message)
     @user = User.find_by_login(message["username"])
-    @repository = Repository.find_by_id(message["repository_id"]) || Repository.find_by_hashed_path(message["gitdir"]) || Repository.find_by_path(message["gitdir"])
+    @repository = Repository.find(message["repository_id"])
     @spec = PushSpecParser.new(*message["message"].split(" "))
   end
 

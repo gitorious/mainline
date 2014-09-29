@@ -34,7 +34,7 @@ class PushProcessorTest < ActiveSupport::TestCase
       @repository.update_attribute(:hashed_path, path)
       @user = @repository.user
       json = {
-        :gitdir => @repository.hashed_path,
+        :repository_id => @repository.id,
         :username => @user.login,
         :message => "#{NULL_SHA} #{@end_sha} refs/heads/master"
       }.to_json
@@ -62,7 +62,7 @@ class PushProcessorTest < ActiveSupport::TestCase
       @user = @repository.user
       @processor.stubs(:process_push)
       @json = {
-        :gitdir => @repository.hashed_path,
+        :repository_id => @repository.id,
         :username => @user.login,
         :message => "#{NULL_SHA} #{SHA} refs/heads/master"
       }.to_json
@@ -80,7 +80,7 @@ class PushProcessorTest < ActiveSupport::TestCase
       @user = @repository.user
       @merge_request = merge_requests(:moes_to_johans)
       @payload = {
-        "gitdir" => @repository.hashed_path,
+        "repository_id" => @repository.id,
         "username" => @user.login,
         "message" => "#{SHA} #{OTHER_SHA} refs/merge-requests/#{@merge_request.sequence_number}"
       }
@@ -130,7 +130,7 @@ class PushProcessorTest < ActiveSupport::TestCase
       Repository.any_instance.stubs(:full_repository_path).returns(push_test_repo_path)
       @user = @repository.user
       @payload = {
-        "gitdir" => @repository.hashed_path,
+        "repository_id" => @repository.id,
         "username" => @user.login,
         "message" => "#{NULL_SHA} #{@end_sha} refs/heads/master"
       }
@@ -188,7 +188,7 @@ class PushProcessorTest < ActiveSupport::TestCase
       @repository = repositories(:johans_wiki)
       @user = @repository.user
       @payload = {
-        "gitdir" => @repository.hashed_path,
+        "repository_id" => @repository.id,
         "username" => @user.login,
         "message" => "#{SHA} #{OTHER_SHA} refs/heads/master"
       }
@@ -225,7 +225,7 @@ class PushProcessorTest < ActiveSupport::TestCase
       @user = @repository.user
 
       message = {
-        "gitdir" => @repository.hashed_path,
+        "repository_id" => @repository.id,
         "username" => @user.login,
         "message" => "#{NULL_SHA} #{@end_sha} refs/heads/master"
       }

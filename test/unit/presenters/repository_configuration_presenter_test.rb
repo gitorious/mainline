@@ -22,7 +22,7 @@ class RepositoryConfigurationPresenterTest < MiniTest::Spec
   let(:repository) { stub("repository", {
     id: 123,
     full_repository_path: "/repo/path",
-    real_gitdir: "real/gitdir",
+    real_gitdir: "real/gitdir.git",
     ssh_cloning?: true,
     http_cloning?: true,
     git_cloning?: true,
@@ -40,7 +40,7 @@ class RepositoryConfigurationPresenterTest < MiniTest::Spec
   describe "#as_json" do
 
     it "includes real_path" do
-      assert_equal "real/gitdir", presenter.as_json[:real_path]
+      assert_equal "real/gitdir.git", presenter.as_json[:real_path]
     end
 
     it "includes repository id" do
