@@ -199,6 +199,19 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   context "destroy" do
+    should "require current_user" do
+      get :destroy, :id => users(:johan).to_param
+      assert_response :redirect
+      assert_redirected_to new_sessions_path
+    end
+
+    should "require current_user to be the same as deleted user" do
+      login_as :moe
+      get :destroy, :id => users(:johan).to_param
+      assert_response :redirect
+      assert_redirected_to user_path(users(:moe))
+    end
+
     should "be allowed if you don't own any projects or repos" do
       user = User.create!({
           :login => "thomas",

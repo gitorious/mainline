@@ -23,7 +23,7 @@
 
 class UsersController < ApplicationController
   renders_in_global_context
-  before_filter :login_required, :only => [:edit, :update]
+  before_filter :login_required, :only => [:edit, :update, :destroy]
   before_filter :find_user, :only => [:show, :edit, :update]
   before_filter :require_current_user, :only => [:edit, :update]
   before_filter :require_public_user, :only => [:show]
