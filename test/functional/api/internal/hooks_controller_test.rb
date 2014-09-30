@@ -73,10 +73,14 @@ class Api::Internal::HooksControllerTest < ActionController::TestCase
 
   context "POST #post_receive" do
     should "enqueue GitoriousPush message" do
+      now = Time.now
+      @controller.stubs(:clock).returns(stub('clock', now: now))
+
       @controller.expects(:publish).with('/queue/GitoriousPush', {
         repository_id: "123",
         message:  "deadbeef baadf00d refs/heads/master",
         username: "bar",
+        pushed_at: now.iso8601,
       })
 
       post :post_receive,

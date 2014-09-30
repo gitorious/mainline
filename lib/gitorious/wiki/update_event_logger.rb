@@ -21,10 +21,11 @@ require 'gitorious/wiki/commit_parser'
 module Gitorious
   module Wiki
     class UpdateEventLogger
-      def initialize(repository, spec, user)
+      def initialize(repository, spec, user, pushed_at = nil)
         @repository = repository
         @spec = spec
         @user = user
+        @pushed_at = pushed_at
       end
 
       def create_wiki_events
@@ -33,10 +34,10 @@ module Gitorious
         project = @repository.project
         commits.each do |c|
           c.modified_page_names.each do |p|
-            project.create_event(Action::UPDATE_WIKI_PAGE, project, @user, p)
+            project.create_event(Action::UPDATE_WIKI_PAGE, project, @user, p, nil, @pushed_at)
           end
           c.added_page_names.each do |p|
-            project.create_event(Action::UPDATE_WIKI_PAGE, project, @user, p)
+            project.create_event(Action::UPDATE_WIKI_PAGE, project, @user, p, nil, @pushed_at)
           end
         end
       end

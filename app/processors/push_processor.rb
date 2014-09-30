@@ -24,7 +24,7 @@ require "gitorious/wiki/update_event_logger"
 class PushProcessor
   include Gitorious::Messaging::Consumer
   consumes "/queue/GitoriousPush"
-  attr_reader :user, :repository, :spec
+  attr_reader :user, :repository, :spec, :pushed_at
 
   def on_message(message)
     load_message(message)
@@ -49,7 +49,7 @@ class PushProcessor
 
   def process_push
     ensure_user
-    logger = PushEventLogger.new(repository, spec, user)
+    logger = PushEventLogger.new(repository, spec, user, pushed_at)
     logger.create_push_event if logger.create_push_event?
     logger.create_meta_event if logger.create_meta_event?
     repository.register_push
@@ -65,7 +65,7 @@ class PushProcessor
 
   def process_wiki_update
     ensure_user
-    logger = Gitorious::Wiki::UpdateEventLogger.new(repository, spec, user)
+    logger = Gitorious::Wiki::UpdateEventLogger.new(repository, spec, user, pushed_at)
     logger.create_wiki_events
   end
 
@@ -73,6 +73,7 @@ class PushProcessor
     @user = User.find_by_login(message["username"])
     @repository = Repository.find(message["repository_id"])
     @spec = PushSpecParser.new(*message["message"].split(" "))
+    @pushed_at = message["pushed_at"] && Time.parse(message["pushed_at"])
   end
 
   private

@@ -18,10 +18,12 @@
 
 class PushEventLogger
   PUSH_EVENT_DATA_SEPARATOR = "$"
-  def initialize(repository, spec, user)
+
+  def initialize(repository, spec, user, pushed_at = nil)
     @repository = repository
     @spec = spec
     @user = user
+    @pushed_at = pushed_at
   end
 
   def create_meta_event?
@@ -35,7 +37,7 @@ class PushEventLogger
   def build_meta_event
     Event.new(:action => meta_event_type, :project => @repository.project,
       :user => @user, :target => @repository, :data => @spec.ref_name,
-      :body => meta_event_body)
+      :body => meta_event_body, :created_at => @pushed_at)
   end
 
   def create_meta_event
@@ -46,7 +48,7 @@ class PushEventLogger
 
   def build_push_event
     Event.new(:user => @user, :project => @repository.project, :target => @repository,
-      :action => Action::PUSH_SUMMARY)
+      :action => Action::PUSH_SUMMARY, :created_at => @pushed_at)
   end
 
   def create_push_event

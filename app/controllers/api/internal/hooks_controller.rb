@@ -40,9 +40,16 @@ module Api
           repository_id: params[:repository_id],
           message:  "#{params[:oldsha]} #{params[:newsha]} #{params[:refname]}",
           username: params[:username],
+          pushed_at: Time.now.iso8601,
         })
 
         head :ok
+      end
+
+      private
+
+      def clock
+        Time
       end
     end
 
