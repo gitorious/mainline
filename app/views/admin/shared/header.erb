@@ -27,10 +27,11 @@
       </div>
     </div>
     <ul class="nav nav-tabs gts-header-nav">
-      <%= options = [[:diagnostics, admin_diagnostics_path, "Diagnostics"]]
+      <%= options = []
+          options << [:users, admin_users_path, "Users"]
           options << [:project_proposals, admin_project_proposals_path, "Project proposals"]
           options << [:repositories, admin_repositories_path, "Repositories"]
-          options << [:users, admin_users_path, "Users"]
+          options << [:diagnostics, admin_diagnostics_path, "Diagnostics"]
           header_navigation(options, :active => defined?(active) ? active : nil) %>
     </ul>
   </div>
