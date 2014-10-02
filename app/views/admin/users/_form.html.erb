@@ -43,14 +43,18 @@
       <%= form.password_field :password_confirmation, :class => "input-xlarge" -%>
     </div>
   </div>
-  <div class="control-group">
-    <div class="controls">
-      <label class="checkbox">
-        <%= form.check_box :terms_of_use  -%>
-         I accept the <%= render :partial => "licenses/tos_link" -%>
-      </label>
+  <% if Gitorious.dot_org? %>
+    <div class="control-group">
+      <div class="controls">
+        <label class="checkbox">
+          <%= form.check_box :terms_of_use  -%>
+          I accept the <%= render :partial => "licenses/tos_link" -%>
+        </label>
+      </div>
     </div>
-  </div>
+  <% else %>
+    <%= form.hidden_field :terms_of_use, { value: '1' } %>
+  <% end %>
   <div class="control-group">
     <div class="controls">
       <label class="checkbox">
