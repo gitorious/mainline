@@ -145,16 +145,6 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
     end
   end
 
-  def self.remote_ops_ips
-    return @remote_ops_ips if @remote_ops_ips && cache?
-    ips = Gitorious::Configuration.get("remote_ops_ips", ["127.0.0.1"])
-    @remote_ops_ips = Array(ips)
-  end
-
-  def self.ops?(remote_addr)
-    remote_ops_ips.include?(remote_addr)
-  end
-
   def self.archive_cache_dir
     return @archive_cache_dir if @archive_cache_dir && cache?
     @archive_cache_dir = Gitorious::Configuration.get("archive_cache_dir")

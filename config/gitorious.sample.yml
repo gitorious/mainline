@@ -196,23 +196,6 @@ archive_work_dir: "/var/git/tarballs-work"
 # requests from spawning 100 % CPU processes that never die.
 #merge_request_diff_timeout: 10
 
-# List of IP addresses that are allowed to access certain possibly
-# sensitive services. Currently this only includes
-# /admin/diagnostics/summary which, when called, runs a number of
-# health checks to verify that the Gitorious installation is
-# configured correctly and that the host system seems healthy. The
-# diagnostics summary is useful for verifying installations and for
-# monitoring running installs. (Note: Logged in gitorious admins can
-# also see a visual overview of the system state at
-# /admin/diagnostics/, regardless of ips listed here)
-#
-# This setting defaults to only accept ops requests from localhost. It
-# can be reconfigured to allow any number of IPs by adding entries to
-# the list (be sure to indent each entry with two spaces, no tabs).
-#
-#remote_ops_ips:
-#  - 127.0.0.1
-
 # If Gitorious trips on an unrecoverable error, it has the ability to notify
 # you about it. There are 2 notification options.
 #

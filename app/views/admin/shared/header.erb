@@ -31,7 +31,6 @@
           options << [:users, admin_users_path, "Users"]
           options << [:project_proposals, admin_project_proposals_path, "Project proposals"]
           options << [:repositories, admin_repositories_path, "Repositories"]
-          options << [:diagnostics, admin_diagnostics_path, "Diagnostics"]
           header_navigation(options, :active => defined?(active) ? active : nil) %>
     </ul>
   </div>
