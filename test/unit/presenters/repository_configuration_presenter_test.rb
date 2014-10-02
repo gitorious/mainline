@@ -22,7 +22,6 @@ class RepositoryConfigurationPresenterTest < MiniTest::Spec
   let(:repository) { stub("repository", {
     id: 123,
     full_repository_path: "/repo/path.git",
-    real_gitdir: "real/gitdir.git",
     ssh_cloning?: true,
     http_cloning?: true,
     git_cloning?: true,
