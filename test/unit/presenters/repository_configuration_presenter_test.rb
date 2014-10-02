@@ -21,7 +21,7 @@ require "test_helper"
 class RepositoryConfigurationPresenterTest < MiniTest::Spec
   let(:repository) { stub("repository", {
     id: 123,
-    full_repository_path: "/repo/path",
+    full_repository_path: "/repo/path.git",
     real_gitdir: "real/gitdir.git",
     ssh_cloning?: true,
     http_cloning?: true,
@@ -39,8 +39,8 @@ class RepositoryConfigurationPresenterTest < MiniTest::Spec
 
   describe "#as_json" do
 
-    it "includes real_path" do
-      assert_equal "real/gitdir.git", presenter.as_json[:real_path]
+    it "includes full_path" do
+      assert_equal "/repo/path.git", presenter.as_json[:full_path]
     end
 
     it "includes repository id" do
@@ -78,32 +78,32 @@ class RepositoryConfigurationPresenterTest < MiniTest::Spec
     end
 
     it "includes custom_pre_receive_path when hook exists" do
-      RepositoryHooks.expects(:custom_hook_path).with("/repo/path", "pre-receive").returns("/the/path")
+      RepositoryHooks.expects(:custom_hook_path).with("/repo/path.git", "pre-receive").returns("/the/path")
       assert_equal "/the/path", presenter.as_json[:custom_pre_receive_path]
     end
 
     it "doesn't include custom_pre_receive_path when hook doesn't exist" do
-      RepositoryHooks.expects(:custom_hook_path).with("/repo/path", "pre-receive").returns(nil)
+      RepositoryHooks.expects(:custom_hook_path).with("/repo/path.git", "pre-receive").returns(nil)
       assert_equal nil, presenter.as_json[:custom_pre_receive_path]
     end
 
     it "includes custom_post_receive_path when hook exists" do
-      RepositoryHooks.expects(:custom_hook_path).with("/repo/path", "post-receive").returns("/the/path")
+      RepositoryHooks.expects(:custom_hook_path).with("/repo/path.git", "post-receive").returns("/the/path")
       assert_equal "/the/path", presenter.as_json[:custom_post_receive_path]
     end
 
     it "doesn't include custom_post_receive_path when hook doesn't exist" do
-      RepositoryHooks.expects(:custom_hook_path).with("/repo/path", "post-receive").returns(nil)
+      RepositoryHooks.expects(:custom_hook_path).with("/repo/path.git", "post-receive").returns(nil)
       assert_equal nil, presenter.as_json[:custom_post_receive_path]
     end
 
     it "includes custom_update_path when hook exists" do
-      RepositoryHooks.expects(:custom_hook_path).with("/repo/path", "update").returns("/the/path")
+      RepositoryHooks.expects(:custom_hook_path).with("/repo/path.git", "update").returns("/the/path")
       assert_equal "/the/path", presenter.as_json[:custom_update_path]
     end
 
     it "doesn't include custom_update_path when hook doesn't exist" do
-      RepositoryHooks.expects(:custom_hook_path).with("/repo/path", "update").returns(nil)
+      RepositoryHooks.expects(:custom_hook_path).with("/repo/path.git", "update").returns(nil)
       assert_equal nil, presenter.as_json[:custom_update_path]
     end
 
