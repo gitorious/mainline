@@ -57,6 +57,11 @@
                 <li>
                   <a href="<%= @main_app.groups_path %>">Teams</a>
                 </li>
+                <% if current_user && current_user.is_admin? %>
+                  <li>
+                    <a href="<%= @main_app.admin_users_path %>">Users</a>
+                  </li>
+                <% end %>
                 <li>
                   <a href="<%= @main_app.about_path %>">About</a>
                 </li>
