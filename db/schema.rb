@@ -360,17 +360,6 @@ ActiveRecord::Schema.define(:version => 20140422142133) do
     t.string  "salt",       :null => false
   end
 
-  create_table "project_memberships", :force => true do |t|
-    t.integer  "project_id"
-    t.string   "member_type"
-    t.integer  "member_id"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
-    t.string   "content_type"
-  end
-
-  add_index "project_memberships", ["project_id", "member_id", "member_type"], :name => "project_memberships_index"
-
   create_table "project_proposals", :force => true do |t|
     t.string   "title"
     t.text     "description"
