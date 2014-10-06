@@ -22,7 +22,8 @@ class RepositoryConfigurationPresenter < Struct.new(:repository)
     repo_path = repository.full_repository_path
 
     json = {
-      id:        repository.id,
+      id: repository.id,
+      repository_id: repository.id,
       full_path: repository.full_repository_path,
     }
 

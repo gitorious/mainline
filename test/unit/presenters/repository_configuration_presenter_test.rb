@@ -44,6 +44,7 @@ class RepositoryConfigurationPresenterTest < MiniTest::Spec
 
     it "includes repository id" do
       assert_equal 123, presenter.as_json[:id]
+      assert_equal 123, presenter.as_json[:repository_id]
     end
 
     it "includes ssh_clone_url when ssh cloning enabled" do
