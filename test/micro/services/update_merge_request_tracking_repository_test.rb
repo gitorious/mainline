@@ -26,18 +26,14 @@ class UpdateMergeRequestTrackingRepositoryTest < MiniTest::Spec
 
   describe '#call' do
     let(:merge_request) { stub('merge_request', target_repository_path: '/target/repo',
-                                                tracking_repository_path: '/tracking/repo',
-                                                tracking_repository_id: 666) }
+                                                tracking_repository_path: '/tracking/repo') }
 
     it "pushes from target repo to tracking repo" do
       merge_request.stubs(:ref_name).with().returns('refs/merge-requests/123')
       merge_request.stubs(:ref_name).with(5).returns('refs/merge-requests/123/5')
 
       git_repository_pusher.expects(:push).
-        with('/target/repo',
-             '/tracking/repo',
-             "refs/merge-requests/123:refs/merge-requests/123/5",
-             { 'GITORIOUS_REPOSITORY_ID' => 666 })
+        with('/target/repo', '/tracking/repo', "refs/merge-requests/123:refs/merge-requests/123/5")
 
       service.call(merge_request, 5)
     end

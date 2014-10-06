@@ -32,8 +32,7 @@ class UpdateMergeRequestTrackingRepository
     git_repository_pusher.push(
       merge_request.target_repository_path,
       merge_request.tracking_repository_path,
-      refspec(merge_request, version_number),
-      { 'GITORIOUS_REPOSITORY_ID' => merge_request.tracking_repository_id }
+      refspec(merge_request, version_number)
     )
   end
 
