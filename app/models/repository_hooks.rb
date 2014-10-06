@@ -22,7 +22,6 @@ class RepositoryHooks
 
   def self.create(path)
     hooks = RepositoryRoot.expand(".hooks")
-    ensure_symlink(Rails.root + "data/hooks", hooks)
     target_path = hooks.relative_path_from(path + "hooks")
 
     Dir.chdir(path) do
@@ -57,10 +56,4 @@ class RepositoryHooks
     end
   end
 
-  private
-
-  def self.ensure_symlink(src, dest)
-    return if dest.symlink? && dest.realpath.to_s == src.realpath.to_s
-    FileUtils.ln_sf(src.realpath.to_s, dest.expand_path.to_s)
-  end
 end

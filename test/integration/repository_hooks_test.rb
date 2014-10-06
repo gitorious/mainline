@@ -21,8 +21,6 @@ require "fileutils"
 class RepositoryHooksTest < ActiveSupport::TestCase
 
   def assert_hooks(repos_path, repo_path)
-    assert_equal "#{Rails.root}/data/hooks", File.readlink("#{repos_path}/.hooks")
-
     %w[pre-receive post-receive update post-update messaging.rb].each do |hook|
       assert_equal "../../.hooks/#{hook}", File.readlink("#{repo_path}/hooks/#{hook}")
     end
