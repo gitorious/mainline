@@ -180,7 +180,7 @@ GEM
     kgio (2.8.1)
     launchy (2.4.2)
       addressable (~> 2.3)
-    libdolt (0.33.17)
+    libdolt (0.33.18)
       force_utf8
       htmlentities (~> 4.3)
       json (~> 1.7)
@@ -448,7 +448,7 @@ DEPENDENCIES
   httparty (~> 0.9)
   jruby-openssl
   just_paginate (= 0.2.2)
-  libdolt (~> 0.33.11)
+  libdolt (~> 0.33.18)
   makeup
   memcache-client (~> 1.8)
   mime-types (~> 1.16)

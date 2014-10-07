@@ -106,7 +106,7 @@ platform :jruby do
 end
 
 group :dolt do
-  gem "libdolt", "~> 0.33.11"
+  gem "libdolt", "~> 0.33.18"
   gem "dolt", "~> 0.30.0"
   gem "tiltout", "~> 1.4"
 
