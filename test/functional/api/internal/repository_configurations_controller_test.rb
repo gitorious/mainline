@@ -36,6 +36,7 @@ class Api::Internal::RepositoryConfigurationsControllerTest < ActionController::
       assert_response :success
       assert_equal({
         "id"             => 1,
+        "repository_id"  => 1,
         "full_path"      => RepositoryRoot.expand("c2a/943/aad718337973577b555383db50ae03e01c.git").to_s,
         "ssh_clone_url"  => "git@gitorious.test:johans-project/johansprojectrepos.git",
         "http_clone_url" => "http://gitorious.test/johans-project/johansprojectrepos.git",
