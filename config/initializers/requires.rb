@@ -19,8 +19,3 @@
 require "fileutils"
 require "diff-display/lib/diff-display"
 require 'oauth/oauth'
-gem "rdiscount", ">=0"
-require 'rdiscount'
-silence_warnings do
-  BlueCloth = RDiscount
-end
