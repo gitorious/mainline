@@ -32,6 +32,8 @@ require((defined?(Rails) ? Rails.root : "") + "config/gitorious_config")
 $: << File.expand_path('../../app/git', __FILE__)
 $: << File.expand_path('../../app/services', __FILE__)
 
+require 'action_view'
+
 class MiniTest::Spec
   def assert_cache_header(cache_control, rack_response)
     actual = rack_response[1]["Cache-Control"]

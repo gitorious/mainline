@@ -25,8 +25,7 @@ module PagesHelper
   def format_toc(toc)
     return "" if toc.strip.blank?
     header = "<li class=\"nav-header\">Table of contents</li>"
-    ul = toc.sub("<div class=\"toc\">", "").strip[0...-6].strip
-    ul = ul.sub(/^<ul>/, "<ul class=\"nav nav-list well gts-toc\">#{header}")
+    ul = toc.sub(/^<ul>/, "<ul class=\"nav nav-list well gts-toc\">#{header}")
     ul.sub("<ul>", "<ul class=\"nav nav-list\">").html_safe
   end
 
@@ -35,8 +34,7 @@ module PagesHelper
       if bracketed_name = Regexp.last_match.captures.first
         page_link = bracketed_name
       end
-      link_to(page_link, project_page_path(@project, page_link),
-                :class => "todo missing_or_existing")
+      link_to(page_link, project_page_path(@project, page_link))
     end
   end
 

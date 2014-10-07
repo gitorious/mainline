@@ -102,20 +102,14 @@ module ApplicationHelper
     HTML
   end
 
-  def markdown(text, options = [:smart])
-    renderer = MarkupRenderer.new(text, :markdown => options)
-    renderer.to_html.html_safe
-  end
+  def render_markdown(text)
+    renderer = Redcarpet::Markdown.new(
+      Redcarpet::Render::HTML.new(filter_html: true, hard_wrap: true),
+      no_intra_emphasis: true,
+      autolink: true
+    )
 
-  def render_markdown(text, *options)
-    # RDiscount < 1.4 doesn't support the :auto_link, use Rails' instead
-    auto_link = options.delete(:auto_link)
-    markdown_options = [:smart] + options
-    markdownized_text = markdown(text, markdown_options)
-    if auto_link
-      markdownized_text = auto_link(markdownized_text, :urls)
-    end
-    markdownized_text.html_safe
+    renderer.render(text).html_safe
   end
 
   def feed_icon(url, alt_title = "Atom feed", size = :small)

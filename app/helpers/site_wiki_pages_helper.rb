@@ -25,8 +25,7 @@ module SiteWikiPagesHelper
       if bracketed_name = Regexp.last_match.captures.first
         page_link = bracketed_name
       end
-      link_to(page_link, site_wiki_page_path( page_link),
-                :class => "todo missing_or_existing")
+      link_to(page_link, site_wiki_page_path(page_link))
     end
   end
 

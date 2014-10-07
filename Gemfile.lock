@@ -473,7 +473,7 @@ DEPENDENCIES
   rdiscount (~> 2.1.7)
   rdoc
   react-rails (~> 0.9.0)
-  redcarpet
+  redcarpet (~> 3.0.0)
   resque (= 1.25.2)
   resque-cleaner
   resque-job-stats

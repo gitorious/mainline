@@ -15,7 +15,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "markup_renderer"
 require "action_view"
 
 module Gitorious
@@ -25,25 +24,25 @@ module Gitorious
 
       def wikize(content)
         content = content.force_utf8
-        content = wiki_link(content)
-        rd = MarkupRenderer.new(content, :markdown => [:smart, :generate_toc])
-        content = content_tag(:div, rd.to_html.html_safe, :class => "page-content")
-        toc_content = rd.markdown.toc_content.html_safe
-        toc_content = toc_content.force_utf8
-        if !toc_content.blank?
-          toc = content_tag(:div, toc_content, :class => "toc")
-        else
-          toc = ""
-        end
-        [toc.html_safe, sanitize_wiki_content(content)]
+        [render_toc(content), render_content(content)]
       end
 
-      def sanitize_wiki_content(html)
-        @worker = ActionView::Base.new
-        @worker.sanitize(html, :tags =>%w(table tr td th dl dd dt strong em b i p code pre tt samp kbd var sub
-      sup dfn cite big small address hr br div span h1 h2 h3 h4 h5 h6 ul ol li dt dd abbr
-      acronym a img blockquote del ins), :class => "page wiki-page", :attributes => %w[id href src alt])
+      private
+
+      def render_toc(text)
+        renderer = Redcarpet::Markdown.new(Redcarpet::Render::HTML_TOC)
+        renderer.render(text).html_safe
       end
+
+      def render_content(text)
+        renderer = Redcarpet::Markdown.new(
+          Redcarpet::Render::HTML.new(filter_html: true, hard_wrap: true, with_toc_data: true),
+          no_intra_emphasis: true,
+          autolink: true
+        )
+        wiki_link(renderer.render(text)).html_safe
+      end
+
     end
   end
 end

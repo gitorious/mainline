@@ -33,6 +33,7 @@ gem "force_utf8"
 gem 'rugged', git: 'https://github.com/libgit2/rugged.git', branch: 'development', submodules: true
 gem 'react-rails', '~> 0.9.0'
 gem 'pundit', '~> 0.2.3'
+gem "redcarpet", '~> 3.0.0'
 
 if ENV['GTS_ENGINE'].to_s != 'true'
   gem "gitorious-issues", :git => "https://git.gitorious.org/gitorious/gitorious-issues.git", :branch => 'master'
@@ -111,7 +112,6 @@ group :dolt do
   gem "tiltout", "~> 1.4"
 
   # Markup formats
-  gem "redcarpet"
   gem "RedCloth"
   gem "rdoc"
   gem "org-ruby"
