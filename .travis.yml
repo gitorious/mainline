@@ -1,5 +1,5 @@
 language: ruby
-bundler_args: --without development postgres ldap_wizard git_proxy resque jruby
+bundler_args: --without development postgres ldap_wizard git_proxy jruby
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libicu-dev
