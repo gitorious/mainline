@@ -8,6 +8,7 @@ before_install:
 before_script:
   - mysql -e 'create database myapp_test;'
   - cp config/database.travis.yml config/database.yml
+  - ln -s test/gitorious.yml config/gitorious.yml
   - phantomjs --version
 rvm:
   - 1.9.3
