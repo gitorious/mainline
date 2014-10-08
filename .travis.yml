@@ -1,20 +1,29 @@
 language: ruby
+
 bundler_args: --without development postgres ldap_wizard git_proxy jruby
+
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libicu-dev
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
+
 before_script:
   - mysql -e 'create database myapp_test;'
   - cp config/database.travis.yml config/database.yml
   - ln -s $PWD/test/gitorious.yml $PWD/config/gitorious.yml
   - phantomjs --version
   - bundle exec rake db:schema:load
+
 rvm:
   - 1.9.3
   - 2.0.0
   - 2.1.0
+
 matrix:
   allow_failures:
     - rvm: 2.1.0
+
+addons:
+  hosts:
+    - gitorious.test
