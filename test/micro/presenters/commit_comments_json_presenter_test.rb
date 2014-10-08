@@ -64,7 +64,7 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
                 "name" => "Christian Johansen"
               },
               "body" => "Yup",
-              "bodyHtml" => "<p>Yup</p>\n",
+              "bodyHtml" => "<p>Yup</p>",
               "createdAt" => "2013-01-01T00:00:00+00:00",
               "updatedAt" => "2013-01-02T00:00:00+00:00",
               "firstLine" => nil,
@@ -133,7 +133,7 @@ class CommitCommentsJSONPresenterTest < MiniTest::Spec
               :target => @repository
             })])
 
-      assert_equal("<p><a href=\"http://somewhere.com\">Hey</a></p>\n",
+      assert_equal("<p><a href=\"http://somewhere.com\">Hey</a></p>",
                    presenter.hash_for(nil)["commit"][0]["bodyHtml"])
     end
 
