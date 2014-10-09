@@ -1,0 +1,5 @@
+# Gitorious SMTP configuration
+
+address: <%= ENV['SMTP_PORT_25_TCP_ADDR'] || 'localhost' %>
+port: <%= ENV['SMTP_PORT_25_TCP_PORT'] || 25 %>
+openssl_verify_mode: none

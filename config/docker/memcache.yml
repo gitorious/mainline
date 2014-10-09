@@ -1,0 +1,2 @@
+production:
+  - <%= ENV['MEMCACHED_PORT_11211_TCP_ADDR'] || 'localhost' %>:<%= ENV['MEMCACHED_PORT_11211_TCP_PORT'] || 11211 %>

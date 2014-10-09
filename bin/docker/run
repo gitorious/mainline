@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+# copy config files for Rails app
+/usr/src/app/bin/docker/copy-configs
+
+exec "$@"

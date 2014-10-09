@@ -1,0 +1,5 @@
+repository_base_path: /var/lib/gitorious/repositories
+archive_cache_dir: /var/lib/gitorious/tarballs-cache
+archive_work_dir: /var/lib/gitorious/tarballs-work
+messaging_adapter: resque
+enable_repository_dir_sharding: false

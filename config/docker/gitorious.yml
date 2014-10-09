@@ -1,0 +1,6 @@
+# These are some defaults for when the external gitorious.yml file is missing,
+# which should only happen when you're starting containers as a developer.
+
+scheme: http
+host: <%= ENV['GITORIOUS_HOST'] || 'localhost' %>
+enable_private_repositories: true

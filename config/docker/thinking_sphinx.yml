@@ -1,0 +1,3 @@
+production:
+  address: <%= ENV['SPHINX_PORT_9312_TCP_ADDR'] || 'localhost' %>
+  mysql41: <%= ENV['SPHINX_PORT_9312_TCP_PORT'] || 9312 %>

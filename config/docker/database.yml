@@ -1,0 +1,16 @@
+# Gitorious database configuration
+
+common: &common
+  adapter: mysql2
+  database: "<%= ENV['MYSQL_DATABASE'] || 'gitorious' %>"
+  username: "<%= ENV['MYSQL_USER'] || 'gitorious' %>"
+  password: "<%= ENV['MYSQL_PASSWORD'] || 'gitorious' %>"
+  host: "<%= ENV['MYSQL_PORT_3306_TCP_ADDR'] %>"
+  port: <%= ENV['MYSQL_PORT_3306_TCP_PORT'] %>
+  encoding: utf8
+
+production:
+  <<: *common
+
+test:
+  <<: *common
