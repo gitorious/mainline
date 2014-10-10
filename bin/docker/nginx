@@ -6,13 +6,6 @@ set -e
 # so we rely here on the "official hack": https://github.com/docker/docker/issues/1143
 export HOST_IP=$(netstat -nr | grep '^0\.0\.0\.0' | awk '{print $2}')
 
-# gitorious-http-backend is running on the host (because we want custom hooks
-# to be run *on the host*), so we set GITORIOUS_HTTP_BACKEND_PORT_6000_TCP_*
-# env vars manually, pointing to host IP.
-# Nginx will use them, like they would come from a linked container.
-export GITORIOUS_HTTP_BACKEND_PORT_6000_TCP_ADDR="$HOST_IP"
-export GITORIOUS_HTTP_BACKEND_PORT_6000_TCP_PORT="6000"
-
 # generate config file for Nginx
 erb /usr/src/app/config/docker/nginx/gitorious.conf.erb >/etc/nginx/conf.d/gitorious.conf
 

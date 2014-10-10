@@ -1,1 +1,1 @@
-production: <%= ENV['REDIS_PORT_6379_TCP_ADDR'] || 'localhost' %>:<%= ENV['REDIS_PORT_6379_TCP_PORT'] || 6379 %>
+production: redis:6379

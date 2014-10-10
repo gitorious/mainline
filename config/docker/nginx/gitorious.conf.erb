@@ -1,13 +1,15 @@
 upstream rails {
-  server <%= ENV['WEB_PORT_3000_TCP_ADDR'] || 'localhost' %>:<%= ENV['WEB_PORT_3000_TCP_PORT'] || 3000 %> fail_timeout=0;
+  server web:3000 fail_timeout=0;
 }
 
+# gitorious-http-backend is running on the host (because we want custom hooks
+# to be run *on the host*), so here we point Nginx to port 6000 of Docker host.
 upstream gitorious_http_backend {
-  server <%= ENV['GITORIOUS_HTTP_BACKEND_PORT_6000_TCP_ADDR'] %>:<%= ENV['GITORIOUS_HTTP_BACKEND_PORT_6000_TCP_PORT'] %> fail_timeout=0;
+  server <%= ENV['HOST_IP'] %>:6000 fail_timeout=0;
 }
 
 upstream git_archive_daemon {
-  server <%= ENV['ARCHIVER_PORT_5000_TCP_ADDR'] || 'localhost' %>:<%= ENV['ARCHIVER_PORT_5000_TCP_PORT'] || 5000 %> fail_timeout=0;
+  server archiver:5000 fail_timeout=0;
 }
 
 server {

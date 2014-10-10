@@ -5,8 +5,8 @@ common: &common
   database: "<%= ENV['MYSQL_DATABASE'] || 'gitorious' %>"
   username: "<%= ENV['MYSQL_USER'] || 'gitorious' %>"
   password: "<%= ENV['MYSQL_PASSWORD'] || 'gitorious' %>"
-  host: "<%= ENV['MYSQL_PORT_3306_TCP_ADDR'] %>"
-  port: <%= ENV['MYSQL_PORT_3306_TCP_PORT'] %>
+  host: mysql
+  port: 3306
   encoding: utf8
 
 production:
