@@ -58,17 +58,6 @@ require "yaml"
 
 ROOT_DIR = File.expand_path( File.join(File.dirname(__FILE__), "../") )
 
-if Rails.env.production? && Process.uid == 0
-  config = Gitorious::ConfigurationReader.read(ROOT_DIR + "/config/gitorious.yml")
-  git_user = config["user"] || (config[Rails.env] && config[Rails.env]["user"])
-  if git_user
-    uid = Etc.getpwnam(git_user).uid
-    gid = Etc.getpwnam(git_user).gid
-    Process::GID.change_privilege(gid)
-    Process::UID.change_privilege(uid)
-  end
-end
-
 begin
   options = {
     :host => "0.0.0.0",
