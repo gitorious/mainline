@@ -50,7 +50,10 @@ RUN useradd -m -d /home/git -u 5000 -U git
 # own app files to git so it can write to config, log and tmp when container is run as git
 RUN chown -R git:git /usr/src/app
 
+RUN ln -sf /usr/src/app/config/docker/nginx/nginx.conf /etc/nginx/nginx.conf
+
 EXPOSE 3000
+EXPOSE 80
 
 ENTRYPOINT ["/usr/src/app/bin/docker/run"]
 
