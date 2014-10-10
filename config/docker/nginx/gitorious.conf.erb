@@ -1,5 +1,5 @@
 upstream rails {
-  server <%= ENV['WEB_PORT_3000_TCP_ADDR'] %>:<%= ENV['WEB_PORT_3000_TCP_PORT'] %> fail_timeout=0;
+  server <%= ENV['WEB_PORT_3000_TCP_ADDR'] || 'localhost' %>:<%= ENV['WEB_PORT_3000_TCP_PORT'] || 3000 %> fail_timeout=0;
 }
 
 upstream gitorious_http_backend {

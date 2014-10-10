@@ -2,16 +2,6 @@
 
 set -e
 
-if [[ -z $WEB_PORT_3000_TCP_ADDR ]]; then
-  echo "WEB_PORT_3000_TCP_ADDR is missing, did you forgot to link to web container?" >&2
-  exit 1
-fi
-
-if [[ -z $ARCHIVER_PORT_5000_TCP_ADDR ]]; then
-  echo "warning: ARCHIVER_PORT_5000_TCP_ADDR is missing, archive generation won't work" >&2
-  echo "warning: link to archiver container to fix that" >&2
-fi
-
 # there's no official way to obtain host IP from the container,
 # so we rely here on the "official hack": https://github.com/docker/docker/issues/1143
 export HOST_IP=$(netstat -nr | grep '^0\.0\.0\.0' | awk '{print $2}')
