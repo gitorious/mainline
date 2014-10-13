@@ -3,6 +3,10 @@ server {
   root /usr/src/app/public;
   try_files $uri/index.html $uri.html $uri @app;
 
+  # Set DNS resolver. Needed by Nginx for resolving upstreams in proxy_pass
+  # directives (even for entries in /etc/hosts O_o).
+  resolver 127.0.0.1;
+
   # Set maximum allowed size of the client request body.
   # It's overriden later (in sections below) for gitorious-http-backend to allow http pushing.
   client_max_body_size 1m;
