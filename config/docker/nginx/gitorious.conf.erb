@@ -1,11 +1,21 @@
+upstream rails {
+  server web:3000 fail_timeout=0;
+}
+
+# gitorious-http-backend is running on the host (because we want custom hooks
+# to be run *on the host*), so here we point Nginx to port 6000 of Docker host.
+upstream gitorious_http_backend {
+  server <%= ENV['HOST_IP'] %>:6000 fail_timeout=0;
+}
+
+upstream git_archive_daemon {
+  server archiver:5000 fail_timeout=0;
+}
+
 server {
   listen 80;
   root /usr/src/app/public;
   try_files $uri/index.html $uri.html $uri @app;
-
-  # Set DNS resolver. Needed by Nginx for resolving upstreams in proxy_pass
-  # directives (even for entries in /etc/hosts O_o).
-  resolver 127.0.0.1;
 
   # Set maximum allowed size of the client request body.
   # It's overriden later (in sections below) for gitorious-http-backend to allow http pushing.
@@ -17,7 +27,7 @@ server {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header Host $http_host;
-    proxy_pass http://web:3000$request_uri;
+    proxy_pass http://rails;
     proxy_redirect off;
     error_page 500 502 504 /500.html; # RAILS error pages
   }
@@ -36,9 +46,7 @@ server {
     proxy_buffering off;
     proxy_read_timeout 120s;
 
-    # gitorious-http-backend is running on the host (because we want custom hooks
-    # to be run *on the host*), so here we point Nginx to port 6000 of Docker host.
-    proxy_pass http://<%= ENV['HOST_IP'] %>:6000$request_uri;
+    proxy_pass http://gitorious_http_backend;
   }
 
   # Proxy internal requests for archives to git-archive-daemon
@@ -50,7 +58,7 @@ server {
     proxy_read_timeout 120s;
 
     rewrite /_internal/archiver(/.*) $1 break;
-    proxy_pass http://archiver:5000$request_uri;
+    proxy_pass http://git_archive_daemon;
   }
 
   # Add caching headers for static assets
