@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+bundle exec rake ts:configure
+
+# listen on all interfaces so other containers can connect
+sed -i '/listen = / s/.*/  listen = 0.0.0.0:9312:mysql41/' config/production.sphinx.conf
+
+# INDEX_ONLY needed because ts:start_in_foreground depends on ts:index, which regenerates config
+INDEX_ONLY=true exec bundle exec rake ts:start_in_foreground

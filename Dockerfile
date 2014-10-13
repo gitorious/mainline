@@ -54,6 +54,7 @@ RUN ln -sf /usr/src/app/config/docker/nginx/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 3000
 EXPOSE 80
+EXPOSE 9312
 
 ENTRYPOINT ["/usr/src/app/bin/docker/run"]
 
