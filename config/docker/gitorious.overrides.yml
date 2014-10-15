@@ -1,6 +1,6 @@
 user: git
 repository_base_path: /var/lib/gitorious/repositories
-archive_cache_dir: /var/lib/gitorious/tarballs-cache
-archive_work_dir: /var/lib/gitorious/tarballs-work
+archive_cache_dir: /var/lib/gitorious/archives
+archive_work_dir: /var/lib/gitorious/tmp
 messaging_adapter: resque
 enable_repository_dir_sharding: false
