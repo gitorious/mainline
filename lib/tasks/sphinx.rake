@@ -11,5 +11,6 @@ namespace :ts do
     Signal.trap('TERM') { Process.kill('TERM', pid) }
     Signal.trap('INT')  { Process.kill('INT', pid) }
     Process.wait(pid)
+    exit $?.exitstatus
   end
 end
