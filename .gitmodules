@@ -1,3 +1,3 @@
 [submodule "public/ui3"]
         path = public/ui3
-        url = http://git.gitorious.org/gitorious/ui3.git
+        url = https://gitorious.org/gitorious/ui3.git
