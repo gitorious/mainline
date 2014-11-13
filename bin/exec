@@ -42,8 +42,9 @@ bundle_exec="$ruby -S bundle exec"
 
 BUNDLE_GEMFILE=${BUNDLE_GEMFILE:-"$app_dir/Gemfile"}
 RAILS_ENV=${RAILS_ENV:-production}
+RACK_ENV=$RAILS_ENV
 
-export BUNDLE_GEMFILE RAILS_ENV
+export BUNDLE_GEMFILE RAILS_ENV RACK_ENV
 
 cd $app_dir
 
