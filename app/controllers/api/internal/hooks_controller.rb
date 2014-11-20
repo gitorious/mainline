@@ -19,7 +19,7 @@
 module Api
   module Internal
 
-    class HooksController < ApplicationController
+    class HooksController < BaseController
       include Gitorious::Messaging::Publisher
 
       # params: username, repository_id, refname, oldsha, newsha, mergebase

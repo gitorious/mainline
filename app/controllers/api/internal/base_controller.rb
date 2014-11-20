@@ -1,4 +1,3 @@
-# encoding: utf-8
 #--
 #   Copyright (C) 2014 Gitorious AS
 #
@@ -19,24 +18,8 @@
 module Api
   module Internal
 
-    class RepositoryConfigurationsController < BaseController
-      respond_to :json
-
-      def show
-        repository = Repository.find_by_path(params[:repo_path])
-        user = User.find_by_login(params[:username])
-
-        if repository
-          if can_read?(user, repository)
-            respond_with RepositoryConfigurationPresenter.new(repository)
-          else
-            head :forbidden
-          end
-        else
-          head :not_found
-        end
-      end
-
+    class BaseController < ApplicationController
+      skip_session
     end
 
   end

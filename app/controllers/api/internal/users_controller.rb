@@ -18,7 +18,7 @@
 module Api
   module Internal
 
-    class UsersController < ApplicationController
+    class UsersController < BaseController
       respond_to :json
 
       def authenticate
