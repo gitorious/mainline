@@ -19,7 +19,7 @@ module Api
   module Internal
 
     class BaseController < ApplicationController
-      skip_session
+      always_skip_session
     end
 
   end
