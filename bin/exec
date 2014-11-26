@@ -20,25 +20,25 @@
 # Wrapper script for running Gitorious-related commands
 #
 # It will:
-# - make sure the command runs as user required in gitorious.yml (if set)
-# - make sure RAILS_ENV is set, defaulting to "production"
+# - ensure the command is not run as root
+# - (optionally) load bin/.env file (which may prepare ruby environment etc)
+# - ensure RAILS_ENV and RACK_ENV are set, defaulting to "production"
 # - change current working directory to Rails app root
-# - run the specified command with bundle exec, using either:
-#   - $app_dir/bin/ruby (your symlink/wrapper pointing to ruby in your system)
-#   - ruby (from $PATH)
+# - run the specified command
 
 set -e
+
+if [[ $(id -u) == 0 ]]; then
+  echo "Error: you must run this script as non-root user"
+  exit 1
+fi
 
 bin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 app_dir="$bin_dir/.."
 
-if [[ -x "$bin_dir/ruby" ]]; then
-  ruby="$bin_dir/ruby"
-else
-  ruby="ruby"
+if [[ -f "$bin_dir/.env" ]]; then
+  source "$bin_dir/.env"
 fi
-
-bundle_exec="$ruby -S bundle exec"
 
 BUNDLE_GEMFILE=${BUNDLE_GEMFILE:-"$app_dir/Gemfile"}
 RAILS_ENV=${RAILS_ENV:-production}
@@ -48,30 +48,4 @@ export BUNDLE_GEMFILE RAILS_ENV RACK_ENV
 
 cd $app_dir
 
-if [[ $RAILS_ENV == "production" ]]; then
-  user=$($ruby -e 'require "yaml"
-                   c = YAML.load_file("config/gitorious.yml")
-                   production_user = (c["production"] || {})["user"]
-                   puts (production_user || c["user"]).to_s')
-  current_user_id=$(id -u)
-
-  if [[ -n $user ]]; then
-    user_id=$(id -u $user)
-
-    if [[ $current_user_id != $user_id ]]; then
-      if [[ $current_user_id == 0 ]]; then
-        exec su -c "exec $bundle_exec \"\$0\" \"\$@\"" $user -- "$@"
-      else
-        echo "Error: This script has to be run either as $user or root"
-        exit 1
-      fi
-    fi
-  else
-    if [[ $current_user_id == 0 ]]; then
-      echo "Error: Set user in gitorious.yml or run this script as non-root user"
-      exit 1
-    fi
-  fi
-fi
-
-exec $bundle_exec "$@"
+exec "$@"

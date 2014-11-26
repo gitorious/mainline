@@ -4,4 +4,4 @@ set -e
 
 bin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-exec $bin_dir/exec rake "$@"
+exec $bin_dir/bundle exec rake "$@"

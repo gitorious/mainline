@@ -4,4 +4,4 @@ set -e
 
 bin_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-exec $bin_dir/exec unicorn -c config/unicorn.rb
+exec $bin_dir/bundle exec unicorn -c config/unicorn.rb
