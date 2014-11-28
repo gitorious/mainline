@@ -80,7 +80,7 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
 
   def self.git_daemon
     return @git_daemon if @git_daemon && cache?
-    return nil if !Gitorious::Configuration.get("enable_git_daemon", true)
+    return nil if !Gitorious::Configuration.get("enable_git_daemon", false)
     host = Gitorious::Configuration.get("git_daemon_host") { Gitorious.host }
     port = Gitorious::Configuration.get("git_daemon_port")
     @git_daemon = Gitorious::GitMountPoint.new(host, port)
