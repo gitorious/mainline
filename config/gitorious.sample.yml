@@ -24,7 +24,7 @@ site_name: Gitorious
 # own the web server process. The user will have its
 # ~/.ssh/authorized_keys file generated and controlled by Gitorious.
 # It is highly recommended to use a dedicated user for this.
-user: git
+#user: git
 
 # The path where git repositories are stored. The actual (bare)
 # repositories reside in
@@ -36,8 +36,7 @@ repository_base_path: "/var/git/repositories"
 # and a directory to keep cached tarballs (such that we don't waste time
 # re-generating tarballs on every request).
 #
-# Tarball cache directory. Gitorious uses X-Accel-Redirect to deliver files to
-# users, so this needs to be readable by the web server.
+# Tarball cache directory
 archive_cache_dir: "/var/git/tarballs"
 
 # Temporary tarball work directory
@@ -48,8 +47,7 @@ archive_work_dir: "/var/git/tarballs-work"
 # scheme defaults to https. When the scheme is https, the port
 # defaults to 443, otherwise it defaults to 80. None of these settings
 # affect your deployment, they only influence how Gitorious generates
-# full URLs. If you stay with the default SSL configuration (highly
-# recommended), you must configure your web server accordingly.
+# full URLs.
 #
 # NB! Gitorious 2.x used a use_ssl setting that made Gitorious force
 # users onto https when attempting to login. This behavior is gone. If
@@ -84,7 +82,7 @@ archive_work_dir: "/var/git/tarballs-work"
 # host as Gitorious (e.g. the `host` setting) on the default git
 # protocol port, 9418. Disabling the Git daemon will hide all git://
 # URLs from the UI.
-#enable_git_daemon: true
+#enable_git_daemon: false
 #git_daemon_host: gitorious.local
 #git_daemon_port: 9418
 
@@ -146,7 +144,7 @@ archive_work_dir: "/var/git/tarballs-work"
 #enable_project_approvals: false
 
 # Only site admins are allowed to create new teams
-# only_site_admins_can_create_teams: true
+#only_site_admins_can_create_teams: true
 
 # Session key. It is recommended to use a long random string for this.
 # A suitable key can be generated with `apg -m 64`. Make sure you
@@ -174,7 +172,7 @@ archive_work_dir: "/var/git/tarballs-work"
 # be configured in config/authentication.yml. Authorization refers to
 # using ldap information to grant access to particular views such as
 # projects, teams or users once a user is already authenticated.
-#enable_ldap_authorization: true
+#enable_ldap_authorization: false
 
 # Gitorious doesn't list LDAP group members on the team pages by default.
 # If you want to list all the group members set the following setting to true,
