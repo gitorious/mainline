@@ -18,8 +18,13 @@
 
 namespace :gts do
   desc 'Upgrade Gitorious database schema and data'
-  task upgrade: ['db:migrate', 'db:seed', :fix_data]
+  task upgrade: ['db:migrate', 'db:seed', :fix_data, :regenerate_authorized_keys]
 
   desc 'Fix data'
   task fix_data: [:fix_dangling_comments, :fix_dangling_memberships, :fix_missing_wiki_repos, :fix_dangling_committerships, :fix_dangling_projects, :fix_system_comments, :fix_dangling_events, :fix_dangling_repositories, :fix_dangling_favorites, :fix_missing_repos]
+
+  desc 'Regenerate authorized_keys'
+  task regenerate_authorized_keys: :environment do
+    SshKeyFile.regenerate(nil)
+  end
 end
