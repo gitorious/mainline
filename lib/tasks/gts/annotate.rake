@@ -1,8 +1,6 @@
 # encoding: utf-8
-
-LICENSE_HEADER = <<-STRING
 #--
-#   Copyright (C) 2012-#{Date.today.year} Gitorious AS
+#   Copyright (C) 2012-2013 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +15,6 @@ LICENSE_HEADER = <<-STRING
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-STRING
 
 namespace :gts do
   desc 'Annotates files with the license header'
