@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "rails", "3.2.19"
+gem "rails", "3.2.21"
 gem "geoip", "0.8.9"
 gem "daemons", "1.1.0", :require => false
 gem "rdiscount", "~> 2.1.7"
