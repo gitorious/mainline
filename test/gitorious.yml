@@ -8,3 +8,4 @@ scheme: http
 cookie_secret: UpDoquajrecJewyeodMilmiasFicsOke
 messaging_adapter: test
 git_binary: /usr/bin/git
+enable_git_daemon: true
