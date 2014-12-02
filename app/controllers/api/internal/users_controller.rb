@@ -22,7 +22,7 @@ module Api
       respond_to :json
 
       def authenticate
-        user = User.authenticate(params[:username], params[:password])
+        user = authenticate_user(params[:username], params[:password])
 
         if user
           respond_with({ username: user.login })
@@ -31,6 +31,15 @@ module Api
         end
       end
 
+      private
+
+      def authenticate_user(username, password)
+        credentials = Gitorious::Authentication::Credentials.new
+        credentials.username = username
+        credentials.password = password
+
+        Gitorious::Authentication.authenticate(credentials)
+      end
     end
 
   end
