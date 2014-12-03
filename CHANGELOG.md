@@ -1,19 +1,45 @@
 # Gitorious Changelog
 
-## master
+## 3.2.0 (2014-12-02)
 
-### New features
+### New features & improvements
 
-* Repositories are now discoverable by `go get` (`go get
-    gitorious-host/project-name/repo-name`)
+* Pushing over HTTP(S) protocol (via
+  [gitorious-http-backend](https://gitorious.org/gitorious/gitorious-proto))
+* Cloning/fetching over HTTP(S) uses "smart" HTTP+GIT protocol now (via
+  [gitorious-http-backend](https://gitorious.org/gitorious/gitorious-proto))
+* Faster and more reliable archive generation (via
+  [git-archive-daemon](https://gitorious.org/gitorious/git-archive-daemon))
+* Improved error messages in SSH protocol handling (via
+  [gitorious-shell](https://gitorious.org/gitorious/gitorious-proto))
+* Repository discovery for Golang
+  (`go get gitorious-host/project-name/repo-name`),
+  including import paths (`import gitorious-host/projec-name/repo-name/package`)
+* Faster commit graph loading with caching of graph data
+* Improved rendering of project/group descriptions and wikis
+* Support for app performance monitoring with skylight.io
+* Support for custom hooks *per repository*
+* User management page linked in header navigation (for admin users)
+* Admin user created automatically when seeding the database
 
 ### Changes
 
-* `frontend_server` option is removed, Nginx is always assumed
+* `frontend_server` option has been removed, Nginx is assumed and required
+* Diagnostics page has been removed (with `remote_ops_ips` config option)
+* Explicit support for Ruby 1.9 has been dropped (it may work on 1.9 though)
+* Rails version has been upgraded to 3.2.21
+* Insecure git:// protocol is now disabled by default
+* Git hooks have been moved to
+  [gitorious-proto](https://gitorious.org/gitorious/gitorious-proto)
 
 ### Bugs fixed
 
 * Fixed closing pre tag in commit history RSS feed
+* Hidden stack trace for exceptions on repository browser pages
+* Tree history (commit info for each tree entry) now handles paths with spaces
+  correctly
+* Retried push processing jobs create events with original push time now
+* Database seeding (rake db:seed) is now idempotent, doesn't create dup records
 
 ## 3.1.1 (2014-07-21)
 
