@@ -35,7 +35,7 @@
 ### Bugs fixed
 
 * Fixed closing pre tag in commit history RSS feed
-* Hidden stack trace for exceptions on repository browser pages
+* Hide stack trace for exceptions on repository browser pages
 * Tree history (commit info for each tree entry) now handles paths with spaces
   correctly
 * Retried push processing jobs create events with original push time now
