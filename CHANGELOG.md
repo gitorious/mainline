@@ -1,6 +1,6 @@
 # Gitorious Changelog
 
-## 3.2.0 (2014-12-02)
+## 3.2.0 (2014-12-03)
 
 ### New features & improvements
 
