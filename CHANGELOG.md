@@ -6,7 +6,7 @@
 
 * Pushing over HTTP(S) protocol (via
   [gitorious-http-backend](https://gitorious.org/gitorious/gitorious-proto))
-* Cloning/fetching over HTTP(S) uses "smart" HTTP+GIT protocol now (via
+* Faster cloning/fetching over HTTP(S) thanks to "smart" HTTP+GIT protocol (via
   [gitorious-http-backend](https://gitorious.org/gitorious/gitorious-proto))
 * Faster and more reliable archive generation (via
   [git-archive-daemon](https://gitorious.org/gitorious/git-archive-daemon))
