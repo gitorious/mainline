@@ -9,7 +9,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider :virtualbox do |vb, override|
     override.vm.box = "ubuntu/trusty64"
     override.vm.network :forwarded_port, guest: 80, host: 8080
-    override.vm.network :forwarded_port, guest: 443, host: 443
+    override.vm.network :forwarded_port, guest: 443, host: 8443
     override.vm.network :forwarded_port, guest: 3000, host: 3000
     override.vm.synced_folder ".", "/vagrant", type: "nfs"
     override.vm.network "private_network", ip: "10.5.7.5"
