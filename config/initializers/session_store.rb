@@ -8,7 +8,7 @@
 # Gitorious::Application.config.session_store :active_record_store
 
 Gitorious::Application.config.session_store(:cookie_store, {
-  :key => "_gitorious_session",
+  :key => ENV["GITORIOUS_SESSION_KEY"] || "_gitorious_session",
   :domain => Gitorious.host =~ /\./ ? ".#{Gitorious.host}" : "",
   :httponly => true,
   :secure => Gitorious.ssl?,
