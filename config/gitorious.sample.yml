@@ -105,15 +105,10 @@ archive_work_dir: "/var/git/tarballs-work"
 #messaging_adapter: resque
 
 # When Gitorious is running in public mode (true), everyone with
-# access to the server can view and clone repositories. Private mode
-# (false) will not allow anonymous access to content or user
+# access to the server can view and clone public repositories. Private mode
+# (false) will not allow anonymous access to any content or user
 # registration. Only pre-approved and logged in users can surf the
 # Gitorious installation.
-#
-# NB! If you intend to run in private mode, you should probably also
-# disable HTTP and git:// cloning. These protocols are anonymous, and
-# will allow unregistered users to pull repositories, given that they
-# somehow obtained the correct URLs.
 #public_mode: true
 
 # By setting this to false, you effectively disable new user
