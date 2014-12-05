@@ -29,7 +29,7 @@ class Api::Internal::RepositoryConfigurationsControllerTest < ActionController::
     end
 
     should "respond with repo configuration when user can read repo" do
-      @controller.expects(:can_read?).with(@user, @repository).returns(true)
+      RepositoryPolicy.expects(:allowed?).with(@user, @repository, :read).returns(true)
 
       get :show, username: "bar", repo_path: "repo/path.git", format: :json
 
@@ -53,7 +53,7 @@ class Api::Internal::RepositoryConfigurationsControllerTest < ActionController::
     end
 
     should "respond with 403 when user can't read repo" do
-      @controller.expects(:can_read?).with(@user, @repository).returns(false)
+      RepositoryPolicy.expects(:allowed?).with(@user, @repository, :read).returns(false)
 
       get :show, username: "bar", repo_path: "repo/path.git", format: :json
 

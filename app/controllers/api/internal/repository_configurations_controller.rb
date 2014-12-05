@@ -27,7 +27,7 @@ module Api
         user = User.find_by_login(params[:username])
 
         if repository
-          if can_read?(user, repository)
+          if RepositoryPolicy.allowed?(user, repository, :read)
             respond_with RepositoryConfigurationPresenter.new(repository)
           else
             head :forbidden

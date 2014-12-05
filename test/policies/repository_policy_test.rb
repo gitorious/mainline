@@ -26,20 +26,34 @@ class RepositoryPolicyTest < MiniTest::Spec
                                               can_push?: :nope) }
 
   describe "#read?" do
-    it "delegates to authorization's #can_read_repository?" do
-      assert_equal :yup, policy.read?
-    end
-  end
+    describe "when user is nil" do
+      let(:user) { nil }
 
-  describe "#upload_pack?" do
-    it "delegates to authorization's #can_read_repository?" do
-      assert_equal :yup, policy.upload_pack?
-    end
-  end
+      it "is false when public_mode=false" do
+        Gitorious::Configuration.override("public_mode" => false) do
+          assert_equal false, policy.read?
+        end
+      end
 
-  describe "#receive_pack?" do
-    it "is false" do
-      refute policy.receive_pack?
+      it "delegates to authorization's #can_read_repository? when public_mode=true" do
+        Gitorious::Configuration.override("public_mode" => true) do
+          assert_equal :yup, policy.read?
+        end
+      end
+    end
+
+    describe "when user is present" do
+      let(:user) { User.new }
+
+      it "delegates to authorization's #can_read_repository? regardless of public_mode value" do
+        Gitorious::Configuration.override("public_mode" => true) do
+          assert_equal :yup, policy.read?
+        end
+
+        Gitorious::Configuration.override("public_mode" => false) do
+          assert_equal :yup, policy.read?
+        end
+      end
     end
   end
 

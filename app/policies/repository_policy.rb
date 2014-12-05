@@ -14,13 +14,8 @@ class RepositoryPolicy
   end
 
   def read?
+    return false if !Gitorious.public? && !user
     authorization.can_read_repository?(user, repository)
-  end
-
-  alias_method :upload_pack?, :read?
-
-  def receive_pack?
-    false
   end
 
   def push?
