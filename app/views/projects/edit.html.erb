@@ -38,7 +38,7 @@
             </div>
             <% if Gitorious::Configuration.get("enable_sidebar_license_descriptions") %>
               <div class="span4">
-                <h3>License overview</h3>
+                <h3><%= license_label("views.projects") %> overview</h3>
                 <dl>
                   <% ProjectLicense.all.each do |license| %>
                     <dt><%= license.name %></dt>

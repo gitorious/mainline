@@ -32,7 +32,7 @@
 <% end %>
 <%= form.textarea_md_preview(:description, 'Description') %>
 <%= form.input(:tag_list, :label => t(:tag_list, :scope => scope), :hint => t(:tag_list_help, :scope => scope)) %>
-<%= form.select_block(:license, t(:license, :scope => scope),
+<%= form.select_block(:license, license_label(scope),
                project_license_choices(:selected => default_license(project)).html_safe,
                { :help => "<div id=\"license-details\"></div>" },
                :class => "gts-option-details", :"data-target" => "license-details"
