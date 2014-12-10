@@ -53,25 +53,13 @@ if !defined?(Gitorious::Configuration) || !Gitorious.configured?
   # Wire up the global Gitorious::Configuration singleton with settings
   config = loader.configure_application!(env)
 
-  if !config.get("symlinked_mirror_repo_base").nil?
-    $stderr.puts <<-MSG
-The symlinked_mirror_repo_base setting in config/gitorious.yml is no
-longer supported. Please specify this directory by running the
-mirror:symlinkedrepos rake task with an environment variable instead.
-Remember to update your crontab if you run this task with cron.
-
-Example:
-env MIRROR_BASEDIR=/var/www/gitorious/repo-mirror bundle exec rake mirror:symlinkedrepos
-    MSG
-  end
-
   # Add additional paths for views
   additional_paths = Array(config.get("additional_view_paths", [])).each do |path|
     path = File.expand_path(path)
     if !File.exists?(path)
       $stderr.puts "WARNING: Additional view path '#{path}' does not exists, skipping"
     end
-    Gitorious::Application.paths.app.views.unshift(path)
+    Gitorious::Application.config.paths['app/views'].unshift(path)
   end
 
   config.append("git_version" => `#{Gitorious.git_binary} --version`.chomp)
