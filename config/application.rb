@@ -123,5 +123,25 @@ module Gitorious
     config.assets.initialize_on_precompile = false
 
     I18n.enforce_available_locales = true
+
+    # Append additional view paths
+    # NOTE: Full-blown configuration loading happens in initializer so it's
+    # necessary to load the config file manually here to get the value of this
+    # setting.
+    # TODO: Decouple config file loading from "configuration initialization"
+    # (see gitorious_config.rb).
+    require "gitorious/configuration_reader"
+    cfg = Gitorious::ConfigurationReader.read((Rails.root + "config" + "gitorious.yml").to_s)
+
+    # Add additional paths for views
+    Array(cfg["additional_view_paths"]).each do |path|
+      path = File.expand_path(path)
+
+      if File.exists?(path)
+        config.paths['app/views'].unshift(path)
+      else
+        $stderr.puts "WARNING: Additional view path '#{path}' does not exists, skipping"
+      end
+    end
   end
 end

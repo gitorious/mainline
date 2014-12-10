@@ -53,15 +53,6 @@ if !defined?(Gitorious::Configuration) || !Gitorious.configured?
   # Wire up the global Gitorious::Configuration singleton with settings
   config = loader.configure_application!(env)
 
-  # Add additional paths for views
-  additional_paths = Array(config.get("additional_view_paths", [])).each do |path|
-    path = File.expand_path(path)
-    if !File.exists?(path)
-      $stderr.puts "WARNING: Additional view path '#{path}' does not exists, skipping"
-    end
-    Gitorious::Application.config.paths['app/views'].unshift(path)
-  end
-
   config.append("git_version" => `#{Gitorious.git_binary} --version`.chomp)
 
   if !Gitorious.public? || Gitorious.private_repositories?
