@@ -47,10 +47,10 @@ module Gitorious
       return @footer_links[sd] if @footer_links[sd] && Rails.env.production?
       @footer_links[sd] = Gitorious::Configuration.group_get(["sites", current_site.subdomain], "footer_links") do
         [["About Gitorious", app.about_path],
-          ["Discussion group", "http://groups.google.com/group/gitorious"],
-          ["Blog", "http://blog.gitorious.org"],
-          ["Terms of Service", "http://en.gitorious.org/tos"],
-          ["Privacy Policy", "http://en.gitorious.org/privacy_policy"]]
+          ["Discussion group", discussion_url],
+          ["Blog", blog_url],
+          ["Terms of Service", terms_of_service_url],
+          ["Privacy Policy", privacy_policy_url]]
       end + Gitorious::Configuration.get("additional_footer_links", [])
     end
 
