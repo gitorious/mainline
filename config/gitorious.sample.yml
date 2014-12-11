@@ -430,9 +430,6 @@ archive_work_dir: "/var/git/tarballs-work"
 #terms_of_service_url: http://en.gitorious.org/tos
 #privacy_policy_url: http://en.gitorious.org/privacy_policy
 
-# Additional text/markup displayed in the footer.
-#footer_blurb
-
 # The following settings are useful if you're interested in theming your
 # Gitorious install. Please note however, that we don't give any API
 # guarantees for view code, controllers or CSS. In fact, we plan to ditch most
