@@ -442,9 +442,6 @@ archive_work_dir: "/var/git/tarballs-work"
 # relevant theme information in the Changelog, so you will need to refer to
 # the git log if updating gives you trouble.
 
-# Additional stylesheets for most pages. "Most pages" is everything except for
-# the frontpage/public index, login page and the register page.
-#
 # One way to theme Gitorious would be to put a submodule in public/ that
 # contains stylesheets and images. Then include the following setting
 # (assuming that your submodule is at public/mytheme, and includes a directory
@@ -452,16 +449,9 @@ archive_work_dir: "/var/git/tarballs-work"
 #common_stylesheets: /mytheme/stylesheets/theme
 #
 # If you have several files:
-#common_stylesheets:
-#  - /mytheme/stylesheets/theme
-#  - /mytheme/stylesheets/theme2
-#
-# Note that the extra stylesheets will be added to the bundle used in
-# production
-
-# Additional stylesheets for the frontpage and login pages. Works like the
-# common_stylesheets setting
-#external_stylesheets: /mytheme/stylesheets/themed-public-index
+#external_stylesheets:
+#  - /mytheme/stylesheets/theme.css
+#  - /mytheme/stylesheets/theme2.css
 
 # Sensible defaults for the development environment
 development:

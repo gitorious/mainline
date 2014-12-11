@@ -143,5 +143,9 @@ module Gitorious
         $stderr.puts "WARNING: Additional view path '#{path}' does not exists, skipping"
       end
     end
+
+    config.after_initialize do
+      Gitorious::View.stylesheets.concat(Array(cfg["external_stylesheets"]))
+    end
   end
 end
