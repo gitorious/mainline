@@ -82,7 +82,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_user_has_ssh_keys
-    unless current_user.ssh_keys.count > 0
+    unless current_user.ssh_keys.count > 0 || Gitorious.ssh_daemon.nil?
       flash[:error] = I18n.t "application.require_ssh_keys_error"
       redirect_to new_user_key_path(current_user)
       return
