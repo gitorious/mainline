@@ -74,8 +74,7 @@ GEM
     backports (3.3.5)
     bourne (1.5.0)
       mocha (>= 0.13.2, < 0.15)
-    bugsnag (2.4.0)
-      httparty (>= 0.6, < 1.0)
+    bugsnag (2.7.1)
       multi_json (~> 1.0)
     builder (3.0.4)
     capillary (1.0.4)
@@ -168,8 +167,8 @@ GEM
     highline (1.6.20)
     hike (1.2.3)
     htmlentities (4.3.1)
-    httparty (0.11.0)
-      multi_json (~> 1.0)
+    httparty (0.13.3)
+      json (~> 1.8)
       multi_xml (>= 0.5.2)
     i18n (0.6.11)
     ice_nine (0.10.0)
@@ -424,7 +423,7 @@ DEPENDENCIES
   activerecord-jdbcmysql-adapter
   acts-as-taggable-on (~> 2.3)
   asciidoctor
-  bugsnag (~> 2.4.0)
+  bugsnag
   capillary (~> 1.0.1)
   capybara (~> 2.1)
   capybara-screenshot
