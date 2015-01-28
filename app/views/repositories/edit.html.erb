@@ -73,6 +73,7 @@
       </div>
       <div class="form-actions">
         <button class="btn btn-primary" type="submit">Save changes</button>
+        <span class="cancel"><%= link_to 'Cancel', project_repository_path(repository.project, repository) %></span>
       </div>
     </fieldset>
   <% end %>

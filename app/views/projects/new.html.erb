@@ -31,7 +31,7 @@
           <legend>Create a new project</legend>
           <%= render('form', :form => f, :project => project, :edit_slug => true, :edit_urls => false) %>
           <div class="form-actions">
-            <%= f.submit 'Save', :class => 'btn btn-primary' %>
+            <%= f.submit 'Save', :class => 'btn btn-primary' %> <span class="cancel"><%= link_to 'Cancel', root_path %></span>
           </div>
         </fieldset>
       <% end %>
