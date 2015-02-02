@@ -83,7 +83,7 @@ class Project < ActiveRecord::Base
   end
 
   scope :order_by_title, order("title")
-  scope :order_by_activity, order("count(events.id) desc")
+  scope :order_by_activity, order("events.id desc")
 
   def self.active_count
     active.count.count
