@@ -22,7 +22,7 @@
 
 <%= render "#{type.pluralize}/header", type.to_sym => owner, :active => :wiki %>
 
-<% @title = t("views.pages.last_n_edits", { :n => 30, :title => page.title }) %>
+<% @title = t("views.pages.last_n_edits_html", { :n => 30, :title => page.title }) %>
 
 <div class="container">
   <%= render('pages/actions', :owner => owner, :page => page, :active => :history) %>
