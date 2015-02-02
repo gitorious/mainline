@@ -80,6 +80,7 @@ group :development do
   gem "foreman", "~> 0.41"
   gem "thin", "~> 1.2"
   gem "pry-rails"
+  gem "quiet_assets"
 end
 
 group :ldap_wizard do
