@@ -47,6 +47,7 @@ else
         "/ui3/js/lib/jquery/jquery.migrate.js",
         "/ui3/js/lib/jquery/jquery.ujs.js",
         "/ui3/js/lib/jquery/jquery.pjax.js",
+        "/ui3/js/lib/shims/jquery.html5-placeholder-shim.js",
         "/ui3/lib/bootstrap/js/bootstrap.min.js",
         "/ui3/js/lib/jquery-ui/ui/jquery.ui.core.js",
         "/ui3/js/lib/jquery-ui/ui/jquery.ui.widget.js",
