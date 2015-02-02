@@ -18,14 +18,21 @@
 module TabsHelper
 
   def user_edit_tabbable(options, &block)
-    tabbable({
-      'account'          => edit_user_path(current_user),
-      'email-aliases'    => user_edit_email_aliases_path(current_user),
-      'change-password'  => user_edit_password_path(current_user),
+    tabs = {
+      'account'       => edit_user_path(current_user),
+      'email-aliases' => user_edit_email_aliases_path(current_user),
+    }
+
+    unless Gitorious::Authentication::Configuration.authentication_method('LDAP')
+      tabs['change-password'] = user_edit_password_path(current_user)
+    end
+
+    tabs.merge!({
       'ssh-keys'         => user_edit_ssh_keys_path(current_user),
-      'manage-favorites' => user_edit_favorites_path(current_user) },
-      options.reverse_merge(:active => 'account'), &block
-    )
+      'manage-favorites' => user_edit_favorites_path(current_user)
+    })
+
+    tabbable(tabs, options.reverse_merge(:active => 'account'), &block)
   end
 
   def activity_tabbable(options = {}, &block)
