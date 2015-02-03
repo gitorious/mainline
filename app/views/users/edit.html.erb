@@ -41,7 +41,13 @@
 
         $nav.tab('show');
 
-        $('.nav').pjax('a', '.tab-pane');
+        if ($.support.pjax) {
+          $('.nav').pjax('a', '.tab-pane');
+        } else {
+          $('.tabbable .nav a').click(function() {
+            window.location = $(this).attr('href');
+          });
+        }
     });
   </script>
 <% end %>
