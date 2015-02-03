@@ -57,7 +57,9 @@
           <% else -%>
             <td><%= link_to t("views.users.suspend"), suspend_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %></td>
           <% end -%>
-          <td><%= link_to t("views.users.reset_pwd"), reset_password_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %></td>
+          <% unless Gitorious::Authentication::Configuration.authentication_method('LDAP') %>
+            <td><%= link_to t("views.users.reset_pwd"), reset_password_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %></td>
+          <% end %>
           <td><%= link_to t("views.users.manage_ssh_keys"), admin_user_keys_path(user) %></td>
         </tr>
       <% end -%>
