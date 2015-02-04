@@ -84,7 +84,7 @@ class CommittershipsControllerTest < ActionController::TestCase
 
       post :create, params(:group => {:name => @group.name}, :user => {}, :permissions => ["review"])
       assert_response :redirect
-      assert_equal "Team added as committers", flash[:success]
+      assert_equal "New collaborator added.", flash[:success]
     end
 
     should "add a User as having committership" do
@@ -101,7 +101,7 @@ class CommittershipsControllerTest < ActionController::TestCase
       }
       assert_nil flash[:error]
       assert_response :redirect
-      assert_equal "User added as committer", flash[:success]
+      assert_equal "New collaborator added.", flash[:success]
     end
 
     should "not fail when the same user is added twice" do
@@ -160,7 +160,7 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert_difference("@repository.committerships.count", -1) do
         delete :destroy, params(:id => committership.id)
       end
-      assert_match(/The committer was removed/, flash[:notice])
+      assert_match(/The collaborator was removed/, flash[:notice])
       assert_response :redirect
     end
   end
