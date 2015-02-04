@@ -35,11 +35,7 @@ class CommittershipsController < ApplicationController
     end
 
     outcome.success do |committership|
-      if committership.committer.is_a?(User)
-        flash[:success] = "User added as committer"
-      else
-        flash[:success] = "Team added as committers"
-      end
+      flash[:success] = "New collaborator added."
       redirect_to([@repository.project, @repository, :committerships])
     end
   end
@@ -68,7 +64,7 @@ class CommittershipsController < ApplicationController
 
   def destroy
     if @repository.committerships.destroy(params[:id], current_user)
-      flash[:notice] = "The committer was removed."
+      flash[:notice] = "The collaborator was removed."
     end
     redirect_to([@repository.project, @repository, :committerships])
   end
