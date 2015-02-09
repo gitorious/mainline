@@ -12,7 +12,7 @@ gem "state_machine", "~> 1.1", :git => "https://github.com/gitorious/state_machi
 gem "acts-as-taggable-on", "~> 3.4"
 gem "will_paginate", "~>3.0"
 gem "just_paginate", "0.2.2"
-gem "net-ldap", "~> 0.3"
+gem "net-ldap", "~> 0.11"
 gem "capillary", "~> 1.0.1"
 gem "nokogiri", "~> 1.5", "< 1.6"
 gem "memcache-client", "~> 1.8"
