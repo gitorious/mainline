@@ -25,7 +25,7 @@
     <fieldset>
       <legend><%= @title = "Transfer ownership for #{project.title}" %></legend>
       <div class="control-group">
-        <%= f.label :owner_id, "New owner", :class => "control-label" -%>
+        <%= f.label :owner_id, "New owner team", :class => "control-label" -%>
         <div class="controls">
           <%= f.select(:owner_id, groups.map { |g| [g.name, g.id] },
                        :include_blank => true, :selected => nil) %>
@@ -33,7 +33,7 @@
             Only change ownership of this project if you are
             absolutely sure you want to give admin and commit access
             to every repository in it to everyone in the selected
-            group.
+            team.
           </p>
         </div>
       </div>
