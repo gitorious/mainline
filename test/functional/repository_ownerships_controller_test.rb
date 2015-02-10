@@ -97,7 +97,7 @@ class RepositoryOwnershipsControllerTest < ActionController::TestCase
       put(:update, {
           :project_id => @project.to_param,
           :id => @repository.to_param,
-          :owner_id => group.id
+          :repository => { :owner_id => group.id }
         })
 
       assert_redirected_to(project_repository_path(@repository.project, @repository))
@@ -116,7 +116,7 @@ class RepositoryOwnershipsControllerTest < ActionController::TestCase
       put(:update, {
           :project_id => @repository.project.to_param,
           :id => @repository.to_param,
-          :owner_id => new_group.id
+          :repository => { :owner_id => new_group.id }
         })
 
       assert_response :redirect

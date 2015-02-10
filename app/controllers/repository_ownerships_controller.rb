@@ -23,10 +23,15 @@ class RepositoryOwnershipsController < ApplicationController
 
   def update
     groups = Team.for_user(current_user)
-    new_owner = groups.detect { |group| group.id == params[:owner_id].to_i }
-    @repository.change_owner_to!(new_owner)
-    flash[:success] = "Repository ownership transferred"
-    redirect_to [@repository.project, @repository]
+    owner_id = params[:repository][:owner_id]
+    if owner_id.present?
+      new_owner = groups.detect { |group| group.id == owner_id.to_i }
+      @repository.change_owner_to!(new_owner)
+      flash[:success] = "Repository ownership transferred"
+      redirect_to [@repository.project, @repository]
+    else
+      render_form(@repository, groups)
+    end
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound
     render_form(@repository, groups)
   end
