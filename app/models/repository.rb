@@ -57,10 +57,10 @@ class Repository < ActiveRecord::Base
   has_many    :services, :dependent => :destroy
 
   has_many    :_committerships, :dependent => :destroy
+
   def committerships
     RepositoryCommitterships.new(self)
   end
-
 
   after_destroy :post_repo_deletion_message
 
