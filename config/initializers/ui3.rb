@@ -41,6 +41,7 @@ else
     add_prod_assets
   else
     Gitorious::View.javascripts.concat([
+        "/ui3/js/lib/console/console.js",
         "/ui3/js/lib/es5-shim/es5-shim.js",
         "/ui3/js/lib/es5-shim/es5-sham.js",
         "/ui3/js/lib/jquery/jquery-1.10.2.min.js",
