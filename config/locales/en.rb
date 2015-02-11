@@ -433,7 +433,7 @@
         :btn_delete_repo => "Delete repository",
         :btn_edit_repo => "Edit repository",
         :committers => "Committers",
-        :current_committers => "Committers",
+        :current_committers => "Collaborators",
         :remove => "Remove",
         :create_title_html => "Create a clone of <a href=\"%{clone_url}\">%{clone_name}</a> in <a href=\"%{project_url}\">%{project_name}</a>",
         :by_teams => "Team clones",
