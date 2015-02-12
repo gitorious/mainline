@@ -116,8 +116,22 @@ class GroupTest < ActiveSupport::TestCase
   end
 
   context "Modifying memberships" do
-    should "be possible" do
-      assert Group.new.memberships_modifiable?
+    should "be possible when user is admin of a group" do
+      group = FactoryGirl.create(:group)
+      user = FactoryGirl.create(:user)
+      group.add_member(user, Role.admin)
+
+      assert group.memberships_modifiable_by?(user)
+    end
+
+    should "not be possible when user isn't admin of a group" do
+      group = FactoryGirl.create(:group)
+      user1 = FactoryGirl.create(:user)
+      user2 = FactoryGirl.create(:user)
+      group.add_member(user1, Role.member)
+
+      refute group.memberships_modifiable_by?(user1)
+      refute group.memberships_modifiable_by?(user2)
     end
   end
 

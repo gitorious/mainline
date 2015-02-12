@@ -58,8 +58,8 @@ module GroupBehavior
       name.downcase! if name
     end
 
-    def memberships_modifiable?
-      true
+    def memberships_modifiable_by?(user)
+      user_role(user) == Role.admin
     end
   end
 end

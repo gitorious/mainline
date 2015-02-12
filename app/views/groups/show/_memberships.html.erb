@@ -18,7 +18,7 @@
 %>
 
 <%= pull_box("Members") do %>
-  <% if group.memberships_modifiable? %>
+  <% if group.memberships_modifiable_by?(current_user) %>
     <div class="pull-box-header-action">
       <%= link_to new_group_membership_path(group), :class => 'btn btn-primary' do %>
         <i class="icon-plus-sign icon-white"></i>

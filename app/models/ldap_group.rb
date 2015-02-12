@@ -95,7 +95,7 @@ class LdapGroup < ActiveRecord::Base
     projects.empty?
   end
 
-  def memberships_modifiable?
+  def memberships_modifiable_by?(user)
     false
   end
 
