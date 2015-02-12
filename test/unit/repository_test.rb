@@ -61,8 +61,8 @@ class RepositoryTest < ActiveSupport::TestCase
       end
     end
 
-    should "has a clone url" do
-      assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.clone_url
+    should "has a git clone url" do
+      assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.git_clone_url
     end
 
     should "has a http url" do
@@ -79,13 +79,13 @@ class RepositoryTest < ActiveSupport::TestCase
     should "have a clone url with the project name" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO
-      assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.clone_url
+      assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.git_clone_url
 
       @repository.kind = Repository::KIND_TEAM_REPO
-      assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.clone_url
+      assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.git_clone_url
 
       @repository.kind = Repository::KIND_USER_REPO
-      assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.clone_url
+      assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.git_clone_url
     end
 
     should "has a push url with the project name" do

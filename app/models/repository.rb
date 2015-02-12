@@ -213,15 +213,21 @@ class Repository < ActiveRecord::Base
   end
 
   def clone_url
-    Gitorious.git_daemon.url(gitdir)
+    if http_cloning?
+      http_clone_url
+    elsif ssh_cloning?
+      ssh_clone_url
+    else
+      raise "cloning disabled"
+    end
   end
 
   def ssh_clone_url
-    push_url
+    Gitorious.ssh_daemon.url(gitdir)
   end
 
   def git_clone_url
-    clone_url
+    Gitorious.git_daemon.url(gitdir)
   end
 
   def http_clone_url
@@ -241,7 +247,13 @@ class Repository < ActiveRecord::Base
   end
 
   def push_url
-    Gitorious.ssh_daemon.url(gitdir)
+    if ssh_cloning?
+      ssh_clone_url
+    elsif http_cloning?
+      http_clone_url
+    else
+      raise "pushing disabled"
+    end
   end
 
   def display_ssh_url?(user)
