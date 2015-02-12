@@ -173,8 +173,9 @@ class MergeRequestsController < ApplicationController
 
   def update
     @merge_request.attributes = params[:merge_request]
+    ending_commit_changed = @merge_request.ending_commit_changed?
     if @merge_request.save
-      @merge_request.publish_notification
+      @merge_request.publish_notification if ending_commit_changed
       flash[:success] = I18n.t "merge_requests_controller.update_success"
       redirect_to [@repository.project, @repository, @merge_request]
     else
