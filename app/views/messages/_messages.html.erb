@@ -21,6 +21,7 @@
 <% render "header" %>
 
 <%= form_tag(bulk_update_messages_path, :method => :put) do %>
+  <%= hidden_field_tag :return_to_action, params[:action] %>
   <table class="table">
     <tr>
       <th></th>

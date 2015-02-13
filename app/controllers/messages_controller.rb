@@ -69,7 +69,7 @@ class MessagesController < ApplicationController
         message.mark_as_read_by_user(current_user)
       end
     end
-    redirect_to :action => :index
+    redirect_to :action => redirect_action(params[:return_to_action])
   end
 
   def show
@@ -132,5 +132,9 @@ class MessagesController < ApplicationController
 
   def user_messages
     @user_messages ||= UserMessages.for(current_user)
+  end
+
+  def redirect_action(action_name)
+    ['index', 'all', 'sent'].include?(action_name) ? action_name : 'index'
   end
 end
