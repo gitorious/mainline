@@ -33,15 +33,12 @@ class MergeRequestVersionsController < ApplicationController
     raise DiffNotAvailable unless merge_request_version
 
     diffs = []
+    timeout = false
 
     begin
-      timeout = Timeout.timeout(Gitorious.diff_timeout) do
-        diffs = merge_request_version.diffs
-      end
-
-      timeout = nil unless timeout.length == 0
+      diffs = Timeout.timeout(Gitorious.diff_timeout) { merge_request_version.diffs }
     rescue Timeout::Error => err
-      timeout = err
+      timeout = true
     end
 
     commit = merge_request.source_repository.git.commit(merge_request.ending_commit)
