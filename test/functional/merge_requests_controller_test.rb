@@ -69,7 +69,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     should "gets all the merge requests in the repository" do
       %w(html xml).each do |format|
         get :index, params(:format => format)
-        assert_equal @target_repository.open_merge_requests, assigns(:open_merge_requests)
+        assert_equal @target_repository.merge_requests, assigns(:open_merge_requests)
       end
     end
 

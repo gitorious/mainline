@@ -509,11 +509,10 @@ class MergeRequestTest < ActiveSupport::TestCase
       MergeRequestStatus.create_defaults_for_project(@repo.project)
     end
 
-    should "default to open merge-requests" do
+    should "default to all merge-requests" do
       merge_requests(:moes_to_johans).update_attribute(:status_tag, "Closed")
       merge_requests(:moes_to_johans_open).update_attribute(:status_tag, "Open")
-      assert !@repo.merge_requests.from_filter(nil).include?(merge_requests(:moes_to_johans))
-      assert_equal [merge_requests(:moes_to_johans_open)], @repo.merge_requests.from_filter(nil)
+      assert_equal Set.new([merge_requests(:moes_to_johans_open), merge_requests(:moes_to_johans)]), Set.new(@repo.merge_requests.from_filter(nil))
     end
 
     should "fall back to using scope on other filter name" do

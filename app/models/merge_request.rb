@@ -114,7 +114,7 @@ class MergeRequest < ActiveRecord::Base
 
   def self.from_filter(filter_name = nil)
     if filter_name.blank?
-      open
+      scoped
     else
       by_status(filter_name)
     end
