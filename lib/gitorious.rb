@@ -21,7 +21,7 @@ require "gitorious/openid"
 require "gitorious/kerberos"
 
 module Gitorious
-  VERSION = "3.2.0"
+  VERSION = "3.2.1"
 
   # Application-wide configuration settings.
   Configuration = Configurable.new("GITORIOUS")

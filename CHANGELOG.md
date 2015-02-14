@@ -1,5 +1,34 @@
 # Gitorious Changelog
 
+## 3.2.1 (2015-02-14)
+
+### New features & improvements
+
+* Several forms got "Cancel" (back) links
+
+### Changes
+
+* Upload of public SSH key is required no more when SSH protocol is disabled
+* "By activity" sorting on Projects page uses latest activity instead of
+  overall (all-time) activity
+* Password change and reset is now hidden when using LDAP authentication
+
+### Bugs fixed
+
+* Multitude of bugfixes for IE 9
+* "Add member" button on team page is only displayed for team admins
+* New version of merge requested is not created anymore when editing only
+  title/description of MR
+* Fixed transferring ownership of a repository to a team
+* Fixed display of custom license label
+* Fixed `additional_view_paths` configuration option
+* Fixed overriding of footer links
+* Fixed `external_stylesheets` configuration option
+* Fixed message selection and pagination links on Messages page
+* Bulk update on Messages page redirects back to proper tab now
+* "Timeout" message is not displayed on MR diff page anymore when commit
+  adds blank file(s)
+
 ## 3.2.0 (2014-12-04)
 
 ### New features & improvements
