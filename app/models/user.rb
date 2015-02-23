@@ -323,6 +323,10 @@ class User < ActiveRecord::Base
     @password
   end
 
+  def owned_repositories
+    repositories.where('kind NOT IN (?)', Repository::KINDS_INTERNAL_REPO)
+  end
+
   protected
   # Encrypts the password with the user salt
   def encrypt(password)

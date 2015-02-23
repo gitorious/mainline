@@ -20,6 +20,8 @@ Gitorious::Application.routes.draw do
   ### R0. Site index
   root :to => "site#index"
 
+  get "/gitlab-import" => "gitlab_import#new"
+
   ### R1. Repository browser (instance is configured in an initializer)
   match "/:project_id/:repository_id/:action/*slug" => Gitorious::RepositoryBrowser.instance, :action => /(source|tree_history|raw|blame|history|archive)/, :as => :repository_browser
   match "/:project_id/:repository_id/refs" => Gitorious::RepositoryBrowser.instance, :as => :repository_refs
