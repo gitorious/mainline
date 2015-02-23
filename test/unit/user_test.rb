@@ -435,6 +435,23 @@ class UserTest < ActiveSupport::TestCase
     refute user.public_email?
   end
 
+  context "exportable_repositories" do
+    should "include repos owned by a user" do
+      user = users(:johan)
+      repo1 = repositories(:johans)
+      repo2 = repositories(:johans_moe_clone)
+
+      assert_equal [repo1, repo2], user.exportable_repositories
+    end
+
+    should "include repos owned by a team which the user is admin of" do
+      user = users(:mike)
+      repo1 = repositories(:johans2)
+
+      assert_equal [repo1], user.exportable_repositories
+    end
+  end
+
   protected
   def create_user(options = {})
     login = options.delete(:login) || "quire"

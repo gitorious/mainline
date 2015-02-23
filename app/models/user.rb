@@ -323,8 +323,10 @@ class User < ActiveRecord::Base
     @password
   end
 
-  def owned_repositories
-    repositories.where('kind NOT IN (?)', Repository::KINDS_INTERNAL_REPO)
+  def exportable_repositories
+    user_repos = repositories.where('kind NOT IN (?)', Repository::KINDS_INTERNAL_REPO)
+    group_repos = memberships.where(role_id: Role.admin.id).map(&:group).map(&:repositories).flatten
+    (user_repos + group_repos).uniq
   end
 
   protected

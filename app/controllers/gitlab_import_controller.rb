@@ -8,7 +8,7 @@ class GitlabImportController < ApplicationController
   private
 
   def owned_repos_list
-    current_user.owned_repositories.map(&:url_path).sort.join(',')
+    current_user.exportable_repositories.map(&:url_path).sort.join(',')
   end
 
 end
