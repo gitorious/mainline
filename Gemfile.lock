@@ -143,6 +143,7 @@ GEM
       thor (>= 0.13.6)
     formatador (0.2.4)
     geoip (0.8.9)
+    get_process_mem (0.2.0)
     github-linguist (2.9.7)
       charlock_holmes (~> 0.6.6)
       escape_utils (~> 0.3.1)
@@ -395,6 +396,9 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    unicorn-worker-killer (0.4.3)
+      get_process_mem (~> 0)
+      unicorn (~> 4)
     use_case (1.0.2)
     vegas (0.1.11)
       rack (>= 1.0.0)
@@ -496,6 +500,7 @@ DEPENDENCIES
   tiltout (~> 1.4)
   trinidad
   unicorn (~> 4.6.3)
+  unicorn-worker-killer
   use_case
   virtus (~> 1.0.1)
   webmock (~> 1.13)
