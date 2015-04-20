@@ -46,12 +46,16 @@ namespace :gts do
             repository.hashed_path = repository.url_path
             repository.save!
 
-            # move repo directory
-            FileUtils.mkdir_p(new_dir)
-            FileUtils.mv(old_path, new_path)
+            if repository.ready?
+              # move repo directory
+              FileUtils.mkdir_p(new_dir)
+              FileUtils.mv(old_path, new_path)
 
-            # fix hooks symlinks (they're relative)
-            RepositoryHooks.create(Pathname(new_path))
+              # fix hooks symlinks (they're relative)
+              RepositoryHooks.create(Pathname(new_path))
+            else
+              puts "warning: repository doesn't exist on disk"
+            end
           end
         end
       end
