@@ -25,6 +25,7 @@ class RepositoryHooks
     target_path = hooks.relative_path_from(path + "hooks")
 
     Dir.chdir(path) do
+      File.unlink("hooks") if File.symlink?("hooks")
       FileUtils.mkdir_p("hooks")
 
       %w[pre-receive post-receive update post-update].each do |hook|
